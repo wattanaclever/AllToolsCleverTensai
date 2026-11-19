@@ -140,13 +140,14 @@
         <div class="flex items-center gap-2.5 sm:gap-3.5">
             <a href="../index.html" class="flex items-center gap-2.5 group" title="กลับสู่หน้าหลัก CLEVERTENSAI Portal">
                 <div
-                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-file-zipper"></i>
+                    class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
+                    <i class="fa-solid fa-object-ungroup"></i>
                 </div>
                 <div class="flex flex-col">
                     <span class="text-sm sm:text-base font-extrabold tracking-wider leading-none">CLEVER<span
                             class="text-red-500">TENSAI</span></span>
-                    <span class="hidden sm:inline font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">COMPRESS PDF STUDIO</span>
+                    <span class="hidden sm:inline font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">MERGE
+                        PDF STUDIO</span>
                 </div>
             </a>
 
@@ -178,7 +179,8 @@
                 <span>Hub</span>
             </button>
 
-            <div class="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+            <div
+                class="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>SYSTEM ONLINE</span>
             </div>
@@ -211,7 +213,8 @@
                         <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
                             CLEVERTENSAI Tools & Workspace Hub
                         </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังเว็บแอปอื่น</p>
+                        <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังเว็บแอปอื่น
+                        </p>
                     </div>
                 </div>
                 <button onclick="toggleNavPopup()"
@@ -223,7 +226,8 @@
             <div class="overflow-y-auto py-6 space-y-6">
                 <!-- กลุ่มที่ 1: PDF Studio Tools -->
                 <div>
-                    <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                    <div
+                        class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i>
                         <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF)</span>
                     </div>
@@ -287,40 +291,47 @@
 
                 <!-- กลุ่มที่ 2: Quick Switch to Other CLEVERTENSAI Apps -->
                 <div class="pt-5 border-t border-gray-800">
-                    <div class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                    <div
+                        class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-cubes text-red-500"></i>
                         <span>OTHER CLEVERTENSAI APPS (สลับไปยังระบบอื่น)</span>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <a href="../index.html"
                             class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-base shrink-0">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-base shrink-0">
                                 <i class="fa-solid fa-house"></i>
                             </div>
                             <div class="min-w-0">
-                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Main Portal</div>
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Main
+                                    Portal</div>
                                 <div class="text-[11px] text-gray-400 truncate">หน้ารวมเว็บแอปพลิเคชันทั้งหมด</div>
                             </div>
                         </a>
 
                         <a href="../HomeExcelUnlock.html"
                             class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base shrink-0">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base shrink-0">
                                 <i class="fa-solid fa-file-excel"></i>
                             </div>
                             <div class="min-w-0">
-                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Excel Unlocker</div>
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Excel
+                                    Unlocker</div>
                                 <div class="text-[11px] text-gray-400 truncate">ปลดล็อกชีตและสมุดงาน Excel</div>
                             </div>
                         </a>
 
                         <a href="../HomeQRcode.html"
                             class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
-                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-base shrink-0">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-base shrink-0">
                                 <i class="fa-solid fa-qrcode"></i>
                             </div>
                             <div class="min-w-0">
-                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">QR Code Studio</div>
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">QR Code
+                                    Studio</div>
                                 <div class="text-[11px] text-gray-400 truncate">สร้าง QR Code ภาษาไทย/Wi-Fi</div>
                             </div>
                         </a>
@@ -339,7 +350,8 @@
         <!-- Tech Header Title & Live Stats -->
         <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4 pb-6 border-b border-tech-border">
             <div>
-                <div class="flex items-center gap-2 font-mono text-xs text-crimson-600 uppercase tracking-wider mb-1.5 font-semibold">
+                <div
+                    class="flex items-center gap-2 font-mono text-xs text-crimson-600 uppercase tracking-wider mb-1.5 font-semibold">
                     <i class="fa-solid fa-object-ungroup"></i>
                     <span>PDF MERGE PIPELINE &bull; 100% CLIENT-SIDE</span>
                 </div>
@@ -353,11 +365,13 @@
 
             <!-- Live Queue Stats -->
             <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs">
-                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                <div
+                    class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
                     <span class="text-tech-muted">TOTAL FILES:</span>
                     <span id="statFiles" class="font-bold text-crimson-600 text-sm">0</span>
                 </div>
-                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                <div
+                    class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
                     <span class="text-tech-muted">SELECTED PAGES:</span>
                     <span id="statPages" class="font-bold text-tech-dark text-sm">0</span>
                 </div>
@@ -375,7 +389,8 @@
                 <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
             </div>
             <h3 class="text-base sm:text-lg font-bold text-tech-dark mb-1">
-                ลากไฟล์ PDF มาวางที่นี่ หรือ <span class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
+                ลากไฟล์ PDF มาวางที่นี่ หรือ <span
+                    class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
             </h3>
             <p class="text-xs font-mono text-tech-muted">
                 รองรับการเลือกพร้อมกันหลายไฟล์ (Multi-Select PDF) &bull; ประมวลผลในเบราว์เซอร์ 100%
@@ -386,7 +401,8 @@
         <div class="flex-grow flex flex-col space-y-4">
 
             <!-- Queue Section Controls Header -->
-            <div class="flex flex-wrap items-center justify-between gap-3 bg-white border border-tech-border rounded-xl px-4 py-3 font-mono text-xs shadow-sm">
+            <div
+                class="flex flex-wrap items-center justify-between gap-3 bg-white border border-tech-border rounded-xl px-4 py-3 font-mono text-xs shadow-sm">
                 <div class="flex items-center gap-2 text-tech-dark font-bold uppercase tracking-wider">
                     <i class="fa-solid fa-list-check text-crimson-600"></i>
                     <span>Sequence Queue</span>
@@ -458,7 +474,8 @@
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
                         <!-- Custom Output Filename -->
                         <div class="lg:col-span-5">
-                            <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5" for="outputFilenameInput">
+                            <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                for="outputFilenameInput">
                                 ชื่อไฟล์ผลลัพธ์ (Output Filename)
                             </label>
                             <div class="relative flex items-center">
@@ -471,13 +488,17 @@
 
                         <!-- Extra Merge Features -->
                         <div class="lg:col-span-4 flex flex-col gap-2">
-                            <label class="inline-flex items-center gap-2.5 cursor-pointer select-none text-xs text-tech-dark font-medium">
+                            <label
+                                class="inline-flex items-center gap-2.5 cursor-pointer select-none text-xs text-tech-dark font-medium">
                                 <input type="checkbox" id="optPageNumbers" class="w-4 h-4 rounded cursor-pointer">
-                                <span>ใส่เลขหน้าอัตโนมัติมุมขวาล่าง (<span class="font-mono text-crimson-600">Page X / Y</span>)</span>
+                                <span>ใส่เลขหน้าอัตโนมัติมุมขวาล่าง (<span class="font-mono text-crimson-600">Page X /
+                                        Y</span>)</span>
                             </label>
-                            <label class="inline-flex items-center gap-2.5 cursor-pointer select-none text-xs text-tech-dark font-medium">
+                            <label
+                                class="inline-flex items-center gap-2.5 cursor-pointer select-none text-xs text-tech-dark font-medium">
                                 <input type="checkbox" id="optNormalizeA4" class="w-4 h-4 rounded cursor-pointer">
-                                <span>ปรับขนาดทุกหน้าให้เท่ากับกระดาษ <span class="font-mono text-crimson-600">A4</span></span>
+                                <span>ปรับขนาดทุกหน้าให้เท่ากับกระดาษ <span
+                                        class="font-mono text-crimson-600">A4</span></span>
                             </label>
                         </div>
 
@@ -485,9 +506,11 @@
                         <div class="lg:col-span-3 flex justify-end">
                             <button id="mergeBtn" onclick="mergeFiles()"
                                 class="w-full px-6 py-3 rounded-xl bg-gray-950 hover:bg-crimson-500 disabled:bg-gray-400 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 red-glow group cursor-pointer disabled:cursor-not-allowed">
-                                <span class="w-2 h-2 rounded-full bg-crimson-500 group-hover:bg-white animate-pulse"></span>
+                                <span
+                                    class="w-2 h-2 rounded-full bg-crimson-500 group-hover:bg-white animate-pulse"></span>
                                 <span id="mergeBtnText">รวมไฟล์ & ดาวน์โหลด</span>
-                                <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                                <i
+                                    class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
                             </button>
                         </div>
                     </div>
@@ -667,7 +690,7 @@
         function parsePageRange(rangeStr, totalPages) {
             const clean = (rangeStr || '').trim().toLowerCase();
             if (!clean || clean === 'all' || clean === 'ทั้งหมด') {
-                return Array.from({ length: totalPages }, (_, i) => i);
+                return Array.from({length: totalPages}, (_, i) => i);
             }
 
             const result = [];
@@ -693,7 +716,7 @@
                     }
                 }
             }
-            return result.length > 0 ? result : Array.from({ length: totalPages }, (_, i) => i);
+            return result.length > 0 ? result : Array.from({length: totalPages}, (_, i) => i);
         }
 
         async function handleFiles(files) {
@@ -712,13 +735,13 @@
 
                     // ตรวจสอบว่าไฟล์ถูกเข้ารหัสป้องกันการเปิด/คัดลอกหน้าหรือไม่
                     try {
-                        await PDFLib.PDFDocument.load(arrayBuffer.slice(0), { ignoreEncryption: false });
+                        await PDFLib.PDFDocument.load(arrayBuffer.slice(0), {ignoreEncryption: false});
                     } catch (encErr) {
                         showToast(`ไฟล์ "${file.name}" ติดรหัสผ่านป้องกัน ไม่สามารถนำเข้าได้`, 'error');
                         continue;
                     }
 
-                    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+                    const pdfDoc = await pdfjsLib.getDocument({data: arrayBuffer.slice(0)}).promise;
 
                     fileQueue.push({
                         id: 'pdf_' + Math.random().toString(36).substring(2, 9),
@@ -942,7 +965,7 @@
 
         function sortQueueByName(dir = 'asc') {
             fileQueue.sort((a, b) => {
-                const cmp = a.name.localeCompare(b.name, 'th', { numeric: true });
+                const cmp = a.name.localeCompare(b.name, 'th', {numeric: true});
                 return dir === 'asc' ? cmp : -cmp;
             });
             renderQueue();
@@ -958,7 +981,7 @@
         async function renderThumbnail(pdfDoc, canvasId) {
             try {
                 const page = await pdfDoc.getPage(1);
-                const viewport = page.getViewport({ scale: 0.25 });
+                const viewport = page.getViewport({scale: 0.25});
                 const canvas = document.getElementById(canvasId);
                 if (!canvas) return;
 
@@ -1162,7 +1185,7 @@
                     const total = allPages.length;
 
                     allPages.forEach((page, idx) => {
-                        const { width } = page.getSize();
+                        const {width} = page.getSize();
                         const label = `Page ${idx + 1} / ${total}`;
                         const fontSize = 9;
                         const textWidth = helveticaFont.widthOfTextAtSize(label, fontSize);
@@ -1179,7 +1202,7 @@
 
                 const mergedPdfBytes = await mergedPdf.save();
 
-                const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                const blob = new Blob([mergedPdfBytes], {type: 'application/pdf'});
                 const downloadUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
