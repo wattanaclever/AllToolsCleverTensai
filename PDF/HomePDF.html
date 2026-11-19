@@ -179,18 +179,18 @@
             <span class="lg:hidden inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
                 title="System Online"></span>
 
-            <div
+            <a href="../index.html"
                 class="w-9 h-9 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 font-bold cursor-pointer hover:border-red-500 hover:text-white transition-colors"
                 title="Clever Tensai Workspace">
                 <i class="fa-regular fa-user text-sm"></i>
-            </div>
+            </a>
         </div>
     </nav>
 
     <!-- ===================================================================== -->
     <!-- Seniors-Friendly Large Navigation Modal Hub                           -->
     <!-- ===================================================================== -->
-    <div id="navPopupModal"
+    <div id="navPopupModal" onclick="if(event.target === this) toggleNavPopup()"
         class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
         <div
             class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
@@ -204,7 +204,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            Select PDF Tool & Workspace
+                            Select PDF Tool &amp; Workspace
                         </h3>
                         <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังระบบอื่น</p>
                     </div>
@@ -218,13 +218,13 @@
             </div>
 
             <div class="overflow-y-auto py-6 space-y-6">
-                <!-- กลุ่มที่ 1: เครื่องมือจัดการเอกสาร PDF 3 ตัวหลัก -->
+                <!-- กลุ่มที่ 1: เครื่องมือจัดการเอกสาร PDF 4 ตัวหลัก -->
                 <div>
                     <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i>
                         <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF)</span>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- 1. Merge PDF -->
                         <a href="MergePDF.html"
                             class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
@@ -256,6 +256,17 @@
                             </div>
                             <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Edit PDF</span>
                             <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF</span>
+                        </a>
+
+                        <!-- 4. Compress PDF -->
+                        <a href="CompressPDF.html"
+                            class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                <i class="fa-solid fa-file-zipper"></i>
+                            </div>
+                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Compress PDF</span>
+                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร</span>
                         </a>
                     </div>
                 </div>
@@ -316,7 +327,7 @@
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-tech-border">
             <div>
                 <div class="flex flex-wrap items-center gap-2.5 mb-3">
-                    <a href="index.html"
+                    <a href="../index.html"
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-gray-950 border border-tech-border hover:border-gray-950 text-tech-dark hover:text-white font-mono text-xs font-semibold transition">
                         <i class="fa-solid fa-arrow-left text-[10px]"></i>
                         <span>กลับหน้าหลัก</span>
@@ -338,7 +349,7 @@
 
             <div class="flex items-center gap-2.5 font-mono text-xs shrink-0">
                 <div class="px-3.5 py-2 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
-                    <span class="text-crimson-500 font-bold" id="toolCounter">3</span> MODULES READY
+                    <span class="text-crimson-500 font-bold" id="toolCounter">4</span> MODULES READY
                 </div>
             </div>
         </div>
@@ -362,23 +373,11 @@
 
 
     <!-- ===================================================================== -->
-    <!-- CONFIGURATION & SCRIPT: แก้ไขหรือเพิ่มฟีเจอร์ PDF ในอนาคตได้ที่ตัวแปร PDF_TOOLS -->
+    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารายการเครื่องมือ PDF ทั้ง 4 ตัวหลัก       -->
     <!-- ===================================================================== -->
     <script>
         /**
-         * ====================================================================
-         * ตั้งค่ารายการเครื่องมือ PDF ทั้งหมด (สามารถเพิ่มหรือแก้ไขบล็อกด้านล่างได้ทันที)
-         * ====================================================================
-         * - id: รหัสอ้างอิงเฉพาะตัว
-         * - title: ชื่อเครื่องมือ PDF
-         * - subtitle: คำโปรยสั้นๆ ภาษาอังกฤษ
-         * - badge: ป้ายมุมซ้ายบนของภาพพรีวิว
-         * - version: เวอร์ชันมุมขวาบน
-         * - description: คำอธิบายรายละเอียดการทำงาน
-         * - href: ชื่อไฟล์ HTML ปลายทางที่จะเปิดเมื่อกดปุ่มเข้าใช้งาน
-         * - icon: ไอคอน FontAwesome
-         * - previewType: รูปแบบภาพประกอบพรีวิว ('merge' | 'split' | 'edit' | 'default')
-         * - tags: ป้ายกำกับความสามารถหลัก
+         * รายการเครื่องมือ PDF ทั้ง 4 โมดูลในชุด CLEVERTENSAI PDF Studio Suite
          */
         const PDF_TOOLS = [
             {
@@ -416,11 +415,23 @@
                 icon: "fa-solid fa-pen-to-square",
                 previewType: "edit",
                 tags: ["พิมพ์ข้อความไทย", "วาด & ไฮไลต์", "วางลายเซ็น"]
+            },
+            {
+                id: "compress-pdf",
+                title: "Compress PDF",
+                subtitle: "OPTIMIZE & REDUCE FILE SIZE",
+                badge: "MODULE 04 // COMPRESS",
+                version: "v1.0",
+                description: "ลดขนาดไฟล์เอกสาร PDF ให้เล็กลงพร้อมรักษาความคมชัดของตัวอักษร ประเมินขนาดไฟล์หลังลดให้เห็นทันทีก่อนกดดาวน์โหลด",
+                href: "CompressPDF.html",
+                icon: "fa-solid fa-file-zipper",
+                previewType: "compress",
+                tags: ["ลดขนาดไฟล์", "คงความคมชัดตัวอักษร", "ประเมินขนาดก่อนลด"]
             }
         ];
 
         /**
-         * สร้างภาพพรีวิวกราฟิกแบบ Custom SVG/HTML ให้ตรงกับแต่ละเครื่องมือ PDF
+         * สร้างภาพพรีวิวกราฟิกแบบ Custom HTML/CSS ให้ตรงกับแต่ละเครื่องมือ PDF
          */
         function buildToolPreviewGraphic(tool) {
             let visualContent = '';
@@ -468,7 +479,7 @@
                     <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
                         <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
                             <span class="font-mono text-[9px] text-gray-400">PAGE_EXTRACTOR</span>
-                            <span class="px-1.5 py-0.5 rounded bg-crimson-500/20 text-red-400 font-mono text-[8px] font-bold">CUT & EXTRACT</span>
+                            <span class="px-1.5 py-0.5 rounded bg-crimson-500/20 text-red-400 font-mono text-[8px] font-bold">CUT &amp; EXTRACT</span>
                         </div>
                         <div class="grid grid-cols-3 gap-2 items-center">
                             <div class="h-14 rounded-lg bg-crimson-500/20 border border-crimson-500 flex flex-col items-center justify-center relative">
@@ -506,6 +517,31 @@
                                 <span class="px-1.5 py-0.5 rounded bg-crimson-500 text-white font-mono text-[8px] font-bold">TEXT + SIGN</span>
                             </div>
                             <div class="h-2 w-36 bg-gray-700 rounded"></div>
+                        </div>
+                    </div>
+                `;
+            } else if (tool.previewType === 'compress') {
+                visualContent = `
+                    <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
+                        <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
+                            <span class="font-mono text-[9px] text-gray-400">SIZE_OPTIMIZER</span>
+                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[8px] font-bold">-77% SAVED</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 px-1">
+                            <div class="w-20 h-14 rounded-lg bg-gray-800 border border-gray-700 flex flex-col items-center justify-center p-1">
+                                <span class="font-mono text-[8px] text-gray-400">BEFORE</span>
+                                <span class="font-mono text-[11px] text-gray-200 font-bold line-through mt-0.5">12.4 MB</span>
+                            </div>
+
+                            <div class="text-crimson-500 text-sm flex flex-col items-center">
+                                <i class="fa-solid fa-angles-right"></i>
+                                <span class="font-mono text-[7px] text-gray-400 mt-0.5">ZIP</span>
+                            </div>
+
+                            <div class="w-20 h-14 rounded-lg bg-crimson-500/20 border border-crimson-500/60 flex flex-col items-center justify-center p-1 shadow-inner">
+                                <span class="font-mono text-[8px] text-red-300">AFTER</span>
+                                <span class="font-mono text-[11px] text-white font-extrabold mt-0.5">2.8 MB</span>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -613,6 +649,15 @@
                 modal.classList.toggle('hidden');
             }
         }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('navPopupModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                }
+            }
+        });
 
         window.onload = function () {
             renderPdfToolsGrid();
