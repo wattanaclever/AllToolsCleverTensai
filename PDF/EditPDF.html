@@ -372,24 +372,24 @@
 
                         <!-- Edit PDF -->
                         <a href="EditPDF.html"
-                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                            <div
-                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </div>
-                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">Edit PDF</span>
-                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">เขียน วาด พิมพ์ข้อความ</span>
-                        </a>
-
-                        <!-- Compress PDF (Active Current Page) -->
-                        <a href="CompressPDF.html"
                             class="p-4 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                             <div
                                 class="w-11 h-11 rounded-2xl bg-red-600 text-white flex items-center justify-center text-lg mb-2.5 shadow-md">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-red-400">Edit PDF</span>
+                            <span class="text-[11px] text-gray-300 mt-1 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                        </a>
+
+                        <!-- Compress PDF -->
+                        <a href="CompressPDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
                                 <i class="fa-solid fa-file-zipper"></i>
                             </div>
-                            <span class="font-extrabold text-sm text-red-400">Compress PDF</span>
-                            <span class="text-[11px] text-gray-300 mt-1 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">Compress PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">บีบอัดขนาดไฟล์ PDF</span>
                         </a>
                     </div>
                 </div>
@@ -979,7 +979,7 @@
 
         </main>
 
-        <!-- RIGHT SIDEBAR: PAGE THUMBNAILS & LAYER NAVIGATOR -->
+        <!-- RIGHT SIDEBAR: PAGE THUMBNAILS & LIVE LAYER NAVIGATOR -->
         <aside
             class="w-full md:w-60 bg-white border-t md:border-t-0 md:border-l border-tech-border flex flex-col flex-shrink-0 z-20 h-auto">
 
@@ -999,7 +999,7 @@
             </div>
 
             <div id="thumbnailList"
-                class="overflow-x-auto md:overflow-y-auto p-2 md:p-3 space-x-2 md:space-x-0 md:space-y-3 flex md:flex-col transition-all duration-300">
+                class="overflow-x-auto md:overflow-y-auto p-2 md:p-3 space-x-2 md:space-x-0 md:space-y-3 flex md:flex-col transition-all duration-300 flex-grow">
             </div>
 
             <!-- Compact Copyright Footer on Desktop Right Sidebar -->
@@ -1329,15 +1329,27 @@
 
                 const canvasContainer = document.createElement('div');
                 canvasContainer.className = 'relative flex items-center justify-center';
+                canvasContainer.style.width = `${viewport.width}px`;
+                canvasContainer.style.height = `${viewport.height}px`;
                 canvasContainer.onclick = () => scrollToPage(i);
 
                 const canvas = document.createElement('canvas');
+                canvas.id = `thumbBaseCanvas_${i}`;
+                canvas.className = 'block pointer-events-none';
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
                 const ctx = canvas.getContext('2d');
 
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                const thumbOverlayCanvas = document.createElement('canvas');
+                thumbOverlayCanvas.id = `thumbOverlayCanvas_${i}`;
+                thumbOverlayCanvas.className = 'absolute inset-0 z-10 pointer-events-none';
+                thumbOverlayCanvas.width = viewport.width;
+                thumbOverlayCanvas.height = viewport.height;
+
                 canvasContainer.appendChild(canvas);
+                canvasContainer.appendChild(thumbOverlayCanvas);
 
                 const footerDiv = document.createElement('div');
                 footerDiv.className = 'flex flex-col items-center gap-1 w-full pt-1 border-t border-tech-border';
@@ -1381,7 +1393,31 @@
                 thumbWrapper.appendChild(canvasContainer);
                 thumbWrapper.appendChild(footerDiv);
                 list.appendChild(thumbWrapper);
+
+                updateThumbnailOverlay(i);
             }
+        }
+
+        function updateThumbnailOverlay(pageNum) {
+            const thumbOverlay = document.getElementById(`thumbOverlayCanvas_${pageNum}`);
+            if (!thumbOverlay) return;
+
+            const ctx = thumbOverlay.getContext('2d');
+            ctx.clearRect(0, 0, thumbOverlay.width, thumbOverlay.height);
+
+            const thumbScale = 0.2;
+            const objects = pageOverlays[pageNum] || [];
+            objects.forEach(obj => {
+                if (obj.type === 'text') {
+                    renderText(ctx, obj, thumbScale);
+                } else if (obj.type === 'image') {
+                    renderImageObject(ctx, obj, thumbScale);
+                } else if (obj.type === 'watermark') {
+                    renderWatermark(ctx, obj, thumbScale);
+                } else if (obj.type === 'path') {
+                    renderPath(ctx, obj, thumbScale);
+                }
+            });
         }
 
         async function rotateSinglePage(pageNum, angleDelta) {
@@ -1438,13 +1474,28 @@
 
             const canvasContainer = thumbWrapper.querySelector('.relative');
             if (canvasContainer) {
+                canvasContainer.style.width = `${viewport.width}px`;
+                canvasContainer.style.height = `${viewport.height}px`;
                 canvasContainer.innerHTML = '';
+
                 const canvas = document.createElement('canvas');
+                canvas.id = `thumbBaseCanvas_${pageNum}`;
+                canvas.className = 'block pointer-events-none';
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
                 const ctx = canvas.getContext('2d');
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                const thumbOverlayCanvas = document.createElement('canvas');
+                thumbOverlayCanvas.id = `thumbOverlayCanvas_${pageNum}`;
+                thumbOverlayCanvas.className = 'absolute inset-0 z-10 pointer-events-none';
+                thumbOverlayCanvas.width = viewport.width;
+                thumbOverlayCanvas.height = viewport.height;
+
                 canvasContainer.appendChild(canvas);
+                canvasContainer.appendChild(thumbOverlayCanvas);
+
+                updateThumbnailOverlay(pageNum);
             }
 
             const pageNumBtn = thumbWrapper.querySelector('button');
@@ -1473,6 +1524,16 @@
             document.getElementById('sidebarTextEditorPanel').classList.add('hidden');
             document.getElementById('wmStatusBadge').textContent = 'New';
             document.getElementById('wmStatusBadge').className = 'text-[9px] bg-tech-panel text-tech-muted px-1 rounded';
+
+            // ซ่อนแผงแก้ไขลายน้ำและสลับกลับไปโหมด Select อัตโนมัติเมื่อคลิกพื้นที่ว่าง
+            if (currentTool === 'watermark') {
+                currentTool = 'select';
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+                document.getElementById('toolSelect').classList.add('active');
+                document.getElementById('watermarkOptions').classList.add('hidden');
+                updateCanvasCursors();
+            }
+
             updateObjectActionsPanel();
             redrawAllOverlays();
         }
@@ -2044,6 +2105,7 @@
                 ctx.font = `${textObj.isItalic ? 'italic ' : ''}${textObj.isBold ? 'bold ' : ''}${textObj.fontSize}px "${textObj.fontFamily}"`;
                 textObj.width = Math.max(120, ctx.measureText(input.value).width + 30);
                 input.style.width = `${(textObj.width + 20) * renderScale}px`;
+                updateThumbnailOverlay(pageNum);
             };
 
             input.onblur = () => {
@@ -2201,6 +2263,8 @@
             if (!hideSelectionHandles && selectedObject && selectedObject.pageNum === pageNum && selectedObject.id !== skipObjId) {
                 drawSelectionBoundingBox(ctx, selectedObject, renderScale);
             }
+
+            updateThumbnailOverlay(pageNum);
         }
 
         function renderText(ctx, obj, scale = 1.0) {
