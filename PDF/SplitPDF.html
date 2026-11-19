@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLEVERTENSAI — Split PDF Studio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Space Grotesk, Prompt & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF.js for rendering PDF page previews -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- pdf-lib for client-side PDF extraction/splitting -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- JSZip for multi-file output downloading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script>
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        crimson: {
+                            50: '#FFF5F5',
+                            100: '#FFE3E3',
+                            500: '#FF1E42',
+                            600: '#E63946',
+                            700: '#DC2626',
+                            900: '#991B1B'
+                        },
+                        tech: {
+                            white: '#FFFFFF',
+                            bg: '#FAF9F6',
+                            panel: '#F3F4F6',
+                            border: '#E5E7EB',
+                            dark: '#0F172A',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #0F172A;
+            background-image:
+                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
+                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+            background-size: 24px 24px, 48px 48px, 48px 48px;
+        }
+
+        /* High-tech custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF1E42;
+            border-radius: 3px;
+        }
+
+        .tech-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-card:hover {
+            border-color: rgba(255, 30, 66, 0.4);
+            box-shadow: 0 8px 25px -5px rgba(255, 30, 66, 0.08);
+        }
+
+        .red-glow {
+            box-shadow: 0 4px 16px rgba(255, 30, 66, 0.25);
+        }
+
+        .drag-over-active {
+            border-color: #FF1E42 !important;
+            background-color: #FFF5F5 !important;
+        }
+
+        /* Page item selection styling */
+        .page-card {
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .page-card.selected {
+            border-color: #FF1E42 !important;
+            background-color: #FFF5F5 !important;
+            box-shadow: 0 0 12px rgba(255, 30, 66, 0.2);
+        }
+
+        /* Laser Scanline Effect */
+        .scanline {
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 30, 66, 0.16),
+                    rgba(255, 255, 255, 0));
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(1000%);
+            }
+        }
+
+        input[type="radio"] {
+            accent-color: #FF1E42;
+        }
+    </style>
+</head>
+
+<body class="min-h-full flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
+
+    <!-- ===================================================================== -->
+    <!-- START: CLEVERTENSAI Global Navbar & Navigation Hub                    -->
+    <!-- ===================================================================== -->
+    <nav
+        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
+        <!-- ฝั่งซ้าย: โลโก้กลับ Main Portal (index.html) และปุ่มย้อนกลับ PDF Studio (HomePDF.html) -->
+        <div class="flex items-center gap-2.5 sm:gap-3.5">
+            <a href="../index.html" class="flex items-center gap-2.5 group" title="กลับสู่หน้าหลัก CLEVERTENSAI Portal">
+                <div
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm sm:text-base font-extrabold tracking-wider leading-none">CLEVER<span
+                            class="text-red-500">TENSAI</span></span>
+                    <span class="hidden sm:inline font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">SPLIT PDF STUDIO</span>
+                </div>
+            </a>
+
+            <span class="hidden sm:inline-block text-gray-700">|</span>
+
+            <a href="HomePDF.html"
+                class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-red-500/40 text-gray-300 hover:text-white font-mono text-[11px] transition-all"
+                title="กลับสู่ศูนย์รวมเครื่องมือ PDF">
+                <i class="fa-solid fa-arrow-left text-red-500 text-[10px]"></i>
+                <span>PDF Studio</span>
+            </a>
+        </div>
+
+        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเครื่องมือ (All Tools Hub) -->
+        <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+            <button onclick="toggleNavPopup()"
+                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
+                <i class="fa-solid fa-th text-red-500 group-hover:scale-110 transition-transform"></i>
+                <span>All Tools Hub</span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+            </button>
+        </div>
+
+        <!-- ฝั่งขวา: ปุ่ม Hub มือถือ, สถานะ System Online และไอคอนโปรไฟล์ -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <button onclick="toggleNavPopup()"
+                class="md:hidden px-2.5 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-gray-100 text-xs font-bold flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-th text-red-500"></i>
+                <span>Hub</span>
+            </button>
+
+            <div class="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+
+            <span class="lg:hidden inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+                title="System Online"></span>
+
+            <a href="index.html"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 font-bold cursor-pointer hover:border-red-500 hover:text-white transition-colors"
+                title="Clever Tensai Main Portal">
+                <i class="fa-regular fa-user text-xs sm:text-sm"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- Unified Navigation Modal Hub (PDF Studio Tools + Cross-App Switcher)  -->
+    <!-- ===================================================================== -->
+    <div id="navPopupModal"
+        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+        <div
+            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
+                        <i class="fa-solid fa-th"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
+                            CLEVERTENSAI Tools & Workspace Hub
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังเว็บแอปอื่น</p>
+                    </div>
+                </div>
+                <button onclick="toggleNavPopup()"
+                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto py-6 space-y-6">
+                <!-- กลุ่มที่ 1: PDF Studio Tools -->
+                <div>
+                    <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF)</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <!-- PDF Hub -->
+                        <a href="HomePDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">PDF Studio Hub</span>
+                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">หน้ารวมเครื่องมือ PDF ทั้งหมด</span>
+                        </a>
+
+                        <!-- Merge PDF -->
+                        <a href="MergePDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-object-ungroup"></i>
+                            </div>
+                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Merge PDF</span>
+                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์เอกสารหลายหน้าเข้าด้วยกัน</span>
+                        </a>
+
+                        <!-- Split PDF (Active Current Page) -->
+                        <a href="SplitPDF.html"
+                            class="p-4 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center text-xl mb-3 shadow-md">
+                                <i class="fa-solid fa-scissors"></i>
+                            </div>
+                            <span class="font-extrabold text-base text-red-400">Split PDF</span>
+                            <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                        </a>
+
+                        <!-- Edit PDF -->
+                        <a href="EditPDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Edit PDF</span>
+                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">เขียน วาด พิมพ์ และเติมข้อความบน PDF</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- กลุ่มที่ 2: Quick Switch to Other CLEVERTENSAI Apps -->
+                <div class="pt-5 border-t border-gray-800">
+                    <div class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-red-500"></i>
+                        <span>OTHER CLEVERTENSAI APPS (สลับไปยังระบบอื่น)</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <a href="../index.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-house"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Main Portal</div>
+                                <div class="text-[11px] text-gray-400 truncate">หน้ารวมเว็บแอปพลิเคชันทั้งหมด</div>
+                            </div>
+                        </a>
+
+                        <a href="../HomeExcelUnlock.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Excel Unlocker</div>
+                                <div class="text-[11px] text-gray-400 truncate">ปลดล็อกชีตและสมุดงาน Excel</div>
+                            </div>
+                        </a>
+
+                        <a href="../HomeQRcode.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">QR Code Studio</div>
+                                <div class="text-[11px] text-gray-400 truncate">สร้าง QR Code ภาษาไทย/Wi-Fi</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: CLEVERTENSAI Global Navbar & Navigation Hub -->
+
+    <!-- ===================================================================== -->
+    <!-- MAIN WORKSPACE                                                        -->
+    <!-- ===================================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+
+        <!-- Header Title HUD -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4 pb-6 border-b border-tech-border">
+            <div>
+                <div class="flex items-center gap-2 font-mono text-xs text-crimson-600 uppercase tracking-wider mb-1.5 font-semibold">
+                    <i class="fa-solid fa-scissors"></i>
+                    <span>PDF EXTRACTION &amp; SEGMENTATION UNIT &bull; 100% CLIENT-SIDE</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark">
+                    แยกและตัดหน้าเอกสาร <span class="text-crimson-500">PDF</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-tech-muted mt-1">
+                    เลือกดึงเฉพาะหน้าที่ต้องการ แยกทุกหน้าเป็นไฟล์เดี่ยว หรือแบ่งชุดละ N หน้า (รองรับ Shift+Click เลือกช่วงหน้า)
+                </p>
+            </div>
+
+            <!-- Live HUD Stats Bar -->
+            <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">FILE:</span>
+                    <span id="statFileName" class="font-bold text-tech-dark max-w-[140px] truncate">NONE</span>
+                </div>
+                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">TOTAL PAGES:</span>
+                    <span id="statTotalPages" class="font-bold text-tech-dark">0</span>
+                </div>
+                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">SELECTED:</span>
+                    <span id="statSelectedPages" class="font-bold text-crimson-600">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Initial Upload Dropzone -->
+        <div id="dropzone"
+            class="tech-card rounded-2xl p-10 sm:p-12 text-center cursor-pointer mb-8 transition-all border-2 border-dashed border-gray-300 hover:border-crimson-500 relative overflow-hidden group">
+            <div class="scanline absolute inset-0 pointer-events-none"></div>
+            <input type="file" id="fileInput" accept="application/pdf" class="hidden">
+
+            <div
+                class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-crimson-50 border border-crimson-100 flex items-center justify-center text-crimson-500 group-hover:bg-crimson-500 group-hover:text-white transition-all red-glow">
+                <i class="fa-solid fa-scissors text-2xl"></i>
+            </div>
+            <h3 class="text-base sm:text-lg font-bold text-tech-dark mb-1">
+                ลากไฟล์ PDF มาวางที่นี่ หรือ <span class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
+            </h3>
+            <p class="text-xs font-mono text-tech-muted">
+                รองรับไฟล์เอกสาร .PDF ทุกขนาดหน้า &bull; ประมวลผลในเบราว์เซอร์ 100% ปลอดภัยไร้การอัปโหลด
+            </p>
+        </div>
+
+        <!-- Active PDF Processing Layout (Hidden initially) -->
+        <div id="splitWorkspace" class="hidden flex-grow flex flex-col space-y-6">
+
+            <!-- File Bar & Mode Switcher Card -->
+            <div
+                class="tech-card rounded-2xl p-5 border border-tech-border flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 font-mono">
+                <!-- File info badge -->
+                <div class="flex items-center gap-3.5 min-w-0 w-full lg:w-auto">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-file-pdf text-xl"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow">
+                        <h3 id="activeDocName" class="font-bold text-tech-dark text-xs sm:text-sm truncate">
+                            document.pdf</h3>
+                        <p id="activeDocMeta" class="text-[11px] text-tech-muted mt-0.5">0 PAGES // 0.0 MB</p>
+                    </div>
+                    <button onclick="changeDocument()"
+                        class="ml-auto px-3 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark text-xs font-bold border border-tech-border transition-colors flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-arrows-rotate text-crimson-600"></i>
+                        <span class="hidden sm:inline">เปลี่ยนไฟล์</span>
+                    </button>
+                </div>
+
+                <!-- Split Mode Selection Tabs -->
+                <div
+                    class="flex flex-wrap items-center gap-1.5 bg-tech-panel p-1.5 rounded-xl border border-tech-border w-full lg:w-auto text-xs">
+                    <button id="modeSelectBtn" onclick="setSplitMode('select')"
+                        class="flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-950 text-white shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-check-double text-crimson-500"></i>
+                        <span>เลือกหน้าเอง (Custom)</span>
+                    </button>
+                    <button id="modeAllBtn" onclick="setSplitMode('all')"
+                        class="flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-tech-muted hover:text-tech-dark cursor-pointer">
+                        <i class="fa-solid fa-cubes"></i>
+                        <span>แยกทุกหน้า (1 หน้า/ไฟล์)</span>
+                    </button>
+                    <button id="modeNBtn" onclick="setSplitMode('everyN')"
+                        class="flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-tech-muted hover:text-tech-dark cursor-pointer">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>แบ่งชุดละ N หน้า</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mode Controls Bar -->
+            <div id="modeControls"
+                class="tech-card rounded-2xl p-4 sm:p-5 border border-tech-border font-mono text-xs space-y-4">
+                <!-- Custom Range / Page Selection Input Controls -->
+                <div id="customSelectionBar" class="space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <!-- Quick Selection Presets -->
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button onclick="selectAllPages()"
+                                class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark font-bold border border-tech-border transition-colors cursor-pointer">
+                                เลือกทั้งหมด
+                            </button>
+                            <button onclick="deselectAllPages()"
+                                class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark font-bold border border-tech-border transition-colors cursor-pointer">
+                                ล้างทั้งหมด
+                            </button>
+                            <button onclick="invertSelection()"
+                                class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark font-bold border border-tech-border transition-colors cursor-pointer">
+                                สลับการเลือก
+                            </button>
+                            <span class="hidden sm:inline text-gray-300 mx-0.5">|</span>
+                            <button onclick="selectPreset('odd')"
+                                class="px-2.5 py-1.5 rounded-lg bg-crimson-50 hover:bg-crimson-500 text-crimson-600 hover:text-white font-bold border border-crimson-200 transition-colors cursor-pointer">
+                                หน้าคี่ (Odd)
+                            </button>
+                            <button onclick="selectPreset('even')"
+                                class="px-2.5 py-1.5 rounded-lg bg-crimson-50 hover:bg-crimson-500 text-crimson-600 hover:text-white font-bold border border-crimson-200 transition-colors cursor-pointer">
+                                หน้าคู่ (Even)
+                            </button>
+                            <button onclick="selectPreset('firstHalf')"
+                                class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-gray-200 text-tech-dark font-bold border border-tech-border transition-colors cursor-pointer">
+                                ครึ่งแรก
+                            </button>
+                            <button onclick="selectPreset('secondHalf')"
+                                class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-gray-200 text-tech-dark font-bold border border-tech-border transition-colors cursor-pointer">
+                                ครึ่งหลัง
+                            </button>
+                        </div>
+
+                        <!-- Range Text Input -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <span class="text-tech-muted uppercase font-bold whitespace-nowrap">ระบุช่วงหน้า:</span>
+                            <input type="text" id="rangeInput" placeholder="เช่น 1, 3-5, 8" oninput="applyRangeInput()"
+                                class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-tech-dark font-bold focus:outline-none focus:border-crimson-500 w-full sm:w-44">
+                        </div>
+                    </div>
+
+                    <!-- Custom Selection Output Packaging Option -->
+                    <div class="pt-3 border-t border-tech-border flex flex-wrap items-center gap-4 text-xs">
+                        <span class="font-bold text-tech-dark uppercase">รูปแบบไฟล์ผลลัพธ์:</span>
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                            <input type="radio" name="customOutputMode" value="singlePdf" checked onchange="updateHUDStats()" class="w-4 h-4 cursor-pointer">
+                            <span class="font-medium text-tech-dark">รวมหน้าที่เลือกเป็น <strong class="text-crimson-600">1 ไฟล์ PDF</strong></span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                            <input type="radio" name="customOutputMode" value="zipIndividual" onchange="updateHUDStats()" class="w-4 h-4 cursor-pointer">
+                            <span class="font-medium text-tech-dark">แยกแต่ละหน้าที่เลือกออกเป็น <strong class="text-crimson-600">ไฟล์เดี่ยวใน ZIP</strong></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Every N Pages Mode Control -->
+                <div id="everyNBar" class="hidden flex flex-wrap items-center gap-3 w-full">
+                    <span class="text-tech-muted font-bold uppercase">แบ่งเอกสารออกเป็นชุดละ:</span>
+                    <input type="number" id="chunkSizeInput" value="2" min="1" oninput="renderChunkInfo()" onchange="clampChunkSize()"
+                        class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-crimson-600 font-bold focus:outline-none focus:border-crimson-500 w-24 text-center">
+                    <span class="text-tech-muted font-bold uppercase">หน้า / ไฟล์</span>
+                    <span id="chunkSummary"
+                        class="sm:ml-auto text-crimson-600 font-bold bg-crimson-50 px-3 py-1.5 rounded-lg border border-crimson-100">จะสร้างไฟล์ PDF ทั้งหมด 0 ไฟล์ (ZIP)</span>
+                </div>
+
+                <!-- Split All Mode Control Info -->
+                <div id="splitAllBar" class="hidden flex items-center gap-2.5 text-tech-dark">
+                    <i class="fa-solid fa-circle-info text-crimson-500 text-sm"></i>
+                    <span>ระบบจะแยกทุกหน้าออกเป็นไฟล์ PDF เดี่ยว (หน้าละ 1 ไฟล์) และบีบอัดรวมเป็นไฟล์ <strong>.ZIP</strong> ให้ดาวน์โหลดทันที</span>
+                </div>
+            </div>
+
+            <!-- Page Thumbnail Grid Workspace -->
+            <div class="flex-grow flex flex-col space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
+                    <span class="font-bold text-tech-dark uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-border-all text-crimson-600"></i>
+                        <span>PAGE MATRIX PREVIEW</span>
+                    </span>
+                    <span class="text-tech-muted">คลิกที่การ์ดเพื่อเลือกหน้า &bull; กด <strong>Shift + คลิก</strong> เพื่อเลือกเป็นช่วงต่อเนื่อง</span>
+                </div>
+
+                <!-- Pages Grid Container -->
+                <div id="pageGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 p-1">
+                    <!-- Dynamic Page Canvas Thumbnails Rendered Here -->
+                </div>
+            </div>
+
+            <!-- Bottom Action HUD / Custom Output Name & Download Button -->
+            <div class="sticky bottom-5 z-20 pt-4">
+                <div
+                    class="tech-card rounded-2xl p-4 sm:p-5 border-2 border-crimson-500/40 bg-white/95 backdrop-blur-md shadow-2xl flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 font-mono">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-crimson-500 animate-ping shrink-0"></div>
+                        <div>
+                            <div class="text-xs font-bold text-tech-dark uppercase">SYSTEM READY FOR EXTRACTION</div>
+                            <div id="splitSummaryText" class="text-[11px] text-tech-muted mt-0.5">0 PAGES SELECTED FOR SPLIT PROCESS</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <!-- Custom Output Filename -->
+                        <div class="relative flex items-center">
+                            <input type="text" id="outputFilenameInput" value=""
+                                placeholder="ตั้งชื่อไฟล์ผลลัพธ์..."
+                                class="w-full sm:w-56 pl-3.5 pr-12 py-2.5 bg-tech-panel border border-gray-300 rounded-xl font-mono text-xs font-bold text-tech-dark focus:outline-none focus:border-crimson-500 focus:bg-white transition">
+                            <span id="outputExtLabel" class="absolute right-3 font-mono text-[11px] font-bold text-tech-muted">.pdf</span>
+                        </div>
+
+                        <button id="splitBtn" onclick="executeSplit()"
+                            class="px-7 py-3 rounded-xl bg-gray-950 hover:bg-crimson-500 disabled:bg-gray-400 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 red-glow group cursor-pointer disabled:cursor-not-allowed shrink-0">
+                            <i class="fa-solid fa-scissors text-xs"></i>
+                            <span id="splitBtnText">แยกไฟล์ &amp; ดาวน์โหลด</span>
+                            <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- UNIVERSAL FOOTER (International Standard Copyright matching index.html) -->
+    <!-- ===================================================================== -->
+    <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
+            &copy; 2026 Clever Tensai. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- EXPAND PAGE PREVIEW MODAL (With Prev/Next Page Navigation)            -->
+    <!-- ===================================================================== -->
+    <div id="previewModal" onclick="handleModalBackdropClick(event)"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200 p-4">
+        <div class="bg-white max-w-4xl w-full h-[90vh] rounded-2xl border-2 border-crimson-500 shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-200"
+            id="previewModalContainer">
+
+            <!-- Modal Header -->
+            <div
+                class="px-5 py-3.5 border-b border-tech-border bg-gray-950 text-white flex items-center justify-between font-mono">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-crimson-500"></span>
+                    <h4 id="modalPageTitle" class="font-bold text-white text-xs uppercase tracking-wider">PAGE PREVIEW</h4>
+                </div>
+
+                <button onclick="closePreviewModal()"
+                    class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white flex items-center justify-center transition-colors text-sm cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Toolbar -->
+            <div
+                class="px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+                <!-- Page Navigation Controls -->
+                <div class="flex items-center gap-1.5">
+                    <button id="modalPrevBtn" onclick="changeModalPage(-1)"
+                        class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 text-tech-dark font-bold transition-colors cursor-pointer">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span class="text-tech-dark font-bold px-2">PAGE <span id="modalCurrentNum" class="text-crimson-600">1</span> / <span id="modalTotalNum">1</span></span>
+                    <button id="modalNextBtn" onclick="changeModalPage(1)"
+                        class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 text-tech-dark font-bold transition-colors cursor-pointer">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Extract Single Page from Modal + Zoom Controls -->
+                <div class="flex items-center gap-2">
+                    <button onclick="downloadSinglePage(modalPageIndex)"
+                        class="px-3 py-1.5 rounded-lg bg-crimson-50 hover:bg-crimson-500 text-crimson-600 hover:text-white border border-crimson-200 font-bold text-[11px] flex items-center gap-1.5 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-download"></i>
+                        <span>ดาวน์โหลดหน้านี้</span>
+                    </button>
+
+                    <div class="flex items-center gap-1 border-l border-tech-border pl-2">
+                        <button onclick="adjustZoom(-0.2)"
+                            class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark transition-colors cursor-pointer"
+                            title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                        <span id="zoomLabel" class="text-tech-dark font-bold min-w-[45px] text-center">100%</span>
+                        <button onclick="adjustZoom(0.2)"
+                            class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark transition-colors cursor-pointer"
+                            title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="resetZoom()"
+                            class="px-2 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark text-[10px] font-bold uppercase transition-colors cursor-pointer">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="flex-grow overflow-auto p-6 bg-gray-900 flex items-center justify-center relative">
+                <div id="modalLoadingSpinner"
+                    class="absolute inset-0 flex items-center justify-center bg-gray-950/85 z-10 font-mono text-xs hidden">
+                    <div class="flex items-center gap-2.5 text-crimson-500 font-bold">
+                        <i class="fa-solid fa-circle-notch animate-spin text-base"></i>
+                        <span>RENDERING HIGH-RES PAGE...</span>
+                    </div>
+                </div>
+                <canvas id="modalCanvas"
+                    class="shadow-2xl rounded-lg border border-gray-800 max-w-full bg-white"></canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tech Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-50 pointer-events-none transform translate-y-4 opacity-0 transition-all duration-200">
+        <div id="toastContent"
+            class="px-4 py-3 rounded-xl bg-gray-950 text-white font-mono text-xs font-bold shadow-2xl border-l-4 border-crimson-500 flex items-center gap-2.5">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-crimson-500"></i>
+            <span id="toastMessage">SYSTEM NOTIFICATION</span>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- APPLICATION LOGIC                                                     -->
+    <!-- ===================================================================== -->
+    <script>
+        let currentFile = null;
+        let pdfjsDoc = null;
+        let pdfLibDoc = null;
+        let totalPages = 0;
+        let selectedPages = new Set(); // 1-indexed page numbers
+        let lastClickedPage = null;    // For Shift + Click continuous range selection
+        let splitMode = 'select';      // 'select', 'all', 'everyN'
+        let modalPageIndex = 1;
+        let currentZoomScale = 1.0;
+        let toastTimer = null;
+
+        // DOM Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const splitWorkspace = document.getElementById('splitWorkspace');
+        const pageGrid = document.getElementById('pageGrid');
+
+        function toggleNavPopup() {
+            const modal = document.getElementById('navPopupModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        // Keyboard Escape support for modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+                const navModal = document.getElementById('navPopupModal');
+                if (navModal && !navModal.classList.contains('hidden')) {
+                    navModal.classList.add('hidden');
+                }
+            }
+        });
+
+        // Dropzone Event Listeners
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadPDFFile(e.target.files[0]);
+                fileInput.value = '';
+            }
+        });
+
+        ['dragenter', 'dragover'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('drag-over-active');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('drag-over-active');
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            if (e.dataTransfer.files.length > 0) {
+                loadPDFFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        async function loadPDFFile(file) {
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('กรุณาเลือกไฟล์นามสกุล .PDF เท่านั้น', 'error');
+                return;
+            }
+
+            try {
+                showToast('กำลังวิเคราะห์โครงสร้างไฟล์ PDF...', 'info');
+                const arrayBuffer = await file.arrayBuffer();
+
+                // ตรวจสอบว่าไฟล์ติดรหัสผ่านเข้ารหัสหรือไม่
+                let loadedPdfLib = null;
+                try {
+                    loadedPdfLib = await PDFLib.PDFDocument.load(arrayBuffer.slice(0), { ignoreEncryption: false });
+                } catch (encErr) {
+                    showToast('ไฟล์ PDF นี้ติดรหัสผ่านป้องกัน ไม่สามารถแยกหน้าได้', 'error');
+                    return;
+                }
+
+                currentFile = file;
+                pdfLibDoc = loadedPdfLib;
+                pdfjsDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+                totalPages = pdfjsDoc.numPages;
+                lastClickedPage = null;
+
+                // Update HUD Metadata
+                document.getElementById('statFileName').textContent = file.name;
+                document.getElementById('statTotalPages').textContent = totalPages;
+                document.getElementById('activeDocName').textContent = file.name;
+                document.getElementById('activeDocMeta').textContent = `${totalPages} PAGES // ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+                // ตั้งชื่อไฟล์ผลลัพธ์ตั้งต้นจากชื่อไฟล์ต้นฉบับ
+                const cleanBase = file.name.replace(/\.pdf$/i, '');
+                document.getElementById('outputFilenameInput').value = `${cleanBase}_split`;
+
+                // Default selection: Select all pages initially
+                selectedPages = new Set(Array.from({ length: totalPages }, (_, i) => i + 1));
+                syncRangeInputText();
+
+                // Show workspace, hide initial dropzone
+                dropzone.classList.add('hidden');
+                splitWorkspace.classList.remove('hidden');
+
+                // Render thumbnail page matrix
+                await renderPageMatrix();
+                updateHUDStats();
+                showToast(`โหลดเอกสารสำเร็จ (${totalPages} หน้า)`, 'success');
+
+            } catch (err) {
+                console.error("PDF Parsing Error:", err);
+                showToast('ไม่สามารถอ่านไฟล์ PDF นี้ได้ กรุณาตรวจสอบความสมบูรณ์ของไฟล์', 'error');
+            }
+        }
+
+        async function renderPageMatrix() {
+            pageGrid.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const isSelected = selectedPages.has(i);
+
+                const card = document.createElement('div');
+                card.id = `pageCard_${i}`;
+                card.className = `tech-card page-card rounded-xl p-2.5 flex flex-col items-center justify-between cursor-pointer border relative group ${isSelected ? 'selected' : ''}`;
+                card.onclick = (e) => {
+                    if (e.target.closest('.card-action-btn')) return;
+                    togglePageSelection(i, e.shiftKey);
+                };
+
+                const canvasId = `pageCanvas_${i}`;
+
+                card.innerHTML = `
+                    <!-- Selection Indicator Badge -->
+                    <div class="w-full flex items-center justify-between font-mono text-[10px] mb-2">
+                        <span class="font-bold text-tech-dark bg-tech-panel px-2 py-0.5 rounded-md border border-tech-border">P.${i}</span>
+                        <div class="checkbox-badge w-4 h-4 rounded border flex items-center justify-center transition-all ${isSelected ? 'bg-crimson-500 border-crimson-500 text-white' : 'border-tech-border bg-white text-transparent'}">
+                            <i class="fa-solid fa-check text-[9px]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Page Thumbnail Container -->
+                    <div class="relative w-full h-36 bg-tech-panel rounded-lg border border-tech-border overflow-hidden flex items-center justify-center mb-1">
+                        <canvas id="${canvasId}" class="max-w-full max-h-full object-contain"></canvas>
+                        
+                        <!-- Hover Overlay with Expand & Quick Single-Page Download Buttons -->
+                        <div class="absolute inset-0 bg-gray-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]">
+                            <button class="card-action-btn w-8 h-8 rounded-full bg-white hover:bg-crimson-500 hover:text-white text-tech-dark font-bold text-xs flex items-center justify-center transition-colors shadow-md cursor-pointer"
+                                title="ขยายดูตัวอย่างหน้า ${i}" onclick="openPreviewModal(${i})">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                            <button class="card-action-btn w-8 h-8 rounded-full bg-white hover:bg-emerald-600 hover:text-white text-tech-dark font-bold text-xs flex items-center justify-center transition-colors shadow-md cursor-pointer"
+                                title="ดาวน์โหลดเฉพาะหน้า ${i} ทันที" onclick="downloadSinglePage(${i})">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                pageGrid.appendChild(card);
+                renderPageThumbnail(i, canvasId);
+            }
+        }
+
+        async function renderPageThumbnail(pageIndex, canvasId) {
+            try {
+                const page = await pdfjsDoc.getPage(pageIndex);
+                const viewport = page.getViewport({ scale: 0.3 });
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+            } catch (err) {
+                console.error(`Page ${pageIndex} render error:`, err);
+            }
+        }
+
+        function togglePageSelection(pageIndex, isShiftKey = false) {
+            if (splitMode !== 'select') {
+                setSplitMode('select');
+            }
+
+            if (isShiftKey && lastClickedPage !== null && lastClickedPage !== pageIndex) {
+                const start = Math.min(lastClickedPage, pageIndex);
+                const end = Math.max(lastClickedPage, pageIndex);
+                for (let p = start; p <= end; p++) {
+                    selectedPages.add(p);
+                    updateCardUI(p);
+                }
+            } else {
+                if (selectedPages.has(pageIndex)) {
+                    selectedPages.delete(pageIndex);
+                } else {
+                    selectedPages.add(pageIndex);
+                }
+                updateCardUI(pageIndex);
+            }
+
+            lastClickedPage = pageIndex;
+            updateHUDStats();
+            syncRangeInputText();
+        }
+
+        function updateCardUI(pageIndex) {
+            const card = document.getElementById(`pageCard_${pageIndex}`);
+            if (!card) return;
+
+            const isSelected = selectedPages.has(pageIndex);
+            if (isSelected) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+
+            const badge = card.querySelector('.checkbox-badge');
+            if (badge) {
+                if (isSelected) {
+                    badge.className = 'checkbox-badge w-4 h-4 rounded border flex items-center justify-center transition-all bg-crimson-500 border-crimson-500 text-white';
+                } else {
+                    badge.className = 'checkbox-badge w-4 h-4 rounded border flex items-center justify-center transition-all border-tech-border bg-white text-transparent';
+                }
+            }
+        }
+
+        function selectAllPages() {
+            selectedPages = new Set(Array.from({ length: totalPages }, (_, i) => i + 1));
+            for (let i = 1; i <= totalPages; i++) updateCardUI(i);
+            updateHUDStats();
+            syncRangeInputText();
+        }
+
+        function deselectAllPages() {
+            selectedPages.clear();
+            lastClickedPage = null;
+            for (let i = 1; i <= totalPages; i++) updateCardUI(i);
+            updateHUDStats();
+            syncRangeInputText();
+        }
+
+        function invertSelection() {
+            const newSelection = new Set();
+            for (let i = 1; i <= totalPages; i++) {
+                if (!selectedPages.has(i)) newSelection.add(i);
+            }
+            selectedPages = newSelection;
+            for (let i = 1; i <= totalPages; i++) updateCardUI(i);
+            updateHUDStats();
+            syncRangeInputText();
+        }
+
+        function selectPreset(presetType) {
+            selectedPages.clear();
+            const half = Math.ceil(totalPages / 2);
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (presetType === 'odd' && i % 2 === 1) selectedPages.add(i);
+                else if (presetType === 'even' && i % 2 === 0) selectedPages.add(i);
+                else if (presetType === 'firstHalf' && i <= half) selectedPages.add(i);
+                else if (presetType === 'secondHalf' && i > half) selectedPages.add(i);
+                updateCardUI(i);
+            }
+            updateHUDStats();
+            syncRangeInputText();
+        }
+
+        function applyRangeInput() {
+            const inputVal = document.getElementById('rangeInput').value.trim();
+            const newSelected = new Set();
+
+            if (inputVal) {
+                const parts = inputVal.split(',');
+                parts.forEach(part => {
+                    part = part.trim();
+                    if (part.includes('-')) {
+                        const [startStr, endStr] = part.split('-');
+                        const start = parseInt(startStr.trim(), 10);
+                        const end = parseInt(endStr.trim(), 10);
+                        if (!isNaN(start) && !isNaN(end)) {
+                            for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+                                if (i >= 1 && i <= totalPages) newSelected.add(i);
+                            }
+                        }
+                    } else {
+                        const num = parseInt(part, 10);
+                        if (!isNaN(num) && num >= 1 && num <= totalPages) {
+                            newSelected.add(num);
+                        }
+                    }
+                });
+            }
+
+            selectedPages = newSelected;
+            for (let i = 1; i <= totalPages; i++) updateCardUI(i);
+            updateHUDStats();
+        }
+
+        function syncRangeInputText() {
+            const rangeInput = document.getElementById('rangeInput');
+            if (document.activeElement === rangeInput) return;
+
+            if (selectedPages.size === 0) {
+                rangeInput.value = '';
+                return;
+            }
+
+            const sorted = Array.from(selectedPages).sort((a, b) => a - b);
+            const ranges = [];
+            let start = sorted[0];
+            let end = start;
+
+            for (let i = 1; i < sorted.length; i++) {
+                if (sorted[i] === end + 1) {
+                    end = sorted[i];
+                } else {
+                    ranges.push(start === end ? `${start}` : `${start}-${end}`);
+                    start = sorted[i];
+                    end = start;
+                }
+            }
+            ranges.push(start === end ? `${start}` : `${start}-${end}`);
+            rangeInput.value = ranges.join(', ');
+        }
+
+        function setSplitMode(mode) {
+            splitMode = mode;
+
+            const selectBtn = document.getElementById('modeSelectBtn');
+            const allBtn = document.getElementById('modeAllBtn');
+            const nBtn = document.getElementById('modeNBtn');
+
+            const customBar = document.getElementById('customSelectionBar');
+            const everyNBar = document.getElementById('everyNBar');
+            const splitAllBar = document.getElementById('splitAllBar');
+
+            [selectBtn, allBtn, nBtn].forEach(btn => {
+                btn.className = 'flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-tech-muted hover:text-tech-dark cursor-pointer';
+            });
+
+            customBar.classList.add('hidden');
+            everyNBar.classList.add('hidden');
+            splitAllBar.classList.add('hidden');
+
+            if (mode === 'select') {
+                selectBtn.className = 'flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-950 text-white shadow-sm cursor-pointer';
+                customBar.classList.remove('hidden');
+            } else if (mode === 'all') {
+                allBtn.className = 'flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-950 text-white shadow-sm cursor-pointer';
+                splitAllBar.classList.remove('hidden');
+            } else if (mode === 'everyN') {
+                nBtn.className = 'flex-1 sm:flex-initial px-3.5 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-2 bg-gray-950 text-white shadow-sm cursor-pointer';
+                everyNBar.classList.remove('hidden');
+                clampChunkSize();
+            }
+
+            updateHUDStats();
+        }
+
+        function clampChunkSize() {
+            const input = document.getElementById('chunkSizeInput');
+            let val = parseInt(input.value, 10);
+            if (isNaN(val) || val < 1) val = 1;
+            if (totalPages > 0 && val > totalPages) val = totalPages;
+            input.value = val;
+            renderChunkInfo();
+        }
+
+        function renderChunkInfo() {
+            const chunkSize = Math.max(1, parseInt(document.getElementById('chunkSizeInput').value, 10) || 1);
+            const fileCount = Math.ceil(totalPages / chunkSize);
+            document.getElementById('chunkSummary').textContent = `จะสร้างไฟล์ PDF ทั้งหมด ${fileCount} ไฟล์ (ZIP)`;
+            updateHUDStats();
+        }
+
+        function getCustomOutputMode() {
+            const checked = document.querySelector('input[name="customOutputMode"]:checked');
+            return checked ? checked.value : 'singlePdf';
+        }
+
+        function updateHUDStats() {
+            document.getElementById('statSelectedPages').textContent = selectedPages.size;
+
+            const summaryText = document.getElementById('splitSummaryText');
+            const extLabel = document.getElementById('outputExtLabel');
+
+            if (splitMode === 'select') {
+                const customMode = getCustomOutputMode();
+                if (customMode === 'zipIndividual') {
+                    summaryText.textContent = `แยก ${selectedPages.size} หน้าที่เลือกออกเป็น ${selectedPages.size} ไฟล์เดี่ยว (.ZIP)`;
+                    extLabel.textContent = '.zip';
+                } else {
+                    summaryText.textContent = `รวม ${selectedPages.size} จาก ${totalPages} หน้าที่เลือกเป็น 1 ไฟล์ (.PDF)`;
+                    extLabel.textContent = '.pdf';
+                }
+            } else if (splitMode === 'all') {
+                summaryText.textContent = `แยกเอกสารทั้งหมด ${totalPages} หน้า เป็นไฟล์เดี่ยวหน้าละ 1 ไฟล์ (.ZIP)`;
+                extLabel.textContent = '.zip';
+            } else if (splitMode === 'everyN') {
+                const chunkSize = Math.max(1, parseInt(document.getElementById('chunkSizeInput').value, 10) || 1);
+                const fileCount = Math.ceil(totalPages / chunkSize);
+                summaryText.textContent = `แบ่งเอกสารออกเป็น ${fileCount} ไฟล์ย่อย (ชุดละ ${chunkSize} หน้า • .ZIP)`;
+                extLabel.textContent = '.zip';
+            }
+        }
+
+        function changeDocument() {
+            splitWorkspace.classList.add('hidden');
+            dropzone.classList.remove('hidden');
+            currentFile = null;
+            pdfjsDoc = null;
+            pdfLibDoc = null;
+            totalPages = 0;
+            lastClickedPage = null;
+            selectedPages.clear();
+            document.getElementById('statFileName').textContent = 'NONE';
+            document.getElementById('statTotalPages').textContent = '0';
+            document.getElementById('statSelectedPages').textContent = '0';
+        }
+
+        /**
+         * ดาวน์โหลดเฉพาะหน้าเดียวแบบรวดเร็ว (1-Click Quick Extract)
+         */
+        async function downloadSinglePage(pageIndex) {
+            if (!pdfLibDoc || pageIndex < 1 || pageIndex > totalPages) return;
+            try {
+                const singlePdf = await PDFLib.PDFDocument.create();
+                const [copiedPage] = await singlePdf.copyPages(pdfLibDoc, [pageIndex - 1]);
+                singlePdf.addPage(copiedPage);
+                const bytes = await singlePdf.save();
+
+                const baseName = currentFile ? currentFile.name.replace(/\.pdf$/i, '') : 'document';
+                downloadBlob(bytes, `${baseName}_page_${pageIndex}.pdf`, 'application/pdf');
+                showToast(`ดาวน์โหลดเฉพาะหน้า ${pageIndex} เรียบร้อยแล้ว`, 'success');
+            } catch (err) {
+                console.error("Single page extract error:", err);
+                showToast(`ไม่สามารถแยกหน้า ${pageIndex} ได้`, 'error');
+            }
+        }
+
+        /* ---------------- EXECUTE PDF SPLITTING ---------------- */
+        async function executeSplit() {
+            if (!pdfLibDoc) return;
+
+            const splitBtn = document.getElementById('splitBtn');
+            const splitBtnText = document.getElementById('splitBtnText');
+
+            const rawName = (document.getElementById('outputFilenameInput').value || '').trim();
+            const defaultBase = currentFile ? `${currentFile.name.replace(/\.pdf$/i, '')}_split` : 'CLEVERTENSAI_SPLIT';
+            const cleanBaseName = rawName.replace(/\.(pdf|zip)$/i, '') || defaultBase;
+
+            splitBtn.disabled = true;
+            splitBtnText.textContent = "กำลังแยกไฟล์...";
+
+            try {
+                if (splitMode === 'select') {
+                    if (selectedPages.size === 0) {
+                        showToast('กรุณาเลือกอย่างน้อย 1 หน้าก่อนดำเนินการ', 'error');
+                        return;
+                    }
+
+                    const sortedPages = Array.from(selectedPages).sort((a, b) => a - b);
+                    const sortedIndices = sortedPages.map(p => p - 1);
+                    const customMode = getCustomOutputMode();
+
+                    if (customMode === 'zipIndividual') {
+                        const zip = new JSZip();
+                        for (let i = 0; i < sortedIndices.length; i++) {
+                            const pageNum = sortedPages[i];
+                            const singlePdf = await PDFLib.PDFDocument.create();
+                            const [copiedPage] = await singlePdf.copyPages(pdfLibDoc, [sortedIndices[i]]);
+                            singlePdf.addPage(copiedPage);
+                            const singleBytes = await singlePdf.save();
+                            zip.file(`${cleanBaseName}_page_${pageNum}.pdf`, singleBytes);
+                        }
+                        const zipContent = await zip.generateAsync({ type: 'blob' });
+                        downloadBlob(zipContent, `${cleanBaseName}.zip`, 'application/zip');
+                        showToast(`แยก ${sortedPages.length} หน้าเป็นไฟล์เดี่ยว (.ZIP) สำเร็จ`, 'success');
+                    } else {
+                        const newPdf = await PDFLib.PDFDocument.create();
+                        const copiedPages = await newPdf.copyPages(pdfLibDoc, sortedIndices);
+                        copiedPages.forEach(p => newPdf.addPage(p));
+
+                        const pdfBytes = await newPdf.save();
+                        downloadBlob(pdfBytes, `${cleanBaseName}.pdf`, 'application/pdf');
+                        showToast(`ดึงหน้าที่เลือก (${sortedPages.length} หน้า) เป็นไฟล์ PDF สำเร็จ`, 'success');
+                    }
+
+                } else if (splitMode === 'all') {
+                    const zip = new JSZip();
+
+                    for (let i = 0; i < totalPages; i++) {
+                        const singlePdf = await PDFLib.PDFDocument.create();
+                        const [copiedPage] = await singlePdf.copyPages(pdfLibDoc, [i]);
+                        singlePdf.addPage(copiedPage);
+
+                        const singleBytes = await singlePdf.save();
+                        zip.file(`${cleanBaseName}_page_${i + 1}.pdf`, singleBytes);
+                    }
+
+                    const zipContent = await zip.generateAsync({ type: 'blob' });
+                    downloadBlob(zipContent, `${cleanBaseName}.zip`, 'application/zip');
+                    showToast(`แยกทั้ง ${totalPages} หน้าเป็นไฟล์เดี่ยว (.ZIP) สำเร็จ`, 'success');
+
+                } else if (splitMode === 'everyN') {
+                    const chunkSize = Math.max(1, parseInt(document.getElementById('chunkSizeInput').value, 10) || 1);
+                    const zip = new JSZip();
+
+                    let fileIndex = 1;
+                    for (let i = 0; i < totalPages; i += chunkSize) {
+                        const chunkPdf = await PDFLib.PDFDocument.create();
+                        const indices = [];
+                        for (let j = i; j < Math.min(i + chunkSize, totalPages); j++) {
+                            indices.push(j);
+                        }
+
+                        const copiedPages = await chunkPdf.copyPages(pdfLibDoc, indices);
+                        copiedPages.forEach(p => chunkPdf.addPage(p));
+
+                        const chunkBytes = await chunkPdf.save();
+                        zip.file(`${cleanBaseName}_part_${fileIndex}_p${i + 1}-${i + indices.length}.pdf`, chunkBytes);
+                        fileIndex++;
+                    }
+
+                    const zipContent = await zip.generateAsync({ type: 'blob' });
+                    downloadBlob(zipContent, `${cleanBaseName}.zip`, 'application/zip');
+                    showToast(`แบ่งไฟล์เป็น ${fileIndex - 1} ส่วน (.ZIP) สำเร็จ`, 'success');
+                }
+
+            } catch (err) {
+                console.error("Splitting execution error:", err);
+                showToast('เกิดข้อผิดพลาดในการแยกไฟล์ PDF', 'error');
+            } finally {
+                splitBtn.disabled = false;
+                splitBtnText.textContent = "แยกไฟล์ & ดาวน์โหลด";
+            }
+        }
+
+        function downloadBlob(data, fileName, mimeType) {
+            const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /* ---------------- PREVIEW MODAL LOGIC ---------------- */
+        function openPreviewModal(pageIndex) {
+            modalPageIndex = pageIndex;
+            currentZoomScale = 1.0;
+
+            const modal = document.getElementById('previewModal');
+            const modalContainer = document.getElementById('previewModalContainer');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-95');
+            modalContainer.classList.add('scale-100');
+
+            renderModalPage();
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === 'previewModal') {
+                closePreviewModal();
+            }
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            const modalContainer = document.getElementById('previewModalContainer');
+
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-100');
+            modalContainer.classList.add('scale-95');
+        }
+
+        function changeModalPage(delta) {
+            const target = modalPageIndex + delta;
+            if (target >= 1 && target <= totalPages) {
+                modalPageIndex = target;
+                renderModalPage();
+            }
+        }
+
+        async function renderModalPage() {
+            if (!pdfjsDoc) return;
+
+            document.getElementById('modalPageTitle').textContent = `PAGE PREVIEW // P.${modalPageIndex} OF ${totalPages}`;
+            document.getElementById('modalCurrentNum').textContent = modalPageIndex;
+            document.getElementById('modalTotalNum').textContent = totalPages;
+            document.getElementById('modalPrevBtn').disabled = (modalPageIndex <= 1);
+            document.getElementById('modalNextBtn').disabled = (modalPageIndex >= totalPages);
+
+            const spinner = document.getElementById('modalLoadingSpinner');
+            spinner.classList.remove('hidden');
+
+            try {
+                const page = await pdfjsDoc.getPage(modalPageIndex);
+                const viewport = page.getViewport({ scale: currentZoomScale * 1.25 });
+
+                const canvas = document.getElementById('modalCanvas');
+                const context = canvas.getContext('2d');
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                document.getElementById('zoomLabel').textContent = `${Math.round(currentZoomScale * 100)}%`;
+
+            } catch (err) {
+                console.error("Modal page render error:", err);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function adjustZoom(delta) {
+            const newScale = currentZoomScale + delta;
+            if (newScale >= 0.4 && newScale <= 2.5) {
+                currentZoomScale = newScale;
+                renderModalPage();
+            }
+        }
+
+        function resetZoom() {
+            currentZoomScale = 1.0;
+            renderModalPage();
+        }
+
+        /* ---------------- TOAST SYSTEM ---------------- */
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-rose-500';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa-solid fa-circle-info text-sky-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-crimson-500';
+            }
+
+            toast.classList.remove('translate-y-4', 'opacity-0');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

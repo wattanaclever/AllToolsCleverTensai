@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLEVERTENSAI — Excel Unlocker & Structure Inspector</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- JSZip สำหรับจัดการโครงสร้าง ZIP/XML ของไฟล์ Excel (.xlsx / .xlsm) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Google Fonts: Space Grotesk, JetBrains Mono & Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        crimson: {
+                            50: '#FFF5F5',
+                            100: '#FFE3E3',
+                            500: '#FF1E42',
+                            600: '#E63946',
+                            700: '#DC2626',
+                            900: '#991B1B'
+                        },
+                        tech: {
+                            white: '#FFFFFF',
+                            bg: '#FAF9F6',
+                            panel: '#F3F4F6',
+                            border: '#E5E7EB',
+                            dark: '#0F172A',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #0F172A;
+            background-image:
+                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
+                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+            background-size: 24px 24px, 48px 48px, 48px 48px;
+        }
+
+        /* High-tech custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF1E42;
+            border-radius: 2px;
+        }
+
+        .tech-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-card:hover {
+            border-color: rgba(255, 30, 66, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(255, 30, 66, 0.08);
+        }
+
+        .red-glow {
+            box-shadow: 0 4px 16px rgba(255, 30, 66, 0.28);
+        }
+
+        .drag-over-active {
+            border-color: #FF1E42 !important;
+            background-color: #FFF5F5 !important;
+        }
+
+        /* Custom Checkbox */
+        input[type="checkbox"] {
+            accent-color: #FF1E42;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- ===================================================================== -->
+    <!-- START: CLEVERTENSAI Global Navbar & All Web Apps Hub                  -->
+    <!-- ===================================================================== -->
+    <nav
+        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
+        <!-- ฝั่งซ้าย: โลโก้แบรนด์ (คลิกเพื่อกลับหน้าหลัก index.html) -->
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="flex items-center gap-2.5 group">
+                <div
+                    class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span
+                            class="text-red-500">TENSAI</span></span>
+                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">EXCEL UNLOCK ENGINE</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเว็บแอปทั้งหมด -->
+        <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
+            <button onclick="toggleNavPopup()"
+                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
+                <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
+                <span>All Web Apps Hub</span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+            </button>
+        </div>
+
+        <!-- ฝั่งขวา: ปุ่มกลับหน้าหลัก Portal และสถานะระบบ -->
+        <div class="flex items-center gap-2.5">
+            <button onclick="toggleNavPopup()"
+                class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
+                <i class="fa-solid fa-grip text-red-500"></i>
+                <span>Hub</span>
+            </button>
+
+            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                XML ENGINE
+            </span>
+
+            <a href="index.html"
+                class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-house text-red-500"></i>
+                <span class="hidden sm:inline">หน้าหลัก Portal</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Popup Modal สลับหน้าเครื่องมือ (All Web Apps Hub) -->
+    <div id="navPopupModal"
+        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+        <div
+            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+
+            <!-- Header ของ Modal -->
+            <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
+                        <i class="fa-solid fa-grip"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
+                            CLEVERTENSAI Web Apps Hub
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันอื่นในระบบได้ทันที</p>
+                    </div>
+                </div>
+
+                <button onclick="toggleNavPopup()"
+                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- รายการเว็บแอปหลัก -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-6 overflow-y-auto">
+                <!-- กลับหน้าหลัก -->
+                <a href="index.html"
+                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Main Portal</span>
+                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">กลับสู่หน้ารวมเว็บแอปพลิเคชันทั้งหมด</span>
+                </a>
+
+                <!-- PDF Tools -->
+                <a href="./PDF/HomePDF.html"
+                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">PDF Studio Suite</span>
+                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์ แยกหน้า และแก้ไขเอกสาร PDF</span>
+                </a>
+
+                <!-- Excel Unlock (Current) -->
+                <a href="HomeExcelUnlock.html"
+                    class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <span class="font-extrabold text-base text-red-400">Excel Unlock Pro</span>
+                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                </a>
+
+                <!-- QR Code -->
+                <a href="HomeQRcode.html"
+                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </div>
+                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">QR Code Generator</span>
+                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">สร้าง QR Code ภาษาไทย ลิงก์ และ Wi-Fi</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END: Global Navbar & Navigation Hub -->
+
+
+    <!-- ===================================================================== -->
+    <!-- กล่องแจ้งเตือน Toast (CLEVERTENSAI Style)                               -->
+    <!-- ===================================================================== -->
+    <div id="toast-notification" role="status" aria-live="polite"
+        class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-mono">
+        <span id="toast-icon" class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
+        <span id="toast-message">ดำเนินการสำเร็จ</span>
+    </div>
+
+
+    <!-- ===================================================================== -->
+    <!-- MAIN WORKSPACE CONTENT                                                -->
+    <!-- ===================================================================== -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
+
+        <!-- Hero Sub-header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-tech-border">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
+                    <i class="fa-solid fa-unlock-keyhole text-[11px]"></i>
+                    <span>EXCEL XML STRUCTURE & UNLOCK STUDIO</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark">
+                    ปลดล็อก & จัดการโครงสร้าง <span class="text-crimson-500">Excel</span>
+                </h1>
+                <p class="text-tech-muted text-sm mt-1">
+                    ปลดล็อกชีต/สมุดงาน, แสดงชีตที่ถูกซ่อน (VeryHidden), ลบตัวล็อก Dropdown และล้างข้อมูลส่วนตัวผู้สร้างไฟล์ในคลิกเดียว
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2 font-mono text-xs">
+                <span class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
+                    <i class="fa-solid fa-shield-halved text-crimson-500 mr-1.5"></i>100% Client-Side
+                </span>
+                <span class="px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold shadow-sm">
+                    v2.0 PRO
+                </span>
+            </div>
+        </div>
+
+        <!-- กล่องแจ้งเตือนข้อจำกัด (Important Notice) -->
+        <div class="tech-card rounded-2xl p-4 sm:p-5 border-l-4 border-l-crimson-500">
+            <div class="flex items-start gap-3.5">
+                <div class="w-9 h-9 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 mt-0.5">
+                    <i class="fa-solid fa-circle-info text-base"></i>
+                </div>
+                <div class="text-xs sm:text-sm text-tech-muted space-y-1">
+                    <h3 class="font-bold text-tech-dark">ขอบเขตการทำงานของระบบ (XML Level Processing)</h3>
+                    <ul class="list-disc list-inside space-y-1 leading-relaxed">
+                        <li><strong class="text-tech-dark">รองรับเต็มรูปแบบ:</strong> ปลดล็อก Sheet Protection, Workbook Protection, Read-only Recommended, ยกเลิกการซ่อนชีต (Hidden / VeryHidden), ลบ Data Validation (Dropdown ล็อกค่า), ลบ External Links ค้าง และล้าง Metadata ผู้สร้างไฟล์ ในนามสกุล <code class="font-mono text-crimson-600 font-semibold">.xlsx</code> และ <code class="font-mono text-crimson-600 font-semibold">.xlsm</code></li>
+                        <li><strong class="text-tech-dark">ข้อจำกัด:</strong> ไม่รองรับไฟล์ที่ใส่รหัสผ่านตั้งแต่ตอนเปิดไฟล์ (<span class="font-mono">Password to Open / Encryption</span>) หรือไฟล์รุ่นเก่า (<span class="font-mono">.xls</span>)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- พื้นที่อัปโหลดไฟล์ (Dropzone) -->
+        <div id="dropzone"
+            class="tech-card border-2 border-dashed border-gray-300 hover:border-crimson-500 rounded-2xl p-8 sm:p-14 text-center transition-all duration-200 cursor-pointer group relative overflow-hidden">
+            <input type="file" id="fileInput" accept=".xlsx,.xlsm" class="hidden">
+
+            <div class="space-y-4 pointer-events-none">
+                <div
+                    class="w-16 h-16 mx-auto rounded-2xl bg-crimson-50 border border-crimson-100 group-hover:bg-crimson-500 text-crimson-500 group-hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
+                </div>
+                <div>
+                    <p class="text-lg sm:text-xl font-bold text-tech-dark group-hover:text-crimson-500 transition-colors">
+                        ลากไฟล์ Excel มาวางที่นี่ หรือ <span class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
+                    </p>
+                    <p class="text-xs sm:text-sm text-tech-muted mt-2 font-mono">
+                        SUPPORTED FORMATS: <span class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSX</span> &bull; <span class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSM</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- กล่องแสดงข้อความแจ้งเตือนข้อผิดพลาด (Error Message Box - ไม่ใช้ alert) -->
+        <div id="errorBox" class="hidden bg-crimson-50 border border-crimson-500/40 rounded-2xl p-4 flex items-start justify-between shadow-sm">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-circle-xmark text-crimson-500 text-lg mt-0.5"></i>
+                <div>
+                    <h4 class="font-bold text-crimson-900 text-sm">ไม่สามารถประมวลผลไฟล์ได้</h4>
+                    <p id="errorText" class="text-xs sm:text-sm text-crimson-700 mt-0.5"></p>
+                </div>
+            </div>
+            <button onclick="hideError()" class="text-crimson-500 hover:text-crimson-700 p-1 rounded-lg transition-colors cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- สถานะกำลังวิเคราะห์โครงสร้างไฟล์ (Loading State) -->
+        <div id="loadingBox" class="hidden tech-card rounded-2xl p-10 text-center space-y-4">
+            <div class="inline-block animate-spin rounded-full h-11 w-11 border-4 border-gray-200 border-t-crimson-500"></div>
+            <div>
+                <h3 class="font-bold text-tech-dark text-lg">กำลังสแกนโครงสร้าง XML ภายในไฟล์ Excel...</h3>
+                <p class="text-xs sm:text-sm text-tech-muted font-mono mt-1">INSPECTING WORKBOOK, WORKSHEETS, HIDDEN STATES & METADATA</p>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ส่วนวิเคราะห์โครงสร้าง เลือกตัวเลือก & ดาวน์โหลด (Inspector Studio)   -->
+        <!-- ================================================================= -->
+        <div id="inspectorSection" class="hidden space-y-6">
+
+            <!-- แถบข้อมูลไฟล์และปุ่มดาวน์โหลดหลัก -->
+            <div class="tech-card rounded-2xl overflow-hidden">
+                <div class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 text-white">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="font-mono text-xs tracking-wider uppercase font-bold">FILE STRUCTURE INSPECTOR READY</span>
+                    </div>
+                    <button onclick="resetApp()"
+                        class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 font-mono text-xs flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-rotate-right text-crimson-500"></i>
+                        <span>เลือกไฟล์ใหม่</span>
+                    </button>
+                </div>
+
+                <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-14 h-14 rounded-2xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 text-2xl">
+                            <i class="fa-solid fa-file-excel"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono text-[10px] font-bold uppercase mb-1">
+                                <i class="fa-solid fa-check"></i> สแกนโครงสร้างสำเร็จ
+                            </div>
+                            <h2 id="fileNameDisplay" class="text-lg sm:text-xl font-extrabold text-tech-dark truncate" title="">filename.xlsx</h2>
+                            <p id="fileSizeDisplay" class="text-xs text-tech-muted font-mono mt-0.5">SIZE: 0 KB</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                        <button id="processDownloadBtn" onclick="buildAndDownloadExcel()"
+                            class="px-6 py-3.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2.5 transition red-glow cursor-pointer">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>ประมวลผล & ดาวน์โหลดไฟล์ที่แก้ไขแล้ว</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Metrics Cards (4 ช่อง) -->
+                <div class="px-6 pb-6 grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div class="p-3.5 rounded-xl bg-tech-panel/70 border border-tech-border">
+                        <div class="text-[11px] font-mono text-tech-muted uppercase">ชีตทั้งหมด (Sheets)</div>
+                        <div id="statTotalSheets" class="text-xl font-extrabold text-tech-dark mt-1">0 ชีต</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-crimson-50/70 border border-crimson-100">
+                        <div class="text-[11px] font-mono text-crimson-700 uppercase">ชีตที่ถูกล็อก (Locked)</div>
+                        <div id="statLockedSheets" class="text-xl font-extrabold text-crimson-600 mt-1">0 ชีต</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                        <div class="text-[11px] font-mono text-amber-800 uppercase">ชีตที่ซ่อน (Hidden)</div>
+                        <div id="statHiddenSheets" class="text-xl font-extrabold text-amber-700 mt-1">0 ชีต</div>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200">
+                        <div class="text-[11px] font-mono text-blue-800 uppercase">โครงสร้างสมุดงาน</div>
+                        <div id="statWorkbookLock" class="text-sm font-extrabold text-blue-900 mt-1.5">ปกติ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Column Controls: ฝั่งซ้าย (ตัวเลือกฟีเจอร์เสริมระดับสมุดงาน) + ฝั่งขวา (Metadata Inspector) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- ฟีเจอร์ระดับสมุดงานและโครงสร้าง (7 Cols) -->
+                <div class="lg:col-span-7 tech-card rounded-2xl p-6 space-y-4">
+                    <div class="flex items-center gap-2 pb-3 border-b border-tech-border">
+                        <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
+                        <h3 class="text-sm font-bold text-tech-dark uppercase tracking-wide">ตัวเลือกจัดการโครงสร้างสมุดงาน (Workbook & XML Tools)</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Option 1: Workbook & Read-Only Protection -->
+                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="optWorkbookUnlock" checked class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <div>
+                                    <div class="text-sm font-bold text-tech-dark">ปลดล็อกการป้องกันสมุดงาน & Read-Only</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ลบ <code class="font-mono text-crimson-600">&lt;workbookProtection&gt;</code> และ <code class="font-mono text-crimson-600">&lt;fileSharing&gt;</code> เพื่อให้เพิ่ม/ย้าย/เปลี่ยนชื่อชีตและบันทึกทับได้ทันที</p>
+                                </div>
+                            </div>
+                            <span id="badgeWorkbookOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">READY</span>
+                        </label>
+
+                        <!-- Option 2: Unhide All Hidden & VeryHidden Sheets -->
+                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="optUnhideSheets" checked class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <div>
+                                    <div class="text-sm font-bold text-tech-dark">แสดงชีตที่ถูกซ่อนทั้งหมด (Unhide Hidden & VeryHidden)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ยกเลิกสถานะ <code class="font-mono text-crimson-600">state="hidden"</code> และ <code class="font-mono text-crimson-600">state="veryHidden"</code> (ชีตลับที่ซ่อนผ่าน VBA) ให้กลับมาแสดงครบทุกชีต</p>
+                                </div>
+                            </div>
+                            <span id="badgeHiddenOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0 HIDDEN</span>
+                        </label>
+
+                        <!-- Option 3: Break External Links -->
+                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="optBreakLinks" class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <div>
+                                    <div class="text-sm font-bold text-tech-dark">ตัดการเชื่อมโยงไฟล์ภายนอก (Break External Links)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ลบลิงก์อ้างอิงข้ามไฟล์ (<code class="font-mono text-crimson-600">externalLinks</code>) เพื่อแก้ปัญหาเปิดไฟล์แล้วขึ้นแจ้งเตือน Update Links หรือไฟล์ค้าง</p>
+                                </div>
+                            </div>
+                            <span id="badgeExtLinksOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0 LINKS</span>
+                        </label>
+
+                        <!-- Option 4: Clean Document Metadata -->
+                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                            <div class="flex items-start gap-3">
+                                <input type="checkbox" id="optCleanMetadata" class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <div>
+                                    <div class="text-sm font-bold text-tech-dark">ลบข้อมูลส่วนตัวผู้สร้างไฟล์ (Clean Metadata)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ล้างชื่อผู้สร้าง (Author), ผู้แก้ไขล่าสุด (Last Modified By) และชื่อบริษัทออกจากคุณสมบัติไฟล์ก่อนส่งต่อ</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">PRIVACY</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Document Properties / Metadata Inspector (5 Cols) -->
+                <div class="lg:col-span-5 tech-card rounded-2xl overflow-hidden flex flex-col">
+                    <div class="bg-gray-950 px-5 py-3.5 border-b border-gray-800 flex items-center justify-between text-white">
+                        <span class="font-mono text-xs font-bold tracking-wider uppercase">
+                            <i class="fa-solid fa-user-secret text-crimson-500 mr-1.5"></i>METADATA INSPECTOR
+                        </span>
+                        <span class="font-mono text-[10px] text-gray-400">docProps/core.xml</span>
+                    </div>
+                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="space-y-2.5 text-xs">
+                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                                <span class="font-mono text-tech-muted">ผู้สร้าง (Creator):</span>
+                                <span id="metaCreator" class="font-semibold text-tech-dark truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                                <span class="font-mono text-tech-muted">แก้ไขล่าสุดโดย:</span>
+                                <span id="metaLastModifiedBy" class="font-semibold text-tech-dark truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                                <span class="font-mono text-tech-muted">บริษัท (Company):</span>
+                                <span id="metaCompany" class="font-semibold text-tech-dark truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                                <span class="font-mono text-tech-muted">วันที่แก้ไขล่าสุด:</span>
+                                <span id="metaModifiedDate" class="font-mono font-semibold text-tech-dark truncate">-</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-crimson-50/70 border border-crimson-100 text-[11px] text-tech-muted leading-relaxed">
+                            <i class="fa-solid fa-lightbulb text-crimson-500 mr-1"></i>
+                            หากต้องการซ่อนชื่อผู้จัดทำไฟล์ก่อนส่งให้บุคคลภายนอก สามารถติ๊กเลือก <strong>"ลบข้อมูลส่วนตัวผู้สร้างไฟล์"</strong> ทางด้านซ้ายได้ทันที
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- ตารางจัดการแต่ละชีตแบบละเอียด (Selective Sheet Control)         -->
+            <!-- ============================================================= -->
+            <div class="tech-card rounded-2xl overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-tech-border flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-tech-dark uppercase tracking-wide">รายการชีตทั้งหมดในไฟล์ (Selective Worksheet Control)</h3>
+                            <p class="text-xs text-tech-muted">เลือกปลดล็อกเฉพาะชีตที่ต้องการ หรือสั่งลบ Data Validation (Dropdown ล็อกการกรอกค่า) รายชีตได้</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+                        <button type="button" onclick="toggleAllUnlockCheckboxes(true)"
+                            class="px-3 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-tech-dark hover:text-crimson-600 font-semibold transition cursor-pointer">
+                            เลือกปลดล็อกทุกชีต
+                        </button>
+                        <button type="button" onclick="toggleAllValidationCheckboxes(true)"
+                            class="px-3 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-tech-dark hover:text-crimson-600 font-semibold transition cursor-pointer">
+                            ลบ Validation ทุกชีต
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-950 text-gray-200 font-mono text-[11px] uppercase tracking-wider">
+                                <th class="py-3.5 px-4">#</th>
+                                <th class="py-3.5 px-4">ชื่อชีต (Worksheet)</th>
+                                <th class="py-3.5 px-4">สถานะปัจจุบัน</th>
+                                <th class="py-3.5 px-4 text-center">ปลดล็อกชีต (Unlock)</th>
+                                <th class="py-3.5 px-4 text-center">ลบตัวล็อก Dropdown (Validation)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sheetTableBody" class="divide-y divide-tech-border bg-white">
+                            <!-- Rendered dynamically after scanning file -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- กล่องแสดงบันทึกการประมวลผลล่าสุด (Activity Log) -->
+            <div id="processLogBox" class="hidden tech-card rounded-2xl p-5 bg-gray-950 text-gray-200 border-gray-800">
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-800 font-mono text-xs">
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-terminal mr-1.5"></i>EXECUTION LOG // COMPLETED</span>
+                    <span id="outputFileNameBadge" class="text-red-400 font-semibold"></span>
+                </div>
+                <ul id="processLogList" class="space-y-1.5 font-mono text-xs text-gray-300"></ul>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- FOOTER (International Standard Copyright matching index.html)         -->
+    <!-- ===================================================================== -->
+    <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
+            &copy; 2026 Clever Tensai. All rights reserved.
+        </div>
+    </footer>
+
+
+    <!-- ===================================================================== -->
+    <!-- APPLICATION LOGIC (100% Client-Side Excel XML Inspector & Unlocker)   -->
+    <!-- ===================================================================== -->
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const errorBox = document.getElementById('errorBox');
+        const errorText = document.getElementById('errorText');
+        const loadingBox = document.getElementById('loadingBox');
+        const inspectorSection = document.getElementById('inspectorSection');
+
+        // State เก็บข้อมูลไฟล์ที่กำลังวิเคราะห์
+        let currentZip = null;
+        let currentOriginalFile = null;
+        let inspectedSheets = []; // [{ index, name, xmlPath, rId, state, isLocked, validationCount, unlockChecked, removeValidationChecked }]
+        let hasWorkbookProtection = false;
+        let hasFileSharing = false;
+        let externalLinkPaths = [];
+        let toastTimer = null;
+
+        // เปิด/ปิด Popup All Web Apps Hub
+        function toggleNavPopup() {
+            const modal = document.getElementById('navPopupModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        // แสดง Toast แจ้งเตือน
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3200);
+        }
+
+        // Drag & Drop Events
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('drag-over-active');
+        });
+
+        dropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('drag-over-active');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('drag-over-active');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                inspectExcelFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                inspectExcelFile(e.target.files[0]);
+            }
+        });
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorBox.classList.remove('hidden');
+            loadingBox.classList.add('hidden');
+        }
+
+        function hideError() {
+            errorBox.classList.add('hidden');
+        }
+
+        function resetApp() {
+            fileInput.value = '';
+            currentZip = null;
+            currentOriginalFile = null;
+            inspectedSheets = [];
+            hideError();
+            inspectorSection.classList.add('hidden');
+            loadingBox.classList.add('hidden');
+            document.getElementById('processLogBox').classList.add('hidden');
+            dropzone.classList.remove('hidden');
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+        }
+
+        function escapeHtml(unsafe) {
+            return String(unsafe || '')
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        /**
+         * ขั้นตอนที่ 1: สแกนและวิเคราะห์โครงสร้างไฟล์ Excel ทั้งหมดทันทีที่อัปโหลด
+         */
+        async function inspectExcelFile(file) {
+            hideError();
+
+            const fileName = file.name;
+            const lowerName = fileName.toLowerCase();
+            if (!lowerName.endsWith('.xlsx') && !lowerName.endsWith('.xlsm')) {
+                if (lowerName.endsWith('.xls')) {
+                    showError('ไม่รองรับไฟล์ .xls (Excel 97-2003) กรุณาเปิดไฟล์แล้ว Save As เป็น .xlsx หรือ .xlsm ก่อนใช้งาน');
+                } else {
+                    showError('รูปแบบไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ .xlsx หรือ .xlsm เท่านั้น');
+                }
+                return;
+            }
+
+            dropzone.classList.add('hidden');
+            inspectorSection.classList.add('hidden');
+            document.getElementById('processLogBox').classList.add('hidden');
+            loadingBox.classList.remove('hidden');
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+
+                // ตรวจสอบ Magic Bytes "PK" (0x50, 0x4B) เพื่อเช็กว่าถูกเข้ารหัสตอนเปิดไฟล์หรือไม่
+                const headerBytes = new Uint8Array(arrayBuffer.slice(0, 4));
+                if (headerBytes[0] !== 0x50 || headerBytes[1] !== 0x4B) {
+                    throw new Error('ไฟล์นี้ถูกเข้ารหัสป้องกันการเปิดไฟล์ (Password to Open / File Encryption) ซึ่งโครงสร้างไฟล์ทั้งหมดถูกเข้ารหัสไว้ จึงไม่สามารถแก้ไขในระดับ XML ได้');
+                }
+
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                const workbookFile = zip.file('xl/workbook.xml');
+                if (!workbookFile) {
+                    throw new Error('ไม่พบโครงสร้างไฟล์ Excel (xl/workbook.xml) ไฟล์อาจเสียหาย');
+                }
+
+                currentZip = zip;
+                currentOriginalFile = file;
+
+                const parser = new DOMParser();
+                const workbookXmlStr = await workbookFile.async('string');
+                const workbookDoc = parser.parseFromString(workbookXmlStr, 'application/xml');
+
+                // ตรวจสอบการล็อกระดับสมุดงาน
+                hasWorkbookProtection = /<workbookProtection\b/i.test(workbookXmlStr);
+                hasFileSharing = /<fileSharing\b/i.test(workbookXmlStr);
+
+                // อ่าน Relationships (xl/_rels/workbook.xml.rels)
+                const relsFile = zip.file('xl/_rels/workbook.xml.rels');
+                let rIdToTarget = {};
+                if (relsFile) {
+                    const relsXmlStr = await relsFile.async('string');
+                    const relsDoc = parser.parseFromString(relsXmlStr, 'application/xml');
+                    const relNodes = relsDoc.getElementsByTagName('Relationship');
+                    for (let i = 0; i < relNodes.length; i++) {
+                        const id = relNodes[i].getAttribute('Id');
+                        const target = relNodes[i].getAttribute('Target');
+                        if (id && target) {
+                            const cleanTarget = target.replace(/^\/?xl\//, '');
+                            rIdToTarget[id] = 'xl/' + cleanTarget;
+                        }
+                    }
+                }
+
+                // ดึงรายการชีตทั้งหมดจาก workbook.xml (รวมทั้ง state="hidden" และ state="veryHidden")
+                const sheetNodes = workbookDoc.getElementsByTagName('sheet');
+                inspectedSheets = [];
+
+                for (let i = 0; i < sheetNodes.length; i++) {
+                    const name = sheetNodes[i].getAttribute('name') || `Sheet ${i + 1}`;
+                    const rId = sheetNodes[i].getAttribute('r:id');
+                    const state = sheetNodes[i].getAttribute('state') || 'visible'; // visible | hidden | veryHidden
+                    const xmlPath = (rId && rIdToTarget[rId]) ? rIdToTarget[rId] : `xl/worksheets/sheet${i + 1}.xml`;
+
+                    let isLocked = false;
+                    let validationCount = 0;
+
+                    const sheetEntry = zip.file(xmlPath);
+                    if (sheetEntry) {
+                        const sheetXml = await sheetEntry.async('string');
+                        isLocked = /<sheetProtection\b/i.test(sheetXml);
+                        const valMatches = sheetXml.match(/<dataValidation\b/gi);
+                        validationCount = valMatches ? valMatches.length : 0;
+                    }
+
+                    inspectedSheets.push({
+                        index: i + 1,
+                        name: name,
+                        xmlPath: xmlPath,
+                        rId: rId,
+                        state: state,
+                        isLocked: isLocked,
+                        validationCount: validationCount,
+                        unlockChecked: isLocked, // ติ๊กเลือกให้อัตโนมัติเฉพาะชีตที่ถูกล็อก
+                        removeValidationChecked: false
+                    });
+                }
+
+                // ตรวจสอบ External Links ค้างในไฟล์
+                externalLinkPaths = [];
+                zip.forEach((relativePath) => {
+                    if (/^xl\/externalLinks\//i.test(relativePath)) {
+                        externalLinkPaths.push(relativePath);
+                    }
+                });
+
+                // อ่าน Metadata (docProps/core.xml & docProps/app.xml)
+                let creator = '-';
+                let lastModifiedBy = '-';
+                let modifiedDate = '-';
+                let company = '-';
+
+                const coreFile = zip.file('docProps/core.xml');
+                if (coreFile) {
+                    const coreXml = await coreFile.async('string');
+                    const coreDoc = parser.parseFromString(coreXml, 'application/xml');
+                    const creatorEl = coreDoc.getElementsByTagName('dc:creator')[0];
+                    const modByEl = coreDoc.getElementsByTagName('cp:lastModifiedBy')[0];
+                    const modDateEl = coreDoc.getElementsByTagName('dcterms:modified')[0];
+
+                    if (creatorEl && creatorEl.textContent) creator = creatorEl.textContent;
+                    if (modByEl && modByEl.textContent) lastModifiedBy = modByEl.textContent;
+                    if (modDateEl && modDateEl.textContent) modifiedDate = modDateEl.textContent.replace('T', ' ').replace('Z', '');
+                }
+
+                const appFile = zip.file('docProps/app.xml');
+                if (appFile) {
+                    const appXml = await appFile.async('string');
+                    const appDoc = parser.parseFromString(appXml, 'application/xml');
+                    const companyEl = appDoc.getElementsByTagName('Company')[0];
+                    if (companyEl && companyEl.textContent) company = companyEl.textContent;
+                }
+
+                // อัปเดต UI แสดงผลการสแกน
+                renderInspectorUI({
+                    fileName: fileName,
+                    fileSize: file.size,
+                    creator,
+                    lastModifiedBy,
+                    company,
+                    modifiedDate
+                });
+
+            } catch (err) {
+                console.error('Excel Inspect Error:', err);
+                dropzone.classList.remove('hidden');
+                showError(err.message || 'เกิดข้อผิดพลาดในการอ่านโครงสร้างไฟล์ Excel');
+            }
+        }
+
+        /**
+         * แสดงผลการวิเคราะห์โครงสร้างไฟล์ลงในตารางและแผงควบคุม
+         */
+        function renderInspectorUI(meta) {
+            loadingBox.classList.add('hidden');
+            inspectorSection.classList.remove('hidden');
+
+            document.getElementById('fileNameDisplay').textContent = meta.fileName;
+            document.getElementById('fileNameDisplay').title = meta.fileName;
+            document.getElementById('fileSizeDisplay').textContent = `ORIGINAL FILE SIZE: ${formatBytes(meta.fileSize)}`;
+
+            const lockedCount = inspectedSheets.filter(s => s.isLocked).length;
+            const hiddenCount = inspectedSheets.filter(s => s.state === 'hidden' || s.state === 'veryHidden').length;
+
+            document.getElementById('statTotalSheets').textContent = `${inspectedSheets.length} ชีต`;
+            document.getElementById('statLockedSheets').textContent = `${lockedCount} ชีต`;
+            document.getElementById('statHiddenSheets').textContent = `${hiddenCount} ชีต`;
+
+            const wbLockEl = document.getElementById('statWorkbookLock');
+            if (hasWorkbookProtection || hasFileSharing) {
+                wbLockEl.textContent = 'พบการล็อกสมุดงาน';
+                wbLockEl.className = 'text-sm font-extrabold text-crimson-600 mt-1.5';
+            } else {
+                wbLockEl.textContent = 'ปกติ (ไม่ได้ล็อก)';
+                wbLockEl.className = 'text-sm font-extrabold text-emerald-700 mt-1.5';
+            }
+
+            // อัปเดต Badge สถานะของแต่ละฟีเจอร์
+            const badgeWorkbookOpt = document.getElementById('badgeWorkbookOpt');
+            if (hasWorkbookProtection || hasFileSharing) {
+                badgeWorkbookOpt.textContent = 'LOCKED FOUND';
+                badgeWorkbookOpt.className = 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-crimson-500 text-white shrink-0';
+            } else {
+                badgeWorkbookOpt.textContent = 'CLEAN';
+                badgeWorkbookOpt.className = 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0';
+            }
+
+            const badgeHiddenOpt = document.getElementById('badgeHiddenOpt');
+            badgeHiddenOpt.textContent = `${hiddenCount} HIDDEN`;
+            badgeHiddenOpt.className = hiddenCount > 0
+                ? 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-amber-500 text-white shrink-0'
+                : 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0';
+
+            const extFileCount = externalLinkPaths.filter(p => p.endsWith('.xml')).length;
+            const badgeExtLinksOpt = document.getElementById('badgeExtLinksOpt');
+            badgeExtLinksOpt.textContent = `${extFileCount} LINKS`;
+            badgeExtLinksOpt.className = extFileCount > 0
+                ? 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-blue-600 text-white shrink-0'
+                : 'px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0';
+            document.getElementById('optBreakLinks').checked = extFileCount > 0;
+
+            // Metadata
+            document.getElementById('metaCreator').textContent = meta.creator;
+            document.getElementById('metaLastModifiedBy').textContent = meta.lastModifiedBy;
+            document.getElementById('metaCompany').textContent = meta.company;
+            document.getElementById('metaModifiedDate').textContent = meta.modifiedDate;
+
+            // เรนเดอร์ตารางชีต
+            renderSheetTable();
+        }
+
+        function renderSheetTable() {
+            const tbody = document.getElementById('sheetTableBody');
+            if (inspectedSheets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-tech-muted">ไม่พบข้อมูลชีตในไฟล์นี้</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = inspectedSheets.map((sheet, idx) => {
+                // สร้างป้ายสถานะรวม (Locked / Hidden / VeryHidden / Data Validation)
+                let badges = [];
+                if (sheet.isLocked) {
+                    badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-crimson-50 border border-crimson-200 text-crimson-700 font-mono text-[11px] font-bold"><i class="fa-solid fa-lock text-[10px]"></i>LOCKED</span>`);
+                } else {
+                    badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono text-[11px]"><i class="fa-solid fa-lock-open text-[10px]"></i>UNLOCKED</span>`);
+                }
+
+                if (sheet.state === 'veryHidden') {
+                    badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-purple-700 font-mono text-[11px] font-bold"><i class="fa-solid fa-eye-slash text-[10px]"></i>VERY HIDDEN</span>`);
+                } else if (sheet.state === 'hidden') {
+                    badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-amber-800 font-mono text-[11px] font-bold"><i class="fa-solid fa-eye-slash text-[10px]"></i>HIDDEN</span>`);
+                }
+
+                if (sheet.validationCount > 0) {
+                    badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-blue-700 font-mono text-[11px]"><i class="fa-solid fa-list-ul text-[10px]"></i>${sheet.validationCount} VALIDATION</span>`);
+                }
+
+                return `
+                    <tr class="hover:bg-tech-panel/50 transition-colors">
+                        <td class="py-3.5 px-4 font-mono text-xs text-tech-muted">${sheet.index}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-tech-dark">${escapeHtml(sheet.name)}</div>
+                            <div class="font-mono text-[11px] text-tech-muted">${sheet.xmlPath}</div>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex flex-wrap gap-1.5">${badges.join('')}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                <input type="checkbox" ${sheet.unlockChecked ? 'checked' : ''}
+                                    onchange="inspectedSheets[${idx}].unlockChecked = this.checked"
+                                    class="w-4 h-4 rounded cursor-pointer">
+                                <span class="text-xs font-mono ${sheet.isLocked ? 'text-crimson-600 font-bold' : 'text-tech-muted'}">
+                                    ${sheet.isLocked ? 'ปลดล็อก' : 'ปกติ'}
+                                </span>
+                            </label>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                                <input type="checkbox" ${sheet.removeValidationChecked ? 'checked' : ''}
+                                    onchange="inspectedSheets[${idx}].removeValidationChecked = this.checked"
+                                    class="w-4 h-4 rounded cursor-pointer">
+                                <span class="text-xs font-mono ${sheet.validationCount > 0 ? 'text-blue-700 font-semibold' : 'text-tech-muted'}">
+                                    ${sheet.validationCount > 0 ? `ลบ (${sheet.validationCount})` : 'ไม่มี'}
+                                </span>
+                            </label>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleAllUnlockCheckboxes(state) {
+            inspectedSheets.forEach(s => s.unlockChecked = state);
+            renderSheetTable();
+            showToast('เลือกปลดล็อกชีตทั้งหมดเรียบร้อยแล้ว');
+        }
+
+        function toggleAllValidationCheckboxes(state) {
+            inspectedSheets.forEach(s => s.removeValidationChecked = state);
+            renderSheetTable();
+            showToast('เลือกลบ Data Validation ทุกชีตเรียบร้อยแล้ว');
+        }
+
+        /**
+         * ขั้นตอนที่ 2: ประมวลผล XML ตามตัวเลือกที่ผู้ใช้กำหนด และสร้างไฟล์ดาวน์โหลด
+         */
+        async function buildAndDownloadExcel() {
+            if (!currentZip || !currentOriginalFile) return;
+
+            const optWorkbookUnlock = document.getElementById('optWorkbookUnlock').checked;
+            const optUnhideSheets = document.getElementById('optUnhideSheets').checked;
+            const optBreakLinks = document.getElementById('optBreakLinks').checked;
+            const optCleanMetadata = document.getElementById('optCleanMetadata').checked;
+
+            const logs = [];
+
+            try {
+                // 1. แก้ไข xl/workbook.xml (Workbook Protection, FileSharing, Unhide Sheets, ExternalReferences)
+                const workbookFile = currentZip.file('xl/workbook.xml');
+                let workbookXml = await workbookFile.async('string');
+
+                if (optWorkbookUnlock) {
+                    const wbProtRegex = /<workbookProtection\b[^>]*\/?>([\s\S]*?<\/workbookProtection>)?/gi;
+                    if (wbProtRegex.test(workbookXml)) {
+                        workbookXml = workbookXml.replace(wbProtRegex, '');
+                        logs.push('ปลดล็อกการป้องกันโครงสร้างสมุดงาน (<workbookProtection>) สำเร็จ');
+                    }
+
+                    const fileSharingRegex = /<fileSharing\b[^>]*\/?>([\s\S]*?<\/fileSharing>)?/gi;
+                    if (fileSharingRegex.test(workbookXml)) {
+                        workbookXml = workbookXml.replace(fileSharingRegex, '');
+                        logs.push('ลบการบังคับอ่านอย่างเดียว / รหัสผ่านเขียนทับ (<fileSharing>) สำเร็จ');
+                    }
+                }
+
+                if (optUnhideSheets) {
+                    const hiddenAttrRegex = /\s+state="(hidden|veryHidden)"/gi;
+                    if (hiddenAttrRegex.test(workbookXml)) {
+                        workbookXml = workbookXml.replace(hiddenAttrRegex, '');
+                        logs.push('ยกเลิกการซ่อนชีตทั้งหมด (Hidden & VeryHidden -> Visible) สำเร็จ');
+                    }
+                }
+
+                if (optBreakLinks && externalLinkPaths.length > 0) {
+                    // ลบแท็ก <externalReferences> ใน workbook.xml
+                    const extRefRegex = /<externalReferences\b[^>]*>[\s\S]*?<\/externalReferences>/gi;
+                    workbookXml = workbookXml.replace(extRefRegex, '');
+
+                    // ลบไฟล์ภายใต้ xl/externalLinks/
+                    externalLinkPaths.forEach(path => currentZip.remove(path));
+
+                    // ลบ Relationship ของ externalLink ใน xl/_rels/workbook.xml.rels
+                    const relsFile = currentZip.file('xl/_rels/workbook.xml.rels');
+                    if (relsFile) {
+                        let relsXml = await relsFile.async('string');
+                        relsXml = relsXml.replace(/<Relationship\b[^>]*Type="[^"]*externalLink"[^>]*\/?>/gi, '');
+                        currentZip.file('xl/_rels/workbook.xml.rels', relsXml);
+                    }
+                    logs.push(`ตัดการเชื่อมโยงไฟล์ภายนอก (External Links) จำนวน ${externalLinkPaths.length} รายการสำเร็จ`);
+                }
+
+                currentZip.file('xl/workbook.xml', workbookXml);
+
+                // 2. แก้ไขแต่ละชีตตามที่เลือกในตาราง (Unlock Sheet & Remove Data Validations)
+                let unlockedSheetCounter = 0;
+                let removedValidationCounter = 0;
+
+                for (const sheet of inspectedSheets) {
+                    const entry = currentZip.file(sheet.xmlPath);
+                    if (!entry) continue;
+
+                    let sheetXml = await entry.async('string');
+                    let modified = false;
+
+                    if (sheet.unlockChecked) {
+                        const sheetProtRegex = /<sheetProtection\b[^>]*\/?>([\s\S]*?<\/sheetProtection>)?/gi;
+                        if (sheetProtRegex.test(sheetXml)) {
+                            sheetProtRegex.lastIndex = 0;
+                            sheetXml = sheetXml.replace(sheetProtRegex, '');
+                            modified = true;
+                            unlockedSheetCounter++;
+                        }
+                    }
+
+                    if (sheet.removeValidationChecked) {
+                        const dataValRegex = /<dataValidations\b[^>]*>[\s\S]*?<\/dataValidations>/gi;
+                        if (dataValRegex.test(sheetXml)) {
+                            dataValRegex.lastIndex = 0;
+                            sheetXml = sheetXml.replace(dataValRegex, '');
+                            modified = true;
+                            removedValidationCounter++;
+                        }
+                    }
+
+                    if (modified) {
+                        currentZip.file(sheet.xmlPath, sheetXml);
+                    }
+                }
+
+                if (unlockedSheetCounter > 0) {
+                    logs.push(`ปลดล็อกรหัสผ่านป้องกันการแก้ไขชีตจำนวน ${unlockedSheetCounter} ชีตสำเร็จ`);
+                }
+                if (removedValidationCounter > 0) {
+                    logs.push(`ลบตัวล็อกการกรอกข้อมูล (Data Validation / Dropdown) ใน ${removedValidationCounter} ชีตสำเร็จ`);
+                }
+
+                // 3. ลบข้อมูลส่วนตัวผู้สร้างไฟล์ (Clean Metadata)
+                if (optCleanMetadata) {
+                    const coreFile = currentZip.file('docProps/core.xml');
+                    if (coreFile) {
+                        let coreXml = await coreFile.async('string');
+                        coreXml = coreXml
+                            .replace(/<dc:creator>[\s\S]*?<\/dc:creator>/gi, '<dc:creator></dc:creator>')
+                            .replace(/<cp:lastModifiedBy>[\s\S]*?<\/cp:lastModifiedBy>/gi, '<cp:lastModifiedBy></cp:lastModifiedBy>');
+                        currentZip.file('docProps/core.xml', coreXml);
+                    }
+                    const appFile = currentZip.file('docProps/app.xml');
+                    if (appFile) {
+                        let appXml = await appFile.async('string');
+                        appXml = appXml.replace(/<Company>[\s\S]*?<\/Company>/gi, '<Company></Company>');
+                        currentZip.file('docProps/app.xml', appXml);
+                    }
+                    logs.push('ล้างข้อมูลส่วนตัวผู้สร้างไฟล์ (Creator, LastModifiedBy, Company) เรียบร้อยแล้ว');
+                }
+
+                if (logs.length === 0) {
+                    logs.push('ไม่พบรายการที่ต้องแก้ไขเพิ่มเติม — ส่งออกไฟล์ต้นฉบับที่สมบูรณ์พร้อมใช้งาน');
+                }
+
+                // 4. บีบอัดกลับเป็นไฟล์ .xlsx หรือ .xlsm และสั่งดาวน์โหลด
+                const origName = currentOriginalFile.name;
+                const lowerName = origName.toLowerCase();
+                const mimeType = lowerName.endsWith('.xlsm')
+                    ? 'application/vnd.ms-excel.sheet.macroEnabled.12'
+                    : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+                const outputBlob = await currentZip.generateAsync({
+                    type: 'blob',
+                    mimeType: mimeType,
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                const lastDot = origName.lastIndexOf('.');
+                const outName = `${origName.substring(0, lastDot)}_unlocked${origName.substring(lastDot)}`;
+
+                const url = URL.createObjectURL(outputBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = outName;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 150);
+
+                // แสดง Execution Log ด้านล่าง
+                const logBox = document.getElementById('processLogBox');
+                const logList = document.getElementById('processLogList');
+                document.getElementById('outputFileNameBadge').textContent = outName;
+                logList.innerHTML = logs.map(item => `<li><span class="text-emerald-400 mr-2">&gt;</span>${escapeHtml(item)}</li>`).join('');
+                logBox.classList.remove('hidden');
+
+                showToast(`ดาวน์โหลดไฟล์ "${outName}" เรียบร้อยแล้ว!`);
+
+            } catch (err) {
+                console.error('Excel Build Error:', err);
+                showError('เกิดข้อผิดพลาดระหว่างสร้างไฟล์ Excel ฉบับปลดล็อก: ' + (err.message || 'Unknown Error'));
+            }
+        }
+    </script>
+</body>
+
+</html>
