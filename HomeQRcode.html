@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLEVERTENSAI — QR Code Generator</title>
+    <title>CLEVERTENSAI — QR Code Generator (ISO/IEC 18004)</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -130,14 +130,12 @@
             accent-color: #FF1E42;
         }
 
-        /* Crisp Pixelated QR Rendering */
+        /* Crisp QR Rendering */
         #qr-canvas {
             max-width: 100%;
             max-height: 100%;
             border-radius: 0.75rem;
             box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
         }
 
         /* Laser Scanline Effect */
@@ -173,12 +171,12 @@
             <a href="index.html" class="flex items-center gap-2.5 group">
                 <div
                     class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-qrcode"></i>
+                    <i class="fa-solid fa-file-excel"></i>
                 </div>
                 <div class="flex flex-col">
                     <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span
                             class="text-red-500">TENSAI</span></span>
-                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">QR STUDIO ENGINE</span>
+                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">EXCEL UNLOCK ENGINE</span>
                 </div>
             </a>
         </div>
@@ -200,6 +198,11 @@
                 <i class="fa-solid fa-grip text-red-500"></i>
                 <span>Hub</span>
             </button>
+
+            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                XML ENGINE
+            </span>
 
             <a href="index.html"
                 class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all">
@@ -260,26 +263,26 @@
                     <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์ แยกหน้า และแก้ไขเอกสาร PDF</span>
                 </a>
 
-                <!-- Excel Unlock -->
+                <!-- Excel Unlock (Current) -->
                 <a href="HomeExcelUnlock.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Excel Unlock Pro</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ปลดล็อกรหัสผ่านแผ่นงานและสมุดงาน Excel</span>
-                </a>
-
-                <!-- QR Code (Current) -->
-                <a href="HomeQRcode.html"
                     class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                     <div
                         class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <span class="font-extrabold text-base text-red-400">Excel Unlock Pro</span>
+                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                </a>
+
+                <!-- QR Code -->
+                <a href="HomeQRcode.html"
+                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
-                    <span class="font-extrabold text-base text-red-400">QR Code Generator</span>
-                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">QR Code Generator</span>
+                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">สร้าง QR Code ภาษาไทย ลิงก์ และ Wi-Fi</span>
                 </a>
             </div>
         </div>
@@ -307,13 +310,13 @@
             <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
                     <i class="fa-solid fa-qrcode text-[11px]"></i>
-                    <span>QR CODE GENERATOR</span>
+                    <span>QR MATRIX GENERATOR // UTF-8 & LOGO ENGINE</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark">
-                    เครื่องมือสร้าง <span class="text-crimson-500">QR Code</span>
+                    เครื่องมือสร้าง <span class="text-crimson-500">QR Code</span> มาตรฐานสากล
                 </h1>
                 <p class="text-tech-muted text-sm mt-1">
-                    สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ และรหัส Wi-Fi ความคมชัดสูง สแกนติด 100% บนทุกอุปกรณ์
+                    สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ รหัส Wi-Fi พร้อมฝังโลโก้บริษัทตรงกลาง สแกนติดคมชัดบนทุกอุปกรณ์
                 </p>
             </div>
 
@@ -322,7 +325,7 @@
                     <i class="fa-solid fa-shield-check text-crimson-500 mr-1.5"></i>100% Client-Side
                 </span>
                 <span class="px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold shadow-sm">
-                    v3.0
+                    v3.1
                 </span>
             </div>
         </div>
@@ -331,7 +334,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
             <!-- ============================================================= -->
-            <!-- ฝั่งซ้าย (7 Cols): ตั้งค่าข้อมูลและรูปแบบ QR Code                -->
+            <!-- ฝั่งซ้าย (7 Cols): ตั้งค่าข้อมูล โลโก้ และรูปแบบ QR Code          -->
             <!-- ============================================================= -->
             <div class="lg:col-span-7 tech-card rounded-2xl p-5 sm:p-7 space-y-6">
 
@@ -436,11 +439,101 @@
 
                 <hr class="border-tech-border">
 
-                <!-- 2. ปรับแต่งสี -->
+                <!-- 2. โลโก้บริษัทตรงกลาง (Center Company Logo) -->
                 <div>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div class="flex items-center gap-2">
                             <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
+                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">โลโก้บริษัทตรงกลาง (Center Logo)</span>
+                        </div>
+                        <button type="button" id="remove-logo-btn" onclick="clearLogo()"
+                            class="hidden px-2.5 py-1 rounded-lg text-xs font-mono text-crimson-600 hover:bg-crimson-50 border border-crimson-200 transition cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can text-[11px]"></i>
+                            <span>ลบโลโก้</span>
+                        </button>
+                    </div>
+
+                    <!-- กล่องอัปโหลดไฟล์โลโก้ -->
+                    <div class="p-4 rounded-xl bg-tech-panel/60 border border-tech-border space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div id="logo-thumb-box"
+                                    class="w-12 h-12 rounded-xl bg-white border border-gray-300 flex items-center justify-center text-tech-muted shrink-0 overflow-hidden shadow-sm">
+                                    <img id="logo-thumb-img" src="" alt="Logo Preview" class="hidden w-full h-full object-contain p-1">
+                                    <i id="logo-thumb-placeholder" class="fa-regular fa-building text-lg text-crimson-500"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div id="logo-file-name" class="text-xs font-bold text-tech-dark truncate">
+                                        ยังไม่ได้อัปโหลดโลโก้บริษัท
+                                    </div>
+                                    <div class="font-mono text-[11px] text-tech-muted mt-0.5">
+                                        รองรับ PNG, JPG, SVG, WebP (แนะนำพื้นใสหรือสี่เหลี่ยมจัตุรัส)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label for="logo-file-input"
+                                class="px-4 py-2.5 rounded-xl bg-gray-950 hover:bg-gray-800 text-white font-semibold text-xs flex items-center justify-center gap-2 transition cursor-pointer shrink-0 shadow-sm">
+                                <i class="fa-solid fa-upload text-crimson-500"></i>
+                                <span>เลือกไฟล์โลโก้</span>
+                            </label>
+                            <input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden">
+                        </div>
+
+                        <!-- ตัวควบคุมขนาดโลโก้และกรอบ Quiet Zone (แสดง/ใช้งานได้ตลอดเวลา) -->
+                        <div id="logo-controls" class="pt-3 border-t border-tech-border/80 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                                <!-- Logo Size Slider (12% - 25% of QR matrix area) -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="logo-size-slider" class="text-xs font-bold text-tech-dark">
+                                            ขนาดโลโก้เทียบกับ QR
+                                        </label>
+                                        <span id="logo-size-label"
+                                            class="px-2 py-0.5 rounded-md bg-white border border-tech-border text-crimson-600 font-mono text-xs font-bold">
+                                            18%
+                                        </span>
+                                    </div>
+                                    <input type="range" id="logo-size-slider" min="12" max="25" step="1" value="18"
+                                        class="w-full cursor-pointer">
+                                    <div class="flex justify-between font-mono text-[10px] text-tech-muted mt-1">
+                                        <span>12% (สแกนง่ายมาก)</span>
+                                        <span>25% (สูงสุดที่แนะนำ)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Quiet-zone padding / background toggle -->
+                                <div class="space-y-2">
+                                    <label class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-tech-border cursor-pointer select-none">
+                                        <span class="text-xs font-semibold text-tech-dark flex items-center gap-2">
+                                            <i class="fa-regular fa-square text-crimson-500"></i>
+                                            <span>พื้นหลังเว้นระยะขอบ (Quiet Zone)</span>
+                                        </span>
+                                        <input type="checkbox" id="logo-padding-toggle" checked
+                                            class="w-4 h-4 accent-[#FF1E42] rounded cursor-pointer">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- แจ้งเตือน / แนะนำระดับ ECC เมื่อเปิดใช้งานโลโก้ -->
+                            <div id="logo-ecc-notice"
+                                class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+                                <i class="fa-solid fa-shield-halved text-amber-600 text-sm mt-0.5 shrink-0"></i>
+                                <div id="logo-ecc-notice-text" class="leading-relaxed">
+                                    ระบบปรับระดับกู้คืนข้อมูล (ECC) เป็น <strong>Q / H</strong> อัตโนมัติเพื่อให้กล้องสแกนติดแม้มีโลโก้บังตรงกลาง
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-tech-border">
+
+                <!-- 3. ปรับแต่งสี -->
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">03</span>
                             <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">ปรับแต่งสี (Colors)</span>
                         </div>
 
@@ -492,12 +585,12 @@
 
                 <hr class="border-tech-border">
 
-                <!-- 3. ขนาดและระดับการกู้คืนข้อมูล -->
+                <!-- 4. ขนาดและระดับการกู้คืนข้อมูล -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">03</span>
+                                <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">04</span>
                                 <label class="text-sm font-bold text-tech-dark uppercase tracking-wide" for="qr-size">ขนาดรูปภาพ</label>
                             </div>
                             <span id="size-label" class="px-2.5 py-0.5 rounded-md bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-bold">
@@ -521,7 +614,7 @@
                             <option value="L">ต่ำ (L - 7%) - จุดห่าง สแกนง่าย</option>
                             <option value="M" selected>ปานกลาง (M - 15%) - แนะนำ</option>
                             <option value="Q">ค่อนข้างสูง (Q - 25%)</option>
-                            <option value="H">สูงสุด (H - 30%) - ทนรอยขีดข่วน</option>
+                            <option value="H">สูงสุด (H - 30%) - ทนรอยขีดข่วน / มีโลโก้</option>
                         </select>
                     </div>
                 </div>
@@ -537,9 +630,9 @@
                 <div class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex items-center justify-between text-white">
                     <div class="flex items-center gap-2.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-crimson-500"></span>
-                        <h2 class="font-bold text-sm tracking-wider uppercase font-mono">LIVE QR CODE PREVIEW</h2>
+                        <h2 class="font-bold text-sm tracking-wider uppercase font-mono">LIVE QR MATRIX PREVIEW</h2>
                     </div>
-                    <span class="font-mono text-[11px] text-gray-400">SCAN READY</span>
+                    <span id="preview-mode-badge" class="font-mono text-[11px] text-gray-400">SCAN READY</span>
                 </div>
 
                 <div class="p-6 flex flex-col items-center text-center">
@@ -575,7 +668,7 @@
                             <div id="preview-resolution" class="text-xs font-bold text-tech-dark font-mono mt-0.5">300 × 300 พิกเซล</div>
                         </div>
                         <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border">
-                            <div class="text-[10px] font-mono text-tech-muted uppercase">Data Mode</div>
+                            <div class="text-[10px] font-mono text-tech-muted uppercase">Data / Logo Mode</div>
                             <div id="encoded-badge" class="text-xs font-bold text-crimson-600 font-mono mt-0.5 truncate">ข้อความ (UTF-8)</div>
                         </div>
                     </div>
@@ -704,17 +797,6 @@
                 return pattern;
             };
 
-            var setupTimingPattern = function() {
-                for (var r = 8; r < _moduleCount - 8; r += 1) {
-                    if (_modules[r][6] != null) continue;
-                    _modules[r][6] = (r % 2 == 0);
-                }
-                for (var c = 8; r < _moduleCount - 8; c += 1) {
-                    if (_modules[6][c] != null) continue;
-                    _modules[6][c] = (c % 2 == 0);
-                }
-            };
-
             var setupTimingPatternFixed = function() {
                 for (var r = 8; r < _moduleCount - 8; r += 1) {
                     if (_modules[r][6] != null) continue;
@@ -725,7 +807,7 @@
                     _modules[6][c] = (c % 2 == 0);
                 }
             };
-            setupTimingPattern = setupTimingPatternFixed;
+            var setupTimingPattern = setupTimingPatternFixed;
 
             var setupPositionAdjustPattern = function() {
                 var pos = QRUtil.getPatternPosition(_typeNumber);
@@ -1346,9 +1428,10 @@
     </script>
 
     <!-- =====================================================================
-         ส่วนควบคุมหน้าเว็บและการวาด Canvas ความคมชัดสูง (Application Logic)
+         ส่วนควบคุมหน้าเว็บ การฝังโลโก้ และการวาด Canvas ความคมชัดสูง
          ===================================================================== -->
     <script>
+        // อ้างอิง DOM Elements
         const qrTextInput = document.getElementById('qr-text');
         const wifiSsidInput = document.getElementById('wifi-ssid');
         const wifiPassInput = document.getElementById('wifi-pass');
@@ -1357,17 +1440,32 @@
         const standardInputBox = document.getElementById('standard-input-box');
         const wifiInputBox = document.getElementById('wifi-input-box');
 
+        // Logo controls
+        const logoFileInput = document.getElementById('logo-file-input');
+        const removeLogoBtn = document.getElementById('remove-logo-btn');
+        const logoThumbImg = document.getElementById('logo-thumb-img');
+        const logoThumbPlaceholder = document.getElementById('logo-thumb-placeholder');
+        const logoFileName = document.getElementById('logo-file-name');
+        const logoSizeSlider = document.getElementById('logo-size-slider');
+        const logoSizeLabel = document.getElementById('logo-size-label');
+        const logoPaddingToggle = document.getElementById('logo-padding-toggle');
+        const logoEccNotice = document.getElementById('logo-ecc-notice');
+        const logoEccNoticeText = document.getElementById('logo-ecc-notice-text');
+
+        // QR style controls
         const qrFgColorInput = document.getElementById('qr-fg-color');
         const qrBgColorInput = document.getElementById('qr-bg-color');
         const qrSizeInput = document.getElementById('qr-size');
         const qrLevelInput = document.getElementById('qr-level');
 
+        // Labels & Preview elements
         const fgHexLabel = document.getElementById('fg-hex-label');
         const bgHexLabel = document.getElementById('bg-hex-label');
         const contrastWarning = document.getElementById('contrast-warning');
         const sizeLabel = document.getElementById('size-label');
         const previewResolution = document.getElementById('preview-resolution');
         const encodedBadge = document.getElementById('encoded-badge');
+        const previewModeBadge = document.getElementById('preview-mode-badge');
         const payloadPreview = document.getElementById('payload-preview');
         const byteLengthLabel = document.getElementById('byte-length-label');
 
@@ -1381,6 +1479,11 @@
 
         let currentMode = 'text';
         let toastTimer = null;
+
+        // สถานะโลโก้บริษัทที่อัปโหลด
+        let activeLogoImage = null;
+        let activeLogoObjectUrl = null;
+        let activeLogoName = '';
 
         /**
          * เปิด/ปิด Popup All Web Apps Hub
@@ -1495,6 +1598,193 @@
         }
 
         /**
+         * จัดการการอัปโหลดโลโก้บริษัท (PNG, JPG, SVG, WebP)
+         */
+        function handleLogoUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+            if (!allowedTypes.includes(file.type) && !/\.(png|jpe?g|webp|svg)$/i.test(file.name)) {
+                showToast('รองรับเฉพาะไฟล์โลโก้ PNG, JPG, SVG หรือ WebP', true);
+                logoFileInput.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('ขนาดไฟล์โลโก้ควรไม่เกิน 5MB เพื่อประสิทธิภาพที่ดี', true);
+                logoFileInput.value = '';
+                return;
+            }
+
+            try {
+                if (activeLogoObjectUrl) {
+                    URL.revokeObjectURL(activeLogoObjectUrl);
+                }
+                const objectUrl = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = function () {
+                    activeLogoImage = img;
+                    activeLogoObjectUrl = objectUrl;
+                    activeLogoName = file.name;
+
+                    logoThumbImg.src = objectUrl;
+                    logoThumbImg.classList.remove('hidden');
+                    logoThumbPlaceholder.classList.add('hidden');
+                    logoFileName.textContent = file.name;
+                    removeLogoBtn.classList.remove('hidden');
+
+                    // ปรับระดับ ECC เป็น Q หรือ H อัตโนมัติเมื่อเปิดใช้โลโก้ครั้งแรก หากเดิมตั้งไว้ต่ำกว่า Q
+                    const logoPct = parseInt(logoSizeSlider.value, 10);
+                    const recommendedLevel = logoPct >= 20 ? 'H' : 'Q';
+                    if (qrLevelInput.value === 'L' || qrLevelInput.value === 'M') {
+                        qrLevelInput.value = recommendedLevel;
+                        showToast('อัปโหลดโลโก้สำเร็จ และปรับ ECC เป็นระดับ ' + recommendedLevel + ' อัตโนมัติ');
+                    } else {
+                        showToast('อัปโหลดโลโก้บริษัทเรียบร้อยแล้ว');
+                    }
+
+                    generateQRCode();
+                };
+                img.onerror = function () {
+                    URL.revokeObjectURL(objectUrl);
+                    showToast('ไม่สามารถอ่านไฟล์รูปภาพโลโก้ได้', true);
+                };
+                img.src = objectUrl;
+            } catch (err) {
+                console.error('Logo upload error:', err);
+                showToast('เกิดข้อผิดพลาดในการโหลดโลโก้', true);
+            }
+        }
+
+        /**
+         * ล้าง/ลบโลโก้ออกจาก QR Code
+         */
+        function clearLogo() {
+            if (activeLogoObjectUrl) {
+                URL.revokeObjectURL(activeLogoObjectUrl);
+                activeLogoObjectUrl = null;
+            }
+            activeLogoImage = null;
+            activeLogoName = '';
+            logoFileInput.value = '';
+
+            logoThumbImg.src = '';
+            logoThumbImg.classList.add('hidden');
+            logoThumbPlaceholder.classList.remove('hidden');
+            logoFileName.textContent = 'ยังไม่ได้อัปโหลดโลโก้บริษัท';
+            removeLogoBtn.classList.add('hidden');
+            logoEccNotice.classList.add('hidden');
+
+            showToast('ลบโลโก้ออกจาก QR Code แล้ว');
+            generateQRCode();
+        }
+
+        /**
+         * ตรวจสอบและแนะนำระดับ ECC เมื่อใช้งานโลโก้
+         */
+        function syncEccForLogo(logoRatioPct) {
+            if (!activeLogoImage) {
+                logoEccNotice.classList.add('hidden');
+                return;
+            }
+
+            const currentLevel = qrLevelInput.value;
+            const minRecommended = logoRatioPct >= 20 ? 'H' : 'Q';
+
+            // หากขนาดโลโก้ใหญ่ (>= 20%) และระดับ ECC ยังเป็น L, M หรือ Q ให้แนะนำ/ขยับเป็น H
+            if (logoRatioPct >= 20 && currentLevel !== 'H') {
+                qrLevelInput.value = 'H';
+                logoEccNotice.classList.remove('hidden');
+                logoEccNoticeText.innerHTML =
+                    'ขนาดโลโก้ <strong>' + logoRatioPct + '%</strong> ค่อนข้างใหญ่ ระบบจึงปรับ ECC เป็น <strong>สูงสุด (H - 30%)</strong> อัตโนมัติเพื่อความแม่นยำในการสแกน';
+                return;
+            }
+
+            // หากระดับ ECC เป็น L หรือ M ขณะมีโลโก้ ให้ขยับเป็น Q อัตโนมัติ
+            if ((currentLevel === 'L' || currentLevel === 'M') && minRecommended === 'Q') {
+                qrLevelInput.value = 'Q';
+                logoEccNotice.classList.remove('hidden');
+                logoEccNoticeText.innerHTML =
+                    'เมื่อมีโลโก้ตรงกลาง ระบบปรับ ECC เป็น <strong>ค่อนข้างสูง (Q - 25%)</strong> อัตโนมัติ (แนะนำ <strong>Q</strong> หรือ <strong>H</strong> เสมอ)';
+                return;
+            }
+
+            logoEccNotice.classList.remove('hidden');
+            logoEccNoticeText.innerHTML =
+                'กำลังใช้ ECC ระดับ <strong>' + qrLevelInput.value + '</strong> ร่วมกับโลโก้ขนาด <strong>' + logoRatioPct + '%</strong> — พร้อมสแกนได้อย่างเสถียร';
+        }
+
+        /**
+         * วาดกรอบสี่เหลี่ยมมุมมนบน Canvas
+         */
+        function drawRoundedRect(ctx, x, y, width, height, radius) {
+            const r = Math.min(radius, width / 2, height / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + width, y, x + width, y + height, r);
+            ctx.arcTo(x + width, y + height, x, y + height, r);
+            ctx.arcTo(x, y + height, x, y, r);
+            ctx.arcTo(x, y, x + width, y, r);
+            ctx.closePath();
+        }
+
+        /**
+         * วาดโลโก้บริษัทตรงกลางพื้นที่เมทริกซ์ QR พร้อมพื้นหลัง/ระยะขอบ Quiet Zone
+         */
+        function drawCenterLogo(ctx, matrixX, matrixY, matrixSize, bgColor, logoPct, withPadding) {
+            if (!activeLogoImage) return;
+
+            // คำนวณขนาดโลโก้ตามสัดส่วนของพื้นที่เมทริกซ์ QR (12% - 25%)
+            const logoBoxSize = Math.round(matrixSize * (logoPct / 100));
+            const centerX = matrixX + matrixSize / 2;
+            const centerY = matrixY + matrixSize / 2;
+
+            // ระยะขอบ Quiet Zone รอบโลโก้เพื่อไม่ให้จุด QR ชิดโลโก้เกินไป
+            const padSize = withPadding ? Math.max(6, Math.round(logoBoxSize * 0.16)) : 0;
+            const totalBoxSize = logoBoxSize + padSize * 2;
+            const boxLeft = centerX - totalBoxSize / 2;
+            const boxTop = centerY - totalBoxSize / 2;
+            const cornerRadius = Math.max(6, Math.round(totalBoxSize * 0.18));
+
+            ctx.save();
+
+            if (withPadding) {
+                // วาดพื้นหลัง Quiet Zone สีเดียวกับพื้นหลัง QR (หรือสีขาวหากพื้นหลังโปร่งใส)
+                ctx.fillStyle = bgColor || '#ffffff';
+                drawRoundedRect(ctx, boxLeft, boxTop, totalBoxSize, totalBoxSize, cornerRadius);
+                ctx.fill();
+            }
+
+            // คำนวณสัดส่วนภาพต้นฉบับ (Aspect Ratio) ให้อยู่ภายในกรอบโลโก้อย่างพอดีโดยไม่บิดเบี้ยว
+            const imgW = activeLogoImage.naturalWidth || activeLogoImage.width || 100;
+            const imgH = activeLogoImage.naturalHeight || activeLogoImage.height || 100;
+            const aspect = imgW / imgH;
+
+            let drawW = logoBoxSize;
+            let drawH = logoBoxSize;
+            if (aspect > 1) {
+                drawH = logoBoxSize / aspect;
+            } else if (aspect < 1) {
+                drawW = logoBoxSize * aspect;
+            }
+
+            const drawX = centerX - drawW / 2;
+            const drawY = centerY - drawH / 2;
+            const innerRadius = Math.max(4, Math.round(Math.min(drawW, drawH) * 0.14));
+
+            // ตัดขอบมุมมนให้โลโก้และวาดด้วย High Quality Smoothing
+            drawRoundedRect(ctx, drawX, drawY, drawW, drawH, innerRadius);
+            ctx.clip();
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(activeLogoImage, drawX, drawY, drawW, drawH);
+
+            ctx.restore();
+        }
+
+        /**
          * สร้าง QR Code และวาดลงบน Canvas ด้วยความคมชัดระดับพิกเซล
          */
         function generateQRCode() {
@@ -1503,14 +1793,19 @@
             const fgColor = qrFgColorInput.value;
             const bgColor = qrBgColorInput.value;
             const size = parseInt(qrSizeInput.value, 10);
-            const level = qrLevelInput.value;
+            const logoPct = parseInt(logoSizeSlider.value, 10);
+            const withPadding = logoPaddingToggle.checked;
 
             fgHexLabel.textContent = fgColor.toUpperCase();
             bgHexLabel.textContent = bgColor.toUpperCase();
             sizeLabel.textContent = size + ' x ' + size + ' px';
+            logoSizeLabel.textContent = logoPct + '%';
             previewResolution.textContent = size + ' × ' + size + ' พิกเซล';
 
             checkColorContrast(fgColor, bgColor);
+            syncEccForLogo(logoPct);
+
+            const level = qrLevelInput.value;
 
             if (!hasContent) {
                 qrCanvas.classList.add('hidden');
@@ -1520,16 +1815,18 @@
                 copyBtn.disabled = true;
                 payloadPreview.textContent = '-';
                 byteLengthLabel.textContent = '0 bytes';
+                previewModeBadge.textContent = activeLogoImage ? 'LOGO READY' : 'SCAN READY';
                 return;
             }
 
-            if (currentMode === 'wifi') {
-                encodedBadge.textContent = 'เครือข่าย Wi-Fi';
-            } else if (/^https?:\/\//i.test(rawText.trim())) {
-                encodedBadge.textContent = 'ลิงก์เว็บไซต์ (URL)';
-            } else {
-                encodedBadge.textContent = 'ข้อความ (UTF-8)';
-            }
+            const modeLabel = currentMode === 'wifi'
+                ? 'เครือข่าย Wi-Fi'
+                : (/^https?:\/\//i.test(rawText.trim()) ? 'ลิงก์เว็บไซต์ (URL)' : 'ข้อความ (UTF-8)');
+
+            encodedBadge.textContent = activeLogoImage
+                ? modeLabel + ' + Logo (' + logoPct + '%)'
+                : modeLabel;
+            previewModeBadge.textContent = activeLogoImage ? 'ECC ' + level + ' • LOGO' : 'SCAN READY';
 
             try {
                 const qr = qrcode(0, level);
@@ -1550,7 +1847,7 @@
                 copyBtn.disabled = false;
 
                 verifyText.textContent = finderValid
-                    ? 'โครงสร้าง QR ผ่านมาตรฐาน (V' + version + ' • ' + moduleCount + '×' + moduleCount + ')'
+                    ? 'โครงสร้าง QR ผ่านมาตรฐาน (V' + version + ' • ECC ' + level + (activeLogoImage ? ' • โลโก้ ' + logoPct + '%' : '') + ')'
                     : 'กำลังตรวจสอบโครงสร้าง QR...';
 
                 byteLengthLabel.textContent = utf8Bytes.length + ' bytes (UTF-8)';
@@ -1559,15 +1856,22 @@
                 const ctx = qrCanvas.getContext('2d');
                 qrCanvas.width = size;
                 qrCanvas.height = size;
-                ctx.imageSmoothingEnabled = false;
 
+                // วาดพื้นหลังทั้งหมดก่อน
+                ctx.imageSmoothingEnabled = false;
                 ctx.fillStyle = bgColor;
                 ctx.fillRect(0, 0, size, size);
 
+                // คำนวณ Quiet Zone รอบเมทริกซ์ QR (4 modules ตามมาตรฐาน ISO/IEC 18004)
                 const quietZone = 4;
                 const totalModules = moduleCount + (quietZone * 2);
                 const cellSize = size / totalModules;
 
+                const matrixX = Math.floor(quietZone * cellSize);
+                const matrixY = Math.floor(quietZone * cellSize);
+                const matrixSize = Math.floor(moduleCount * cellSize);
+
+                // วาดจุดโมดูล QR Code แบบคมชัดระดับพิกเซล
                 ctx.fillStyle = fgColor;
                 for (let row = 0; row < moduleCount; row++) {
                     for (let col = 0; col < moduleCount; col++) {
@@ -1579,6 +1883,11 @@
                             ctx.fillRect(x, y, w, h);
                         }
                     }
+                }
+
+                // วาดโลโก้บริษัทตรงกลางเมทริกซ์ QR หากมีไฟล์โลโก้
+                if (activeLogoImage) {
+                    drawCenterLogo(ctx, matrixX, matrixY, matrixSize, bgColor, logoPct, withPadding);
                 }
             } catch (err) {
                 console.error('QR Error:', err);
@@ -1596,7 +1905,7 @@
         }
 
         /**
-         * ดาวน์โหลดรูปภาพ QR Code เป็นไฟล์ PNG
+         * ดาวน์โหลดรูปภาพ QR Code เป็นไฟล์ PNG (รวมโลโก้บน Canvas)
          */
         function downloadQRCode() {
             const text = getPayloadData().trim();
@@ -1608,7 +1917,8 @@
                 const dataUrl = qrCanvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 const dateStr = new Date().toISOString().slice(0, 10);
-                link.download = 'clevertensai-qr-' + dateStr + '.png';
+                const suffix = activeLogoImage ? '-logo' : '';
+                link.download = 'clevertensai-qr' + suffix + '-' + dateStr + '.png';
                 link.href = dataUrl;
                 document.body.appendChild(link);
                 link.click();
@@ -1620,7 +1930,7 @@
         }
 
         /**
-         * คัดลอกรูปภาพ QR Code ลงคลิปบอร์ด
+         * คัดลอกรูปภาพ QR Code ลงคลิปบอร์ด (รวมโลโก้บน Canvas)
          */
         async function copyQRCodeImage() {
             const text = getPayloadData().trim();
@@ -1651,6 +1961,10 @@
         wifiSsidInput.addEventListener('input', generateQRCode);
         wifiPassInput.addEventListener('input', generateQRCode);
         wifiTypeInput.addEventListener('change', generateQRCode);
+
+        logoFileInput.addEventListener('change', handleLogoUpload);
+        logoSizeSlider.addEventListener('input', generateQRCode);
+        logoPaddingToggle.addEventListener('change', generateQRCode);
 
         qrFgColorInput.addEventListener('input', generateQRCode);
         qrBgColorInput.addEventListener('input', generateQRCode);
