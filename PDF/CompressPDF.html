@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLEVERTENSAI — Compress PDF Studio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Space Grotesk, Prompt & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF.js for rendering PDF page previews & size estimation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- pdf-lib for client-side PDF rebuilding/compression -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <script>
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        crimson: {
+                            50: '#FFF5F5',
+                            100: '#FFE3E3',
+                            500: '#FF1E42',
+                            600: '#E63946',
+                            700: '#DC2626',
+                            900: '#991B1B'
+                        },
+                        tech: {
+                            white: '#FFFFFF',
+                            bg: '#FAF9F6',
+                            panel: '#F3F4F6',
+                            border: '#E5E7EB',
+                            dark: '#0F172A',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #0F172A;
+            background-image:
+                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
+                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+            background-size: 24px 24px, 48px 48px, 48px 48px;
+        }
+
+        /* High-tech custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF1E42;
+            border-radius: 3px;
+        }
+
+        /* Prominent, easy-to-grab scrollbar inside Quality Preview Modal */
+        .preview-scroll-area {
+            scrollbar-width: auto;
+            scrollbar-color: #64748B #1E293B;
+        }
+
+        .preview-scroll-area::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .preview-scroll-area::-webkit-scrollbar-track {
+            background: #1E293B;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+
+        .preview-scroll-area::-webkit-scrollbar-thumb {
+            background: #64748B;
+            border-radius: 6px;
+            border: 2px solid #1E293B;
+            transition: background-color 0.15s ease;
+        }
+
+        .preview-scroll-area::-webkit-scrollbar-thumb:hover,
+        .preview-scroll-area::-webkit-scrollbar-thumb:active {
+            background: #FF1E42;
+        }
+
+        .preview-scroll-area::-webkit-scrollbar-corner {
+            background: #0F172A;
+        }
+
+        .tech-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tech-card:hover {
+            border-color: rgba(255, 30, 66, 0.4);
+            box-shadow: 0 8px 25px -5px rgba(255, 30, 66, 0.08);
+        }
+
+        .red-glow {
+            box-shadow: 0 4px 16px rgba(255, 30, 66, 0.25);
+        }
+
+        .drag-over-active {
+            border-color: #FF1E42 !important;
+            background-color: #FFF5F5 !important;
+        }
+
+        /* Preset Card Styling */
+        .preset-card {
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .preset-card.selected {
+            border-color: #FF1E42 !important;
+            background-color: #FFF5F5 !important;
+            box-shadow: 0 4px 14px rgba(255, 30, 66, 0.14);
+        }
+
+        /* Laser Scanline Effect */
+        .scanline {
+            background: linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 30, 66, 0.16),
+                    rgba(255, 255, 255, 0));
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(1000%);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-full flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
+
+    <!-- ===================================================================== -->
+    <!-- START: CLEVERTENSAI Global Navbar & Navigation Hub                    -->
+    <!-- ===================================================================== -->
+    <nav
+        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
+        <!-- ฝั่งซ้าย: โลโก้กลับ Main Portal (index.html) และปุ่มย้อนกลับ PDF Studio (HomePDF.html) -->
+        <div class="flex items-center gap-2.5 sm:gap-3.5">
+            <a href="../index.html" class="flex items-center gap-2.5 group" title="กลับสู่หน้าหลัก CLEVERTENSAI Portal">
+                <div
+                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
+                    <i class="fa-solid fa-file-zipper"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-sm sm:text-base font-extrabold tracking-wider leading-none">CLEVER<span
+                            class="text-red-500">TENSAI</span></span>
+                    <span class="hidden sm:inline font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">COMPRESS PDF STUDIO</span>
+                </div>
+            </a>
+
+            <span class="hidden sm:inline-block text-gray-700">|</span>
+
+            <a href="HomePDF.html"
+                class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-red-500/40 text-gray-300 hover:text-white font-mono text-[11px] transition-all"
+                title="กลับสู่ศูนย์รวมเครื่องมือ PDF">
+                <i class="fa-solid fa-arrow-left text-red-500 text-[10px]"></i>
+                <span>PDF Studio</span>
+            </a>
+        </div>
+
+        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเครื่องมือ (All Tools Hub) -->
+        <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+            <button onclick="toggleNavPopup()"
+                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
+                <i class="fa-solid fa-th text-red-500 group-hover:scale-110 transition-transform"></i>
+                <span>All Tools Hub</span>
+                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+            </button>
+        </div>
+
+        <!-- ฝั่งขวา: ปุ่ม Hub มือถือ, สถานะ System Online และไอคอนโปรไฟล์ -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <button onclick="toggleNavPopup()"
+                class="md:hidden px-2.5 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-lg text-gray-100 text-xs font-bold flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-th text-red-500"></i>
+                <span>Hub</span>
+            </button>
+
+            <div class="hidden lg:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>SYSTEM ONLINE</span>
+            </div>
+
+            <span class="lg:hidden inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+                title="System Online"></span>
+
+            <a href="../index.html"
+                class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 font-bold cursor-pointer hover:border-red-500 hover:text-white transition-colors"
+                title="Clever Tensai Main Portal">
+                <i class="fa-regular fa-user text-xs sm:text-sm"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ===================================================================== -->
+    <!-- Unified Navigation Modal Hub (PDF Studio Tools + Cross-App Switcher)  -->
+    <!-- ===================================================================== -->
+    <div id="navPopupModal"
+        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+        <div
+            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
+                        <i class="fa-solid fa-th"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
+                            CLEVERTENSAI Tools & Workspace Hub
+                        </h3>
+                        <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังเว็บแอปอื่น</p>
+                    </div>
+                </div>
+                <button onclick="toggleNavPopup()"
+                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto py-6 space-y-6">
+                <!-- กลุ่มที่ 1: PDF Studio Tools -->
+                <div>
+                    <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF)</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <!-- PDF Hub -->
+                        <a href="HomePDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">PDF Hub</span>
+                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">หน้ารวมเครื่องมือ PDF</span>
+                        </a>
+
+                        <!-- Merge PDF -->
+                        <a href="MergePDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-object-ungroup"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">Merge PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">รวมไฟล์เอกสารเป็นเล่ม</span>
+                        </a>
+
+                        <!-- Split PDF -->
+                        <a href="SplitPDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-scissors"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">Split PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">แยกและตัดหน้าเอกสาร</span>
+                        </a>
+
+                        <!-- Edit PDF -->
+                        <a href="EditPDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg mb-2.5 transition-all duration-200 group-hover:scale-110">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">Edit PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1 leading-relaxed">เขียน วาด พิมพ์ข้อความ</span>
+                        </a>
+
+                        <!-- Compress PDF (Active Current Page) -->
+                        <a href="CompressPDF.html"
+                            class="p-4 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-red-600 text-white flex items-center justify-center text-lg mb-2.5 shadow-md">
+                                <i class="fa-solid fa-file-zipper"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-red-400">Compress PDF</span>
+                            <span class="text-[11px] text-gray-300 mt-1 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- กลุ่มที่ 2: Quick Switch to Other CLEVERTENSAI Apps -->
+                <div class="pt-5 border-t border-gray-800">
+                    <div class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-red-500"></i>
+                        <span>OTHER CLEVERTENSAI APPS (สลับไปยังระบบอื่น)</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <a href="../index.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-house"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Main Portal</div>
+                                <div class="text-[11px] text-gray-400 truncate">หน้ารวมเว็บแอปพลิเคชันทั้งหมด</div>
+                            </div>
+                        </a>
+
+                        <a href="../HomeExcelUnlock.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Excel Unlocker</div>
+                                <div class="text-[11px] text-gray-400 truncate">ปลดล็อกชีตและสมุดงาน Excel</div>
+                            </div>
+                        </a>
+
+                        <a href="../HomeQRcode.html"
+                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-base shrink-0">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">QR Code Studio</div>
+                                <div class="text-[11px] text-gray-400 truncate">สร้าง QR Code ภาษาไทย/Wi-Fi</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END: CLEVERTENSAI Global Navbar & Navigation Hub -->
+
+    <!-- ===================================================================== -->
+    <!-- MAIN WORKSPACE                                                        -->
+    <!-- ===================================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+
+        <!-- Header Title HUD -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-6 gap-4 pb-6 border-b border-tech-border">
+            <div>
+                <div class="flex items-center gap-2 font-mono text-xs text-crimson-600 uppercase tracking-wider mb-1.5 font-semibold">
+                    <i class="fa-solid fa-file-zipper"></i>
+                    <span>SMART COMPRESSION &amp; SHARPNESS ENGINE &bull; 100% CLIENT-SIDE</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark">
+                    ลดขนาดไฟล์ <span class="text-crimson-500">PDF</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-tech-muted mt-1">
+                    บีบอัดไฟล์เอกสารให้เล็กลงพร้อมรักษาความคมชัดของตัวอักษร ประเมินขนาดไฟล์หลังลดให้เห็นทันทีก่อนกดดาวน์โหลด
+                </p>
+            </div>
+
+            <!-- Live HUD Stats Bar -->
+            <div class="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">FILE:</span>
+                    <span id="statFileName" class="font-bold text-tech-dark max-w-[140px] truncate">NONE</span>
+                </div>
+                <div class="bg-white border border-tech-border px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">ORIGINAL:</span>
+                    <span id="statOriginalSize" class="font-bold text-tech-dark">0 MB</span>
+                </div>
+                <div class="bg-white border border-crimson-200 px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-sm">
+                    <span class="text-tech-muted">ESTIMATED:</span>
+                    <span id="statEstimatedSize" class="font-bold text-crimson-600">0 MB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Initial Upload Dropzone -->
+        <div id="dropzone"
+            class="tech-card rounded-2xl p-10 sm:p-12 text-center cursor-pointer mb-8 transition-all border-2 border-dashed border-gray-300 hover:border-crimson-500 relative overflow-hidden group">
+            <div class="scanline absolute inset-0 pointer-events-none"></div>
+            <input type="file" id="fileInput" accept="application/pdf" class="hidden">
+
+            <div
+                class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-crimson-50 border border-crimson-100 flex items-center justify-center text-crimson-500 group-hover:bg-crimson-500 group-hover:text-white transition-all red-glow">
+                <i class="fa-solid fa-file-zipper text-2xl"></i>
+            </div>
+            <h3 class="text-base sm:text-lg font-bold text-tech-dark mb-1">
+                ลากไฟล์ PDF มาวางที่นี่ หรือ <span class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
+            </h3>
+            <p class="text-xs font-mono text-tech-muted">
+                รองรับไฟล์เอกสาร .PDF ทุกขนาดหน้า &bull; ประมวลผลในเบราว์เซอร์ 100% ปลอดภัยไร้การอัปโหลด
+            </p>
+        </div>
+
+        <!-- Active PDF Compression Workspace (Hidden initially) -->
+        <div id="compressWorkspace" class="hidden flex-grow flex flex-col space-y-6">
+
+            <!-- File Info Bar -->
+            <div
+                class="tech-card rounded-2xl p-5 border border-tech-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono">
+                <div class="flex items-center gap-3.5 min-w-0 w-full sm:w-auto">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-file-pdf text-xl"></i>
+                    </div>
+                    <div class="min-w-0 flex-grow">
+                        <h3 id="activeDocName" class="font-bold text-tech-dark text-xs sm:text-sm truncate">
+                            document.pdf</h3>
+                        <p id="activeDocMeta" class="text-[11px] text-tech-muted mt-0.5">0 PAGES // 0.00 MB</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                    <span id="estimatingBadge"
+                        class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-bold">
+                        <i class="fa-solid fa-circle-notch animate-spin"></i>
+                        <span>กำลังคำนวณขนาด...</span>
+                    </span>
+
+                    <button onclick="changeDocument()"
+                        class="px-3.5 py-2 rounded-xl bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark text-xs font-bold border border-tech-border transition-colors flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-arrows-rotate text-crimson-600"></i>
+                        <span>เปลี่ยนไฟล์</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Compression Level Selector (3 Presets with Real-Time Size Estimation) -->
+            <div class="tech-card rounded-2xl p-5 border border-tech-border space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="font-mono text-xs font-bold text-tech-dark uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-crimson-600"></i>
+                        <span>เลือกระดับการบีบอัด (ประเมินขนาดไฟล์หลังลดแบบเรียลไทม์)</span>
+                    </div>
+
+                    <!-- Smart Sharpness & Size Guard Toggle -->
+                    <div class="flex flex-wrap items-center gap-4 font-mono text-xs">
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none"
+                            title="เสริมความคมชัดของขอบตัวอักษรและเส้นสายหลังย่อขนาด">
+                            <input type="checkbox" id="sharpnessToggle" checked onchange="onOptionChanged()"
+                                class="w-4 h-4 accent-crimson-500 rounded cursor-pointer">
+                            <span class="font-bold text-tech-dark">เพิ่มความคมชัดตัวอักษร</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none"
+                            title="หากหน้าไหนบีบอัดแล้วใหญ่กว่าต้นฉบับ จะคงหน้าต้นฉบับไว้ให้อัตโนมัติ">
+                            <input type="checkbox" id="sizeGuardToggle" checked onchange="onOptionChanged()"
+                                class="w-4 h-4 accent-crimson-500 rounded cursor-pointer">
+                            <span class="font-bold text-tech-dark">กันไฟล์บวมอัตโนมัติ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Preset 1: Extreme -->
+                    <div id="presetCard_extreme" onclick="selectPreset('extreme')"
+                        class="preset-card rounded-xl p-4 border-2 border-tech-border bg-white hover:border-crimson-500/50 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 font-mono text-[10px] font-bold">EXTREME // 96 DPI</span>
+                                <div class="preset-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-crimson-500 hidden"></div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-sm text-tech-dark">ลดขนาดสูงสุด (ไฟล์เล็กสุด)</h4>
+                            <p class="text-xs text-tech-muted mt-1 leading-relaxed">
+                                เหมาะสำหรับส่งอีเมลหรืออัปโหลดเข้าระบบที่จำกัดขนาดไฟล์เข้มงวด
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-tech-border flex items-center justify-between font-mono">
+                            <span class="text-[11px] text-tech-muted">ขนาดโดยประมาณ:</span>
+                            <div class="text-right">
+                                <span id="estSize_extreme" class="text-xs font-extrabold text-tech-dark">-- MB</span>
+                                <span id="estPct_extreme" class="ml-1 text-[10px] font-bold text-emerald-600">(-0%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset 2: Recommended (Default) -->
+                    <div id="presetCard_recommended" onclick="selectPreset('recommended')"
+                        class="preset-card selected rounded-xl p-4 border-2 border-tech-border bg-white hover:border-crimson-500/50 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 rounded-md bg-crimson-500 text-white font-mono text-[10px] font-bold">RECOMMENDED // 135 DPI</span>
+                                <div class="preset-check w-5 h-5 rounded-full border-2 border-crimson-500 flex items-center justify-center">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-crimson-500"></div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-sm text-tech-dark">สมดุล &amp; คมชัดอ่านง่าย (แนะนำ)</h4>
+                            <p class="text-xs text-tech-muted mt-1 leading-relaxed">
+                                ลดขนาดไฟล์ได้มากโดยยังคงความคมชัดของตัวอักษรและตารางสำหรับงานเอกสารทั่วไป
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-crimson-200/70 flex items-center justify-between font-mono">
+                            <span class="text-[11px] text-tech-muted">ขนาดโดยประมาณ:</span>
+                            <div class="text-right">
+                                <span id="estSize_recommended" class="text-xs font-extrabold text-crimson-600">-- MB</span>
+                                <span id="estPct_recommended" class="ml-1 text-[10px] font-bold text-emerald-600">(-0%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset 3: High Quality -->
+                    <div id="presetCard_high" onclick="selectPreset('high')"
+                        class="preset-card rounded-xl p-4 border-2 border-tech-border bg-white hover:border-crimson-500/50 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">HIGH QUALITY // 180 DPI</span>
+                                <div class="preset-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                                    <div class="w-2.5 h-2.5 rounded-full bg-crimson-500 hidden"></div>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-sm text-tech-dark">คมชัดสูงใกล้เคียงต้นฉบับ</h4>
+                            <p class="text-xs text-tech-muted mt-1 leading-relaxed">
+                                คงรายละเอียดภาพและตัวอักษรขนาดเล็ก เหมาะสำหรับเอกสารสำคัญหรือพิมพ์ลงกระดาษ
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-tech-border flex items-center justify-between font-mono">
+                            <span class="text-[11px] text-tech-muted">ขนาดโดยประมาณ:</span>
+                            <div class="text-right">
+                                <span id="estSize_high" class="text-xs font-extrabold text-tech-dark">-- MB</span>
+                                <span id="estPct_high" class="ml-1 text-[10px] font-bold text-emerald-600">(-0%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Matrix Preview -->
+            <div class="flex-grow flex flex-col space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
+                    <span class="font-bold text-tech-dark uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-border-all text-crimson-600"></i>
+                        <span>DOCUMENT PAGES PREVIEW</span>
+                    </span>
+                    <span class="text-tech-muted">คลิกปุ่มขยายบนหน้าเอกสารเพื่อตรวจสอบความคมชัดหลังบีบอัดก่อนดาวน์โหลด</span>
+                </div>
+
+                <!-- Pages Grid Container -->
+                <div id="pageGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 p-1">
+                    <!-- Dynamic Page Canvas Thumbnails Rendered Here -->
+                </div>
+            </div>
+
+            <!-- Bottom Action HUD / Custom Output Name & Compress Button -->
+            <div class="sticky bottom-5 z-20 pt-4">
+                <div
+                    class="tech-card rounded-2xl p-4 sm:p-5 border-2 border-crimson-500/40 bg-white/95 backdrop-blur-md shadow-2xl flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 font-mono">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full bg-crimson-500 animate-ping shrink-0"></div>
+                        <div>
+                            <div class="text-xs font-bold text-tech-dark uppercase" id="actionTitleText">READY TO COMPRESS</div>
+                            <div id="compressSummaryText" class="text-[11px] text-tech-muted mt-0.5">
+                                ขนาดเดิม 0.00 MB &rarr; คาดว่าจะเหลือประมาณ 0.00 MB
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <!-- Custom Output Filename -->
+                        <div class="relative flex items-center">
+                            <input type="text" id="outputFilenameInput" value=""
+                                placeholder="ตั้งชื่อไฟล์ผลลัพธ์..."
+                                class="w-full sm:w-56 pl-3.5 pr-12 py-2.5 bg-tech-panel border border-gray-300 rounded-xl font-mono text-xs font-bold text-tech-dark focus:outline-none focus:border-crimson-500 focus:bg-white transition">
+                            <span class="absolute right-3 font-mono text-[11px] font-bold text-tech-muted">.pdf</span>
+                        </div>
+
+                        <button id="compressBtn" onclick="executeCompression()"
+                            class="px-7 py-3 rounded-xl bg-gray-950 hover:bg-crimson-500 disabled:bg-gray-400 text-white font-mono text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-2.5 red-glow group cursor-pointer disabled:cursor-not-allowed shrink-0">
+                            <i class="fa-solid fa-file-zipper text-xs"></i>
+                            <span id="compressBtnText">ลดขนาด &amp; ดาวน์โหลด</span>
+                            <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- UNIVERSAL FOOTER                                                      -->
+    <!-- ===================================================================== -->
+    <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
+            &copy; 2026 Clever Tensai. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- QUALITY CHECK PREVIEW MODAL (ตรวจสอบความคมชัดหลังบีบอัดของแต่ละหน้า) -->
+    <!-- ===================================================================== -->
+    <div id="previewModal" onclick="handleModalBackdropClick(event)"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200 p-4">
+        <div class="bg-white max-w-4xl w-full h-[90vh] rounded-2xl border-2 border-crimson-500 shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-200"
+            id="previewModalContainer">
+
+            <!-- Modal Header -->
+            <div
+                class="px-5 py-3.5 border-b border-tech-border bg-gray-950 text-white flex items-center justify-between font-mono">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-crimson-500"></span>
+                    <h4 id="modalPageTitle" class="font-bold text-white text-xs uppercase tracking-wider">QUALITY PREVIEW</h4>
+                </div>
+
+                <button onclick="closePreviewModal()"
+                    class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white flex items-center justify-center transition-colors text-sm cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Toolbar -->
+            <div
+                class="px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+                <div class="flex items-center gap-1.5">
+                    <button id="modalPrevBtn" onclick="changeModalPage(-1)"
+                        class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 text-tech-dark font-bold transition-colors cursor-pointer">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span class="text-tech-dark font-bold px-2">PAGE <span id="modalCurrentNum" class="text-crimson-600">1</span> / <span id="modalTotalNum">1</span></span>
+                    <button id="modalNextBtn" onclick="changeModalPage(1)"
+                        class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 text-tech-dark font-bold transition-colors cursor-pointer">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span id="modalQualityBadge" class="px-2.5 py-1 rounded bg-crimson-50 text-crimson-600 font-bold text-[11px] border border-crimson-200">
+                        PREVIEW: RECOMMENDED
+                    </span>
+
+                    <div class="flex items-center gap-1 border-l border-tech-border pl-2">
+                        <button id="fitModeBtn" onclick="setFitMode()"
+                            class="px-2.5 py-1.5 rounded-lg bg-crimson-500 text-white text-[10px] font-bold uppercase transition-colors cursor-pointer"
+                            title="แสดงเต็มหน้าพอดีกับหน้าจอ">พอดีจอ (Fit)</button>
+                        <button onclick="adjustZoom(-0.2)"
+                            class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark transition-colors cursor-pointer"
+                            title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                        <span id="zoomLabel" class="text-tech-dark font-bold min-w-[48px] text-center">FIT</span>
+                        <button onclick="adjustZoom(0.2)"
+                            class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark transition-colors cursor-pointer"
+                            title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                        <button id="actualSizeBtn" onclick="resetZoom()"
+                            class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark text-[10px] font-bold uppercase transition-colors cursor-pointer"
+                            title="แสดงความละเอียดพิกเซลจริง 100%">100%</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Helper Hint Bar -->
+            <div class="px-5 py-1.5 bg-gray-900 border-b border-gray-800 flex items-center justify-between font-mono text-[11px] text-gray-400">
+                <span class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-hand text-crimson-500"></i>
+                    <span>คลิกลากภาพหรือใช้แถบเลื่อนเพื่อดูรายละเอียด (กด Ctrl + ล้อเมาส์เพื่อซูมเข้า-ออก)</span>
+                </span>
+                <span id="panStatusHint" class="hidden sm:inline text-gray-500">DRAG &amp; SCROLL ENABLED</span>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div id="modalViewport" class="preview-scroll-area flex-grow overflow-auto p-6 bg-gray-950 text-center relative select-none">
+                <div id="modalLoadingSpinner"
+                    class="fixed inset-0 flex items-center justify-center bg-gray-950/75 z-10 font-mono text-xs hidden">
+                    <div class="flex items-center gap-2.5 text-crimson-500 font-bold bg-gray-900 px-4 py-3 rounded-xl border border-gray-800 shadow-xl">
+                        <i class="fa-solid fa-circle-notch animate-spin text-base"></i>
+                        <span>RENDERING COMPRESSED QUALITY PREVIEW...</span>
+                    </div>
+                </div>
+                <div class="min-h-full min-w-full inline-flex items-center justify-center">
+                    <img id="modalPreviewImg" alt="Compressed Page Preview" draggable="false"
+                        class="inline-block m-auto shadow-2xl rounded-lg border border-gray-800 bg-white transition-shadow" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tech Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-6 right-6 z-50 pointer-events-none transform translate-y-4 opacity-0 transition-all duration-200">
+        <div id="toastContent"
+            class="px-4 py-3 rounded-xl bg-gray-950 text-white font-mono text-xs font-bold shadow-2xl border-l-4 border-crimson-500 flex items-center gap-2.5">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-crimson-500"></i>
+            <span id="toastMessage">SYSTEM NOTIFICATION</span>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- APPLICATION LOGIC                                                     -->
+    <!-- ===================================================================== -->
+    <script>
+        let currentFile = null;
+        let currentArrayBuffer = null;
+        let pdfjsDoc = null;
+        let pdfLibDoc = null;
+        let totalPages = 0;
+        let selectedPreset = 'recommended'; // 'extreme', 'recommended', 'high'
+        let estimatedSizes = { extreme: 0, recommended: 0, high: 0 };
+        let modalPageIndex = 1;
+        let currentZoomScale = 1.0;
+        let isFitMode = true;
+        let modalNaturalWidth = 0;
+        let toastTimer = null;
+
+        // ตั้งค่าระดับการบีบอัด (จูน DPI + JPEG Quality + Sharpness ให้ตัวอักษรคมชัดอ่านง่าย)
+        const PRESETS = {
+            extreme: {
+                scale: 96 / 72,       // 96 DPI
+                quality: 0.55,
+                sharpness: 0.28,
+                label: 'EXTREME (96 DPI)'
+            },
+            recommended: {
+                scale: 135 / 72,      // 135 DPI
+                quality: 0.75,
+                sharpness: 0.22,
+                label: 'RECOMMENDED (135 DPI)'
+            },
+            high: {
+                scale: 180 / 72,      // 180 DPI
+                quality: 0.88,
+                sharpness: 0.15,
+                label: 'HIGH QUALITY (180 DPI)'
+            }
+        };
+
+        // DOM Elements
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const compressWorkspace = document.getElementById('compressWorkspace');
+        const pageGrid = document.getElementById('pageGrid');
+
+        function toggleNavPopup() {
+            const modal = document.getElementById('navPopupModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+                const navModal = document.getElementById('navPopupModal');
+                if (navModal && !navModal.classList.contains('hidden')) {
+                    navModal.classList.add('hidden');
+                }
+            }
+        });
+
+        // Dropzone Events
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadPDFFile(e.target.files[0]);
+                fileInput.value = '';
+            }
+        });
+
+        ['dragenter', 'dragover'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.add('drag-over-active');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(name => {
+            dropzone.addEventListener(name, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropzone.classList.remove('drag-over-active');
+            });
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            if (e.dataTransfer.files.length > 0) {
+                loadPDFFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        function formatBytes(bytes) {
+            if (!bytes || bytes <= 0) return '0 KB';
+            if (bytes < 1024 * 1024) {
+                return (bytes / 1024).toFixed(1) + ' KB';
+            }
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        /**
+         * ฟิลเตอร์เสริมความคมชัดขอบตัวอักษรและเส้น (Unsharp Mask Convolution)
+         */
+        function applySharpnessFilter(ctx, width, height, amount) {
+            if (!amount || amount <= 0) return;
+            const imgData = ctx.getImageData(0, 0, width, height);
+            const src = imgData.data;
+            const out = new Uint8ClampedArray(src.length);
+
+            const w = width;
+            const h = height;
+            const centerWeight = 1 + 4 * amount;
+            const sideWeight = -amount;
+
+            // Copy borders
+            out.set(src);
+
+            for (let y = 1; y < h - 1; y++) {
+                const rowOffset = y * w * 4;
+                for (let x = 1; x < w - 1; x++) {
+                    const idx = rowOffset + x * 4;
+                    const up = idx - w * 4;
+                    const down = idx + w * 4;
+                    const left = idx - 4;
+                    const right = idx + 4;
+
+                    for (let c = 0; c < 3; c++) {
+                        const val =
+                            src[idx + c] * centerWeight +
+                            (src[up + c] + src[down + c] + src[left + c] + src[right + c]) * sideWeight;
+                        out[idx + c] = val;
+                    }
+                    out[idx + 3] = 255;
+                }
+            }
+
+            imgData.data.set(out);
+            ctx.putImageData(imgData, 0, 0);
+        }
+
+        /**
+         * เรนเดอร์หน้า PDF 1 หน้าเป็น JPEG Data URL ตาม Preset
+         */
+        async function renderPageToCompressedJpeg(pageNum, presetKey, useSharpness) {
+            const preset = PRESETS[presetKey];
+            const page = await pdfjsDoc.getPage(pageNum);
+            const originalViewport = page.getViewport({ scale: 1.0 });
+            const renderViewport = page.getViewport({ scale: preset.scale });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(renderViewport.width));
+            canvas.height = Math.max(1, Math.round(renderViewport.height));
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            await page.render({
+                canvasContext: ctx,
+                viewport: renderViewport
+            }).promise;
+
+            if (useSharpness) {
+                applySharpnessFilter(ctx, canvas.width, canvas.height, preset.sharpness);
+            }
+
+            const dataUrl = canvas.toDataURL('image/jpeg', preset.quality);
+            // คำนวณขนาด Byte จริงของ JPEG จาก Base64
+            const base64Str = dataUrl.split(',')[1] || '';
+            const byteLength = Math.floor((base64Str.length * 3) / 4);
+
+            return {
+                dataUrl,
+                byteLength,
+                origWidth: originalViewport.width,
+                origHeight: originalViewport.height
+            };
+        }
+
+        async function loadPDFFile(file) {
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('กรุณาเลือกไฟล์นามสกุล .PDF เท่านั้น', 'error');
+                return;
+            }
+
+            try {
+                showToast('กำลังวิเคราะห์ไฟล์และประเมินขนาดหลังลด...', 'info');
+                const arrayBuffer = await file.arrayBuffer();
+
+                let loadedPdfLib = null;
+                try {
+                    loadedPdfLib = await PDFLib.PDFDocument.load(arrayBuffer.slice(0), { ignoreEncryption: false });
+                } catch (encErr) {
+                    showToast('ไฟล์ PDF นี้ติดรหัสผ่านป้องกัน ไม่สามารถบีบอัดได้', 'error');
+                    return;
+                }
+
+                currentFile = file;
+                currentArrayBuffer = arrayBuffer;
+                pdfLibDoc = loadedPdfLib;
+                pdfjsDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+                totalPages = pdfjsDoc.numPages;
+
+                // Update HUD Metadata
+                document.getElementById('statFileName').textContent = file.name;
+                document.getElementById('statOriginalSize').textContent = formatBytes(file.size);
+                document.getElementById('activeDocName').textContent = file.name;
+                document.getElementById('activeDocMeta').textContent = `${totalPages} PAGES // ${formatBytes(file.size)}`;
+
+                const cleanBase = file.name.replace(/\.pdf$/i, '');
+                document.getElementById('outputFilenameInput').value = `${cleanBase}_compressed`;
+
+                dropzone.classList.add('hidden');
+                compressWorkspace.classList.remove('hidden');
+
+                // Render thumbnails & run real-time size estimation in parallel
+                await Promise.all([
+                    renderPageMatrix(),
+                    estimateAllPresets()
+                ]);
+
+                showToast(`วิเคราะห์สำเร็จ (${totalPages} หน้า) พร้อมประเมินขนาดแล้ว`, 'success');
+
+            } catch (err) {
+                console.error('PDF Load Error:', err);
+                showToast('ไม่สามารถอ่านไฟล์ PDF นี้ได้ กรุณาตรวจสอบไฟล์', 'error');
+            }
+        }
+
+        /**
+         * ประเมินขนาดไฟล์หลังลดของทั้ง 3 โหมดทันทีโดยสุ่มตัวอย่างหน้าเอกสารจริง
+         */
+        async function estimateAllPresets() {
+            if (!pdfjsDoc || !currentFile) return;
+
+            const badge = document.getElementById('estimatingBadge');
+            badge.classList.remove('hidden');
+
+            const useSharpness = document.getElementById('sharpnessToggle').checked;
+            const useSizeGuard = document.getElementById('sizeGuardToggle').checked;
+            const origSize = currentFile.size;
+
+            // เลือกหน้าตัวอย่างสูงสุด 3 หน้า (หน้าแรก, หน้ากลาง, หน้าสุดท้าย) เพื่อประเมินขนาดได้แม่นยำและรวดเร็ว
+            const sampleSet = new Set([1]);
+            if (totalPages >= 2) sampleSet.add(Math.ceil(totalPages / 2));
+            if (totalPages >= 3) sampleSet.add(totalPages);
+            const samplePages = Array.from(sampleSet);
+
+            try {
+                for (const key of ['extreme', 'recommended', 'high']) {
+                    let sampleBytesSum = 0;
+                    for (const pNum of samplePages) {
+                        const res = await renderPageToCompressedJpeg(pNum, key, useSharpness);
+                        sampleBytesSum += res.byteLength;
+                    }
+
+                    const avgPageBytes = sampleBytesSum / samplePages.length;
+                    // รวม Overhead โครงสร้าง PDF ประมาณ 12 KB + 1.5 KB/หน้า
+                    let projectedTotal = Math.round(avgPageBytes * totalPages + 12288 + totalPages * 1536);
+
+                    if (useSizeGuard && projectedTotal >= origSize) {
+                        projectedTotal = origSize;
+                    }
+
+                    estimatedSizes[key] = projectedTotal;
+                    updatePresetCardDisplay(key, origSize, projectedTotal);
+                }
+
+                updateSelectedSummary();
+            } finally {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function updatePresetCardDisplay(key, origSize, estSize) {
+            const sizeEl = document.getElementById(`estSize_${key}`);
+            const pctEl = document.getElementById(`estPct_${key}`);
+
+            sizeEl.textContent = formatBytes(estSize);
+
+            if (estSize < origSize) {
+                const savedPct = ((origSize - estSize) / origSize) * 100;
+                pctEl.textContent = `(-${savedPct.toFixed(0)}%)`;
+                pctEl.className = 'ml-1 text-[10px] font-bold text-emerald-600';
+            } else {
+                pctEl.textContent = `(คงขนาดเดิม)`;
+                pctEl.className = 'ml-1 text-[10px] font-bold text-amber-600';
+            }
+        }
+
+        function selectPreset(key) {
+            selectedPreset = key;
+
+            ['extreme', 'recommended', 'high'].forEach(k => {
+                const card = document.getElementById(`presetCard_${k}`);
+                const checkOuter = card.querySelector('.preset-check');
+                const checkInner = checkOuter.querySelector('div');
+                const sizeText = document.getElementById(`estSize_${k}`);
+
+                if (k === key) {
+                    card.classList.add('selected');
+                    checkOuter.classList.remove('border-gray-300');
+                    checkOuter.classList.add('border-crimson-500');
+                    checkInner.classList.remove('hidden');
+                    sizeText.classList.remove('text-tech-dark');
+                    sizeText.classList.add('text-crimson-600');
+                } else {
+                    card.classList.remove('selected');
+                    checkOuter.classList.add('border-gray-300');
+                    checkOuter.classList.remove('border-crimson-500');
+                    checkInner.classList.add('hidden');
+                    sizeText.classList.add('text-tech-dark');
+                    sizeText.classList.remove('text-crimson-600');
+                }
+            });
+
+            updateSelectedSummary();
+        }
+
+        function onOptionChanged() {
+            estimateAllPresets();
+        }
+
+        function updateSelectedSummary() {
+            if (!currentFile) return;
+
+            const origSize = currentFile.size;
+            const estSize = estimatedSizes[selectedPreset] || origSize;
+
+            document.getElementById('statEstimatedSize').textContent = formatBytes(estSize);
+
+            const summaryEl = document.getElementById('compressSummaryText');
+            if (estSize < origSize) {
+                const savedPct = ((origSize - estSize) / origSize) * 100;
+                summaryEl.innerHTML = `ขนาดเดิม <strong>${formatBytes(origSize)}</strong> &rarr; คาดว่าจะเหลือประมาณ <strong class="text-crimson-600">${formatBytes(estSize)}</strong> <span class="text-emerald-600 font-bold">(ลดลง ~${savedPct.toFixed(1)}%)</span>`;
+            } else {
+                summaryEl.innerHTML = `ขนาดเดิม <strong>${formatBytes(origSize)}</strong> &rarr; ไฟล์ต้นฉบับถูกบีบอัดมาดีแล้ว (ขนาดใกล้เคียงเดิม)`;
+            }
+        }
+
+        async function renderPageMatrix() {
+            pageGrid.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const card = document.createElement('div');
+                card.className = 'tech-card rounded-xl p-2.5 flex flex-col items-center justify-between border relative group';
+
+                const canvasId = `pageCanvas_${i}`;
+
+                card.innerHTML = `
+                    <div class="w-full flex items-center justify-between font-mono text-[10px] mb-2">
+                        <span class="font-bold text-tech-dark bg-tech-panel px-2 py-0.5 rounded-md border border-tech-border">P.${i}</span>
+                        <span class="text-tech-muted text-[9px]">READY</span>
+                    </div>
+
+                    <div class="relative w-full h-36 bg-tech-panel rounded-lg border border-tech-border overflow-hidden flex items-center justify-center mb-1">
+                        <canvas id="${canvasId}" class="max-w-full max-h-full object-contain"></canvas>
+
+                        <div class="absolute inset-0 bg-gray-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                            <button type="button" onclick="openPreviewModal(${i})"
+                                class="px-3 py-1.5 rounded-full bg-white hover:bg-crimson-500 hover:text-white text-tech-dark font-mono font-bold text-[11px] flex items-center gap-1.5 transition-colors shadow-md cursor-pointer">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                <span>ดูความชัด</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                pageGrid.appendChild(card);
+                renderPageThumbnail(i, canvasId);
+            }
+        }
+
+        async function renderPageThumbnail(pageIndex, canvasId) {
+            try {
+                const page = await pdfjsDoc.getPage(pageIndex);
+                const viewport = page.getViewport({ scale: 0.3 });
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+            } catch (err) {
+                console.error(`Thumbnail error P.${pageIndex}:`, err);
+            }
+        }
+
+        function changeDocument() {
+            compressWorkspace.classList.add('hidden');
+            dropzone.classList.remove('hidden');
+            currentFile = null;
+            currentArrayBuffer = null;
+            pdfjsDoc = null;
+            pdfLibDoc = null;
+            totalPages = 0;
+            estimatedSizes = { extreme: 0, recommended: 0, high: 0 };
+            document.getElementById('statFileName').textContent = 'NONE';
+            document.getElementById('statOriginalSize').textContent = '0 MB';
+            document.getElementById('statEstimatedSize').textContent = '0 MB';
+        }
+
+        /* ---------------- EXECUTE COMPRESSION & DOWNLOAD ---------------- */
+        async function executeCompression() {
+            if (!pdfjsDoc || !pdfLibDoc || !currentFile) return;
+
+            const compressBtn = document.getElementById('compressBtn');
+            const compressBtnText = document.getElementById('compressBtnText');
+            const summaryText = document.getElementById('compressSummaryText');
+
+            const useSharpness = document.getElementById('sharpnessToggle').checked;
+            const useSizeGuard = document.getElementById('sizeGuardToggle').checked;
+
+            const rawName = (document.getElementById('outputFilenameInput').value || '').trim();
+            const defaultBase = `${currentFile.name.replace(/\.pdf$/i, '')}_compressed`;
+            const cleanBaseName = rawName.replace(/\.pdf$/i, '') || defaultBase;
+
+            compressBtn.disabled = true;
+
+            try {
+                const { PDFDocument } = PDFLib;
+                const newPdf = await PDFDocument.create();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    compressBtnText.textContent = `กำลังบีบอัดหน้า ${i}/${totalPages}...`;
+                    summaryText.textContent = `กำลังประมวลผลหน้า ${i} จากทั้งหมด ${totalPages} หน้า...`;
+
+                    const rendered = await renderPageToCompressedJpeg(i, selectedPreset, useSharpness);
+
+                    // หากเปิด Size Guard: เปรียบเทียบขนาดหน้าที่บีบอัดแล้วกับหน้าต้นฉบับ หากบีบอัดแล้วใหญ่กว่า ให้ใช้หน้าต้นฉบับ
+                    let usedOriginalPage = false;
+                    if (useSizeGuard) {
+                        const singleOrigPdf = await PDFDocument.create();
+                        const [copiedOrig] = await singleOrigPdf.copyPages(pdfLibDoc, [i - 1]);
+                        singleOrigPdf.addPage(copiedOrig);
+                        const origPageBytes = await singleOrigPdf.save({ useObjectStreams: true });
+
+                        if (rendered.byteLength >= origPageBytes.byteLength) {
+                            const [copiedToFinal] = await newPdf.copyPages(pdfLibDoc, [i - 1]);
+                            newPdf.addPage(copiedToFinal);
+                            usedOriginalPage = true;
+                        }
+                    }
+
+                    if (!usedOriginalPage) {
+                        const jpgBytes = await fetch(rendered.dataUrl).then(r => r.arrayBuffer());
+                        const embeddedJpg = await newPdf.embedJpg(jpgBytes);
+                        const page = newPdf.addPage([rendered.origWidth, rendered.origHeight]);
+                        page.drawImage(embeddedJpg, {
+                            x: 0,
+                            y: 0,
+                            width: rendered.origWidth,
+                            height: rendered.origHeight
+                        });
+                    }
+                }
+
+                compressBtnText.textContent = 'กำลังบันทึกไฟล์...';
+                const finalBytes = await newPdf.save({ useObjectStreams: true });
+                let finalBlob = new Blob([finalBytes], { type: 'application/pdf' });
+
+                // ตรวจสอบขนาดรวมทั้งไฟล์อีกครั้งเมื่อเปิด Size Guard
+                if (useSizeGuard && finalBlob.size >= currentFile.size) {
+                    finalBlob = new Blob([currentArrayBuffer], { type: 'application/pdf' });
+                    summaryText.innerHTML = `ไฟล์ต้นฉบับมีขนาดเล็กที่สุดอยู่แล้ว (<strong>${formatBytes(currentFile.size)}</strong>) &bull; คงไฟล์ต้นฉบับที่คมชัด 100%`;
+                    showToast('ไฟล์ต้นฉบับถูกบีบอัดมาดีที่สุดแล้ว คงขนาดเดิมไว้ให้ครับ', 'info');
+                } else {
+                    const savedPct = ((currentFile.size - finalBlob.size) / currentFile.size) * 100;
+                    document.getElementById('statEstimatedSize').textContent = formatBytes(finalBlob.size);
+                    summaryText.innerHTML = `บีบอัดสำเร็จ! <strong>${formatBytes(currentFile.size)}</strong> &rarr; <strong class="text-crimson-600">${formatBytes(finalBlob.size)}</strong> <span class="text-emerald-600 font-bold">(ลดลง ${savedPct.toFixed(1)}%)</span>`;
+                    showToast(`ลดขนาดสำเร็จ! เหลือ ${formatBytes(finalBlob.size)} (ลดลง ${savedPct.toFixed(1)}%)`, 'success');
+                }
+
+                downloadBlob(finalBlob, `${cleanBaseName}.pdf`);
+
+            } catch (err) {
+                console.error('Compression error:', err);
+                showToast('เกิดข้อผิดพลาดระหว่างการบีบอัดไฟล์ PDF', 'error');
+                updateSelectedSummary();
+            } finally {
+                compressBtn.disabled = false;
+                compressBtnText.textContent = 'ลดขนาด & ดาวน์โหลด';
+            }
+        }
+
+        function downloadBlob(blob, fileName) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /* ---------------- QUALITY CHECK PREVIEW MODAL ---------------- */
+        function openPreviewModal(pageIndex) {
+            modalPageIndex = pageIndex;
+            isFitMode = true;
+            currentZoomScale = 1.0;
+
+            const modal = document.getElementById('previewModal');
+            const modalContainer = document.getElementById('previewModalContainer');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-95');
+            modalContainer.classList.add('scale-100');
+
+            renderModalQualityPreview();
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === 'previewModal') {
+                closePreviewModal();
+            }
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            const modalContainer = document.getElementById('previewModalContainer');
+
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContainer.classList.remove('scale-100');
+            modalContainer.classList.add('scale-95');
+        }
+
+        function changeModalPage(delta) {
+            const target = modalPageIndex + delta;
+            if (target >= 1 && target <= totalPages) {
+                modalPageIndex = target;
+                renderModalQualityPreview();
+            }
+        }
+
+        function applyModalImageSizing() {
+            const imgEl = document.getElementById('modalPreviewImg');
+            const viewport = document.getElementById('modalViewport');
+            const fitBtn = document.getElementById('fitModeBtn');
+            const actualBtn = document.getElementById('actualSizeBtn');
+            const zoomLabel = document.getElementById('zoomLabel');
+
+            if (!imgEl || !viewport) return;
+
+            if (isFitMode) {
+                const availHeight = Math.max(240, viewport.clientHeight - 48);
+                imgEl.style.width = 'auto';
+                imgEl.style.maxWidth = '100%';
+                imgEl.style.height = 'auto';
+                imgEl.style.maxHeight = `${availHeight}px`;
+                imgEl.style.cursor = 'zoom-in';
+
+                zoomLabel.textContent = 'FIT';
+                fitBtn.className = 'px-2.5 py-1.5 rounded-lg bg-crimson-500 text-white text-[10px] font-bold uppercase transition-colors cursor-pointer';
+                actualBtn.className = 'px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark text-[10px] font-bold uppercase transition-colors cursor-pointer';
+            } else {
+                const baseWidth = modalNaturalWidth || imgEl.naturalWidth || 794;
+                const targetWidth = Math.round(baseWidth * currentZoomScale);
+
+                imgEl.style.maxWidth = 'none';
+                imgEl.style.maxHeight = 'none';
+                imgEl.style.height = 'auto';
+                imgEl.style.width = `${targetWidth}px`;
+                imgEl.style.cursor = 'grab';
+
+                zoomLabel.textContent = `${Math.round(currentZoomScale * 100)}%`;
+                fitBtn.className = 'px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark text-[10px] font-bold uppercase transition-colors cursor-pointer';
+
+                if (Math.abs(currentZoomScale - 1.0) < 0.01) {
+                    actualBtn.className = 'px-2.5 py-1.5 rounded-lg bg-crimson-500 text-white text-[10px] font-bold uppercase transition-colors cursor-pointer';
+                } else {
+                    actualBtn.className = 'px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark text-[10px] font-bold uppercase transition-colors cursor-pointer';
+                }
+            }
+        }
+
+        async function renderModalQualityPreview() {
+            if (!pdfjsDoc) return;
+
+            document.getElementById('modalPageTitle').textContent = `QUALITY PREVIEW // P.${modalPageIndex} OF ${totalPages}`;
+            document.getElementById('modalCurrentNum').textContent = modalPageIndex;
+            document.getElementById('modalTotalNum').textContent = totalPages;
+            document.getElementById('modalPrevBtn').disabled = (modalPageIndex <= 1);
+            document.getElementById('modalNextBtn').disabled = (modalPageIndex >= totalPages);
+            document.getElementById('modalQualityBadge').textContent = `MODE: ${PRESETS[selectedPreset].label}`;
+
+            const spinner = document.getElementById('modalLoadingSpinner');
+            spinner.classList.remove('hidden');
+
+            try {
+                const useSharpness = document.getElementById('sharpnessToggle').checked;
+                const rendered = await renderPageToCompressedJpeg(modalPageIndex, selectedPreset, useSharpness);
+
+                const imgEl = document.getElementById('modalPreviewImg');
+                imgEl.onload = () => {
+                    modalNaturalWidth = imgEl.naturalWidth;
+                    applyModalImageSizing();
+                    const viewport = document.getElementById('modalViewport');
+                    if (viewport) {
+                        viewport.scrollTop = 0;
+                        viewport.scrollLeft = 0;
+                    }
+                };
+                imgEl.src = rendered.dataUrl;
+            } catch (err) {
+                console.error('Modal preview error:', err);
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function setFitMode() {
+            isFitMode = true;
+            currentZoomScale = 1.0;
+            applyModalImageSizing();
+        }
+
+        function adjustZoom(delta) {
+            if (isFitMode) {
+                isFitMode = false;
+                currentZoomScale = 1.0;
+            }
+            const newScale = Math.round((currentZoomScale + delta) * 10) / 10;
+            if (newScale >= 0.4 && newScale <= 2.6) {
+                currentZoomScale = newScale;
+                applyModalImageSizing();
+            }
+        }
+
+        function resetZoom() {
+            isFitMode = false;
+            currentZoomScale = 1.0;
+            applyModalImageSizing();
+        }
+
+        /* ---------------- DRAG-TO-PAN & CTRL+WHEEL ZOOM IN PREVIEW MODAL ---------------- */
+        (function initModalPanAndZoom() {
+            const viewport = document.getElementById('modalViewport');
+            const imgEl = document.getElementById('modalPreviewImg');
+            if (!viewport || !imgEl) return;
+
+            let isDragging = false;
+            let hasMoved = false;
+            let startX = 0;
+            let startY = 0;
+            let startScrollLeft = 0;
+            let startScrollTop = 0;
+
+            viewport.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                isDragging = true;
+                hasMoved = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                startScrollLeft = viewport.scrollLeft;
+                startScrollTop = viewport.scrollTop;
+                if (!isFitMode) {
+                    imgEl.style.cursor = 'grabbing';
+                    viewport.style.cursor = 'grabbing';
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+                    hasMoved = true;
+                }
+                viewport.scrollLeft = startScrollLeft - dx;
+                viewport.scrollTop = startScrollTop - dy;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                viewport.style.cursor = 'default';
+                imgEl.style.cursor = isFitMode ? 'zoom-in' : 'grab';
+            });
+
+            // คลิกที่ภาพในโหมด Fit เพื่อขยายดู 100% ทันที
+            imgEl.addEventListener('click', () => {
+                if (hasMoved) return;
+                if (isFitMode) {
+                    resetZoom();
+                }
+            });
+
+            // รองรับ Ctrl/Cmd + ล้อเมาส์เพื่อซูมเข้า-ออก
+            viewport.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    adjustZoom(e.deltaY < 0 ? 0.2 : -0.2);
+                }
+            }, { passive: false });
+        })();
+
+        window.addEventListener('resize', () => {
+            const modal = document.getElementById('previewModal');
+            if (modal && !modal.classList.contains('pointer-events-none') && isFitMode) {
+                applyModalImageSizing();
+            }
+        });
+
+        /* ---------------- TOAST SYSTEM ---------------- */
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-rose-500';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa-solid fa-circle-info text-sky-400';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-crimson-500';
+            }
+
+            toast.classList.remove('translate-y-4', 'opacity-0');
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+            }, 3200);
+        }
+    </script>
+</body>
+
+</html>
