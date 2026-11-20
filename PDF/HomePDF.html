@@ -150,7 +150,6 @@
             </a>
 
             <span class="hidden md:inline-block text-gray-700">|</span>
-
         </div>
 
         <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเครื่องมือ (All Tools Hub) -->
@@ -193,7 +192,7 @@
     <div id="navPopupModal" onclick="if(event.target === this) toggleNavPopup()"
         class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
         <div
-            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
 
             <!-- Header ของ Modal -->
             <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
@@ -218,55 +217,67 @@
             </div>
 
             <div class="overflow-y-auto py-6 space-y-6">
-                <!-- กลุ่มที่ 1: เครื่องมือจัดการเอกสาร PDF 4 ตัวหลัก -->
+                <!-- กลุ่มที่ 1: เครื่องมือจัดการเอกสาร PDF 5 ตัวหลัก -->
                 <div>
                     <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-file-pdf"></i>
-                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF)</span>
+                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 5 โมดูล)</span>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
                         <!-- 1. Merge PDF -->
                         <a href="MergePDF.html"
-                            class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                             <div
-                                class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
                                 <i class="fa-solid fa-object-ungroup"></i>
                             </div>
-                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Merge PDF</span>
-                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว</span>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">Merge PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว</span>
                         </a>
 
                         <!-- 2. Split PDF -->
                         <a href="SplitPDF.html"
-                            class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                             <div
-                                class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
                                 <i class="fa-solid fa-scissors"></i>
                             </div>
-                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Split PDF</span>
-                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF</span>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">Split PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF</span>
                         </a>
 
                         <!-- 3. Edit PDF -->
                         <a href="EditPDF.html"
-                            class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                             <div
-                                class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </div>
-                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Edit PDF</span>
-                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF</span>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">Edit PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF</span>
                         </a>
 
                         <!-- 4. Compress PDF -->
                         <a href="CompressPDF.html"
-                            class="p-5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
                             <div
-                                class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
                                 <i class="fa-solid fa-file-zipper"></i>
                             </div>
-                            <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">Compress PDF</span>
-                            <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร</span>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">Compress PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร</span>
+                        </a>
+
+                        <!-- 5. Convert to PDF (NEW) -->
+                        <a href="ConvertToPDF.html"
+                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg relative">
+                            <span class="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">NEW</span>
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                <i class="fa-solid fa-file-import"></i>
+                            </div>
+                            <span class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">Convert to PDF</span>
+                            <span class="text-[11px] text-gray-400 mt-1.5 leading-relaxed">แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF</span>
                         </a>
                     </div>
                 </div>
@@ -349,7 +360,7 @@
 
             <div class="flex items-center gap-2.5 font-mono text-xs shrink-0">
                 <div class="px-3.5 py-2 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
-                    <span class="text-crimson-500 font-bold" id="toolCounter">4</span> MODULES READY
+                    <span class="text-crimson-500 font-bold" id="toolCounter">5</span> MODULES READY
                 </div>
             </div>
         </div>
@@ -373,11 +384,11 @@
 
 
     <!-- ===================================================================== -->
-    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารายการเครื่องมือ PDF ทั้ง 4 ตัวหลัก       -->
+    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารายการเครื่องมือ PDF ทั้ง 5 ตัวหลัก       -->
     <!-- ===================================================================== -->
     <script>
         /**
-         * รายการเครื่องมือ PDF ทั้ง 4 โมดูลในชุด CLEVERTENSAI PDF Studio Suite
+         * รายการเครื่องมือ PDF ทั้ง 5 โมดูลในชุด CLEVERTENSAI PDF Studio Suite
          */
         const PDF_TOOLS = [
             {
@@ -427,6 +438,18 @@
                 icon: "fa-solid fa-file-zipper",
                 previewType: "compress",
                 tags: ["ลดขนาดไฟล์", "คงความคมชัดตัวอักษร", "ประเมินขนาดก่อนลด"]
+            },
+            {
+                id: "convert-to-pdf",
+                title: "Convert to PDF",
+                subtitle: "IMAGES & DOCUMENTS TO PDF",
+                badge: "MODULE 05 // CONVERT",
+                version: "v1.0",
+                description: "แปลงไฟล์รูปภาพ (JPG, PNG, WebP) หรือไฟล์ข้อความและเอกสารให้เป็นไฟล์ PDF มาตรฐาน รวมหลายรูปภาพเป็นเล่มเดียวได้ทันที",
+                href: "ConvertToPDF.html",
+                icon: "fa-solid fa-file-import",
+                previewType: "convert",
+                tags: ["แปลงรูปภาพเป็น PDF", "รองรับ JPG / PNG / WebP", "จัดหน้าอัตโนมัติ"]
             }
         ];
 
@@ -541,6 +564,40 @@
                             <div class="w-20 h-14 rounded-lg bg-crimson-500/20 border border-crimson-500/60 flex flex-col items-center justify-center p-1 shadow-inner">
                                 <span class="font-mono text-[8px] text-red-300">AFTER</span>
                                 <span class="font-mono text-[11px] text-white font-extrabold mt-0.5">2.8 MB</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (tool.previewType === 'convert') {
+                visualContent = `
+                    <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
+                        <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
+                            <span class="font-mono text-[9px] text-gray-400">FORMAT_CONVERTER</span>
+                            <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono text-[8px] font-bold">IMG / TXT</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 px-1">
+                            <!-- ไฟล์ต้นทาง JPG / PNG -->
+                            <div class="flex flex-col gap-1.5">
+                                <div class="w-16 h-7 rounded bg-gray-800 border border-gray-700 flex items-center justify-center gap-1.5 px-1.5">
+                                    <i class="fa-regular fa-image text-sky-400 text-[11px]"></i>
+                                    <span class="font-mono text-[8px] text-gray-300">IMG.JPG</span>
+                                </div>
+                                <div class="w-16 h-7 rounded bg-gray-800 border border-gray-700 flex items-center justify-center gap-1.5 px-1.5">
+                                    <i class="fa-regular fa-file-lines text-amber-400 text-[11px]"></i>
+                                    <span class="font-mono text-[8px] text-gray-300">DOC.PNG</span>
+                                </div>
+                            </div>
+
+                            <!-- ลูกศรแปลงไฟล์ -->
+                            <div class="text-crimson-500 text-sm flex flex-col items-center">
+                                <i class="fa-solid fa-angles-right"></i>
+                                <span class="font-mono text-[7px] text-gray-400 mt-0.5">CONVERT</span>
+                            </div>
+
+                            <!-- ไฟล์ผลลัพธ์ PDF -->
+                            <div class="w-20 h-16 rounded-lg bg-crimson-500/20 border border-crimson-500/60 flex flex-col items-center justify-center p-1.5 shadow-inner">
+                                <i class="fa-solid fa-file-pdf text-crimson-500 text-lg mb-1"></i>
+                                <span class="font-mono text-[8px] text-white font-bold">OUTPUT.PDF</span>
                             </div>
                         </div>
                     </div>
