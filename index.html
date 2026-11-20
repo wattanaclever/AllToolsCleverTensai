@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLEVERTENSAI — Web Application Portal</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Space Grotesk, JetBrains Mono & Prompt -->
+    <!-- Google Fonts: Space Grotesk, Prompt & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,22 +47,24 @@
                     }
                 }
             }
-        }
+        };
     </script>
+
     <style>
         body {
             background-color: #FAF9F6;
             color: #0F172A;
             background-image:
-                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
-                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+                radial-gradient(rgba(255, 30, 66, 0.06) 1px, transparent 0),
+                linear-gradient(to right, rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.025) 1px, transparent 1px);
             background-size: 24px 24px, 48px 48px, 48px 48px;
         }
 
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
@@ -68,20 +73,20 @@
 
         ::-webkit-scrollbar-thumb {
             background: #FF1E42;
-            border-radius: 2px;
+            border-radius: 3px;
         }
 
         .tech-card {
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
+            box-shadow: 0 6px 24px -4px rgba(15, 23, 42, 0.04);
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .tech-card:hover {
-            border-color: rgba(255, 30, 66, 0.45);
-            box-shadow: 0 12px 28px -6px rgba(255, 30, 66, 0.12);
-            transform: translateY(-5px);
+            border-color: rgba(255, 30, 66, 0.5);
+            box-shadow: 0 14px 32px -6px rgba(255, 30, 66, 0.14);
+            transform: translateY(-4px);
         }
 
         .tech-card:hover .preview-zoom {
@@ -92,16 +97,47 @@
             transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .red-glow {
-            box-shadow: 0 0 15px rgba(255, 30, 66, 0.25);
+        .hud-frame {
+            position: relative;
+        }
+
+        .hud-frame::before,
+        .hud-frame::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            pointer-events: none;
+        }
+
+        .hud-frame::before {
+            top: 10px;
+            left: 10px;
+            border-top: 2px solid #FF1E42;
+            border-left: 2px solid #FF1E42;
+        }
+
+        .hud-frame::after {
+            bottom: 10px;
+            right: 10px;
+            border-bottom: 2px solid #FF1E42;
+            border-right: 2px solid #FF1E42;
         }
 
         .scanline {
-            background: linear-gradient(to bottom,
-                    rgba(255, 255, 255, 0),
-                    rgba(255, 30, 66, 0.14),
-                    rgba(255, 255, 255, 0));
-            animation: scan 3.5s linear infinite;
+            opacity: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 30, 66, 0.18),
+                rgba(255, 255, 255, 0)
+            );
+            transition: opacity 0.25s ease;
+        }
+
+        .tech-card:hover .scanline {
+            opacity: 1;
+            animation: scan 2.8s linear infinite;
         }
 
         @keyframes scan {
@@ -110,7 +146,7 @@
             }
 
             100% {
-                transform: translateY(1000%);
+                transform: translateY(450%);
             }
         }
     </style>
@@ -119,62 +155,73 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- ===================================================================== -->
-    <!-- START: CLEVERTENSAI Global Navbar & All Web Apps Hub                  -->
+    <!-- GLOBAL NAVBAR & ALL WEB APPS HUB                                      -->
     <!-- ===================================================================== -->
     <nav class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
-        <!-- ฝั่งซ้าย: โลโก้แบรนด์ -->
+        <!-- Brand Logo -->
         <div class="flex items-center gap-3">
             <a href="index.html" class="flex items-center gap-2.5 group">
                 <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
                     <i class="fa-solid fa-cubes"></i>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span class="text-red-500">TENSAI</span></span>
+                    <span class="text-base font-extrabold tracking-wider leading-none">
+                        CLEVER<span class="text-red-500">TENSAI</span>
+                    </span>
                     <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">WEBAPP PORTAL</span>
                 </div>
             </a>
         </div>
 
-        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเว็บแอปทั้งหมด -->
+        <!-- Center Hub Button -->
         <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-            <button onclick="toggleNavPopup()" class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
+            <button type="button" onclick="toggleNavPopup()"
+                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
                 <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
                 <span>All Web Apps Hub</span>
                 <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
             </button>
         </div>
 
-        <!-- ฝั่งขวา: ปุ่มเข้าสู่ระบบ Admin & แผงควบคุมเมื่อล็อกอินแล้ว -->
+        <!-- Right Controls -->
         <div class="flex items-center gap-2 sm:gap-2.5">
-            <button onclick="toggleNavPopup()" class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
+            <button type="button" onclick="toggleNavPopup()"
+                class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
                 <i class="fa-solid fa-grip text-red-500"></i>
                 <span>Hub</span>
             </button>
 
-            <!-- สถานะยังไม่ล็อกอิน -->
-            <button id="navAdminLoginBtn" onclick="openAdminLoginModal()" class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all cursor-pointer">
+            <!-- Logged-out State -->
+            <button id="navAdminLoginBtn" type="button" onclick="openAdminLoginModal()"
+                class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all cursor-pointer">
                 <i class="fa-solid fa-shield-halved text-red-500"></i>
                 <span>เข้าสู่ระบบ Admin</span>
             </button>
 
-            <!-- สถานะล็อกอิน Admin แล้ว -->
+            <!-- Logged-in Admin State -->
             <div id="navAdminControls" class="items-center gap-2 hidden">
                 <span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-600/20 border border-red-500/40 text-red-400 font-mono text-[11px] font-bold">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                     ADMIN MODE
                 </span>
 
-                <button onclick="openCardEditorModal()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/60 text-white font-mono text-xs flex items-center gap-1.5 transition-all cursor-pointer" title="เพิ่มการ์ดเว็บแอปใหม่">
+                <button type="button" onclick="openCardEditorModal(-1)"
+                    class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/60 text-white font-mono text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="เพิ่มการ์ดเว็บแอปใหม่">
                     <i class="fa-solid fa-plus text-red-500"></i>
                     <span class="hidden md:inline">เพิ่มการ์ดใหม่</span>
                 </button>
 
-                <button onclick="savePermanentHtmlFile()" class="px-3 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer" title="Save As ไฟล์ HTML สะอาด (ไม่มีโค้ดส่วนเกิน)">
+                <button type="button" onclick="savePermanentHtmlFile()"
+                    class="px-3 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                    title="Save As ไฟล์ HTML สะอาด">
                     <i class="fa-solid fa-file-arrow-down"></i>
                     <span class="hidden md:inline">Save As ไฟล์โค้ดถาวร</span>
                 </button>
 
-                <button onclick="logoutAdmin()" class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 border border-gray-700 hover:border-red-500/50 text-gray-300 hover:text-red-300 font-mono text-xs flex items-center gap-1.5 transition-all cursor-pointer" title="ออกจากระบบ Admin">
+                <button type="button" onclick="logoutAdmin()"
+                    class="px-3 py-2 rounded-xl bg-gray-900 hover:bg-red-950 border border-gray-700 hover:border-red-500/50 text-gray-300 hover:text-red-300 font-mono text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="ออกจากระบบ Admin">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span class="hidden xl:inline">ออกจากระบบ</span>
                 </button>
@@ -182,19 +229,19 @@
         </div>
     </nav>
 
-    <!-- แถบแจ้งเตือนโหมดผู้ดูแลระบบ -->
+    <!-- Admin Mode Banner -->
     <div id="adminBannerBar" class="bg-gray-900 border-b border-red-500/30 px-4 sm:px-6 py-2.5 text-xs text-gray-200 hidden">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2 font-mono">
                 <span class="px-2 py-0.5 rounded bg-crimson-500 text-white font-bold text-[10px]">ADMIN ACTIVE</span>
-                <span>กด <strong>&lt; / &gt;</strong> เพื่อสลับตำแหน่ง, กด <strong>แก้ไข / ลบ</strong> การ์ด และกด <strong>Save As ไฟล์โค้ดถาวร</strong> เพื่อดาวน์โหลดไฟล์สะอาดพร้อมเปิดใน VS Code</span>
+                <span>จัดเรียงลำดับ (&lt; / &gt;), แก้ไข/เพิ่ม/ลบการ์ด และกด <strong>Save As ไฟล์โค้ดถาวร</strong> เพื่อส่งออกไฟล์ HTML สะอาด</span>
             </div>
             <div class="flex items-center gap-3 font-mono text-[11px]">
-                <button onclick="copyCurrentArrayCode()" class="text-gray-300 hover:text-white underline cursor-pointer">
+                <button type="button" onclick="copyCurrentArrayCode()" class="text-gray-300 hover:text-white underline cursor-pointer">
                     <i class="fa-regular fa-copy mr-1"></i>คัดลอกโค้ด Array
                 </button>
                 <span class="text-gray-600">|</span>
-                <button onclick="resetToDefaultCode()" class="text-amber-400 hover:text-amber-300 underline cursor-pointer">
+                <button type="button" onclick="resetToDefaultCode()" class="text-amber-400 hover:text-amber-300 underline cursor-pointer">
                     <i class="fa-solid fa-rotate-left mr-1"></i>รีเซ็ตตามโค้ดตั้งต้น
                 </button>
             </div>
@@ -202,10 +249,11 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Large Navigation Modal Hub                                            -->
+    <!-- ALL WEB APPS HUB MODAL                                                -->
     <!-- ===================================================================== -->
-    <div id="navPopupModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-        <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+    <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
+        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+        <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
                 <div class="flex items-center gap-3.5">
                     <div class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
@@ -215,17 +263,18 @@
                         <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
                             Select Web Application
                         </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">เลือกเว็บแอปพลิเคชันที่คุณต้องการเข้าใช้งานด่วน</p>
+                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันภายใน CLEVERTENSAI ได้ทันที</p>
                     </div>
                 </div>
 
-                <button onclick="toggleNavPopup()" class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
+                <button type="button" onclick="toggleNavPopup()"
+                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div id="hubModalGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 py-6 overflow-y-auto">
-                <!-- เติมรายการอัตโนมัติจาก WEB_APPS -->
+            <div id="hubModalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 py-6 overflow-y-auto">
+                <!-- Rendered dynamically from WEB_APPS -->
             </div>
         </div>
     </div>
@@ -235,42 +284,55 @@
     <!-- ===================================================================== -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
-        <!-- Hero & Search Bar -->
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-tech-border">
+        <!-- Hero & Search Section -->
+        <div class="tech-card hud-frame rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-3">
-                    <i class="fa-solid fa-bolt text-[11px]"></i>
-                    <span>CLEVERTENSAI SYSTEM HUB</span>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-950 text-white font-mono text-[11px] font-bold tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-crimson-500 animate-ping"></span>
+                        <span>CLEVERTENSAI SYSTEM HUB</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-[11px] font-semibold">
+                        <i class="fa-solid fa-bolt text-[10px]"></i>
+                        <span>100% CLIENT-SIDE</span>
+                    </span>
                 </div>
+
                 <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-tech-dark">
                     ศูนย์รวมระบบ <span class="text-crimson-500">Web Application</span>
                 </h1>
-                <p class="text-tech-muted text-sm sm:text-base mt-2 max-w-2xl">
-                    เลือกเข้าใช้งานเครื่องมือจัดการเอกสาร PDF, ระบบปลดล็อกไฟล์ Excel และระบบสร้าง QR Code ได้โดยตรงจากรายการด้านล่าง
+                <p class="text-tech-muted text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+                    เลือกเข้าใช้งานเครื่องมือจัดการเอกสาร PDF, ระบบปลดล็อกไฟล์ Excel, ระบบสร้าง QR Code และระบบแปลงมาตราวัดอเนกประสงค์ได้โดยตรงจากรายการด้านล่าง
                 </p>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <div class="relative w-full sm:w-72">
+            <!-- Search Input -->
+            <div class="w-full lg:w-80 shrink-0">
+                <label for="searchInput" class="block font-mono text-[11px] font-bold text-tech-muted uppercase tracking-wider mb-1.5">
+                    ค้นหาเครื่องมือ / หมวดหมู่
+                </label>
+                <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-tech-muted text-sm"></i>
-                    <input type="text" id="searchInput" oninput="renderPortal()" placeholder="ค้นหาชื่อเว็บแอป หรือหมวดหมู่..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-tech-border rounded-xl text-sm text-tech-dark placeholder-tech-muted focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15 transition">
+                    <input type="text" id="searchInput" oninput="renderPortal()"
+                        placeholder="ค้นหาชื่อเว็บแอป หรือหมวดหมู่..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-tech-bg border-2 border-tech-border rounded-xl text-sm text-tech-dark placeholder-tech-muted focus:outline-none focus:bg-white focus:border-crimson-500 focus:ring-4 focus:ring-crimson-500/10 transition">
                 </div>
             </div>
         </div>
 
-        <!-- Category Pills & Counter -->
+        <!-- Category Filter Pills & Counter -->
         <div class="flex flex-wrap items-center justify-between gap-4 my-6">
             <div id="categoryFilterBar" class="flex items-center gap-2 flex-wrap">
-                <!-- เติมปุ่มหมวดหมู่อัตโนมัติ -->
+                <!-- Rendered dynamically from WEB_APPS -->
             </div>
-            <div class="font-mono text-xs text-tech-muted">
-                SHOWING <span id="appCounter" class="font-bold text-crimson-500">3</span> APPS (3 PER ROW)
+            <div class="font-mono text-xs text-tech-muted bg-white px-3.5 py-2 rounded-xl border border-tech-border shadow-2xs">
+                SHOWING <span id="appCounter" class="font-bold text-crimson-500">4</span> APPS (3 PER ROW)
             </div>
         </div>
 
-        <!-- 3-Column Card Grid -->
+        <!-- 3-Column Responsive Card Grid -->
         <div id="portalGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <!-- เติมการ์ดอัตโนมัติจาก WEB_APPS -->
+            <!-- Rendered dynamically from WEB_APPS -->
         </div>
 
         <!-- Empty State -->
@@ -280,7 +342,8 @@
             </div>
             <h3 class="text-lg font-bold text-tech-dark">ไม่พบเว็บแอปพลิเคชันที่ค้นหา</h3>
             <p class="text-sm text-tech-muted mt-1">ลองเปลี่ยนคำค้นหา หรือเลือกดูหมวดหมู่ทั้งหมด</p>
-            <button onclick="resetSearch()" class="mt-4 px-4 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white text-xs font-bold tracking-wider uppercase transition cursor-pointer">
+            <button type="button" onclick="resetSearch()"
+                class="mt-4 px-4 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white text-xs font-bold tracking-wider uppercase transition cursor-pointer">
                 แสดงทั้งหมด
             </button>
         </div>
@@ -288,18 +351,19 @@
     </main>
 
     <!-- ===================================================================== -->
-    <!-- FOOTER (International Standard Copyright)                             -->
+    <!-- FOOTER                                                                -->
     <!-- ===================================================================== -->
     <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
         <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
-            © 2026 Clever Tensai. All rights reserved.
+            &copy; 2026 Clever Tensai. All rights reserved.
         </div>
     </footer>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 1: เข้าสู่ระบบผู้ดูแล (Admin Login Modal)                        -->
+    <!-- MODAL 1: ADMIN LOGIN MODAL                                            -->
     <!-- ===================================================================== -->
-    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div id="adminLoginModal" onclick="if (event.target === this) closeAdminLoginModal()"
+        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white border-2 border-gray-200 rounded-3xl max-w-md w-full shadow-2xl overflow-hidden">
             <div class="bg-gray-950 text-white px-6 py-4 flex items-center justify-between border-b border-gray-800">
                 <div class="flex items-center gap-2.5">
@@ -311,20 +375,23 @@
                         <p class="text-[11px] text-gray-400 font-mono">CLEVERTENSAI SECURITY GATEWAY</p>
                     </div>
                 </div>
-                <button onclick="closeAdminLoginModal()" class="text-gray-400 hover:text-white text-lg px-2 cursor-pointer">
+                <button type="button" onclick="closeAdminLoginModal()" class="text-gray-400 hover:text-white text-lg px-2 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1.5">
+                    <label for="adminPasswordInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1.5">
                         รหัสผ่านผู้ดูแลระบบ (Admin Password)
                     </label>
                     <div class="relative">
                         <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                        <input type="password" id="adminPasswordInput" required placeholder="กรอกรหัสผ่านที่ตั้งไว้ในโค้ด..." class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl font-mono text-sm focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-sm cursor-pointer" title="แสดง/ซ่อนรหัสผ่าน">
+                        <input type="password" id="adminPasswordInput" required placeholder="กรอกรหัสผ่านผู้ดูแลระบบ..."
+                            class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-xl font-mono text-sm focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
+                        <button type="button" onclick="togglePasswordVisibility()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 text-sm cursor-pointer"
+                            title="แสดง/ซ่อนรหัสผ่าน">
                             <i id="passwordEyeIcon" class="fa-regular fa-eye"></i>
                         </button>
                     </div>
@@ -335,10 +402,12 @@
                 </div>
 
                 <div class="pt-2 flex items-center justify-end gap-2">
-                    <button type="button" onclick="closeAdminLoginModal()" class="px-4 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
+                    <button type="button" onclick="closeAdminLoginModal()"
+                        class="px-4 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
                         ยกเลิก
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-2 transition shadow-md cursor-pointer">
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-2 transition shadow-md cursor-pointer">
                         <i class="fa-solid fa-unlock-keyhole"></i>
                         <span>เข้าสู่ระบบ</span>
                     </button>
@@ -348,10 +417,11 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 2: แก้ไข / เพิ่มการ์ดเว็บแอป (Admin Card Editor Modal)           -->
+    <!-- MODAL 2: CARD EDITOR MODAL (ADD / EDIT + LIVE PREVIEW)                -->
     <!-- ===================================================================== -->
-    <div id="cardEditorModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white border-2 border-gray-200 rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden">
+    <div id="cardEditorModal" onclick="if (event.target === this) closeCardEditorModal()"
+        class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white border-2 border-gray-200 rounded-3xl max-w-4xl w-full shadow-2xl overflow-hidden">
             <div class="bg-gray-950 text-white px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <span class="w-8 h-8 rounded-lg bg-crimson-500 flex items-center justify-center text-sm">
@@ -359,81 +429,136 @@
                     </span>
                     <div>
                         <h3 id="editorModalTitle" class="font-bold text-base">แก้ไขการ์ดเว็บแอป</h3>
-                        <p class="text-[11px] text-gray-400 font-mono">Admin Card Configuration</p>
+                        <p class="text-[11px] text-gray-400 font-mono">ADMIN CARD CONFIGURATION &amp; LIVE PREVIEW</p>
                     </div>
                 </div>
-                <button onclick="closeCardEditorModal()" class="text-gray-400 hover:text-white text-lg px-2 cursor-pointer">
+                <button type="button" onclick="closeCardEditorModal()" class="text-gray-400 hover:text-white text-lg px-2 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <form onsubmit="handleCardFormSubmit(event)" class="p-6 space-y-4 text-sm max-h-[82vh] overflow-y-auto">
-                <input type="hidden" id="editCardIndex" value="0">
+            <form onsubmit="handleCardFormSubmit(event)" class="p-6 text-sm max-h-[84vh] overflow-y-auto">
+                <input type="hidden" id="editCardIndex" value="-1">
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">ชื่อเว็บแอป (Title) *</label>
-                        <input type="text" id="cardTitleInput" required placeholder="เช่น PDF Studio Suite" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-crimson-500">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left Form Inputs (7 Cols) -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                            <div class="sm:col-span-2">
+                                <label for="cardTitleInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    ชื่อเว็บแอป (Title) *
+                                </label>
+                                <input type="text" id="cardTitleInput" required oninput="updateEditorLivePreview()"
+                                    placeholder="เช่น Unit Converter Suite"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-crimson-500">
+                            </div>
+                            <div>
+                                <label for="cardVersionInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    เวอร์ชัน
+                                </label>
+                                <input type="text" id="cardVersionInput" value="v1.0" oninput="updateEditorLivePreview()"
+                                    placeholder="v1.0"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label for="cardCategoryInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    หมวดหมู่ (Category) *
+                                </label>
+                                <input type="text" id="cardCategoryInput" required oninput="updateEditorLivePreview()"
+                                    placeholder="เช่น UTILITY / DOCUMENT / SECURITY"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                            <div>
+                                <label for="cardPreviewTypeInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    รูปแบบกราฟิกพรีวิว
+                                </label>
+                                <select id="cardPreviewTypeInput" onchange="updateEditorLivePreview()"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500 bg-white">
+                                    <option value="pdf">PDF Engine Theme</option>
+                                    <option value="excel">Excel Unlocker Theme</option>
+                                    <option value="qr">QR Matrix Theme</option>
+                                    <option value="unit">Unit Converter Theme</option>
+                                    <option value="default">Standard Cube Theme</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="cardDescInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                คำอธิบาย (Description) *
+                            </label>
+                            <textarea id="cardDescInput" rows="2" required oninput="updateEditorLivePreview()"
+                                placeholder="รายละเอียดของเว็บแอปพลิเคชัน..."
+                                class="w-full px-3.5 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-crimson-500"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label for="cardUrlInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    ลิงก์เข้าใช้งาน (URL) *
+                                </label>
+                                <input type="text" id="cardUrlInput" required oninput="updateEditorLivePreview()"
+                                    placeholder="เช่น UnitConverter.html"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                            <div>
+                                <label for="cardIconInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    ไอคอน FontAwesome
+                                </label>
+                                <input type="text" id="cardIconInput" value="fa-solid fa-ruler-combined" oninput="updateEditorLivePreview()"
+                                    placeholder="fa-solid fa-ruler-combined"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label for="cardImageInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    Path รูปภาพตัวอย่าง (ถ้ามี)
+                                </label>
+                                <input type="text" id="cardImageInput" oninput="updateEditorLivePreview()"
+                                    placeholder="เว้นว่างเพื่อใช้กราฟิกอัตโนมัติ"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                            <div>
+                                <label for="cardTagsInput" class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">
+                                    ป้ายกำกับ (คั่นด้วย ,)
+                                </label>
+                                <input type="text" id="cardTagsInput" oninput="updateEditorLivePreview()"
+                                    placeholder="เช่น 12 หมวดมาตราวัด, Real-Time"
+                                    class="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs focus:outline-none focus:border-crimson-500">
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">เวอร์ชัน (Version)</label>
-                        <input type="text" id="cardVersionInput" value="v1.0" placeholder="เช่น v1.0" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
+
+                    <!-- Right Live Card Preview (5 Cols) -->
+                    <div class="lg:col-span-5 flex flex-col">
+                        <div class="font-mono text-[11px] font-bold text-tech-muted uppercase tracking-wider mb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-eye text-crimson-500 mr-1.5"></i>LIVE CARD PREVIEW</span>
+                            <span class="text-emerald-600">REAL-TIME</span>
+                        </div>
+                        <div id="editorLivePreviewBox" class="flex-grow flex items-center justify-center bg-tech-bg border border-dashed border-gray-300 rounded-2xl p-3">
+                            <!-- Rendered dynamically by updateEditorLivePreview() -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">หมวดหมู่ (Category) *</label>
-                        <input type="text" id="cardCategoryInput" required placeholder="เช่น DOCUMENT / SECURITY / UTILITY" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">รูปแบบกราฟิกพรีวิวอัตโนมัติ</label>
-                        <select id="cardPreviewTypeInput" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500 bg-white">
-                            <option value="pdf">PDF Engine Theme</option>
-                            <option value="excel">Excel Unlocker Theme</option>
-                            <option value="qr">QR Matrix Theme</option>
-                            <option value="default">Standard Cube Theme</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">คำอธิบาย (Description) *</label>
-                    <textarea id="cardDescInput" rows="2" required placeholder="รายละเอียดของเว็บแอปนี้..." class="w-full px-3.5 py-2 border border-gray-300 rounded-xl focus:outline-none focus:border-crimson-500"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">ลิงก์เข้าใช้งาน (URL) *</label>
-                        <input type="text" id="cardUrlInput" required placeholder="เช่น ./HomePDF.html" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">ไอคอน FontAwesome</label>
-                        <input type="text" id="cardIconInput" value="fa-solid fa-cube" placeholder="fa-solid fa-file-pdf" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">Path รูปภาพตัวอย่าง (ถ้ามี)</label>
-                        <input type="text" id="cardImageInput" placeholder="เช่น ./images/preview.png (เว้นว่างได้)" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl font-mono text-xs focus:outline-none focus:border-crimson-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase font-mono mb-1">ป้ายกำกับ (คั่นด้วย ,)</label>
-                        <input type="text" id="cardTagsInput" placeholder="เช่น Merge PDF, Split PDF" class="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-xs focus:outline-none focus:border-crimson-500">
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2.5">
-                    <button type="button" onclick="closeCardEditorModal()" class="px-4 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
+                <div class="pt-5 mt-5 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2.5">
+                    <button type="button" onclick="closeCardEditorModal()"
+                        class="px-4 py-2.5 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
                         ยกเลิก
                     </button>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button type="submit" name="saveMode" value="preview" class="px-4 py-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+                        <button type="submit" name="saveMode" value="preview"
+                            class="px-4 py-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
                             <i class="fa-solid fa-check text-red-400"></i>
                             <span>บันทึกการแก้ไข</span>
                         </button>
-                        <button type="submit" name="saveMode" value="permanent" class="px-4 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md cursor-pointer">
+                        <button type="submit" name="saveMode" value="permanent"
+                            class="px-4 py-2.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-md cursor-pointer">
                             <i class="fa-solid fa-file-arrow-down"></i>
                             <span>บันทึก &amp; Save As ไฟล์ HTML ถาวร</span>
                         </button>
@@ -444,9 +569,10 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- MODAL 3: ยืนยันการลบการ์ด (Delete Confirmation Modal)                  -->
+    <!-- MODAL 3: DELETE CONFIRMATION MODAL                                    -->
     <!-- ===================================================================== -->
-    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div id="deleteConfirmModal" onclick="if (event.target === this) closeDeleteConfirmModal()"
+        class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white border-2 border-gray-200 rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center">
             <div class="w-12 h-12 rounded-2xl bg-crimson-50 text-crimson-500 border border-crimson-100 flex items-center justify-center text-xl mx-auto mb-3">
                 <i class="fa-solid fa-trash-can"></i>
@@ -454,38 +580,31 @@
             <h3 class="font-bold text-base text-tech-dark">ยืนยันการลบการ์ดเว็บแอป?</h3>
             <p id="deleteCardNameText" class="text-xs text-tech-muted mt-1 mb-5 font-mono"></p>
             <div class="flex items-center justify-center gap-2.5">
-                <button onclick="closeDeleteConfirmModal()" class="px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
+                <button type="button" onclick="closeDeleteConfirmModal()"
+                    class="px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold text-xs cursor-pointer">
                     ยกเลิก
                 </button>
-                <button onclick="confirmDeleteCard()" class="px-4 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs cursor-pointer">
+                <button type="button" onclick="confirmDeleteCard()"
+                    class="px-4 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs cursor-pointer">
                     ยืนยันการลบ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Toast แจ้งเตือน -->
-    <div id="toastNotice" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs font-mono">
+    <!-- Toast Notification -->
+    <div id="toastNotice" role="status" aria-live="polite"
+        class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs font-mono">
         <i class="fa-solid fa-circle-check text-red-500 text-base"></i>
         <span id="toastText">ดำเนินการสำเร็จ</span>
     </div>
 
     <!-- ===================================================================== -->
-    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารหัสผ่าน Admin และรายการเว็บแอปในโค้ดตรงนี้ -->
+    <!-- PORTAL DATA & APPLICATION LOGIC                                       -->
     <!-- ===================================================================== -->
     <script id="portalDataScript">
-        /**
-         * ====================================================================
-         * 1. ตั้งค่ารหัสผ่าน ADMIN (แก้ไขรหัสผ่านในโค้ดที่บรรทัดล่างนี้ได้ตลอดเวลา)
-         * ====================================================================
-         */
         const ADMIN_PASSWORD = "Lion1!King";
 
-        /**
-         * ====================================================================
-         * 2. ส่วนตั้งค่ารายการเว็บแอปพลิเคชัน
-         * ====================================================================
-         */
         /*__WEB_APPS_START__*/
         let WEB_APPS = [
             {
@@ -535,25 +654,41 @@
                     "High-Res PNG",
                     "Instant Vector"
                 ]
+            },
+            {
+                "id": "webapp-unit",
+                "title": "Unit Converter Suite",
+                "category": "UTILITY",
+                "version": "v1.0",
+                "description": "ระบบแปลงมาตราวัดอเนกประสงค์ 12 หมวดหมู่ ครอบคลุมทั้งหน่วยสากลและมาตราไทย (ซม.-นิ้ว, ไร่-งาน-วา, บาททองคำ, อุณหภูมิ, พื้นที่) พร้อมตารางเทียบค่าแบบเรียลไทม์",
+                "url": "UnitConverter.html",
+                "image": "",
+                "previewType": "unit",
+                "icon": "fa-solid fa-ruler-combined",
+                "tags": [
+                    "12 หมวดมาตราวัด",
+                    "หน่วยสากล & ไทย",
+                    "Real-Time Matrix"
+                ]
             }
         ];
         /*__WEB_APPS_END__*/
 
-        // เก็บค่าตั้งต้นจากโค้ดไว้เผื่อกดรีเซ็ต
         const DEFAULT_CODE_APPS = JSON.parse(JSON.stringify(WEB_APPS));
-        const STORAGE_KEY = "clevertensai_portal_apps_v1";
+        const STORAGE_KEY = "clevertensai_portal_apps_v2";
 
-        let activeCategory = 'ALL';
+        let activeCategory = "ALL";
         let isAdminLoggedIn = false;
         let pendingDeleteIndex = -1;
+        let toastTimer = null;
 
         function escapeHtml(str) {
-            return String(str ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            return String(str ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
         }
 
         function loadSavedAppsFromStorage() {
@@ -565,29 +700,29 @@
                         WEB_APPS = parsed;
                     }
                 }
-            } catch (e) {
-                console.warn("Storage load skipped:", e);
+            } catch (err) {
+                console.warn("Storage load skipped:", err);
             }
         }
 
         function syncAppsToStorage() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(WEB_APPS));
-            } catch (e) {
-                console.warn("Storage write skipped:", e);
+            } catch (err) {
+                console.warn("Storage write skipped:", err);
             }
         }
 
         function renderPreviewGraphic(app) {
-            const safeTitle = escapeHtml(app.title);
-            const safeCategory = escapeHtml(app.category);
-            const safeVersion = escapeHtml(app.version || 'v1.0');
+            const safeTitle = escapeHtml(app.title || "Web App");
+            const safeCategory = escapeHtml((app.category || "UTILITY").toUpperCase());
+            const safeVersion = escapeHtml(app.version || "v1.0");
 
             if (app.image && app.image.trim() !== "") {
                 return `
                     <div class="relative h-48 w-full overflow-hidden bg-gray-950 border-b border-tech-border">
                         <img src="${escapeHtml(app.image)}" alt="${safeTitle}"
-                             onerror="this.onerror=null; this.src='https://placehold.co/600x360/0F172A/FF1E42?text=${encodeURIComponent(app.title)}';"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x360/0F172A/FF1E42?text=${encodeURIComponent(app.title || "CLEVERTENSAI")}';"
                              class="w-full h-full object-cover preview-zoom">
                         <div class="scanline absolute inset-0 pointer-events-none"></div>
                         <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-gray-950/85 border border-gray-800 text-white font-mono text-[10px] tracking-wider uppercase">
@@ -600,9 +735,9 @@
                 `;
             }
 
-            let innerGraphic = '';
+            let innerGraphic = "";
 
-            if (app.previewType === 'pdf') {
+            if (app.previewType === "pdf") {
                 innerGraphic = `
                     <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
                         <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
@@ -629,7 +764,7 @@
                         </div>
                     </div>
                 `;
-            } else if (app.previewType === 'excel') {
+            } else if (app.previewType === "excel") {
                 innerGraphic = `
                     <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
                         <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
@@ -653,7 +788,7 @@
                         </div>
                     </div>
                 `;
-            } else if (app.previewType === 'qr') {
+            } else if (app.previewType === "qr") {
                 innerGraphic = `
                     <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl flex items-center gap-3.5">
                         <div class="w-16 h-16 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 relative">
@@ -673,11 +808,36 @@
                         </div>
                     </div>
                 `;
+            } else if (app.previewType === "unit") {
+                innerGraphic = `
+                    <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
+                        <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
+                            <div class="flex items-center gap-1.5 text-crimson-500 text-xs font-mono">
+                                <i class="fa-solid fa-ruler-combined"></i>
+                                <span class="text-[10px] text-red-400">UNIT_CONVERTER.EXE</span>
+                            </div>
+                            <span class="px-1.5 py-0.5 rounded bg-crimson-500/20 text-red-300 font-mono text-[9px]">12 MODS</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 text-center">
+                            <div class="flex-1 bg-gray-800/90 border border-gray-700 rounded-lg p-2">
+                                <div class="font-mono text-xs font-extrabold text-white">100</div>
+                                <div class="text-[9px] font-mono text-gray-400 mt-0.5">cm</div>
+                            </div>
+                            <div class="text-crimson-500 text-xs">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                            <div class="flex-1 bg-crimson-500/20 border border-crimson-500/40 rounded-lg p-2">
+                                <div class="font-mono text-xs font-extrabold text-red-300">39.37</div>
+                                <div class="text-[9px] font-mono text-red-200 mt-0.5">in</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             } else {
                 innerGraphic = `
                     <div class="preview-zoom relative z-10 text-center">
                         <div class="w-16 h-16 rounded-2xl bg-gray-900 border border-crimson-500/40 flex items-center justify-center mx-auto mb-2 text-crimson-500 text-2xl shadow-lg">
-                            <i class="${escapeHtml(app.icon || 'fa-solid fa-cube')}"></i>
+                            <i class="${escapeHtml(app.icon || "fa-solid fa-cube")}"></i>
                         </div>
                         <span class="font-mono text-xs text-gray-300">${safeTitle}</span>
                     </div>
@@ -702,182 +862,210 @@
             `;
         }
 
-        function renderPortal() {
-            const grid = document.getElementById('portalGrid');
-            const hubModalGrid = document.getElementById('hubModalGrid');
-            const emptyState = document.getElementById('emptyState');
-            const searchVal = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+        function buildCardArticleHtml(app, realIndex, isPreviewOnly = false) {
+            const tagsHtml = (app.tags || []).map(tag => `
+                <span class="px-2.5 py-1 rounded-md bg-tech-panel border border-tech-border font-mono text-[11px] text-tech-dark">
+                    ${escapeHtml(tag)}
+                </span>
+            `).join("");
 
-            const categories = ['ALL', ...new Set(WEB_APPS.map(a => a.category.toUpperCase()))];
-            const catBar = document.getElementById('categoryFilterBar');
-            catBar.innerHTML = categories.map(cat => {
-                const isActive = activeCategory === cat;
-                const safeCat = escapeHtml(cat);
-                return `
-                    <button onclick="setCategory('${safeCat}')"
-                        class="px-3.5 py-1.5 rounded-xl font-mono text-xs font-semibold transition cursor-pointer ${
-                            isActive
-                                ? 'bg-gray-950 text-white border border-gray-950 shadow-sm'
-                                : 'bg-white text-tech-muted border border-tech-border hover:border-crimson-500/50 hover:text-tech-dark'
-                        }">
-                        ${cat === 'ALL' ? 'ทั้งหมด (ALL)' : safeCat}
-                    </button>
-                `;
-            }).join('');
+            const isFirst = realIndex === 0;
+            const isLast = realIndex === WEB_APPS.length - 1;
+
+            const adminCardToolbar = (!isPreviewOnly && isAdminLoggedIn) ? `
+                <div class="bg-gray-950 border-b border-gray-800 px-3.5 py-2 flex items-center justify-between text-xs font-mono text-white">
+                    <div class="flex items-center gap-1">
+                        <span class="text-[10px] text-gray-400 mr-1">#${realIndex + 1}</span>
+                        <button type="button" onclick="moveCard(${realIndex}, -1)" ${isFirst ? "disabled" : ""}
+                            class="w-7 h-7 rounded-lg border border-gray-700 flex items-center justify-center transition ${
+                                isFirst
+                                    ? "opacity-30 cursor-not-allowed text-gray-500"
+                                    : "hover:bg-crimson-500 hover:border-crimson-500 cursor-pointer text-gray-200"
+                            }" title="ขยับไปทางซ้าย / ขึ้น">
+                            <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </button>
+                        <button type="button" onclick="moveCard(${realIndex}, 1)" ${isLast ? "disabled" : ""}
+                            class="w-7 h-7 rounded-lg border border-gray-700 flex items-center justify-center transition ${
+                                isLast
+                                    ? "opacity-30 cursor-not-allowed text-gray-500"
+                                    : "hover:bg-crimson-500 hover:border-crimson-500 cursor-pointer text-gray-200"
+                            }" title="ขยับไปทางขวา / ลง">
+                            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="openCardEditorModal(${realIndex})"
+                            class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-crimson-500 border border-gray-700 hover:border-crimson-500 text-gray-100 text-[11px] flex items-center gap-1 transition cursor-pointer">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                            <span>แก้ไข</span>
+                        </button>
+                        <button type="button" onclick="openDeleteConfirmModal(${realIndex})"
+                            class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-red-700 border border-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition cursor-pointer"
+                            title="ลบการ์ดนี้">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            ` : "";
+
+            return `
+                <article class="tech-card rounded-2xl overflow-hidden flex flex-col justify-between group w-full ${!isPreviewOnly && isAdminLoggedIn ? "ring-1 ring-crimson-500/30" : ""}">
+                    <div>
+                        ${adminCardToolbar}
+                        ${renderPreviewGraphic(app)}
+
+                        <div class="p-6">
+                            <div class="flex items-center gap-2.5 mb-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center text-sm shrink-0">
+                                    <i class="${escapeHtml(app.icon || "fa-solid fa-cube")}"></i>
+                                </div>
+                                <h2 class="text-xl font-bold text-tech-dark group-hover:text-crimson-500 transition-colors">
+                                    ${escapeHtml(app.title || "Untitled App")}
+                                </h2>
+                            </div>
+
+                            <p class="text-sm text-tech-muted leading-relaxed mb-4">
+                                ${escapeHtml(app.description || "คำอธิบายระบบ")}
+                            </p>
+
+                            <div class="flex flex-wrap gap-1.5">
+                                ${tagsHtml}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 pb-6 pt-3 border-t border-tech-border/70 flex items-center justify-between gap-3">
+                        <span class="font-mono text-[11px] text-tech-muted truncate" title="Target: ${escapeHtml(app.url || "#")}">
+                            <i class="fa-solid fa-terminal text-crimson-500 mr-1"></i>${!isPreviewOnly && isAdminLoggedIn ? escapeHtml(app.url || "#") : "READY"}
+                        </span>
+                        <a href="${escapeHtml(app.url || "#")}"
+                           class="px-5 py-2.5 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-2 transition-all shadow-sm shrink-0">
+                            <span>เข้าใช้งานระบบ</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderPortal() {
+            const grid = document.getElementById("portalGrid");
+            const hubModalGrid = document.getElementById("hubModalGrid");
+            const emptyState = document.getElementById("emptyState");
+            const searchEl = document.getElementById("searchInput");
+            const searchVal = (searchEl ? searchEl.value : "").trim().toLowerCase();
+
+            const categories = ["ALL", ...new Set(WEB_APPS.map(a => (a.category || "UTILITY").toUpperCase()))];
+            if (!categories.includes(activeCategory)) {
+                activeCategory = "ALL";
+            }
+
+            const catBar = document.getElementById("categoryFilterBar");
+            if (catBar) {
+                catBar.innerHTML = categories.map(cat => {
+                    const isActive = activeCategory === cat;
+                    const safeCat = escapeHtml(cat);
+                    return `
+                        <button type="button" onclick="setCategory('${safeCat}')"
+                            class="px-3.5 py-1.5 rounded-xl font-mono text-xs font-semibold transition cursor-pointer ${
+                                isActive
+                                    ? "bg-gray-950 text-white border border-gray-950 shadow-sm"
+                                    : "bg-white text-tech-muted border border-tech-border hover:border-crimson-500/50 hover:text-tech-dark"
+                            }">
+                            ${cat === "ALL" ? "ทั้งหมด (ALL)" : safeCat}
+                        </button>
+                    `;
+                }).join("");
+            }
 
             const filteredWithIndex = WEB_APPS
                 .map((app, realIndex) => ({ app, realIndex }))
                 .filter(({ app }) => {
-                    const matchCat = activeCategory === 'ALL' || app.category.toUpperCase() === activeCategory;
-                    const matchText = app.title.toLowerCase().includes(searchVal) ||
-                                      app.description.toLowerCase().includes(searchVal) ||
-                                      app.category.toLowerCase().includes(searchVal) ||
-                                      (app.tags && app.tags.some(t => t.toLowerCase().includes(searchVal)));
+                    const catUpper = (app.category || "UTILITY").toUpperCase();
+                    const matchCat = activeCategory === "ALL" || catUpper === activeCategory;
+                    const matchText =
+                        (app.title || "").toLowerCase().includes(searchVal) ||
+                        (app.description || "").toLowerCase().includes(searchVal) ||
+                        catUpper.toLowerCase().includes(searchVal) ||
+                        (app.tags && app.tags.some(t => t.toLowerCase().includes(searchVal)));
                     return matchCat && matchText;
                 });
 
-            document.getElementById('appCounter').textContent = filteredWithIndex.length;
+            const counterEl = document.getElementById("appCounter");
+            if (counterEl) counterEl.textContent = String(filteredWithIndex.length);
 
             if (filteredWithIndex.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                if (grid) grid.innerHTML = "";
+                if (emptyState) emptyState.classList.remove("hidden");
             } else {
-                emptyState.classList.add('hidden');
-                grid.innerHTML = filteredWithIndex.map(({ app, realIndex }) => {
-                    const tagsHtml = (app.tags || []).map(tag => `
-                        <span class="px-2.5 py-1 rounded-md bg-tech-panel border border-tech-border font-mono text-[11px] text-tech-dark">
-                            ${escapeHtml(tag)}
-                        </span>
-                    `).join('');
-
-                    const isFirst = realIndex === 0;
-                    const isLast = realIndex === WEB_APPS.length - 1;
-
-                    const adminCardToolbar = isAdminLoggedIn ? `
-                        <div class="bg-gray-950 border-b border-gray-800 px-3.5 py-2 flex items-center justify-between text-xs font-mono text-white">
-                            <div class="flex items-center gap-1">
-                                <span class="text-[10px] text-gray-400 mr-1">#${realIndex + 1}</span>
-                                <button onclick="moveCard(${realIndex}, -1)" ${isFirst ? 'disabled' : ''}
-                                    class="w-7 h-7 rounded-lg border border-gray-700 flex items-center justify-center transition ${
-                                        isFirst ? 'opacity-30 cursor-not-allowed text-gray-500' : 'hover:bg-crimson-500 hover:border-crimson-500 cursor-pointer text-gray-200'
-                                    }" title="ขยับไปทางซ้าย / ขึ้น">
-                                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
-                                </button>
-                                <button onclick="moveCard(${realIndex}, 1)" ${isLast ? 'disabled' : ''}
-                                    class="w-7 h-7 rounded-lg border border-gray-700 flex items-center justify-center transition ${
-                                        isLast ? 'opacity-30 cursor-not-allowed text-gray-500' : 'hover:bg-crimson-500 hover:border-crimson-500 cursor-pointer text-gray-200'
-                                    }" title="ขยับไปทางขวา / ลง">
-                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                                </button>
-                            </div>
-
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="openCardEditorModal(${realIndex})"
-                                    class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-crimson-500 border border-gray-700 hover:border-crimson-500 text-gray-100 text-[11px] flex items-center gap-1 transition cursor-pointer">
-                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
-                                    <span>แก้ไข</span>
-                                </button>
-                                <button onclick="openDeleteConfirmModal(${realIndex})"
-                                    class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-red-700 border border-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition cursor-pointer"
-                                    title="ลบการ์ดนี้">
-                                    <i class="fa-solid fa-trash-can text-[10px]"></i>
-                                </button>
-                            </div>
-                        </div>
-                    ` : '';
-
-                    return `
-                        <article class="tech-card rounded-2xl overflow-hidden flex flex-col justify-between group ${isAdminLoggedIn ? 'ring-1 ring-crimson-500/30' : ''}">
-                            <div>
-                                ${adminCardToolbar}
-
-                                ${renderPreviewGraphic(app)}
-
-                                <div class="p-6">
-                                    <div class="flex items-center gap-2.5 mb-2.5">
-                                        <div class="w-8 h-8 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center text-sm shrink-0">
-                                            <i class="${escapeHtml(app.icon || 'fa-solid fa-cube')}"></i>
-                                        </div>
-                                        <h2 class="text-xl font-bold text-tech-dark group-hover:text-crimson-500 transition-colors">
-                                            ${escapeHtml(app.title)}
-                                        </h2>
-                                    </div>
-
-                                    <p class="text-sm text-tech-muted leading-relaxed mb-4">
-                                        ${escapeHtml(app.description)}
-                                    </p>
-
-                                    <div class="flex flex-wrap gap-1.5">
-                                        ${tagsHtml}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="px-6 pb-6 pt-3 border-t border-tech-border/70 flex items-center justify-between gap-3">
-                                <span class="font-mono text-[11px] text-tech-muted truncate" title="Target: ${escapeHtml(app.url)}">
-                                    <i class="fa-solid fa-terminal text-crimson-500 mr-1"></i>${isAdminLoggedIn ? escapeHtml(app.url) : 'READY'}
-                                </span>
-                                <a href="${escapeHtml(app.url)}"
-                                   class="px-5 py-2.5 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-2 transition-all shadow-sm shrink-0">
-                                    <span>เข้าใช้งานระบบ</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                                </a>
-                            </div>
-                        </article>
-                    `;
-                }).join('');
+                if (emptyState) emptyState.classList.add("hidden");
+                if (grid) {
+                    grid.innerHTML = filteredWithIndex
+                        .map(({ app, realIndex }) => buildCardArticleHtml(app, realIndex, false))
+                        .join("");
+                }
             }
 
-            hubModalGrid.innerHTML = WEB_APPS.map(app => `
-                <a href="${escapeHtml(app.url)}"
-                    class="p-6 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-16 h-16 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-3xl mb-4 transition-all duration-200 group-hover:scale-110 shadow-md">
-                        <i class="${escapeHtml(app.icon || 'fa-solid fa-cube')}"></i>
-                    </div>
-                    <span class="font-extrabold text-lg text-gray-100 group-hover:text-red-400 tracking-wide">${escapeHtml(app.title)}</span>
-                    <span class="text-xs text-gray-400 mt-2 font-medium leading-relaxed line-clamp-2">${escapeHtml(app.description)}</span>
-                </a>
-            `).join('');
+            if (hubModalGrid) {
+                hubModalGrid.innerHTML = WEB_APPS.map(app => `
+                    <a href="${escapeHtml(app.url || "#")}"
+                        class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
+                        <div class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
+                            <i class="${escapeHtml(app.icon || "fa-solid fa-cube")}"></i>
+                        </div>
+                        <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">${escapeHtml(app.title || "Web App")}</span>
+                        <span class="text-xs text-gray-400 mt-1.5 font-medium leading-relaxed line-clamp-2">${escapeHtml(app.description || "")}</span>
+                    </a>
+                `).join("");
+            }
         }
 
-        // ====================================================================
-        // ระบบเข้าสู่ระบบ / ออกจากระบบ Admin
-        // ====================================================================
+        // =====================================================================
+        // ADMIN AUTHENTICATION
+        // =====================================================================
         function openAdminLoginModal() {
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('adminLoginError').classList.add('hidden');
-            document.getElementById('adminLoginModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('adminPasswordInput').focus(), 60);
+            const input = document.getElementById("adminPasswordInput");
+            const errEl = document.getElementById("adminLoginError");
+            const modal = document.getElementById("adminLoginModal");
+            if (input) input.value = "";
+            if (errEl) errEl.classList.add("hidden");
+            if (modal) modal.classList.remove("hidden");
+            setTimeout(() => {
+                if (input) input.focus();
+            }, 60);
         }
 
         function closeAdminLoginModal() {
-            document.getElementById('adminLoginModal').classList.add('hidden');
+            const modal = document.getElementById("adminLoginModal");
+            if (modal) modal.classList.add("hidden");
         }
 
         function togglePasswordVisibility() {
-            const input = document.getElementById('adminPasswordInput');
-            const icon = document.getElementById('passwordEyeIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fa-regular fa-eye-slash';
+            const input = document.getElementById("adminPasswordInput");
+            const icon = document.getElementById("passwordEyeIcon");
+            if (!input || !icon) return;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "fa-regular fa-eye-slash";
             } else {
-                input.type = 'password';
-                icon.className = 'fa-regular fa-eye';
+                input.type = "password";
+                icon.className = "fa-regular fa-eye";
             }
         }
 
         function handleAdminLogin(event) {
             event.preventDefault();
-            const entered = document.getElementById('adminPasswordInput').value;
+            const entered = document.getElementById("adminPasswordInput").value;
             if (entered === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
                 closeAdminLoginModal();
                 updateAdminUIState();
                 renderPortal();
-                showToast("เข้าสู่ระบบ Admin สำเร็จ! สามารถแก้ไขหรือขยับการ์ดได้ทันที");
+                showToast("เข้าสู่ระบบ Admin สำเร็จ! พร้อมแก้ไขหรือจัดเรียงการ์ด");
             } else {
-                document.getElementById('adminLoginError').classList.remove('hidden');
+                const errEl = document.getElementById("adminLoginError");
+                if (errEl) errEl.classList.remove("hidden");
             }
         }
 
@@ -889,26 +1077,30 @@
         }
 
         function updateAdminUIState() {
-            const loginBtn = document.getElementById('navAdminLoginBtn');
-            const controls = document.getElementById('navAdminControls');
-            const banner = document.getElementById('adminBannerBar');
+            const loginBtn = document.getElementById("navAdminLoginBtn");
+            const controls = document.getElementById("navAdminControls");
+            const banner = document.getElementById("adminBannerBar");
 
             if (isAdminLoggedIn) {
-                loginBtn.classList.add('hidden');
-                controls.classList.remove('hidden');
-                controls.classList.add('flex');
-                banner.classList.remove('hidden');
+                if (loginBtn) loginBtn.classList.add("hidden");
+                if (controls) {
+                    controls.classList.remove("hidden");
+                    controls.classList.add("flex");
+                }
+                if (banner) banner.classList.remove("hidden");
             } else {
-                loginBtn.classList.remove('hidden');
-                controls.classList.add('hidden');
-                controls.classList.remove('flex');
-                banner.classList.add('hidden');
+                if (loginBtn) loginBtn.classList.remove("hidden");
+                if (controls) {
+                    controls.classList.add("hidden");
+                    controls.classList.remove("flex");
+                }
+                if (banner) banner.classList.add("hidden");
             }
         }
 
-        // ====================================================================
-        // ระบบจัดการการ์ดในโหมด Admin
-        // ====================================================================
+        // =====================================================================
+        // ADMIN CARD MANAGEMENT & LIVE PREVIEW
+        // =====================================================================
         function moveCard(index, direction) {
             if (!isAdminLoggedIn) return;
             const targetIndex = index + direction;
@@ -923,41 +1115,71 @@
             showToast(`ขยับตำแหน่งการ์ด "${temp.title}" เรียบร้อยแล้ว`);
         }
 
+        function getEditorFormCardData() {
+            const editIndex = parseInt(document.getElementById("editCardIndex").value, 10);
+            const tagsArray = document.getElementById("cardTagsInput").value
+                .split(",")
+                .map(t => t.trim())
+                .filter(Boolean);
+
+            return {
+                id: editIndex >= 0 && WEB_APPS[editIndex] ? WEB_APPS[editIndex].id : "webapp-" + Date.now(),
+                title: document.getElementById("cardTitleInput").value.trim() || "New Web App",
+                category: (document.getElementById("cardCategoryInput").value.trim() || "UTILITY").toUpperCase(),
+                version: document.getElementById("cardVersionInput").value.trim() || "v1.0",
+                description: document.getElementById("cardDescInput").value.trim() || "คำอธิบายระบบเว็บแอปพลิเคชัน",
+                url: document.getElementById("cardUrlInput").value.trim() || "#",
+                image: document.getElementById("cardImageInput").value.trim(),
+                previewType: document.getElementById("cardPreviewTypeInput").value || "default",
+                icon: document.getElementById("cardIconInput").value.trim() || "fa-solid fa-cube",
+                tags: tagsArray.length > 0 ? tagsArray : ["Web App"]
+            };
+        }
+
+        function updateEditorLivePreview() {
+            const box = document.getElementById("editorLivePreviewBox");
+            if (!box) return;
+            const draftApp = getEditorFormCardData();
+            box.innerHTML = buildCardArticleHtml(draftApp, 0, true);
+        }
+
         function openCardEditorModal(index = -1) {
             if (!isAdminLoggedIn) return;
-            const modalTitle = document.getElementById('editorModalTitle');
-            document.getElementById('editCardIndex').value = index;
+            const modalTitle = document.getElementById("editorModalTitle");
+            document.getElementById("editCardIndex").value = index;
 
             if (index >= 0 && WEB_APPS[index]) {
                 const app = WEB_APPS[index];
                 modalTitle.textContent = `แก้ไขการ์ดใบที่ #${index + 1}: ${app.title}`;
-                document.getElementById('cardTitleInput').value = app.title || '';
-                document.getElementById('cardVersionInput').value = app.version || 'v1.0';
-                document.getElementById('cardCategoryInput').value = app.category || 'UTILITY';
-                document.getElementById('cardPreviewTypeInput').value = app.previewType || 'default';
-                document.getElementById('cardDescInput').value = app.description || '';
-                document.getElementById('cardUrlInput').value = app.url || '';
-                document.getElementById('cardIconInput').value = app.icon || 'fa-solid fa-cube';
-                document.getElementById('cardImageInput').value = app.image || '';
-                document.getElementById('cardTagsInput').value = (app.tags || []).join(', ');
+                document.getElementById("cardTitleInput").value = app.title || "";
+                document.getElementById("cardVersionInput").value = app.version || "v1.0";
+                document.getElementById("cardCategoryInput").value = app.category || "UTILITY";
+                document.getElementById("cardPreviewTypeInput").value = app.previewType || "default";
+                document.getElementById("cardDescInput").value = app.description || "";
+                document.getElementById("cardUrlInput").value = app.url || "";
+                document.getElementById("cardIconInput").value = app.icon || "fa-solid fa-cube";
+                document.getElementById("cardImageInput").value = app.image || "";
+                document.getElementById("cardTagsInput").value = (app.tags || []).join(", ");
             } else {
-                modalTitle.textContent = 'เพิ่มการ์ดเว็บแอปพลิเคชันใหม่';
-                document.getElementById('cardTitleInput').value = '';
-                document.getElementById('cardVersionInput').value = 'v1.0';
-                document.getElementById('cardCategoryInput').value = 'UTILITY';
-                document.getElementById('cardPreviewTypeInput').value = 'default';
-                document.getElementById('cardDescInput').value = '';
-                document.getElementById('cardUrlInput').value = './new-app/index.html';
-                document.getElementById('cardIconInput').value = 'fa-solid fa-cube';
-                document.getElementById('cardImageInput').value = '';
-                document.getElementById('cardTagsInput').value = 'Web App, Tool';
+                modalTitle.textContent = "เพิ่มการ์ดเว็บแอปพลิเคชันใหม่";
+                document.getElementById("cardTitleInput").value = "";
+                document.getElementById("cardVersionInput").value = "v1.0";
+                document.getElementById("cardCategoryInput").value = "UTILITY";
+                document.getElementById("cardPreviewTypeInput").value = "unit";
+                document.getElementById("cardDescInput").value = "";
+                document.getElementById("cardUrlInput").value = "UnitConverter.html";
+                document.getElementById("cardIconInput").value = "fa-solid fa-ruler-combined";
+                document.getElementById("cardImageInput").value = "";
+                document.getElementById("cardTagsInput").value = "12 หมวดมาตราวัด, Real-Time Matrix";
             }
 
-            document.getElementById('cardEditorModal').classList.remove('hidden');
+            updateEditorLivePreview();
+            document.getElementById("cardEditorModal").classList.remove("hidden");
         }
 
         function closeCardEditorModal() {
-            document.getElementById('cardEditorModal').classList.add('hidden');
+            const modal = document.getElementById("cardEditorModal");
+            if (modal) modal.classList.add("hidden");
         }
 
         async function handleCardFormSubmit(event) {
@@ -965,26 +1187,9 @@
             if (!isAdminLoggedIn) return;
 
             const submitter = event.submitter;
-            const saveMode = submitter && submitter.value ? submitter.value : 'preview';
-            const editIndex = parseInt(document.getElementById('editCardIndex').value, 10);
-
-            const tagsArray = document.getElementById('cardTagsInput').value
-                .split(',')
-                .map(t => t.trim())
-                .filter(Boolean);
-
-            const cardData = {
-                id: editIndex >= 0 && WEB_APPS[editIndex] ? WEB_APPS[editIndex].id : "webapp-" + Date.now(),
-                title: document.getElementById('cardTitleInput').value.trim(),
-                category: document.getElementById('cardCategoryInput').value.trim().toUpperCase(),
-                version: document.getElementById('cardVersionInput').value.trim() || "v1.0",
-                description: document.getElementById('cardDescInput').value.trim(),
-                url: document.getElementById('cardUrlInput').value.trim(),
-                image: document.getElementById('cardImageInput').value.trim(),
-                previewType: document.getElementById('cardPreviewTypeInput').value,
-                icon: document.getElementById('cardIconInput').value.trim() || "fa-solid fa-cube",
-                tags: tagsArray.length > 0 ? tagsArray : ["Web App"]
-            };
+            const saveMode = submitter && submitter.value ? submitter.value : "preview";
+            const editIndex = parseInt(document.getElementById("editCardIndex").value, 10);
+            const cardData = getEditorFormCardData();
 
             if (editIndex >= 0 && editIndex < WEB_APPS.length) {
                 WEB_APPS[editIndex] = cardData;
@@ -996,7 +1201,7 @@
             renderPortal();
             closeCardEditorModal();
 
-            if (saveMode === 'permanent') {
+            if (saveMode === "permanent") {
                 await savePermanentHtmlFile();
             } else {
                 showToast(`อัปเดตการ์ด "${cardData.title}" เรียบร้อยแล้ว`);
@@ -1006,13 +1211,13 @@
         function openDeleteConfirmModal(index) {
             if (!isAdminLoggedIn || !WEB_APPS[index]) return;
             pendingDeleteIndex = index;
-            document.getElementById('deleteCardNameText').textContent = `[#${index + 1}] ${WEB_APPS[index].title}`;
-            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+            document.getElementById("deleteCardNameText").textContent = `[#${index + 1}] ${WEB_APPS[index].title}`;
+            document.getElementById("deleteConfirmModal").classList.remove("hidden");
         }
 
         function closeDeleteConfirmModal() {
             pendingDeleteIndex = -1;
-            document.getElementById('deleteConfirmModal').classList.add('hidden');
+            document.getElementById("deleteConfirmModal").classList.add("hidden");
         }
 
         function confirmDeleteCard() {
@@ -1027,7 +1232,11 @@
 
         function resetToDefaultCode() {
             WEB_APPS = JSON.parse(JSON.stringify(DEFAULT_CODE_APPS));
-            localStorage.removeItem(STORAGE_KEY);
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (err) {
+                console.warn("Storage clear skipped:", err);
+            }
             renderPortal();
             showToast("รีเซ็ตข้อมูลการ์ดกลับตามโค้ดตั้งต้นเรียบร้อย");
         }
@@ -1038,70 +1247,66 @@
         }
 
         function resetSearch() {
-            document.getElementById('searchInput').value = '';
-            activeCategory = 'ALL';
+            const searchEl = document.getElementById("searchInput");
+            if (searchEl) searchEl.value = "";
+            activeCategory = "ALL";
             renderPortal();
         }
 
         function toggleNavPopup() {
-            const modal = document.getElementById('navPopupModal');
-            if (modal) modal.classList.toggle('hidden');
+            const modal = document.getElementById("navPopupModal");
+            if (modal) modal.classList.toggle("hidden");
         }
 
-        // สร้างโค้ด JavaScript ของ WEB_APPS สำหรับฝังลงไฟล์
+        // =====================================================================
+        // CLEAN HTML EXPORT & CLIPBOARD
+        // =====================================================================
         function generateWebAppsCodeBlock() {
-            const jsonString = JSON.stringify(WEB_APPS, null, 12).replace(/\]$/, '        ]');
+            const jsonString = JSON.stringify(WEB_APPS, null, 12).replace(/\]$/, "        ]");
             return `/*__WEB_APPS_START__*/\n        let WEB_APPS = ${jsonString};\n        /*__WEB_APPS_END__*/`;
         }
 
-        /**
-         * ====================================================================
-         * 3. CLEAN SAVE AS FILE (สร้างไฟล์ HTML สะอาดปราศจาก DOM/Style ส่วนเกิน)
-         * ====================================================================
-         * แก้ปัญหาการใช้ document.documentElement.outerHTML ที่ทำให้ Tailwind Runtime
-         * ฉีดแท็ก <style> และ HTML ที่เรนเดอร์แล้วติดไปจน VS Code แจ้ง Error
-         */
         function buildCleanSourceHtml() {
-            // โคลน document ปัจจุบันเพื่อล้างเฉพาะส่วนที่ถูกสร้างขึ้นตอนรันไทม์ (Runtime Artifacts)
             const clonedDoc = document.documentElement.cloneNode(true);
 
-            // 1. ลบแท็ก <style> ส่วนเกินที่ Tailwind CDN สร้างขึ้นตอนรันไทม์ใน <head>
-            const headEl = clonedDoc.querySelector('head');
+            const headEl = clonedDoc.querySelector("head");
             if (headEl) {
-                headEl.querySelectorAll('style').forEach((styleTag) => {
-                    // คงไว้เฉพาะ <style> หลักของเราที่มี .tech-card
-                    if (!styleTag.textContent.includes('.tech-card')) {
+                headEl.querySelectorAll("style").forEach(styleTag => {
+                    if (!styleTag.textContent.includes(".tech-card")) {
                         styleTag.remove();
                     }
                 });
             }
 
-            // 2. รีเซ็ตสถานะ UI กลับเป็นโหมดผู้ใช้ปกติ (ซ่อนแถบ Admin และ Modal ทั้งหมด)
-            const loginBtn = clonedDoc.querySelector('#navAdminLoginBtn');
-            if (loginBtn) loginBtn.classList.remove('hidden');
+            const loginBtn = clonedDoc.querySelector("#navAdminLoginBtn");
+            if (loginBtn) loginBtn.classList.remove("hidden");
 
-            const adminControls = clonedDoc.querySelector('#navAdminControls');
+            const adminControls = clonedDoc.querySelector("#navAdminControls");
             if (adminControls) {
-                adminControls.classList.add('hidden');
-                adminControls.classList.remove('flex');
+                adminControls.classList.add("hidden");
+                adminControls.classList.remove("flex");
             }
 
-            const adminBanner = clonedDoc.querySelector('#adminBannerBar');
-            if (adminBanner) adminBanner.classList.add('hidden');
+            const adminBanner = clonedDoc.querySelector("#adminBannerBar");
+            if (adminBanner) adminBanner.classList.add("hidden");
 
-            ['navPopupModal', 'adminLoginModal', 'cardEditorModal', 'deleteConfirmModal', 'emptyState'].forEach(id => {
-                const el = clonedDoc.querySelector('#' + id);
-                if (el && !el.classList.contains('hidden')) {
-                    el.classList.add('hidden');
+            [
+                "navPopupModal",
+                "adminLoginModal",
+                "cardEditorModal",
+                "deleteConfirmModal",
+                "emptyState"
+            ].forEach(id => {
+                const el = clonedDoc.querySelector("#" + id);
+                if (el && !el.classList.contains("hidden")) {
+                    el.classList.add("hidden");
                 }
             });
 
-            // 3. ล้างเนื้อหาที่ JavaScript เรนเดอร์แบบ Dynamic ออกจาก Container เพื่อให้โค้ดสะอาด
-            // (เมื่อเปิดไฟล์ใหม่ window.onload จะเรนเดอร์จาก WEB_APPS ให้อัตโนมัติ)
             const dynamicContainers = [
-                { selector: '#hubModalGrid', comment: '<!-- เติมรายการอัตโนมัติจาก WEB_APPS -->' },
-                { selector: '#categoryFilterBar', comment: '<!-- เติมปุ่มหมวดหมู่อัตโนมัติ -->' },
-                { selector: '#portalGrid', comment: '<!-- เติมการ์ดอัตโนมัติจาก WEB_APPS -->' }
+                { selector: "#hubModalGrid", comment: "<!-- Rendered dynamically from WEB_APPS -->" },
+                { selector: "#categoryFilterBar", comment: "<!-- Rendered dynamically from WEB_APPS -->" },
+                { selector: "#portalGrid", comment: "<!-- Rendered dynamically from WEB_APPS -->" }
             ];
 
             dynamicContainers.forEach(({ selector, comment }) => {
@@ -1111,18 +1316,17 @@
                 }
             });
 
-            const searchInput = clonedDoc.querySelector('#searchInput');
-            if (searchInput) searchInput.removeAttribute('value');
+            const searchInput = clonedDoc.querySelector("#searchInput");
+            if (searchInput) searchInput.removeAttribute("value");
 
-            const appCounter = clonedDoc.querySelector('#appCounter');
+            const appCounter = clonedDoc.querySelector("#appCounter");
             if (appCounter) appCounter.textContent = String(WEB_APPS.length);
 
-            const toastNotice = clonedDoc.querySelector('#toastNotice');
+            const toastNotice = clonedDoc.querySelector("#toastNotice");
             if (toastNotice) {
-                toastNotice.classList.add('translate-y-20', 'opacity-0');
+                toastNotice.classList.add("translate-y-20", "opacity-0");
             }
 
-            // 4. ประกอบโค้ด HTML และแทนที่บล็อก WEB_APPS ด้วยข้อมูลล่าสุด
             let cleanHtml = "<!DOCTYPE html>\n" + clonedDoc.outerHTML;
             cleanHtml = cleanHtml.replace(
                 /\/\*__WEB_APPS_START__\*\/[\s\S]*?\/\*__WEB_APPS_END__\*\//,
@@ -1132,17 +1336,16 @@
             return cleanHtml;
         }
 
-        // Save As ไฟล์ HTML สะอาดลงเครื่อง (รองรับทั้ง Save File Picker และ Download)
         async function savePermanentHtmlFile() {
             const cleanFullHtml = buildCleanSourceHtml();
 
-            if ('showSaveFilePicker' in window) {
+            if ("showSaveFilePicker" in window) {
                 try {
                     const fileHandle = await window.showSaveFilePicker({
-                        suggestedName: 'index.html',
+                        suggestedName: "index.html",
                         types: [{
-                            description: 'HTML Source File (*.html)',
-                            accept: { 'text/html': ['.html'] }
+                            description: "HTML Source File (*.html)",
+                            accept: { "text/html": [".html"] }
                         }]
                     });
                     const writable = await fileHandle.createWritable();
@@ -1151,47 +1354,67 @@
                     showToast("Save As ไฟล์โค้ด HTML สะอาดถาวรเรียบร้อยแล้ว!");
                     return;
                 } catch (err) {
-                    if (err.name === 'AbortError') return;
+                    if (err && err.name === "AbortError") return;
                 }
             }
 
-            // Fallback: ดาวน์โหลดไฟล์ HTML สะอาดลงโฟลเดอร์ Downloads
-            const blob = new Blob([cleanFullHtml], { type: 'text/html;charset=utf-8' });
-            const link = document.createElement('a');
+            const blob = new Blob([cleanFullHtml], { type: "text/html;charset=utf-8" });
+            const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = 'index.html';
+            link.download = "index.html";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(link.href);
-            showToast("Save As (ดาวน์โหลด) ไฟล์ index.html สะอาดเรียบร้อยแล้ว!");
+            showToast("ดาวน์โหลดไฟล์ index.html สะอาดเรียบร้อยแล้ว!");
+        }
+
+        function copyToClipboardSafe(text) {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.left = "-9999px";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+            } catch (err) {
+                console.error("Copy failed:", err);
+            }
         }
 
         function copyCurrentArrayCode() {
             const codeText = `let WEB_APPS = ${JSON.stringify(WEB_APPS, null, 4)};`;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(codeText).then(() => {
-                    showToast("คัดลอกโค้ด WEB_APPS ลงคลิปบอร์ดแล้ว!");
-                });
-                return;
-            }
-            const textarea = document.createElement('textarea');
-            textarea.value = codeText;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
+            copyToClipboardSafe(codeText);
             showToast("คัดลอกโค้ด WEB_APPS ลงคลิปบอร์ดแล้ว!");
         }
 
         function showToast(msg) {
-            const toast = document.getElementById('toastNotice');
-            document.getElementById('toastText').textContent = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
+            const toast = document.getElementById("toastNotice");
+            const textEl = document.getElementById("toastText");
+            if (!toast || !textEl) return;
+
+            textEl.textContent = msg;
+            toast.classList.remove("translate-y-20", "opacity-0");
+
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add("translate-y-20", "opacity-0");
             }, 3200);
         }
+
+        window.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+                closeAdminLoginModal();
+                closeCardEditorModal();
+                closeDeleteConfirmModal();
+                const navModal = document.getElementById("navPopupModal");
+                if (navModal && !navModal.classList.contains("hidden")) {
+                    navModal.classList.add("hidden");
+                }
+            }
+        });
 
         window.onload = function () {
             loadSavedAppsFromStorage();
