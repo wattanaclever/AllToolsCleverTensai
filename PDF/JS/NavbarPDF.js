@@ -4,37 +4,49 @@
 (function () {
     const currentFile = window.location.pathname.split("/").pop() || "HomePDF.html";
 
-    // รายการเครื่องมือ PDF ทั้ง 5 โมดูล (อยู่ในโฟลเดอร์ /PDF/ เดียวกัน)
+    // รายการเครื่องมือ PDF ทั้ง 6 โมดูล (อยู่ในโฟลเดอร์ /PDF/ เดียวกัน)
     const PDF_TOOLS_MENU = [
         {
             title: "Merge PDF",
             desc: "รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว",
             url: "MergePDF.html",
-            icon: "fa-solid fa-object-ungroup"
+            icon: "fa-solid fa-object-ungroup",
+            isNew: false
         },
         {
             title: "Split PDF",
             desc: "แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF",
             url: "SplitPDF.html",
-            icon: "fa-solid fa-scissors"
+            icon: "fa-solid fa-scissors",
+            isNew: false
+        },
+        {
+            title: "Crop PDF",
+            desc: "ตัดขอบหน้าเอกสาร PDF และลบพื้นที่ขอบขาวส่วนเกิน",
+            url: "CropPDF.html",
+            icon: "fa-solid fa-crop-simple",
+            isNew: true
         },
         {
             title: "Edit PDF",
             desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF",
             url: "EditPDF.html",
-            icon: "fa-solid fa-pen-to-square"
+            icon: "fa-solid fa-pen-to-square",
+            isNew: false
         },
         {
             title: "Compress PDF",
             desc: "ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร",
             url: "CompressPDF.html",
-            icon: "fa-solid fa-file-zipper"
+            icon: "fa-solid fa-file-zipper",
+            isNew: false
         },
         {
             title: "Convert to PDF",
             desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF",
             url: "ConvertToPDF.html",
-            icon: "fa-solid fa-file-import"
+            icon: "fa-solid fa-file-import",
+            isNew: false
         }
     ];
 
@@ -123,13 +135,13 @@
                     </button>
                 </div>
 
-                <!-- รายการเครื่องมือ PDF ทั้ง 5 โมดูล -->
+                <!-- รายการเครื่องมือ PDF ทั้ง 6 โมดูล -->
                 <div class="overflow-y-auto py-6">
                     <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-layer-group"></i>
-                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 5 โมดูล)</span>
+                        <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 6 โมดูล)</span>
                     </div>
-                    <div id="pdfToolsModalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
+                    <div id="pdfToolsModalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
         </div>
@@ -141,7 +153,7 @@
         container.innerHTML = navbarHtml;
     }
 
-    // เรนเดอร์การ์ดเครื่องมือ PDF ทั้ง 5 ตัว + ไฮไลต์หน้าที่กำลังใช้งานอยู่
+    // เรนเดอร์การ์ดเครื่องมือ PDF ทั้ง 6 ตัว + ไฮไลต์หน้าที่กำลังใช้งานอยู่
     const pdfGrid = document.getElementById("pdfToolsModalGrid");
     if (pdfGrid) {
         pdfGrid.innerHTML = PDF_TOOLS_MENU.map(tool => {
@@ -163,6 +175,7 @@
             return `
                 <a href="${tool.url}"
                     class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg relative">
+                    ${tool.isNew ? '<span class="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">NEW</span>' : ''}
                     <div class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
                         <i class="${tool.icon}"></i>
                     </div>
