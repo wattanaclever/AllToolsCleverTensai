@@ -179,108 +179,10 @@
 <body class="min-h-screen flex flex-col overflow-x-hidden font-sans">
 
     <!-- ===================================================================== -->
-    <!-- 1. GLOBAL STICKY TOP NAVBAR (MATCHING INDEX.HTML PORTAL)              -->
+    <!-- SHARED NAVBAR & ALL WEB APPS HUB (ดึงจาก JS/Navbar.js)                -->
     <!-- ===================================================================== -->
-    <nav
-        class="no-print bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0 shadow-lg">
-        <!-- Left: CLEVERTENSAI Portal Logo + Divider + Active App Module Badge -->
-        <div class="flex items-center gap-3 min-w-0">
-            <a href="index.html" class="flex items-center gap-2.5 group shrink-0" title="กลับไปยังหน้าหลัก CLEVERTENSAI">
-                <div
-                    class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-cubes"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-extrabold tracking-wider leading-none">
-                        CLEVER<span class="text-red-500">TENSAI</span>
-                    </span>
-                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">WEBAPP PORTAL</span>
-                </div>
-            </a>
-
-            <span class="hidden md:block h-7 w-px bg-gray-800 mx-1"></span>
-
-            <div class="hidden md:flex items-center gap-2 min-w-0">
-                <span
-                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gray-900 border border-gray-800 text-gray-200 font-mono text-[11px] font-bold">
-                    <i class="fa-solid fa-droplet text-crimson-500"></i>
-                    <span class="truncate">COLOR MIXER &amp; FORMULA STUDIO</span>
-                </span>
-                <span id="navDefaultBadge"
-                    class="inline-flex items-center px-2 py-0.5 rounded bg-crimson-500/20 border border-crimson-500/40 text-crimson-400 font-mono text-[10px] font-extrabold tracking-wider">
-                    CMYK
-                </span>
-            </div>
-        </div>
-
-        <!-- Center: All Web Apps Hub Button -->
-        <div class="hidden lg:block absolute left-1/2 transform -translate-x-1/2">
-            <button type="button" onclick="toggleNavPopup()"
-                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
-                <span>All Web Apps Hub</span>
-                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-            </button>
-        </div>
-
-        <!-- Right Controls: Mobile Hub, Reset All & Back to Portal -->
-        <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            <button type="button" onclick="toggleNavPopup()"
-                class="lg:hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500"></i>
-                <span>Hub</span>
-            </button>
-
-            <button type="button" onclick="resetAllSlots()"
-                class="px-3 sm:px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-crimson-500/20 border border-gray-700 hover:border-crimson-500/60 text-gray-200 hover:text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-                title="ล้างข้อมูลทั้งหมด">
-                <i class="fa-solid fa-rotate-left text-crimson-500"></i>
-                <span class="hidden sm:inline">ล้างข้อมูลทั้งหมด</span>
-                <span class="sm:hidden">ล้าง</span>
-            </button>
-
-            <a href="index.html"
-                class="px-3.5 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-md"
-                title="กลับหน้าหลัก">
-                <i class="fa-solid fa-house text-[11px]"></i>
-                <span class="hidden sm:inline">กลับหน้าหลัก</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- ===================================================================== -->
-    <!-- ALL WEB APPS HUB MODAL (MATCHING INDEX.HTML PORTAL)                   -->
-    <!-- ===================================================================== -->
-    <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
-        class="no-print hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-        <div
-            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
-                <div class="flex items-center gap-3.5">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
-                        <i class="fa-solid fa-grip"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            Select Web Application
-                        </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันภายใน CLEVERTENSAI ได้ทันที</p>
-                    </div>
-                </div>
-
-                <button type="button" onclick="toggleNavPopup()"
-                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="hubModalGrid"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 py-6 overflow-y-auto">
-                <!-- Populated dynamically via renderHubModalGrid() -->
-            </div>
-        </div>
-    </div>
+    <div id="navbar-container" class="no-print"></div>
+    <script src="JS/Navbar.js"></script>
 
     <!-- ===================================================================== -->
     <!-- MAIN WORKSPACE                                                        -->
@@ -315,8 +217,15 @@
                     </p>
                 </div>
 
-                <!-- 12 Color Systems Selector Button -->
+                <!-- 12 Color Systems Selector & Reset All Buttons -->
                 <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                    <button type="button" onclick="resetAllSlots()"
+                        class="px-4 py-3 rounded-xl bg-tech-bg hover:bg-crimson-50 border border-tech-border hover:border-crimson-300 text-tech-dark hover:text-crimson-600 font-mono text-xs font-bold flex items-center gap-2 transition cursor-pointer"
+                        title="ล้างข้อมูลทั้งหมด">
+                        <i class="fa-solid fa-rotate-left text-crimson-500"></i>
+                        <span>ล้างข้อมูลทั้งหมด</span>
+                    </button>
+
                     <button type="button" onclick="openSystemSelectorModal()"
                         class="px-5 py-3 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs tracking-wider uppercase flex items-center gap-2.5 transition shadow-md cursor-pointer">
                         <i class="fa-solid fa-layer-group text-crimson-400"></i>
@@ -1284,363 +1193,278 @@
     <!-- ===================================================================== -->
     <script>
         // =====================================================================
-        // 0. CLEVERTENSAI WEB APPS HUB DATA (SYNCHRONIZED WITH INDEX.HTML)
-        // =====================================================================
-        const PORTAL_WEB_APPS = [
-            {
-                id: 'webapp-pdf',
-                title: 'PDF Studio Suite',
-                description: 'ระบบจัดการเอกสาร PDF ครบวงจร รวมไฟล์เอกสารหลายหน้า แยกหน้าตัดเฉพาะส่วน และแก้ไขเขียนข้อความลงบนไฟล์ PDF',
-                url: './PDF/HomePDF.html',
-                icon: 'fa-solid fa-file-pdf',
-                isCurrent: false
-            },
-            {
-                id: 'webapp-excel',
-                title: 'Excel Unlock Pro',
-                description: 'ปลดล็อกรหัสผ่านแผ่นงาน (Worksheet) และสมุดงาน (Workbook) สำหรับไฟล์ Excel (.xlsx, .xlsm) อย่างรวดเร็วโดยข้อมูลไม่สูญหาย',
-                url: 'HomeExcelUnlock.html',
-                icon: 'fa-solid fa-file-excel',
-                isCurrent: false
-            },
-            {
-                id: 'webapp-qr',
-                title: 'QR Code Generator',
-                description: 'สร้างคิวอาร์โค้ดความคมชัดสูงสำหรับ URL, ข้อความ, Wi-Fi หรือพร้อมเพย์ พร้อมปรับแต่งสีและดาวน์โหลดไฟล์ PNG/SVG ทันที',
-                url: 'HomeQRcode.html',
-                icon: 'fa-solid fa-qrcode',
-                isCurrent: false
-            },
-            {
-                id: 'webapp-unit',
-                title: 'Unit Converter Suite',
-                description: 'ระบบแปลงมาตราวัดอเนกประสงค์ 12 หมวดหมู่ ครอบคลุมทั้งหน่วยสากลและมาตราไทย พร้อมตารางเทียบค่าแบบเรียลไทม์',
-                url: 'UnitConverter.html',
-                icon: 'fa-solid fa-ruler-combined',
-                isCurrent: false
-            },
-            {
-                id: 'webapp-color',
-                title: 'Color Mixer & Formula Studio',
-                description: 'สตูดิโอผสมสีและคำนวณสูตรแม่สีทดแทน รองรับ 12 ระบบสี (CMYK, HEX, RGB, LAB, OKLCH) คลังสี 240 เฉด และใบพิมพ์สูตร',
-                url: 'HomeMixColor.html',
-                icon: 'fa-solid fa-droplet',
-                isCurrent: true
-            }
-        ];
-
-        function toggleNavPopup() {
-            const modal = document.getElementById('navPopupModal');
-            if (!modal) return;
-            renderHubModalGrid();
-            modal.classList.toggle('hidden');
-        }
-
-        function renderHubModalGrid() {
-            const grid = document.getElementById('hubModalGrid');
-            if (!grid) return;
-            grid.innerHTML = PORTAL_WEB_APPS.map(app => {
-                if (app.isCurrent) {
-                    return `
-                        <button type="button" onclick="toggleNavPopup()"
-                            class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/70 transition-all flex flex-col items-center text-center group shadow-lg relative cursor-pointer">
-                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-crimson-500 text-white font-mono text-[9px] font-bold">
-                                ACTIVE
-                            </span>
-                            <div class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
-                                <i class="${escapeHtml(app.icon)}"></i>
-                            </div>
-                            <span class="font-extrabold text-base text-red-400 tracking-wide">${escapeHtml(app.title)}</span>
-                            <span class="text-xs text-gray-300 mt-1.5 font-medium leading-relaxed line-clamp-2">${escapeHtml(app.description)}</span>
-                        </button>
-                    `;
-                }
-                return `
-                    <a href="${escapeHtml(app.url)}"
-                        class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                        <div class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110 shadow-md">
-                            <i class="${escapeHtml(app.icon)}"></i>
-                        </div>
-                        <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400 tracking-wide">${escapeHtml(app.title)}</span>
-                        <span class="text-xs text-gray-400 mt-1.5 font-medium leading-relaxed line-clamp-2">${escapeHtml(app.description)}</span>
-                    </a>
-                `;
-            }).join('');
-        }
-
-        // =====================================================================
         // 1. 240-SWATCH COLOR LIBRARY ACROSS 15 CATEGORIES (16 SWATCHES EACH)
         // =====================================================================
         const NAMED_COLORS_REF = [
             // 1. แม่สี & มาตรฐานงานพิมพ์ (16)
-            {name: 'แดงแม่สี (RYB Red)', hex: '#E63946', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'เหลืองแม่สี (RYB Yellow)', hex: '#FACC15', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'น้ำเงินแม่สี (RYB Blue)', hex: '#1D4ED8', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'แดงแสง (RGB Red)', hex: '#FF0000', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'เขียวแสง (RGB Green)', hex: '#00FF00', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'น้ำเงินแสง (RGB Blue)', hex: '#0000FF', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'ฟ้าไซแอนพิมพ์ (CMYK Cyan)', hex: '#00FFFF', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'บานเย็นพิมพ์ (CMYK Magenta)', hex: '#FF00FF', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'เหลืองพิมพ์ (CMYK Yellow)', hex: '#FFFF00', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'ดำหมึกพิมพ์แท้ (100K Black)', hex: '#18181B', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'ดำเข้มงานพิมพ์ (Rich Black)', hex: '#09090B', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'แดงคริมสันสด (Vivid Crimson)', hex: '#FF1E42', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'ส้มสด (Vivid Orange)', hex: '#F97316', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'เขียวมรกตสด (Vivid Emerald)', hex: '#10B981', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'น้ำเงินรอยัลสด (Vivid Royal Blue)', hex: '#2563EB', category: 'แม่สี & มาตรฐานงานพิมพ์'},
-            {name: 'ม่วงไวโอเล็ตสด (Vivid Violet)', hex: '#8B5CF6', category: 'แม่สี & มาตรฐานงานพิมพ์'},
+            { name: 'แดงแม่สี (RYB Red)', hex: '#E63946', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'เหลืองแม่สี (RYB Yellow)', hex: '#FACC15', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'น้ำเงินแม่สี (RYB Blue)', hex: '#1D4ED8', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'แดงแสง (RGB Red)', hex: '#FF0000', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'เขียวแสง (RGB Green)', hex: '#00FF00', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'น้ำเงินแสง (RGB Blue)', hex: '#0000FF', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'ฟ้าไซแอนพิมพ์ (CMYK Cyan)', hex: '#00FFFF', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'บานเย็นพิมพ์ (CMYK Magenta)', hex: '#FF00FF', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'เหลืองพิมพ์ (CMYK Yellow)', hex: '#FFFF00', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'ดำหมึกพิมพ์แท้ (100K Black)', hex: '#18181B', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'ดำเข้มงานพิมพ์ (Rich Black)', hex: '#09090B', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'แดงคริมสันสด (Vivid Crimson)', hex: '#FF1E42', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'ส้มสด (Vivid Orange)', hex: '#F97316', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'เขียวมรกตสด (Vivid Emerald)', hex: '#10B981', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'น้ำเงินรอยัลสด (Vivid Royal Blue)', hex: '#2563EB', category: 'แม่สี & มาตรฐานงานพิมพ์' },
+            { name: 'ม่วงไวโอเล็ตสด (Vivid Violet)', hex: '#8B5CF6', category: 'แม่สี & มาตรฐานงานพิมพ์' },
 
             // 2. โทนแดง & เบอร์กันดี (16)
-            {name: 'แดงสการ์เล็ต (Scarlet Red)', hex: '#EF4444', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงชาด (Vermilion Red)', hex: '#DC2626', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงคาร์ไมน์ (Carmine Red)', hex: '#B91C1C', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงเชอร์รี (Cherry Red)', hex: '#BE123C', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงทับทิม (Ruby Red)', hex: '#9F1239', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงเบอร์กันดี (Deep Burgundy)', hex: '#881337', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงไวน์มารูน (Wine Maroon)', hex: '#7F1D1D', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงเลือดหมูเข้ม (Oxblood Red)', hex: '#5C1111', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงอิฐ (Brick Red)', hex: '#991B1B', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงราสป์เบอร์รี (Raspberry Red)', hex: '#E11D48', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงสตรอว์เบอร์รี (Strawberry Red)', hex: '#F43F5E', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงแตงโม (Watermelon Red)', hex: '#FB7185', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงสนิมเหล็ก (Iron Oxide Red)', hex: '#8B261D', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงมะฮอกกานี (Mahogany Red)', hex: '#6B1D1D', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงปาปริก้า (Paprika Red)', hex: '#C83E37', category: 'โทนแดง & เบอร์กันดี'},
-            {name: 'แดงกุหลาบเข้ม (Deep Rose Red)', hex: '#9E1B32', category: 'โทนแดง & เบอร์กันดี'},
+            { name: 'แดงสการ์เล็ต (Scarlet Red)', hex: '#EF4444', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงชาด (Vermilion Red)', hex: '#DC2626', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงคาร์ไมน์ (Carmine Red)', hex: '#B91C1C', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงเชอร์รี (Cherry Red)', hex: '#BE123C', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงทับทิม (Ruby Red)', hex: '#9F1239', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงเบอร์กันดี (Deep Burgundy)', hex: '#881337', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงไวน์มารูน (Wine Maroon)', hex: '#7F1D1D', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงเลือดหมูเข้ม (Oxblood Red)', hex: '#5C1111', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงอิฐ (Brick Red)', hex: '#991B1B', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงราสป์เบอร์รี (Raspberry Red)', hex: '#E11D48', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงสตรอว์เบอร์รี (Strawberry Red)', hex: '#F43F5E', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงแตงโม (Watermelon Red)', hex: '#FB7185', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงสนิมเหล็ก (Iron Oxide Red)', hex: '#8B261D', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงมะฮอกกานี (Mahogany Red)', hex: '#6B1D1D', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงปาปริก้า (Paprika Red)', hex: '#C83E37', category: 'โทนแดง & เบอร์กันดี' },
+            { name: 'แดงกุหลาบเข้ม (Deep Rose Red)', hex: '#9E1B32', category: 'โทนแดง & เบอร์กันดี' },
 
             // 3. โทนชมพู & กุหลาบ (16)
-            {name: 'ชมพูช็อกกิ้งพิงก์ (Shocking Pink)', hex: '#EC4899', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูบานเย็นเข้ม (Deep Magenta)', hex: '#DB2777', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูฟูเชีย (Fuchsia Pink)', hex: '#D946EF', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูกุหลาบ (Rose Pink)', hex: '#F472B6', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูฟลามิงโก (Flamingo Pink)', hex: '#F984A9', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูซากุระ (Sakura Pink)', hex: '#F9A8D4', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูเบบี้พิงก์ (Baby Pink)', hex: '#FBCFE8', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูพาสเทลอ่อน (Pastel Blush)', hex: '#FCE7F3', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูกะปิ (Dusty Rose)', hex: '#C08081', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูกะปิเข้ม (Deep Dusty Rose)', hex: '#9D5C63', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูนู้ดอุ่น (Warm Nude Pink)', hex: '#E6B8B7', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูแซลมอน (Salmon Pink)', hex: '#FA8072', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูคาร์เนชัน (Carnation Pink)', hex: '#FFA6C9', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูพีโอนี (Peony Pink)', hex: '#DE5D83', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูเบอรี (Berry Pink)', hex: '#BE185D', category: 'โทนชมพู & กุหลาบ'},
-            {name: 'ชมพูมัลเบอร์รี (Mulberry Pink)', hex: '#831843', category: 'โทนชมพู & กุหลาบ'},
+            { name: 'ชมพูช็อกกิ้งพิงก์ (Shocking Pink)', hex: '#EC4899', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูบานเย็นเข้ม (Deep Magenta)', hex: '#DB2777', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูฟูเชีย (Fuchsia Pink)', hex: '#D946EF', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูกุหลาบ (Rose Pink)', hex: '#F472B6', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูฟลามิงโก (Flamingo Pink)', hex: '#F984A9', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูซากุระ (Sakura Pink)', hex: '#F9A8D4', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูเบบี้พิงก์ (Baby Pink)', hex: '#FBCFE8', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูพาสเทลอ่อน (Pastel Blush)', hex: '#FCE7F3', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูกะปิ (Dusty Rose)', hex: '#C08081', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูกะปิเข้ม (Deep Dusty Rose)', hex: '#9D5C63', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูนู้ดอุ่น (Warm Nude Pink)', hex: '#E6B8B7', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูแซลมอน (Salmon Pink)', hex: '#FA8072', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูคาร์เนชัน (Carnation Pink)', hex: '#FFA6C9', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูพีโอนี (Peony Pink)', hex: '#DE5D83', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูเบอรี (Berry Pink)', hex: '#BE185D', category: 'โทนชมพู & กุหลาบ' },
+            { name: 'ชมพูมัลเบอร์รี (Mulberry Pink)', hex: '#831843', category: 'โทนชมพู & กุหลาบ' },
 
             // 4. โทนส้ม & คอรัล (16)
-            {name: 'ส้มแสด (Tangerine)', hex: '#EA580C', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มแมนดาริน (Mandarin Orange)', hex: '#FB923C', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มแครอท (Carrot Orange)', hex: '#ED7D31', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มฟักทอง (Pumpkin Orange)', hex: '#D95D1E', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มอิฐดินเผา (Terracotta)', hex: '#C2410C', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มสนิม (Burnt Orange)', hex: '#9A3412', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มปะการังสด (Vibrant Coral)', hex: '#FF6F61', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มปะการังอ่อน (Soft Coral)', hex: '#FDA4AF', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มพีช (Peach)', hex: '#FDBA74', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มพีชละมุน (Soft Peach)', hex: '#FED7AA', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มแอปริคอต (Apricot)', hex: '#FFEDD5', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มแคนตาลูป (Cantaloupe)', hex: '#FFA07A', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มมะละกอ (Papaya Orange)', hex: '#FF9E6D', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มทองแดง (Copper Orange)', hex: '#B85D19', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มอำพันเข้ม (Deep Amber)', hex: '#B45309', category: 'โทนส้ม & คอรัล'},
-            {name: 'ส้มน้ำผึ้ง (Honey Orange)', hex: '#E07A22', category: 'โทนส้ม & คอรัล'},
+            { name: 'ส้มแสด (Tangerine)', hex: '#EA580C', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มแมนดาริน (Mandarin Orange)', hex: '#FB923C', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มแครอท (Carrot Orange)', hex: '#ED7D31', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มฟักทอง (Pumpkin Orange)', hex: '#D95D1E', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มอิฐดินเผา (Terracotta)', hex: '#C2410C', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มสนิม (Burnt Orange)', hex: '#9A3412', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มปะการังสด (Vibrant Coral)', hex: '#FF6F61', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มปะการังอ่อน (Soft Coral)', hex: '#FDA4AF', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มพีช (Peach)', hex: '#FDBA74', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มพีชละมุน (Soft Peach)', hex: '#FED7AA', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มแอปริคอต (Apricot)', hex: '#FFEDD5', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มแคนตาลูป (Cantaloupe)', hex: '#FFA07A', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มมะละกอ (Papaya Orange)', hex: '#FF9E6D', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มทองแดง (Copper Orange)', hex: '#B85D19', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มอำพันเข้ม (Deep Amber)', hex: '#B45309', category: 'โทนส้ม & คอรัล' },
+            { name: 'ส้มน้ำผึ้ง (Honey Orange)', hex: '#E07A22', category: 'โทนส้ม & คอรัล' },
 
             // 5. โทนเหลือง & ทองคำ (16)
-            {name: 'เหลืองเลมอน (Lemon Yellow)', hex: '#FEF08A', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองคานารี (Canary Yellow)', hex: '#FDE047', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองดอกทานตะวัน (Sunflower)', hex: '#F59E0B', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองบุษราคัม (Topaz Gold)', hex: '#EAB308', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองอำพัน (Warm Amber)', hex: '#D97706', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองมัสตาร์ด (Warm Mustard)', hex: '#CA8A04', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองมัสตาร์ดเข้ม (Dark Mustard)', hex: '#A16207', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองดินเหลือง (Yellow Ochre)', hex: '#CC7722', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองหญ้าฝรั่น (Saffron Yellow)', hex: '#F4C430', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองข้าวโพด (Corn Yellow)', hex: '#FBEC5D', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองบัตเตอร์ครีม (Buttercream)', hex: '#FEF9C3', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองครีมวานิลลา (Vanilla Cream)', hex: '#FFFBEB', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองแชมเปญอ่อน (Pale Champagne)', hex: '#F7E7CE', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองทองอร่าม (Marigold Gold)', hex: '#EAA221', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองกล้วยหอม (Banana Pastel)', hex: '#FAE7B5', category: 'โทนเหลือง & ทองคำ'},
-            {name: 'เหลืองขมิ้น (Turmeric Gold)', hex: '#D49B1A', category: 'โทนเหลือง & ทองคำ'},
+            { name: 'เหลืองเลมอน (Lemon Yellow)', hex: '#FEF08A', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองคานารี (Canary Yellow)', hex: '#FDE047', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองดอกทานตะวัน (Sunflower)', hex: '#F59E0B', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองบุษราคัม (Topaz Gold)', hex: '#EAB308', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองอำพัน (Warm Amber)', hex: '#D97706', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองมัสตาร์ด (Warm Mustard)', hex: '#CA8A04', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองมัสตาร์ดเข้ม (Dark Mustard)', hex: '#A16207', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองดินเหลือง (Yellow Ochre)', hex: '#CC7722', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองหญ้าฝรั่น (Saffron Yellow)', hex: '#F4C430', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองข้าวโพด (Corn Yellow)', hex: '#FBEC5D', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองบัตเตอร์ครีม (Buttercream)', hex: '#FEF9C3', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองครีมวานิลลา (Vanilla Cream)', hex: '#FFFBEB', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองแชมเปญอ่อน (Pale Champagne)', hex: '#F7E7CE', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองทองอร่าม (Marigold Gold)', hex: '#EAA221', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองกล้วยหอม (Banana Pastel)', hex: '#FAE7B5', category: 'โทนเหลือง & ทองคำ' },
+            { name: 'เหลืองขมิ้น (Turmeric Gold)', hex: '#D49B1A', category: 'โทนเหลือง & ทองคำ' },
 
             // 6. โทนเขียวใบไม้ & มรกต (16)
-            {name: 'เขียวมรกต (Emerald Forest)', hex: '#059669', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวหยก (Jade Green)', hex: '#00A86B', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวใบไม้ธรรมชาติ (Natural Leaf Green)', hex: '#16A34A', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวเคลลี (Kelly Green)', hex: '#22C55E', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวแอปเปิล (Apple Green)', hex: '#4ADE80', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวมิ้นต์สด (Fresh Mint)', hex: '#34D399', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวมิ้นต์พาสเทล (Pastel Mint)', hex: '#A7F3D0', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวมิ้นต์น้ำแข็ง (Ice Mint)', hex: '#D1FAE5', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวป่าสน (Forest Green)', hex: '#15803D', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวป่าสนเข้ม (Deep Forest Green)', hex: '#14532D', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวฮันเตอร์ (Hunter Green)', hex: '#1B4D3E', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวสนไซเปรส (Cypress Green)', hex: '#065F46', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวมาลาไคต์ (Malachite Green)', hex: '#0BDA51', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวใบเตย (Pandan Green)', hex: '#3B7A57', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวซีโฟม (Seafoam Green)', hex: '#93E9BE', category: 'โทนเขียวใบไม้ & มรกต'},
-            {name: 'เขียวยูคาลิปตัส (Eucalyptus Green)', hex: '#44D7A8', category: 'โทนเขียวใบไม้ & มรกต'},
+            { name: 'เขียวมรกต (Emerald Forest)', hex: '#059669', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวหยก (Jade Green)', hex: '#00A86B', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวใบไม้ธรรมชาติ (Natural Leaf Green)', hex: '#16A34A', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวเคลลี (Kelly Green)', hex: '#22C55E', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวแอปเปิล (Apple Green)', hex: '#4ADE80', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวมิ้นต์สด (Fresh Mint)', hex: '#34D399', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวมิ้นต์พาสเทล (Pastel Mint)', hex: '#A7F3D0', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวมิ้นต์น้ำแข็ง (Ice Mint)', hex: '#D1FAE5', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวป่าสน (Forest Green)', hex: '#15803D', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวป่าสนเข้ม (Deep Forest Green)', hex: '#14532D', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวฮันเตอร์ (Hunter Green)', hex: '#1B4D3E', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวสนไซเปรส (Cypress Green)', hex: '#065F46', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวมาลาไคต์ (Malachite Green)', hex: '#0BDA51', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวใบเตย (Pandan Green)', hex: '#3B7A57', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวซีโฟม (Seafoam Green)', hex: '#93E9BE', category: 'โทนเขียวใบไม้ & มรกต' },
+            { name: 'เขียวยูคาลิปตัส (Eucalyptus Green)', hex: '#44D7A8', category: 'โทนเขียวใบไม้ & มรกต' },
 
             // 7. โทนเขียวมะกอก & เอิร์ธกรีน (16)
-            {name: 'เขียวมะนาว (Electric Lime)', hex: '#84CC16', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวชาร์ทรูส (Chartreuse)', hex: '#A3E635', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวพิสตาชิโอ (Pistachio)', hex: '#BBF7D0', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวลูกแพร์ (Pear Green)', hex: '#D9F99D', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวมะกอก (Olive Leaf)', hex: '#65A30D', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวมะกอกเข้ม (Dark Olive)', hex: '#3F6212', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวมอส (Moss Green)', hex: '#4D7C0F', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวเสจ (Sage Green)', hex: '#6B8E78', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวเสจอ่อน (Soft Sage)', hex: '#9CAF88', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวขี้ม้า (Army Olive)', hex: '#4B5320', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวอะโวคาโด (Avocado Green)', hex: '#568203', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวมัทฉะ (Matcha Green)', hex: '#74A12E', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวเฟิร์น (Fern Green)', hex: '#4F7942', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวอาร์ติโชก (Artichoke Green)', hex: '#8F9779', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวมะกอกหม่น (Muted Olive)', hex: '#708238', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
-            {name: 'เขียวไพร (Deep Pine Moss)', hex: '#2D3B1E', category: 'โทนเขียวมะกอก & เอิร์ธกรีน'},
+            { name: 'เขียวมะนาว (Electric Lime)', hex: '#84CC16', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวชาร์ทรูส (Chartreuse)', hex: '#A3E635', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวพิสตาชิโอ (Pistachio)', hex: '#BBF7D0', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวลูกแพร์ (Pear Green)', hex: '#D9F99D', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวมะกอก (Olive Leaf)', hex: '#65A30D', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวมะกอกเข้ม (Dark Olive)', hex: '#3F6212', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวมอส (Moss Green)', hex: '#4D7C0F', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวเสจ (Sage Green)', hex: '#6B8E78', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวเสจอ่อน (Soft Sage)', hex: '#9CAF88', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวขี้ม้า (Army Olive)', hex: '#4B5320', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวอะโวคาโด (Avocado Green)', hex: '#568203', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวมัทฉะ (Matcha Green)', hex: '#74A12E', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวเฟิร์น (Fern Green)', hex: '#4F7942', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวอาร์ติโชก (Artichoke Green)', hex: '#8F9779', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวมะกอกหม่น (Muted Olive)', hex: '#708238', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
+            { name: 'เขียวไพร (Deep Pine Moss)', hex: '#2D3B1E', category: 'โทนเขียวมะกอก & เอิร์ธกรีน' },
 
             // 8. โทนฟ้าอควา & เทอร์ควอยซ์ (16)
-            {name: 'ฟ้าเทอร์ควอยซ์ (Turquoise)', hex: '#06B6D4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าอควาสด (Vivid Aqua)', hex: '#22D3EE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าทิฟฟานี (Tiffany Blue)', hex: '#0ABAB5', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าน้ำแข็งอควา (Aqua Ice Blue)', hex: '#99F6E4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าคริสตัล (Crystal Mist)', hex: '#CFFAFE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'เขียวน้ำทะเล (Ocean Teal)', hex: '#0D9488', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'เขียวหัวเป็ดเข้ม (Deep Teal)', hex: '#115E59', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'เขียวเป็ดน้ำลึก (Dark Petrol Teal)', hex: '#134E4A', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าเซอร์รูเลียน (Cerulean Blue)', hex: '#0284C7', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าสกายบลู (Sky Blue)', hex: '#38BDF8', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าเบบี้บลู (Sky Baby Blue)', hex: '#BAE6FD', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าไอซ์บลู (Ice Blue)', hex: '#E0F2FE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าแปซิฟิก (Pacific Blue)', hex: '#009DC4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าลากูน (Lagoon Blue)', hex: '#2DD4BF', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าโรบินเอ้ก (Robin Egg Blue)', hex: '#00CCCC', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
-            {name: 'ฟ้าพีค็อก (Peacock Blue)', hex: '#005F69', category: 'โทนฟ้าอควา & เทอร์ควอยซ์'},
+            { name: 'ฟ้าเทอร์ควอยซ์ (Turquoise)', hex: '#06B6D4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าอควาสด (Vivid Aqua)', hex: '#22D3EE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าทิฟฟานี (Tiffany Blue)', hex: '#0ABAB5', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าน้ำแข็งอควา (Aqua Ice Blue)', hex: '#99F6E4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าคริสตัล (Crystal Mist)', hex: '#CFFAFE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'เขียวน้ำทะเล (Ocean Teal)', hex: '#0D9488', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'เขียวหัวเป็ดเข้ม (Deep Teal)', hex: '#115E59', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'เขียวเป็ดน้ำลึก (Dark Petrol Teal)', hex: '#134E4A', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าเซอร์รูเลียน (Cerulean Blue)', hex: '#0284C7', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าสกายบลู (Sky Blue)', hex: '#38BDF8', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าเบบี้บลู (Sky Baby Blue)', hex: '#BAE6FD', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าไอซ์บลู (Ice Blue)', hex: '#E0F2FE', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าแปซิฟิก (Pacific Blue)', hex: '#009DC4', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าลากูน (Lagoon Blue)', hex: '#2DD4BF', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าโรบินเอ้ก (Robin Egg Blue)', hex: '#00CCCC', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
+            { name: 'ฟ้าพีค็อก (Peacock Blue)', hex: '#005F69', category: 'โทนฟ้าอควา & เทอร์ควอยซ์' },
 
             // 9. โทนน้ำเงิน & คราม (16)
-            {name: 'น้ำเงินคอร์นฟลาวเวอร์ (Cornflower Blue)', hex: '#4E7AE6', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินรอยัลบลู (Royal Blue)', hex: '#1D4ED8', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินโคบอลต์ (Cobalt Blue)', hex: '#0047AB', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินไพลิน (Sapphire Blue)', hex: '#0F52BA', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินอัลตร้ามารีน (Ultramarine)', hex: '#120A8F', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินอาซูร์ (Azure Blue)', hex: '#007FFF', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินเดนิม (Denim Blue)', hex: '#1560BD', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินสตีล (Steel Blue)', hex: '#4682B4', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินเพอริวิงเคิล (Periwinkle)', hex: '#8E9BFF', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'ฟ้าพาวเดอร์บลู (Powder Blue)', hex: '#93C5FD', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินโคบอลต์ลึก (Deep Cobalt)', hex: '#1E3A8A', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินกรมท่า (Midnight Navy)', hex: '#1E293B', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินปรัสเซียน (Prussian Blue)', hex: '#0F294A', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินออกซ์ฟอร์ด (Oxford Navy)', hex: '#002147', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินครามเข้ม (Deep Indigo Blue)', hex: '#1E1B4B', category: 'โทนน้ำเงิน & คราม'},
-            {name: 'น้ำเงินหม่นสเลท (Muted Slate Blue)', hex: '#475569', category: 'โทนน้ำเงิน & คราม'},
+            { name: 'น้ำเงินคอร์นฟลาวเวอร์ (Cornflower Blue)', hex: '#4E7AE6', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินรอยัลบลู (Royal Blue)', hex: '#1D4ED8', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินโคบอลต์ (Cobalt Blue)', hex: '#0047AB', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินไพลิน (Sapphire Blue)', hex: '#0F52BA', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินอัลตร้ามารีน (Ultramarine)', hex: '#120A8F', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินอาซูร์ (Azure Blue)', hex: '#007FFF', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินเดนิม (Denim Blue)', hex: '#1560BD', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินสตีล (Steel Blue)', hex: '#4682B4', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินเพอริวิงเคิล (Periwinkle)', hex: '#8E9BFF', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'ฟ้าพาวเดอร์บลู (Powder Blue)', hex: '#93C5FD', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินโคบอลต์ลึก (Deep Cobalt)', hex: '#1E3A8A', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินกรมท่า (Midnight Navy)', hex: '#1E293B', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินปรัสเซียน (Prussian Blue)', hex: '#0F294A', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินออกซ์ฟอร์ด (Oxford Navy)', hex: '#002147', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินครามเข้ม (Deep Indigo Blue)', hex: '#1E1B4B', category: 'โทนน้ำเงิน & คราม' },
+            { name: 'น้ำเงินหม่นสเลท (Muted Slate Blue)', hex: '#475569', category: 'โทนน้ำเงิน & คราม' },
 
             // 10. โทนม่วง & พลัม (16)
-            {name: 'ม่วงอเมทิสต์ (Amethyst Violet)', hex: '#834BB1', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงไวโอเล็ต (Royal Violet)', hex: '#7C3AED', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงออร์คิด (Orchid Purple)', hex: '#DA70D6', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงลาเวนเดอร์ (Soft Lavender)', hex: '#C4B5FD', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงไลแลค (Pastel Lilac)', hex: '#DDD6FE', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงวิสทีเรีย (Wisteria Purple)', hex: '#C9A0DC', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงไอริส (Iris Purple)', hex: '#5A4FCF', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงอินดิโก (Deep Indigo)', hex: '#312E81', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงองุ่นเข้ม (Deep Grape)', hex: '#7E4491', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงพลัม (Plum Purple)', hex: '#8E4585', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงเปลือกมังคุด (Deep Eggplant Plum)', hex: '#581C87', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงออบอร์จีน (Aubergine)', hex: '#3B0764', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงบอยเซนเบอร์รี (Boysenberry)', hex: '#873260', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงเฮลิโอโทรป (Heliotrope)', hex: '#DF73FF', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงองุ่นแดง (Concord Grape)', hex: '#6B21A8', category: 'โทนม่วง & พลัม'},
-            {name: 'ม่วงอมน้ำเงินเข้ม (Byzantium Purple)', hex: '#4C1D95', category: 'โทนม่วง & พลัม'},
+            { name: 'ม่วงอเมทิสต์ (Amethyst Violet)', hex: '#834BB1', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงไวโอเล็ต (Royal Violet)', hex: '#7C3AED', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงออร์คิด (Orchid Purple)', hex: '#DA70D6', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงลาเวนเดอร์ (Soft Lavender)', hex: '#C4B5FD', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงไลแลค (Pastel Lilac)', hex: '#DDD6FE', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงวิสทีเรีย (Wisteria Purple)', hex: '#C9A0DC', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงไอริส (Iris Purple)', hex: '#5A4FCF', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงอินดิโก (Deep Indigo)', hex: '#312E81', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงองุ่นเข้ม (Deep Grape)', hex: '#7E4491', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงพลัม (Plum Purple)', hex: '#8E4585', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงเปลือกมังคุด (Deep Eggplant Plum)', hex: '#581C87', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงออบอร์จีน (Aubergine)', hex: '#3B0764', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงบอยเซนเบอร์รี (Boysenberry)', hex: '#873260', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงเฮลิโอโทรป (Heliotrope)', hex: '#DF73FF', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงองุ่นแดง (Concord Grape)', hex: '#6B21A8', category: 'โทนม่วง & พลัม' },
+            { name: 'ม่วงอมน้ำเงินเข้ม (Byzantium Purple)', hex: '#4C1D95', category: 'โทนม่วง & พลัม' },
 
             // 11. โทนน้ำตาล & ไม้ธรรมชาติ (16)
-            {name: 'เบจลินิน (Natural Linen)', hex: '#E7DFD5', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'ทรายอุ่น (Warm Sand)', hex: '#D6C7B2', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลกากี (Khaki Tan)', hex: '#C3B091', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลอูฐ (Camel Brown)', hex: '#C19A6B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลคาราเมล (Caramel)', hex: '#92400E', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลชินนามอน (Cinnamon)', hex: '#7B3F00', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลไม้สัก (Teak Wood)', hex: '#8B5A2B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลเชสต์นัท (Chestnut)', hex: '#954535', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลเฮเซลนัท (Hazelnut)', hex: '#A67B5B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลมอคค่า (Mocha Brown)', hex: '#6F4E37', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลกาแฟคั่ว (Roasted Coffee)', hex: '#5C4033', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลโกโก้ (Cocoa Brown)', hex: '#4E3524', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลช็อกโกแลตเข้ม (Dark Chocolate)', hex: '#3E2723', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลเอสเพรสโซ (Espresso)', hex: '#291D18', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลไม้วอลนัท (Walnut Wood)', hex: '#4A3728', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
-            {name: 'น้ำตาลซีเปีย (Sepia Brown)', hex: '#704214', category: 'โทนน้ำตาล & ไม้ธรรมชาติ'},
+            { name: 'เบจลินิน (Natural Linen)', hex: '#E7DFD5', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'ทรายอุ่น (Warm Sand)', hex: '#D6C7B2', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลกากี (Khaki Tan)', hex: '#C3B091', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลอูฐ (Camel Brown)', hex: '#C19A6B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลคาราเมล (Caramel)', hex: '#92400E', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลชินนามอน (Cinnamon)', hex: '#7B3F00', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลไม้สัก (Teak Wood)', hex: '#8B5A2B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลเชสต์นัท (Chestnut)', hex: '#954535', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลเฮเซลนัท (Hazelnut)', hex: '#A67B5B', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลมอคค่า (Mocha Brown)', hex: '#6F4E37', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลกาแฟคั่ว (Roasted Coffee)', hex: '#5C4033', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลโกโก้ (Cocoa Brown)', hex: '#4E3524', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลช็อกโกแลตเข้ม (Dark Chocolate)', hex: '#3E2723', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลเอสเพรสโซ (Espresso)', hex: '#291D18', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลไม้วอลนัท (Walnut Wood)', hex: '#4A3728', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
+            { name: 'น้ำตาลซีเปีย (Sepia Brown)', hex: '#704214', category: 'โทนน้ำตาล & ไม้ธรรมชาติ' },
 
             // 12. โทนสกินโทน & ผิวพรรณ (16)
-            {name: 'ผิวขาวพอร์ซเลน (Porcelain Fair)', hex: '#FDEEE6', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวงาช้าง (Ivory Fair)', hex: '#FCE5D8', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวอมชมพูอ่อน (Light Cool Rose)', hex: '#F9D5C9', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวเหลืองอ่อน (Light Warm Cream)', hex: '#F7DEC8', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวธรรมชาติ (Natural Fair)', hex: '#F3CBB2', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวอมชมพู (Rosy Fair Skin)', hex: '#EEB7A5', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวขาวเหลืองนวล (Warm Light Beige)', hex: '#EBC29F', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวปานกลางธรรมชาติ (Medium Neutral)', hex: '#DFB18B', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวสองสีโทนอุ่น (Warm Olive Medium)', hex: '#D4A17A', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวสีน้ำผึ้ง (Honey Tan)', hex: '#C68B59', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวแทนทอง (Golden Tan)', hex: '#B87A4B', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวแทนคาราเมล (Caramel Tan)', hex: '#A4663B', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวสีอัลมอนด์ (Almond Deep)', hex: '#8D5524', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวน้ำตาลอบอุ่น (Warm Umber Skin)', hex: '#75421D', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวน้ำตาลเข้ม (Deep Mahogany Skin)', hex: '#593118', category: 'โทนสกินโทน & ผิวพรรณ'},
-            {name: 'ผิวน้ำตาลเอสเพรสโซ (Deep Ebony Skin)', hex: '#3D2010', category: 'โทนสกินโทน & ผิวพรรณ'},
+            { name: 'ผิวขาวพอร์ซเลน (Porcelain Fair)', hex: '#FDEEE6', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวงาช้าง (Ivory Fair)', hex: '#FCE5D8', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวอมชมพูอ่อน (Light Cool Rose)', hex: '#F9D5C9', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวเหลืองอ่อน (Light Warm Cream)', hex: '#F7DEC8', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวธรรมชาติ (Natural Fair)', hex: '#F3CBB2', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวอมชมพู (Rosy Fair Skin)', hex: '#EEB7A5', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวขาวเหลืองนวล (Warm Light Beige)', hex: '#EBC29F', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวปานกลางธรรมชาติ (Medium Neutral)', hex: '#DFB18B', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวสองสีโทนอุ่น (Warm Olive Medium)', hex: '#D4A17A', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวสีน้ำผึ้ง (Honey Tan)', hex: '#C68B59', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวแทนทอง (Golden Tan)', hex: '#B87A4B', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวแทนคาราเมล (Caramel Tan)', hex: '#A4663B', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวสีอัลมอนด์ (Almond Deep)', hex: '#8D5524', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวน้ำตาลอบอุ่น (Warm Umber Skin)', hex: '#75421D', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวน้ำตาลเข้ม (Deep Mahogany Skin)', hex: '#593118', category: 'โทนสกินโทน & ผิวพรรณ' },
+            { name: 'ผิวน้ำตาลเอสเพรสโซ (Deep Ebony Skin)', hex: '#3D2010', category: 'โทนสกินโทน & ผิวพรรณ' },
 
             // 13. โทนสีตุ่น & โมเดิร์นพาสเทล (16)
-            {name: 'ม่วงกะปิตุ่น (Muted Mauve)', hex: '#9F8189', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ม่วงตุ่นลาเวนเดอร์ (Dusty Lavender)', hex: '#A69CAC', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ชมพูตุ่นโมแรนดี (Morandi Dusty Pink)', hex: '#D8A7B1', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ชมพูอมน้ำตาลนู้ด (Nude Terracotta)', hex: '#C99E93', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ส้มพีชตุ่น (Muted Apricot)', hex: '#DFB29B', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เหลืองครีมตุ่น (Muted Cream)', hex: '#E3D5B8', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เขียวตุ่นยูคาลิปตัส (Dusty Eucalyptus)', hex: '#95A792', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เขียวมิ้นต์ตุ่น (Muted Celadon)', hex: '#A3B899', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ฟ้าอมเทาหมอก (Misty Slate Blue)', hex: '#8E9AAF', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ฟ้าเดนิมตุ่น (Dusty Denim)', hex: '#6C809A', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'ฟ้าพาสเทลหม่น (Powder Slate)', hex: '#B8C4D4', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'น้ำตาลเทาโทป (Warm Taupe)', hex: '#8B8589', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เทาอมน้ำตาลอ่อน (Greige Mist)', hex: '#CFC9C2', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เทาอมเขียวเสจ (Sage Grey)', hex: '#9DA39A', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'เทาอมม่วงพลัม (Plum Ash Grey)', hex: '#7A6F7D', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
-            {name: 'น้ำเงินเทาเข้ม (Dark Slate Indigo)', hex: '#3D4856', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล'},
+            { name: 'ม่วงกะปิตุ่น (Muted Mauve)', hex: '#9F8189', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ม่วงตุ่นลาเวนเดอร์ (Dusty Lavender)', hex: '#A69CAC', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ชมพูตุ่นโมแรนดี (Morandi Dusty Pink)', hex: '#D8A7B1', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ชมพูอมน้ำตาลนู้ด (Nude Terracotta)', hex: '#C99E93', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ส้มพีชตุ่น (Muted Apricot)', hex: '#DFB29B', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เหลืองครีมตุ่น (Muted Cream)', hex: '#E3D5B8', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เขียวตุ่นยูคาลิปตัส (Dusty Eucalyptus)', hex: '#95A792', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เขียวมิ้นต์ตุ่น (Muted Celadon)', hex: '#A3B899', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ฟ้าอมเทาหมอก (Misty Slate Blue)', hex: '#8E9AAF', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ฟ้าเดนิมตุ่น (Dusty Denim)', hex: '#6C809A', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'ฟ้าพาสเทลหม่น (Powder Slate)', hex: '#B8C4D4', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'น้ำตาลเทาโทป (Warm Taupe)', hex: '#8B8589', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เทาอมน้ำตาลอ่อน (Greige Mist)', hex: '#CFC9C2', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เทาอมเขียวเสจ (Sage Grey)', hex: '#9DA39A', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'เทาอมม่วงพลัม (Plum Ash Grey)', hex: '#7A6F7D', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
+            { name: 'น้ำเงินเทาเข้ม (Dark Slate Indigo)', hex: '#3D4856', category: 'โทนสีตุ่น & โมเดิร์นพาสเทล' },
 
             // 14. โทนโลหะ & อัญมณี (16)
-            {name: 'ทองคำบริสุทธิ์ (24K Gold)', hex: '#D4AF37', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ทองคำขาว (White Gold)', hex: '#EAE6DF', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ทองแชมเปญ (Champagne Gold)', hex: '#E6C98C', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'โรสโกลด์ (Rose Gold)', hex: '#E0A99A', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ทองแดงบรอนซ์ (Copper Bronze)', hex: '#B87333', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ทองเหลืองโบราณ (Antique Brass)', hex: '#A16207', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'เงินสเตอร์ลิง (Sterling Silver)', hex: '#C0C0C0', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'แพลตินัม (Platinum Metal)', hex: '#E5E4E2', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'เทาไทเทเนียม (Titanium Gunmetal)', hex: '#52525B', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'เหล็กกล้าโครเมียม (Chrome Steel)', hex: '#8E9299', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'แดงทับทิมอัญมณี (Ruby Gemstone)', hex: '#BE123C', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'น้ำเงินไพลินอัญมณี (Sapphire Gem)', hex: '#0F52BA', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'เขียวหยกจักรพรรดิ (Imperial Jade)', hex: '#10B981', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ม่วงอเมทิสต์อัญมณี (Amethyst Gem)', hex: '#9333EA', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ฟ้าอะความารีน (Aquamarine Gem)', hex: '#7FFFD4', category: 'โทนโลหะ & อัญมณี'},
-            {name: 'ส้มโกเมน (Garnet Gemstone)', hex: '#733635', category: 'โทนโลหะ & อัญมณี'},
+            { name: 'ทองคำบริสุทธิ์ (24K Gold)', hex: '#D4AF37', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ทองคำขาว (White Gold)', hex: '#EAE6DF', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ทองแชมเปญ (Champagne Gold)', hex: '#E6C98C', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'โรสโกลด์ (Rose Gold)', hex: '#E0A99A', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ทองแดงบรอนซ์ (Copper Bronze)', hex: '#B87333', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ทองเหลืองโบราณ (Antique Brass)', hex: '#A16207', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'เงินสเตอร์ลิง (Sterling Silver)', hex: '#C0C0C0', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'แพลตินัม (Platinum Metal)', hex: '#E5E4E2', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'เทาไทเทเนียม (Titanium Gunmetal)', hex: '#52525B', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'เหล็กกล้าโครเมียม (Chrome Steel)', hex: '#8E9299', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'แดงทับทิมอัญมณี (Ruby Gemstone)', hex: '#BE123C', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'น้ำเงินไพลินอัญมณี (Sapphire Gem)', hex: '#0F52BA', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'เขียวหยกจักรพรรดิ (Imperial Jade)', hex: '#10B981', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ม่วงอเมทิสต์อัญมณี (Amethyst Gem)', hex: '#9333EA', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ฟ้าอะความารีน (Aquamarine Gem)', hex: '#7FFFD4', category: 'โทนโลหะ & อัญมณี' },
+            { name: 'ส้มโกเมน (Garnet Gemstone)', hex: '#733635', category: 'โทนโลหะ & อัญมณี' },
 
             // 15. โทนขาว เทา ดำ (16)
-            {name: 'ขาวบริสุทธิ์ (Pure White)', hex: '#FFFFFF', category: 'โทนขาว เทา ดำ'},
-            {name: 'ขาวมณี (Pearl Alabaster)', hex: '#F8FAFC', category: 'โทนขาว เทา ดำ'},
-            {name: 'ขาวนวลไอวอรี (Warm Ivory)', hex: '#FAF8F5', category: 'โทนขาว เทา ดำ'},
-            {name: 'ขาวควันบุหรี่ (Smoke White)', hex: '#F3F4F6', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 10% (10% Cool Grey)', hex: '#E5E7EB', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 20% (20% Fog Grey)', hex: '#CBD5E1', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 30% (30% Silver Ash)', hex: '#B0B7C3', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทาอุ่นสโตน (Warm Stone Grey)', hex: '#A8A29E', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 45% (Neutral Medium Grey)', hex: '#9CA3AF', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 55% (Pewter Grey)', hex: '#78716C', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 65% (Slate Grey)', hex: '#64748B', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทา 75% (Graphite Grey)', hex: '#4B5563', category: 'โทนขาว เทา ดำ'},
-            {name: 'เทาชาร์โคล (Charcoal Slate)', hex: '#334155', category: 'โทนขาว เทา ดำ'},
-            {name: 'ดำถ่านไม้ (Charcoal Black)', hex: '#18181B', category: 'โทนขาว เทา ดำ'},
-            {name: 'ดำออบซิเดียน (Obsidian Ink)', hex: '#0F172A', category: 'โทนขาว เทา ดำ'},
-            {name: 'ดำสนิท (Pure Black)', hex: '#000000', category: 'โทนขาว เทา ดำ'}
+            { name: 'ขาวบริสุทธิ์ (Pure White)', hex: '#FFFFFF', category: 'โทนขาว เทา ดำ' },
+            { name: 'ขาวมณี (Pearl Alabaster)', hex: '#F8FAFC', category: 'โทนขาว เทา ดำ' },
+            { name: 'ขาวนวลไอวอรี (Warm Ivory)', hex: '#FAF8F5', category: 'โทนขาว เทา ดำ' },
+            { name: 'ขาวควันบุหรี่ (Smoke White)', hex: '#F3F4F6', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 10% (10% Cool Grey)', hex: '#E5E7EB', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 20% (20% Fog Grey)', hex: '#CBD5E1', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 30% (30% Silver Ash)', hex: '#B0B7C3', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทาอุ่นสโตน (Warm Stone Grey)', hex: '#A8A29E', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 45% (Neutral Medium Grey)', hex: '#9CA3AF', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 55% (Pewter Grey)', hex: '#78716C', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 65% (Slate Grey)', hex: '#64748B', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทา 75% (Graphite Grey)', hex: '#4B5563', category: 'โทนขาว เทา ดำ' },
+            { name: 'เทาชาร์โคล (Charcoal Slate)', hex: '#334155', category: 'โทนขาว เทา ดำ' },
+            { name: 'ดำถ่านไม้ (Charcoal Black)', hex: '#18181B', category: 'โทนขาว เทา ดำ' },
+            { name: 'ดำออบซิเดียน (Obsidian Ink)', hex: '#0F172A', category: 'โทนขาว เทา ดำ' },
+            { name: 'ดำสนิท (Pure Black)', hex: '#000000', category: 'โทนขาว เทา ดำ' }
         ];
 
         const SAMPLE_CATEGORIES = [
@@ -1671,10 +1495,10 @@
                 desc: 'ระบบแม่สีหมึกพิมพ์ 4 สี สำหรับงานโรงพิมพ์ โบรชัวร์ บรรจุภัณฑ์ และสื่อสิ่งพิมพ์ทุกชนิด (ค่าเริ่มต้น)',
                 supportsScale: true,
                 channels: [
-                    {key: 'c', labelPct: 'C (%)', labelDec: 'C (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'm', labelPct: 'M (%)', labelDec: 'M (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'y', labelPct: 'Y (%)', labelDec: 'Y (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'k', labelPct: 'K (%)', labelDec: 'K (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'c', labelPct: 'C (%)', labelDec: 'C (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'm', labelPct: 'M (%)', labelDec: 'M (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'y', labelPct: 'Y (%)', labelDec: 'Y (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'k', labelPct: 'K (%)', labelDec: 'K (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             HEX: {
@@ -1682,7 +1506,7 @@
                 desc: 'ใช้ระบุค่าสีในงานออกแบบเว็บไซต์ (HTML/CSS) และงานกราฟิกดิจิทัล โดยแทนค่าแม่สีแดง-เขียว-น้ำเงินด้วยเลขฐานสิบหก 6 หลัก',
                 supportsScale: false,
                 channels: [
-                    {key: 'hex', labelPct: 'HEX (6 หลัก)', labelDec: 'HEX (6 หลัก)', phPct: 'FF1E42', phDec: 'FF1E42', type: 'text', maxLength: 6}
+                    { key: 'hex', labelPct: 'HEX (6 หลัก)', labelDec: 'HEX (6 หลัก)', phPct: 'FF1E42', phDec: 'FF1E42', type: 'text', maxLength: 6 }
                 ]
             },
             RGB: {
@@ -1690,9 +1514,9 @@
                 desc: 'ระบบแม่สีของแสงหน้าจอคอมพิวเตอร์และมือถือ (โหมด % ใช้ 0–255 / โหมดทศนิยมใช้ 0.00–1.00)',
                 supportsScale: true,
                 channels: [
-                    {key: 'r', labelPct: 'R (0-255)', labelDec: 'R (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true},
-                    {key: 'g', labelPct: 'G (0-255)', labelDec: 'G (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true},
-                    {key: 'b', labelPct: 'B (0-255)', labelDec: 'B (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true}
+                    { key: 'r', labelPct: 'R (0-255)', labelDec: 'R (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true },
+                    { key: 'g', labelPct: 'G (0-255)', labelDec: 'G (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true },
+                    { key: 'b', labelPct: 'B (0-255)', labelDec: 'B (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true }
                 ]
             },
             RGBA: {
@@ -1700,10 +1524,10 @@
                 desc: 'ระบบสี RGB ที่เพิ่มช่อง Alpha (ความทึบแสง 0–100% หรือ 0.00–1.00) สำหรับงานซ้อนเลเยอร์และ UI โปร่งใส',
                 supportsScale: true,
                 channels: [
-                    {key: 'r', labelPct: 'R (0-255)', labelDec: 'R (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true},
-                    {key: 'g', labelPct: 'G (0-255)', labelDec: 'G (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true},
-                    {key: 'b', labelPct: 'B (0-255)', labelDec: 'B (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true},
-                    {key: 'a', labelPct: 'A (%)', labelDec: 'A (0-1)', phPct: '100', phDec: '1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'r', labelPct: 'R (0-255)', labelDec: 'R (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true },
+                    { key: 'g', labelPct: 'G (0-255)', labelDec: 'G (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true },
+                    { key: 'b', labelPct: 'B (0-255)', labelDec: 'B (0-1)', phPct: '0-255', phDec: '0.00-1', type: 'number', min: 0, maxPct: 255, maxDec: 1, isFractional: true },
+                    { key: 'a', labelPct: 'A (%)', labelDec: 'A (0-1)', phPct: '100', phDec: '1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             HSL: {
@@ -1711,9 +1535,9 @@
                 desc: 'แยกองค์ประกอบสีเป็น มุมสี (0–360°), ความสดของสี (S) และความสว่าง (L) ทำให้ปรับสีให้อ่อนลงหรือเข้มขึ้นได้สะดวก',
                 supportsScale: true,
                 channels: [
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false},
-                    {key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false },
+                    { key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             HSLA: {
@@ -1721,10 +1545,10 @@
                 desc: 'ระบบสี HSL พร้อมช่องความทึบแสง Alpha (0–100% หรือ 0.00–1.00) สำหรับงานออกแบบกราฟิกและเว็บสมัยใหม่',
                 supportsScale: true,
                 channels: [
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false},
-                    {key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'a', labelPct: 'A (%)', labelDec: 'A (0-1)', phPct: '100', phDec: '1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false },
+                    { key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'a', labelPct: 'A (%)', labelDec: 'A (0-1)', phPct: '100', phDec: '1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             HSV: {
@@ -1732,9 +1556,9 @@
                 desc: 'ระบบสีมาตรฐานในโปรแกรมแต่งภาพและวาดรูปดิจิทัล เช่น Photoshop, Illustrator และ Procreate',
                 supportsScale: true,
                 channels: [
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false},
-                    {key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'v', labelPct: 'V (%)', labelDec: 'V (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false },
+                    { key: 's', labelPct: 'S (%)', labelDec: 'S (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'v', labelPct: 'V (%)', labelDec: 'V (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             LAB: {
@@ -1742,9 +1566,9 @@
                 desc: 'ปริภูมิสีมาตรฐานอุตสาหกรรมที่ออกแบบให้ตรงกับการมองเห็นของดวงตามนุษย์ ใช้เทียบความคลาดเคลื่อนของสี',
                 supportsScale: true,
                 channels: [
-                    {key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'a', labelPct: 'a (-128..127)', labelDec: 'a (-128..127)', phPct: '78', phDec: '78', type: 'number', min: -128, maxPct: 127, maxDec: 127, isFractional: false},
-                    {key: 'b', labelPct: 'b (-128..127)', labelDec: 'b (-128..127)', phPct: '32', phDec: '32', type: 'number', min: -128, maxPct: 127, maxDec: 127, isFractional: false}
+                    { key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'a', labelPct: 'a (-128..127)', labelDec: 'a (-128..127)', phPct: '78', phDec: '78', type: 'number', min: -128, maxPct: 127, maxDec: 127, isFractional: false },
+                    { key: 'b', labelPct: 'b (-128..127)', labelDec: 'b (-128..127)', phPct: '32', phDec: '32', type: 'number', min: -128, maxPct: 127, maxDec: 127, isFractional: false }
                 ]
             },
             LCH: {
@@ -1752,9 +1576,9 @@
                 desc: 'แปลงค่าจาก CIE LAB ให้อยู่ในรูปทรงกระบอก (ความสว่าง, ความอิ่มตัวสี Chroma, มุมสี) ช่วยคุมความสดของสีได้แม่นยำ',
                 supportsScale: true,
                 channels: [
-                    {key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'c', labelPct: 'C (0-150)', labelDec: 'C (0-150)', phPct: '0-150', phDec: '0-150', type: 'number', min: 0, maxPct: 150, maxDec: 150, isFractional: false},
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false}
+                    { key: 'l', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'c', labelPct: 'C (0-150)', labelDec: 'C (0-150)', phPct: '0-150', phDec: '0-150', type: 'number', min: 0, maxPct: 150, maxDec: 150, isFractional: false },
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false }
                 ]
             },
             XYZ: {
@@ -1762,9 +1586,9 @@
                 desc: 'ปริภูมิสีอ้างอิงพื้นฐานทางวิทยาศาสตร์ของค่าแสง ใช้เป็นตัวกลางในการแปลงค่าระหว่างอุปกรณ์วัดสีต่างๆ',
                 supportsScale: true,
                 channels: [
-                    {key: 'x', labelPct: 'X (%)', labelDec: 'X (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'y', labelPct: 'Y (%)', labelDec: 'Y (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'z', labelPct: 'Z (%)', labelDec: 'Z (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'x', labelPct: 'X (%)', labelDec: 'X (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'y', labelPct: 'Y (%)', labelDec: 'Y (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'z', labelPct: 'Z (%)', labelDec: 'Z (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             HWB: {
@@ -1772,9 +1596,9 @@
                 desc: 'ระบบสีมาตรฐาน CSS ที่จำลองการผสมสีจริง โดยระบุมุมสีหลักแล้วเติมปริมาณสีขาว (Whiteness) และสีดำ (Blackness)',
                 supportsScale: true,
                 channels: [
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false},
-                    {key: 'w', labelPct: 'W (%)', labelDec: 'W (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'b', labelPct: 'B (%)', labelDec: 'B (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true}
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false },
+                    { key: 'w', labelPct: 'W (%)', labelDec: 'W (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'b', labelPct: 'B (%)', labelDec: 'B (0-1)', phPct: '0-100', phDec: '0.00-1', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true }
                 ]
             },
             OKLCH: {
@@ -1782,9 +1606,9 @@
                 desc: 'มาตรฐานสี CSS ยุคใหม่ล่าสุด รองรับหน้าจอขอบเขตสีกว้าง และรักษาความสว่างของสีให้สม่ำเสมอในทุกเฉด',
                 supportsScale: true,
                 channels: [
-                    {key: 'L', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.63', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true},
-                    {key: 'c', labelPct: 'C (0..0.4)', labelDec: 'C (0..0.4)', phPct: '0.24', phDec: '0.24', type: 'number', min: 0, maxPct: 0.4, maxDec: 0.4, isFractional: false},
-                    {key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false}
+                    { key: 'L', labelPct: 'L (%)', labelDec: 'L (0-1)', phPct: '0-100', phDec: '0.63', type: 'number', min: 0, maxPct: 100, maxDec: 1, isFractional: true },
+                    { key: 'c', labelPct: 'C (0..0.4)', labelDec: 'C (0..0.4)', phPct: '0.24', phDec: '0.24', type: 'number', min: 0, maxPct: 0.4, maxDec: 0.4, isFractional: false },
+                    { key: 'h', labelPct: 'H (0-360°)', labelDec: 'H (0-360°)', phPct: '0-360', phDec: '0-360', type: 'number', min: 0, maxPct: 360, maxDec: 360, isFractional: false }
                 ]
             }
         };
@@ -1985,7 +1809,7 @@
             const gn = clamp(g, 0, 255) / 255;
             const bn = clamp(b, 0, 255) / 255;
             const k = 1 - Math.max(rn, gn, bn);
-            if (k >= 0.9999) return {c: 0, m: 0, y: 0, k: 100};
+            if (k >= 0.9999) return { c: 0, m: 0, y: 0, k: 100 };
             return {
                 c: Math.round(((1 - rn - k) / (1 - k)) * 100),
                 m: Math.round(((1 - gn - k) / (1 - k)) * 100),
@@ -2024,7 +1848,7 @@
                 else h = (rn - gn) / d + 4;
                 h /= 6;
             }
-            return {h: Math.round(h * 360) % 360, s: Math.round(s * 100), l: Math.round(l * 100)};
+            return { h: Math.round(h * 360) % 360, s: Math.round(s * 100), l: Math.round(l * 100) };
         }
 
         function hslToRgb(h, s, l) {
@@ -2033,7 +1857,7 @@
             const ln = clamp(l, 0, 100) / 100;
             if (sn === 0) {
                 const v = Math.round(ln * 255);
-                return {r: v, g: v, b: v};
+                return { r: v, g: v, b: v };
             }
             const hue2rgb = (p, q, t) => {
                 let tn = t;
@@ -2069,7 +1893,7 @@
                 else h = (rn - gn) / d + 4;
                 h /= 6;
             }
-            return {h: Math.round(h * 360) % 360, s: Math.round(s * 100), v: Math.round(v * 100)};
+            return { h: Math.round(h * 360) % 360, s: Math.round(s * 100), v: Math.round(v * 100) };
         }
 
         function hsvToRgb(h, s, v) {
@@ -2083,20 +1907,20 @@
             const t = vn * (1 - (1 - f) * sn);
             let r = 0, g = 0, b = 0;
             const mod = i % 6;
-            if (mod === 0) {r = vn; g = t; b = p;}
-            else if (mod === 1) {r = q; g = vn; b = p;}
-            else if (mod === 2) {r = p; g = vn; b = t;}
-            else if (mod === 3) {r = p; g = q; b = vn;}
-            else if (mod === 4) {r = t; g = p; b = vn;}
-            else {r = vn; g = p; b = q;}
-            return {r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255)};
+            if (mod === 0) { r = vn; g = t; b = p; }
+            else if (mod === 1) { r = q; g = vn; b = p; }
+            else if (mod === 2) { r = p; g = vn; b = t; }
+            else if (mod === 3) { r = p; g = q; b = vn; }
+            else if (mod === 4) { r = t; g = p; b = vn; }
+            else { r = vn; g = p; b = q; }
+            return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
         }
 
         function rgbToHwb(r, g, b) {
             const hsl = rgbToHsl(r, g, b);
             const w = Math.round((Math.min(r, g, b) / 255) * 100);
             const bl = Math.round((1 - Math.max(r, g, b) / 255) * 100);
-            return {h: hsl.h, w, b: bl};
+            return { h: hsl.h, w, b: bl };
         }
 
         function hwbToRgb(h, w, b) {
@@ -2104,7 +1928,7 @@
             const bn = clamp(b, 0, 100) / 100;
             if (wn + bn >= 1) {
                 const gray = Math.round((wn / (wn + bn)) * 255);
-                return {r: gray, g: gray, b: gray};
+                return { r: gray, g: gray, b: gray };
             }
             const base = hslToRgb(h, 100, 50);
             const factor = 1 - wn - bn;
@@ -2144,7 +1968,7 @@
             const rl = xn * 3.2404542 - yn * 1.5371385 - zn * 0.4985314;
             const gl = -xn * 0.9692660 + yn * 1.8760108 + zn * 0.0415560;
             const bl = xn * 0.0556434 - yn * 0.2040259 + zn * 1.0572252;
-            return {r: linearToSrgb(rl), g: linearToSrgb(gl), b: linearToSrgb(bl)};
+            return { r: linearToSrgb(rl), g: linearToSrgb(gl), b: linearToSrgb(bl) };
         }
 
         function rgbToLab(r, g, b) {
@@ -2173,7 +1997,7 @@
             const c = Math.sqrt(lab.a * lab.a + lab.b * lab.b);
             let h = (Math.atan2(lab.b, lab.a) * 180) / Math.PI;
             if (h < 0) h += 360;
-            return {l: lab.l, c: Number(c.toFixed(1)), h: Number(h.toFixed(1))};
+            return { l: lab.l, c: Number(c.toFixed(1)), h: Number(h.toFixed(1)) };
         }
 
         function lchToRgb(l, c, h) {
@@ -2208,7 +2032,7 @@
             const rl = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
             const gl = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
             const bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
-            return {r: linearToSrgb(rl), g: linearToSrgb(gl), b: linearToSrgb(bl)};
+            return { r: linearToSrgb(rl), g: linearToSrgb(gl), b: linearToSrgb(bl) };
         }
 
         function rgbToOklch(r, g, b) {
@@ -2216,7 +2040,7 @@
             const c = Math.sqrt(ok.a * ok.a + ok.b * ok.b);
             let h = (Math.atan2(ok.b, ok.a) * 180) / Math.PI;
             if (h < 0) h += 360;
-            return {L: ok.L, c: Number(c.toFixed(3)), h: Number(h.toFixed(1))};
+            return { L: ok.L, c: Number(c.toFixed(3)), h: Number(h.toFixed(1)) };
         }
 
         function oklchToRgb(L, c, h) {
@@ -2230,7 +2054,7 @@
 
         function getAll12ColorCodes(hex, scaleMode = 'percent') {
             const norm = normalizeHex(hex) || '#000000';
-            const {r, g, b} = hexToRgb(norm);
+            const { r, g, b } = hexToRgb(norm);
             const cmyk = rgbToCmyk(r, g, b);
             const hsl = rgbToHsl(r, g, b);
             const hsv = rgbToHsv(r, g, b);
@@ -2280,73 +2104,73 @@
 
         function hexToDraftChannels(hex, format = state.activeFormat, scaleMode = 'percent') {
             const norm = normalizeHex(hex) || '#000000';
-            const {r, g, b} = hexToRgb(norm);
+            const { r, g, b } = hexToRgb(norm);
             const isDec = scaleMode === 'decimal';
 
             if (format === 'CMYK') {
                 const c = rgbToCmyk(r, g, b);
                 return isDec
-                    ? {c: formatNumDec(c.c, 100), m: formatNumDec(c.m, 100), y: formatNumDec(c.y, 100), k: formatNumDec(c.k, 100)}
-                    : {c: c.c, m: c.m, y: c.y, k: c.k};
+                    ? { c: formatNumDec(c.c, 100), m: formatNumDec(c.m, 100), y: formatNumDec(c.y, 100), k: formatNumDec(c.k, 100) }
+                    : { c: c.c, m: c.m, y: c.y, k: c.k };
             }
-            if (format === 'HEX') return {hex: norm.slice(1)};
+            if (format === 'HEX') return { hex: norm.slice(1) };
             if (format === 'RGB') {
                 return isDec
-                    ? {r: formatNumDec(r, 255), g: formatNumDec(g, 255), b: formatNumDec(b, 255)}
-                    : {r, g, b};
+                    ? { r: formatNumDec(r, 255), g: formatNumDec(g, 255), b: formatNumDec(b, 255) }
+                    : { r, g, b };
             }
             if (format === 'RGBA') {
                 return isDec
-                    ? {r: formatNumDec(r, 255), g: formatNumDec(g, 255), b: formatNumDec(b, 255), a: 1}
-                    : {r, g, b, a: 100};
+                    ? { r: formatNumDec(r, 255), g: formatNumDec(g, 255), b: formatNumDec(b, 255), a: 1 }
+                    : { r, g, b, a: 100 };
             }
             if (format === 'HSL') {
                 const h = rgbToHsl(r, g, b);
                 return isDec
-                    ? {h: h.h, s: formatNumDec(h.s, 100), l: formatNumDec(h.l, 100)}
-                    : {h: h.h, s: h.s, l: h.l};
+                    ? { h: h.h, s: formatNumDec(h.s, 100), l: formatNumDec(h.l, 100) }
+                    : { h: h.h, s: h.s, l: h.l };
             }
             if (format === 'HSLA') {
                 const h = rgbToHsl(r, g, b);
                 return isDec
-                    ? {h: h.h, s: formatNumDec(h.s, 100), l: formatNumDec(h.l, 100), a: 1}
-                    : {h: h.h, s: h.s, l: h.l, a: 100};
+                    ? { h: h.h, s: formatNumDec(h.s, 100), l: formatNumDec(h.l, 100), a: 1 }
+                    : { h: h.h, s: h.s, l: h.l, a: 100 };
             }
             if (format === 'HSV') {
                 const hv = rgbToHsv(r, g, b);
                 return isDec
-                    ? {h: hv.h, s: formatNumDec(hv.s, 100), v: formatNumDec(hv.v, 100)}
-                    : {h: hv.h, s: hv.s, v: hv.v};
+                    ? { h: hv.h, s: formatNumDec(hv.s, 100), v: formatNumDec(hv.v, 100) }
+                    : { h: hv.h, s: hv.s, v: hv.v };
             }
             if (format === 'LAB') {
                 const l = rgbToLab(r, g, b);
                 return isDec
-                    ? {l: formatNumDec(l.l, 100), a: l.a, b: l.b}
-                    : {l: l.l, a: l.a, b: l.b};
+                    ? { l: formatNumDec(l.l, 100), a: l.a, b: l.b }
+                    : { l: l.l, a: l.a, b: l.b };
             }
             if (format === 'LCH') {
                 const lc = rgbToLch(r, g, b);
                 return isDec
-                    ? {l: formatNumDec(lc.l, 100), c: lc.c, h: lc.h}
-                    : {l: lc.l, c: lc.c, h: lc.h};
+                    ? { l: formatNumDec(lc.l, 100), c: lc.c, h: lc.h }
+                    : { l: lc.l, c: lc.c, h: lc.h };
             }
             if (format === 'XYZ') {
                 const x = rgbToXyz(r, g, b);
                 return isDec
-                    ? {x: formatNumDec(x.x, 100), y: formatNumDec(x.y, 100), z: formatNumDec(x.z, 100)}
-                    : {x: x.x, y: x.y, z: x.z};
+                    ? { x: formatNumDec(x.x, 100), y: formatNumDec(x.y, 100), z: formatNumDec(x.z, 100) }
+                    : { x: x.x, y: x.y, z: x.z };
             }
             if (format === 'HWB') {
                 const w = rgbToHwb(r, g, b);
                 return isDec
-                    ? {h: w.h, w: formatNumDec(w.w, 100), b: formatNumDec(w.b, 100)}
-                    : {h: w.h, w: w.w, b: w.b};
+                    ? { h: w.h, w: formatNumDec(w.w, 100), b: formatNumDec(w.b, 100) }
+                    : { h: w.h, w: w.w, b: w.b };
             }
             if (format === 'OKLCH') {
                 const oc = rgbToOklch(r, g, b);
                 return isDec
-                    ? {L: oc.L, c: oc.c, h: oc.h}
-                    : {L: Math.round(oc.L * 100), c: oc.c, h: oc.h};
+                    ? { L: oc.L, c: oc.c, h: oc.h }
+                    : { L: Math.round(oc.L * 100), c: oc.c, h: oc.h };
             }
             return {};
         }
@@ -2409,7 +2233,7 @@
 
         function parseSplitChannelsToHex(format, draft, scaleMode = 'percent') {
             const meta = COLOR_FORMAT_META[format];
-            if (!meta) return {hex: null, error: 'ไม่พบระบบสีที่เลือก', rawInputText: ''};
+            if (!meta) return { hex: null, error: 'ไม่พบระบบสีที่เลือก', rawInputText: '' };
 
             const isDec = scaleMode === 'decimal';
             const rawVals = {};
@@ -2420,17 +2244,17 @@
                 const label = isDec ? ch.labelDec : ch.labelPct;
 
                 if (rawStr === '') {
-                    return {hex: null, error: `กรุณากรอกค่าในช่อง ${label}`, rawInputText: ''};
+                    return { hex: null, error: `กรุณากรอกค่าในช่อง ${label}`, rawInputText: '' };
                 }
 
                 if (ch.type === 'number') {
                     const num = Number(rawStr);
                     const maxAllowed = isDec ? ch.maxDec : ch.maxPct;
                     if (!Number.isFinite(num)) {
-                        return {hex: null, error: `ช่อง ${label} ต้องเป็นตัวเลข`, rawInputText: ''};
+                        return { hex: null, error: `ช่อง ${label} ต้องเป็นตัวเลข`, rawInputText: '' };
                     }
                     if (ch.min !== undefined && num < ch.min) {
-                        return {hex: null, error: `ค่าในช่อง ${label} ต้องไม่ต่ำกว่า ${ch.min}`, rawInputText: ''};
+                        return { hex: null, error: `ค่าในช่อง ${label} ต้องไม่ต่ำกว่า ${ch.min}`, rawInputText: '' };
                     }
                     if (maxAllowed !== undefined && num > maxAllowed) {
                         return {
@@ -2498,13 +2322,13 @@
             }
 
             if (!parsedHex) {
-                return {hex: null, error: 'รูปแบบโค้ดสีไม่ถูกต้อง', rawInputText: ''};
+                return { hex: null, error: 'รูปแบบโค้ดสีไม่ถูกต้อง', rawInputText: '' };
             }
 
             return {
                 hex: parsedHex,
                 rawCmyk: format === 'CMYK'
-                    ? {c: normVals.c, m: normVals.m, y: normVals.y, k: normVals.k}
+                    ? { c: normVals.c, m: normVals.m, y: normVals.y, k: normVals.k }
                     : null,
                 error: '',
                 rawInputText: formatRawInputString(format, scaleMode, rawVals)
@@ -2543,9 +2367,9 @@
             if (maxY > 0) {
                 const n = maxG / maxY;
                 rn *= n;
-                return {r: rn + w, y: outY * n + w, b: outB * n + w};
+                return { r: rn + w, y: outY * n + w, b: outB * n + w };
             }
-            return {r: rn + w, y: outY + w, b: outB + w};
+            return { r: rn + w, y: outY + w, b: outB + w };
         }
 
         function rybToRgb(r, y, b) {
@@ -2572,9 +2396,9 @@
             const maxG = Math.max(outR, outG, bn);
             if (maxG > 0) {
                 const n = maxY / maxG;
-                return {r: (outR * n + w) * 255, g: (outG * n + w) * 255, b: (bn * n + w) * 255};
+                return { r: (outR * n + w) * 255, g: (outG * n + w) * 255, b: (bn * n + w) * 255 };
             }
-            return {r: (outR + w) * 255, g: (outG + w) * 255, b: (bn + w) * 255};
+            return { r: (outR + w) * 255, g: (outG + w) * 255, b: (bn + w) * 255 };
         }
 
         function rgbToCmykFloat(r, g, b) {
@@ -2582,7 +2406,7 @@
             const gn = clamp(g, 0, 255) / 255;
             const bn = clamp(b, 0, 255) / 255;
             const k = 1 - Math.max(rn, gn, bn);
-            if (k >= 0.999999) return {c: 0, m: 0, y: 0, k: 100};
+            if (k >= 0.999999) return { c: 0, m: 0, y: 0, k: 100 };
             return {
                 c: ((1 - rn - k) / (1 - k)) * 100,
                 m: ((1 - gn - k) / (1 - k)) * 100,
@@ -2767,12 +2591,12 @@
                 y += cmyk.y * w;
                 k += cmyk.k * w;
             });
-            return {c, m, y, k};
+            return { c, m, y, k };
         }
 
         function getMixedResultDisplayCode(scaleMode = 'percent') {
             if (state.activeFormat === 'CMYK' && state.mixingModel === 'cmyk' && state.resultRawCmyk) {
-                const {c, m, y, k} = state.resultRawCmyk;
+                const { c, m, y, k } = state.resultRawCmyk;
                 if (scaleMode === 'decimal') {
                     return `cmyk(${formatNumDec(c, 100)}, ${formatNumDec(m, 100)}, ${formatNumDec(y, 100)}, ${formatNumDec(k, 100)})`;
                 }
@@ -3482,7 +3306,7 @@
 
             const q = String(state.sampleSearch || '').trim().toLowerCase();
             const qNumsOnly = q.replace(/[^0-9.\s]/g, ' ').replace(/\s+/g, ' ').trim();
-            const filtered = NAMED_COLORS_REF.map((item, idx) => ({item, idx})).filter(({item}) => {
+            const filtered = NAMED_COLORS_REF.map((item, idx) => ({ item, idx })).filter(({ item }) => {
                 const catMatch = state.sampleCategory === 'ทั้งหมด' || item.category === state.sampleCategory;
                 if (!catMatch) return false;
                 if (!q) return true;
@@ -3509,7 +3333,7 @@
                 : (ctx === 'solver-primary' ? 'นำเข้าแม่สี' : '+1 นำเข้า');
             const actionBtnIcon = ctx === 'solver-target' ? 'fa-crosshairs' : 'fa-plus';
 
-            gridEl.innerHTML = filtered.map(({item, idx}) => {
+            gridEl.innerHTML = filtered.map(({ item, idx }) => {
                 const codeStr = formatHexInSelectedSystem(item.hex, fmt, 'percent');
                 const rgb = hexToRgb(item.hex);
                 const useDarkTxt = getRelativeLuminance(rgb) > 0.45;
@@ -3626,7 +3450,7 @@
 
         function openDuplicateColorModal(payload) {
             state.pendingDuplicate = payload;
-            const {hex, label, targetSlotIndex, rawInputText} = payload;
+            const { hex, label, targetSlotIndex, rawInputText } = payload;
             const fmt = state.activeFormat;
             const unitLabel = state.mixingUnit;
             const targetSlot = state.slots[targetSlotIndex];
@@ -3663,7 +3487,7 @@
 
         function confirmDuplicateModalMerge() {
             if (!state.pendingDuplicate) return;
-            const {targetSlotIndex, sourceSlotIndex, rawInputText, rawInputFormat} = state.pendingDuplicate;
+            const { targetSlotIndex, sourceSlotIndex, rawInputText, rawInputFormat } = state.pendingDuplicate;
             const existingSlot = state.slots[targetSlotIndex];
             const unitLabel = state.mixingUnit;
 
@@ -3750,7 +3574,7 @@
 
             const fmt = state.activeFormat;
             const scaleMode = slot.inputMode || 'percent';
-            const {hex: parsedHex, rawCmyk, error, rawInputText} = parseSplitChannelsToHex(
+            const { hex: parsedHex, rawCmyk, error, rawInputText } = parseSplitChannelsToHex(
                 fmt,
                 slot.draftChannels,
                 scaleMode
@@ -4125,7 +3949,7 @@
                 return;
             }
             const hex = state.resultHex;
-            const savedRawCmyk = state.resultRawCmyk ? {...state.resultRawCmyk} : null;
+            const savedRawCmyk = state.resultRawCmyk ? { ...state.resultRawCmyk } : null;
             const fmt = state.activeFormat;
             const label = resolveColorNameByHex(hex);
             const rawInputText = getMixedResultDisplayCode('percent');
@@ -4460,23 +4284,23 @@
 
         function parseMatchRangeSpec(rawStr) {
             const cleaned = String(rawStr ?? '').trim().replace(/%/g, '');
-            if (!cleaned) return {min: 0, max: 100, label: '0% – 100%'};
+            if (!cleaned) return { min: 0, max: 100, label: '0% – 100%' };
 
             const rangeMatch = cleaned.match(/^(\d+(?:\.\d+)?)\s*[-–~ถึง]\s*(\d+(?:\.\d+)?)$/);
             if (rangeMatch) {
                 let a = clamp(Math.round(parseFloat(rangeMatch[1])), 0, 100);
                 let b = clamp(Math.round(parseFloat(rangeMatch[2])), 0, 100);
                 if (a > b) [a, b] = [b, a];
-                return {min: a, max: b, label: `${a}% – ${b}%`};
+                return { min: a, max: b, label: `${a}% – ${b}%` };
             }
 
             const singleMatch = cleaned.match(/^(\d+(?:\.\d+)?)$/);
             if (singleMatch) {
                 const v = clamp(Math.round(parseFloat(singleMatch[1])), 0, 100);
-                return {min: v, max: 100, label: `≥ ${v}%`};
+                return { min: v, max: 100, label: `≥ ${v}%` };
             }
 
-            return {min: 0, max: 100, label: '0% – 100%'};
+            return { min: 0, max: 100, label: '0% – 100%' };
         }
 
         function updateSolverMatchRangeFilter(rawVal) {
@@ -4924,7 +4748,7 @@
         // =====================================================================
         function solveWeightsConstrained(paletteHexes, maxShares, targetHex, initialWeights = null) {
             const n = paletteHexes.length;
-            if (n === 0 || !targetHex) return {weights: [], hex: null, matchPct: 0, deltaE: 100};
+            if (n === 0 || !targetHex) return { weights: [], hex: null, matchPct: 0, deltaE: 100 };
 
             const model = state.mixingModel || 'cmyk';
             const targetRgb = hexToRgb(targetHex);
@@ -5020,7 +4844,7 @@
                         g += precomp[i].rgb.g * w;
                         b += precomp[i].rgb.b * w;
                     }
-                    return {r, g, b};
+                    return { r, g, b };
                 }
                 let r = 0, y = 0, b = 0;
                 for (let i = 0; i < n; i++) {
@@ -5069,14 +4893,14 @@
             }
 
             const solvedRgb = mixFastRgb(shares);
-            if (!solvedRgb) return {weights: shares, hex: null, matchPct: 0, deltaE: 100};
+            if (!solvedRgb) return { weights: shares, hex: null, matchPct: 0, deltaE: 100 };
 
             const solvedHex = rgbToHex(solvedRgb.r, solvedRgb.g, solvedRgb.b);
             const solvedLab = rgbToLab(solvedRgb.r, solvedRgb.g, solvedRgb.b);
             const deltaE = Number(deltaE2000(solvedLab, targetLab).toFixed(2));
             const matchPct = clamp(Number((100 - deltaE * 1.45).toFixed(1)), 0, 100);
 
-            return {weights: shares, hex: solvedHex, matchPct, deltaE};
+            return { weights: shares, hex: solvedHex, matchPct, deltaE };
         }
 
         function allocateExactTotalVolumeWithCaps(shares, totalVolume, maxCaps) {
@@ -5124,14 +4948,14 @@
         function evaluateMixAgainstTargetLab(itemsWithAmounts, targetLab) {
             const active = itemsWithAmounts.filter(it => (Number(it.amount) || 0) > 0);
             const total = active.reduce((sum, it) => sum + (Number(it.amount) || 0), 0);
-            if (total <= 1e-9) return {hex: null, matchPct: 0, deltaE: 100};
+            if (total <= 1e-9) return { hex: null, matchPct: 0, deltaE: 100 };
 
             const mixHex = mixWeightedHexes(active, state.mixingModel);
             const mixRgb = hexToRgb(mixHex);
             const mixLab = rgbToLab(mixRgb.r, mixRgb.g, mixRgb.b);
             const deltaE = Number(deltaE2000(mixLab, targetLab).toFixed(2));
             const matchPct = clamp(Number((100 - deltaE * 1.45).toFixed(1)), 0, 100);
-            return {hex: mixHex, matchPct, deltaE};
+            return { hex: mixHex, matchPct, deltaE };
         }
 
         function generateSolverRecipes(notify = false) {
@@ -5230,7 +5054,7 @@
             const maxAchievable = seedSolutions.reduce((best, seed) => {
                 const amts = allocateExactTotalVolumeWithCaps(seed.weights, totalVol, maxCaps);
                 const ev = evaluateMixAgainstTargetLab(
-                    chosenEntries.map((e, i) => ({hex: e.hex, amount: amts[i]})),
+                    chosenEntries.map((e, i) => ({ hex: e.hex, amount: amts[i] })),
                     targetLab
                 );
                 return Math.max(best, ev.matchPct);
@@ -5246,7 +5070,7 @@
                 seenRatioSigs.add(sig);
 
                 const reEval = evaluateMixAgainstTargetLab(
-                    chosenEntries.map((e, i) => ({hex: e.hex, amount: exactAmounts[i]})),
+                    chosenEntries.map((e, i) => ({ hex: e.hex, amount: exactAmounts[i] })),
                     targetLab
                 );
 
@@ -5399,7 +5223,7 @@
         function scrollToSolverSelectedDetail() {
             const detailEl = document.getElementById('solverSelectedDetailCard');
             if (!detailEl) return;
-            detailEl.scrollIntoView({behavior: 'smooth', block: 'start'});
+            detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function toggleSolverFloatingCollapse(collapsed) {
@@ -5431,7 +5255,7 @@
                         updateSolverFloatingPreview();
                     }
                 });
-            }, {threshold: 0.25});
+            }, { threshold: 0.25 });
 
             solverDetailObserver.observe(detailEl);
         }
@@ -5895,7 +5719,7 @@
 
             lines.push('============================================================');
 
-            const blob = new Blob([lines.join('\n')], {type: 'text/plain;charset=utf-8'});
+            const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -5985,7 +5809,7 @@
             if (state.activeWorkspaceTab === 'solver') {
                 updateSolverFloatingPreview();
             }
-        }, {passive: true});
+        }, { passive: true });
 
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
@@ -5995,10 +5819,6 @@
                 closeSampleColorsModal();
                 closeImageSamplerModal();
                 closeDuplicateColorModal();
-                const navModal = document.getElementById('navPopupModal');
-                if (navModal && !navModal.classList.contains('hidden')) {
-                    navModal.classList.add('hidden');
-                }
             }
         });
 
