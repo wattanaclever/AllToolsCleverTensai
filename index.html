@@ -302,7 +302,7 @@
                     ศูนย์รวมระบบ <span class="text-crimson-500">Web Application</span>
                 </h1>
                 <p class="text-tech-muted text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
-                    เลือกเข้าใช้งานเครื่องมือจัดการเอกสาร PDF, ระบบปลดล็อกไฟล์ Excel, ระบบสร้าง QR Code และระบบแปลงมาตราวัดอเนกประสงค์ได้โดยตรงจากรายการด้านล่าง
+                    เลือกเข้าใช้งานเครื่องมือจัดการเอกสาร PDF, ระบบปลดล็อกไฟล์ Excel, ระบบสร้าง QR Code, ระบบแปลงมาตราวัดอเนกประสงค์ และสตูดิโอผสมสีคำนวณสูตรแม่สีได้โดยตรงจากรายการด้านล่าง
                 </p>
             </div>
 
@@ -326,7 +326,7 @@
                 <!-- Rendered dynamically from WEB_APPS -->
             </div>
             <div class="font-mono text-xs text-tech-muted bg-white px-3.5 py-2 rounded-xl border border-tech-border shadow-2xs">
-                SHOWING <span id="appCounter" class="font-bold text-crimson-500">4</span> APPS (3 PER ROW)
+                SHOWING <span id="appCounter" class="font-bold text-crimson-500">5</span> APPS (3 PER ROW)
             </div>
         </div>
 
@@ -481,6 +481,7 @@
                                     <option value="excel">Excel Unlocker Theme</option>
                                     <option value="qr">QR Matrix Theme</option>
                                     <option value="unit">Unit Converter Theme</option>
+                                    <option value="color">Color Mixer Theme</option>
                                     <option value="default">Standard Cube Theme</option>
                                 </select>
                             </div>
@@ -670,6 +671,22 @@
                     "หน่วยสากล & ไทย",
                     "Real-Time Matrix"
                 ]
+            },
+            {
+                "id": "webapp-color",
+                "title": "Color Mixer & Formula Studio",
+                "category": "DESIGN & LAB",
+                "version": "v1.0",
+                "description": "สตูดิโอผสมสีและคำนวณสูตรแม่สีทดแทน รองรับ 12 ระบบสี (CMYK, HEX, RGB, LAB, OKLCH) คลังสี 240 เฉด พร้อมระบบคำนวณสูตรจากสีเป้าหมายและใบพิมพ์สูตร",
+                "url": "HomeMixColor.html",
+                "image": "",
+                "previewType": "color",
+                "icon": "fa-solid fa-droplet",
+                "tags": [
+                    "12 ระบบสี",
+                    "คลังสี 240 เฉด",
+                    "Formula Solver"
+                ]
             }
         ];
         /*__WEB_APPS_END__*/
@@ -829,6 +846,32 @@
                             <div class="flex-1 bg-crimson-500/20 border border-crimson-500/40 rounded-lg p-2">
                                 <div class="font-mono text-xs font-extrabold text-red-300">39.37</div>
                                 <div class="text-[9px] font-mono text-red-200 mt-0.5">in</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (app.previewType === "color") {
+                innerGraphic = `
+                    <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
+                        <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
+                            <div class="flex items-center gap-1.5 text-crimson-500 text-xs font-mono">
+                                <i class="fa-solid fa-droplet"></i>
+                                <span class="text-[10px] text-red-400">COLOR_STUDIO.EXE</span>
+                            </div>
+                            <span class="px-1.5 py-0.5 rounded bg-crimson-500/20 text-red-300 font-mono text-[9px]">240 SWATCHES</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 text-center">
+                            <div class="flex items-center -space-x-1.5">
+                                <span class="w-7 h-7 rounded-full bg-cyan-400 border-2 border-gray-900"></span>
+                                <span class="w-7 h-7 rounded-full bg-pink-500 border-2 border-gray-900"></span>
+                                <span class="w-7 h-7 rounded-full bg-yellow-400 border-2 border-gray-900"></span>
+                            </div>
+                            <div class="text-crimson-500 text-xs">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                            <div class="flex-1 bg-crimson-500/20 border border-crimson-500/40 rounded-lg py-1.5 px-2">
+                                <div class="font-mono text-[10px] font-extrabold text-white">CMYK / LAB</div>
+                                <div class="text-[8px] font-mono text-red-300">FORMULA SOLVER</div>
                             </div>
                         </div>
                     </div>
