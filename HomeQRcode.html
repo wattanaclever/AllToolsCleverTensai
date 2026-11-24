@@ -161,64 +161,15 @@
 
 <body class="min-h-screen flex flex-col">
 
-    <!-- ===================================================================== -->
-    <!-- START: CLEVERTENSAI Global Navbar & All Web Apps Hub                  -->
-    <!-- ===================================================================== -->
-    <nav
-        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
-        <!-- ฝั่งซ้าย: โลโก้แบรนด์ (คลิกเพื่อกลับหน้าหลัก index.html) -->
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-2.5 group">
-                <div
-                    class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-qrcode"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span
-                            class="text-red-500">TENSAI</span></span>
-                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">QR STUDIO ENGINE</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเว็บแอปทั้งหมด -->
-        <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-            <button onclick="toggleNavPopup()"
-                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
-                <span>All Web Apps Hub</span>
-                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-            </button>
-        </div>
-
-        <!-- ฝั่งขวา: ปุ่มกลับหน้าหลัก Portal และสถานะระบบ -->
-        <div class="flex items-center gap-2.5">
-            <button onclick="toggleNavPopup()"
-                class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500"></i>
-                <span>Hub</span>
-            </button>
-
-            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                ISO/IEC 18004
-            </span>
-
-            <a href="index.html"
-                class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-house text-red-500"></i>
-                <span class="hidden sm:inline">หน้าหลัก Portal</span>
-            </a>
-        </div>
-    </nav>
+    <!-- ดึง NAVBAR & ALL WEB APPS HUB MODAL จากโฟลเดอร์ JS/Navbar.js -->
+    <div id="navbar-container"></div>
+    <script src="JS/Navbar.js"></script>
 
     <!-- Popup Modal สลับหน้าเครื่องมือ (All Web Apps Hub) -->
-    <div id="navPopupModal"
+    <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
         class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
         <div
-            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-
-            <!-- Header ของ Modal -->
+            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
                 <div class="flex items-center gap-3.5">
                     <div
@@ -227,74 +178,21 @@
                     </div>
                     <div>
                         <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            CLEVERTENSAI Web Apps Hub
+                            Select Web Application
                         </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันอื่นในระบบได้ทันที</p>
+                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันภายใน CLEVERTENSAI ได้ทันที</p>
                     </div>
                 </div>
 
-                <button onclick="toggleNavPopup()"
+                <button type="button" onclick="toggleNavPopup()"
                     class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- รายการเว็บแอปหลัก -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-6 overflow-y-auto">
-                <!-- กลับหน้าหลัก -->
-                <a href="index.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Main Portal</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">กลับสู่หน้ารวมเว็บแอปพลิเคชันทั้งหมด</span>
-                </a>
-
-                <!-- PDF Tools -->
-                <a href="./PDF/HomePDF.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-pdf"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">PDF Studio Suite</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์ แยกหน้า และแก้ไขเอกสาร PDF</span>
-                </a>
-
-                <!-- Excel Unlock -->
-                <a href="HomeExcelUnlock.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Excel Unlock Pro</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ปลดล็อกรหัสผ่านแผ่นงานและสมุดงาน Excel</span>
-                </a>
-
-                <!-- QR Code (Current) -->
-                <a href="HomeQRcode_2.html"
-                    class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-red-400">QR Code Generator</span>
-                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
-                </a>
-
-                <!-- 5. Unit Converter (Current) -->
-                <a href="UnitConverter.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Unit Converter</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ระบบแปลงมาตราวัด</span>
-                </a>
+            <div id="hubModalGrid"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 py-6 overflow-y-auto">
+                <!-- Rendered dynamically from WEB_APPS -->
             </div>
         </div>
     </div>
@@ -306,7 +204,8 @@
     <!-- ===================================================================== -->
     <div id="toast-notification" role="status" aria-live="polite"
         class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-mono">
-        <span id="toast-icon" class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
+        <span id="toast-icon"
+            class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
         <span id="toast-message">ดำเนินการสำเร็จ</span>
     </div>
 
@@ -319,7 +218,8 @@
         <!-- Hero Sub-header -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-8 border-b border-tech-border">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
                     <i class="fa-solid fa-qrcode text-[11px]"></i>
                     <span>QR MATRIX GENERATOR // UTF-8 & LOGO ENGINE</span>
                 </div>
@@ -327,12 +227,14 @@
                     เครื่องมือสร้าง <span class="text-crimson-500">QR Code</span> มาตรฐานสากล
                 </h1>
                 <p class="text-tech-muted text-sm mt-1">
-                    สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ รหัส Wi-Fi พร้อมฝังโลโก้บริษัทตรงกลาง สแกนติดคมชัดบนทุกอุปกรณ์
+                    สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ รหัส Wi-Fi พร้อมฝังโลโก้บริษัทตรงกลาง
+                    สแกนติดคมชัดบนทุกอุปกรณ์
                 </p>
             </div>
 
             <div class="flex items-center gap-2 font-mono text-xs">
-                <span class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
+                <span
+                    class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
                     <i class="fa-solid fa-shield-check text-crimson-500 mr-1.5"></i>100% Client-Side
                 </span>
                 <span class="px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold shadow-sm">
@@ -353,8 +255,10 @@
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">เลือกประเภทข้อมูล (Data Type)</span>
+                            <span
+                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
+                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">เลือกประเภทข้อมูล
+                                (Data Type)</span>
                         </div>
                         <button type="button" id="clear-btn"
                             class="px-2.5 py-1 rounded-lg text-xs font-mono text-tech-muted hover:text-crimson-600 hover:bg-crimson-50 transition cursor-pointer flex items-center gap-1.5">
@@ -397,7 +301,8 @@
                                 class="px-3 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-xs font-medium text-tech-dark hover:text-crimson-600 transition cursor-pointer">
                                 ข้อความภาษาไทย
                             </button>
-                            <button type="button" onclick="fillSample('รหัสผ่าน Wi-Fi: 12345678\nชื่อเครือข่าย: Home_5G', 'text')"
+                            <button type="button"
+                                onclick="fillSample('รหัสผ่าน Wi-Fi: 12345678\nชื่อเครือข่าย: Home_5G', 'text')"
                                 class="px-3 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-xs font-medium text-tech-dark hover:text-crimson-600 transition cursor-pointer">
                                 ข้อความหลายบรรทัด
                             </button>
@@ -409,9 +314,11 @@
                     </div>
 
                     <!-- กล่องกรอกข้อมูล Wi-Fi -->
-                    <div id="wifi-input-box" class="hidden bg-tech-panel/70 border border-tech-border rounded-xl p-4 space-y-3.5">
+                    <div id="wifi-input-box"
+                        class="hidden bg-tech-panel/70 border border-tech-border rounded-xl p-4 space-y-3.5">
                         <div>
-                            <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5" for="wifi-ssid">
+                            <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                for="wifi-ssid">
                                 ชื่อเครือข่าย Wi-Fi (SSID)
                             </label>
                             <input type="text" id="wifi-ssid" placeholder="เช่น MyHome_WiFi_5G"
@@ -419,14 +326,16 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                             <div>
-                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5" for="wifi-pass">
+                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                    for="wifi-pass">
                                     รหัสผ่าน (Password)
                                 </label>
                                 <input type="text" id="wifi-pass" placeholder="รหัสผ่าน Wi-Fi"
                                     class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm text-tech-dark focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5" for="wifi-type">
+                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                    for="wifi-type">
                                     ความปลอดภัย (Encryption)
                                 </label>
                                 <select id="wifi-type"
@@ -439,11 +348,13 @@
                     </div>
 
                     <!-- Info Banner -->
-                    <div class="mt-4 p-3.5 rounded-xl bg-crimson-50/70 border border-crimson-100 flex items-start gap-3 text-xs text-tech-dark leading-relaxed">
+                    <div
+                        class="mt-4 p-3.5 rounded-xl bg-crimson-50/70 border border-crimson-100 flex items-start gap-3 text-xs text-tech-dark leading-relaxed">
                         <i class="fa-solid fa-circle-check text-crimson-500 text-sm mt-0.5"></i>
                         <div>
                             <strong class="text-crimson-600 font-mono">UTF-8 BYTE MODE:</strong>
-                            เข้ารหัสภาษาไทยและอักขระพิเศษตามมาตรฐานสากล กล้อง iPhone, Android และแอป LINE สแกนแล้วแสดงข้อความถูกต้องทันที
+                            เข้ารหัสภาษาไทยและอักขระพิเศษตามมาตรฐานสากล กล้อง iPhone, Android และแอป LINE
+                            สแกนแล้วแสดงข้อความถูกต้องทันที
                         </div>
                     </div>
                 </div>
@@ -454,8 +365,10 @@
                 <div>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">โลโก้บริษัทตรงกลาง (Center Logo)</span>
+                            <span
+                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
+                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">โลโก้บริษัทตรงกลาง
+                                (Center Logo)</span>
                         </div>
                         <button type="button" id="remove-logo-btn" onclick="clearLogo()"
                             class="hidden px-2.5 py-1 rounded-lg text-xs font-mono text-crimson-600 hover:bg-crimson-50 border border-crimson-200 transition cursor-pointer flex items-center gap-1.5">
@@ -469,7 +382,8 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <!-- Canvas พรีวิวโลโก้ที่วาดรูปทรงและเส้นกรอบตัดขอบตามที่เลือกจริง -->
-                                <div class="w-14 h-14 rounded-xl bg-white/80 border border-tech-border flex items-center justify-center shrink-0 shadow-sm p-1">
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-white/80 border border-tech-border flex items-center justify-center shrink-0 shadow-sm p-1">
                                     <canvas id="logo-thumb-canvas" width="96" height="96" class="w-12 h-12"></canvas>
                                 </div>
                                 <div class="min-w-0">
@@ -501,50 +415,61 @@
                                         <i class="fa-solid fa-shapes text-crimson-500"></i>
                                         <span>รูปทรงพื้นหลัง & กรอบโลโก้ (Logo Shape)</span>
                                     </span>
-                                    <span id="logo-shape-label" class="font-mono text-[11px] text-crimson-600 font-bold">
+                                    <span id="logo-shape-label"
+                                        class="font-mono text-[11px] text-crimson-600 font-bold">
                                         วงกลม (Circle)
                                     </span>
                                 </div>
                                 <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5" id="logo-shape-grid">
                                     <button type="button" data-shape="circle" onclick="setLogoShape('circle')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-gray-950 bg-gray-950 text-white text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <circle cx="12" cy="12" r="9" />
                                         </svg>
                                         <span>วงกลม</span>
                                     </button>
                                     <button type="button" data-shape="rounded" onclick="setLogoShape('rounded')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
                                         </svg>
                                         <span>มุมมน</span>
                                     </button>
                                     <button type="button" data-shape="square" onclick="setLogoShape('square')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <rect x="4" y="4" width="16" height="16" />
                                         </svg>
                                         <span>สี่เหลี่ยม</span>
                                     </button>
                                     <button type="button" data-shape="hexagon" onclick="setLogoShape('hexagon')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
+                                            aria-hidden="true">
                                             <polygon points="12,2.5 20.5,7.25 20.5,16.75 12,21.5 3.5,16.75 3.5,7.25" />
                                         </svg>
                                         <span>หกเหลี่ยม</span>
                                     </button>
                                     <button type="button" data-shape="diamond" onclick="setLogoShape('diamond')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
+                                            aria-hidden="true">
                                             <polygon points="12,2.5 21.5,12 12,21.5 2.5,12" />
                                         </svg>
                                         <span>ข้าวหลามตัด</span>
                                     </button>
                                     <button type="button" data-shape="shield" onclick="setLogoShape('shield')"
                                         class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M12 2.5L19.5 5.8V12.2C19.5 16.9 16.3 20.4 12 21.8C7.7 20.4 4.5 16.9 4.5 12.2V5.8L12 2.5Z" />
+                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
+                                            aria-hidden="true">
+                                            <path
+                                                d="M12 2.5L19.5 5.8V12.2C19.5 16.9 16.3 20.4 12 21.8C7.7 20.4 4.5 16.9 4.5 12.2V5.8L12 2.5Z" />
                                         </svg>
                                         <span>ทรงโล่</span>
                                     </button>
@@ -574,7 +499,8 @@
 
                                 <!-- Quiet-zone padding / background toggle -->
                                 <div class="space-y-2">
-                                    <label class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-tech-border cursor-pointer select-none">
+                                    <label
+                                        class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-tech-border cursor-pointer select-none">
                                         <span class="text-xs font-semibold text-tech-dark flex items-center gap-2">
                                             <i class="fa-regular fa-square text-crimson-500"></i>
                                             <span>พื้นหลังเว้นระยะขอบ (Quiet Zone)</span>
@@ -602,7 +528,8 @@
                                         <span class="text-[11px] font-mono text-tech-muted mr-1">สีด่วน:</span>
                                         <button type="button" onclick="applyLogoBorderPreset('#FF1E42')"
                                             class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
-                                            style="background:#FF1E42;" title="สีแดงมาตรฐาน (#FF1E42 - Default)"></button>
+                                            style="background:#FF1E42;"
+                                            title="สีแดงมาตรฐาน (#FF1E42 - Default)"></button>
                                         <button type="button" onclick="applyLogoBorderPreset('#0F172A')"
                                             class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                             style="background:#0F172A;" title="สีดำเข้ม (#0F172A)"></button>
@@ -618,12 +545,16 @@
                                     </div>
                                 </div>
 
-                                <div id="logo-border-color-row" class="flex items-center justify-between pt-2 border-t border-tech-border/70">
+                                <div id="logo-border-color-row"
+                                    class="flex items-center justify-between pt-2 border-t border-tech-border/70">
                                     <div>
-                                        <div class="text-xs font-semibold text-tech-dark">สีเส้นกรอบโลโก้ (Frame Border Color)</div>
-                                        <div id="logo-border-hex-label" class="font-mono text-xs text-crimson-600 font-bold mt-0.5">#FF1E42</div>
+                                        <div class="text-xs font-semibold text-tech-dark">สีเส้นกรอบโลโก้ (Frame Border
+                                            Color)</div>
+                                        <div id="logo-border-hex-label"
+                                            class="font-mono text-xs text-crimson-600 font-bold mt-0.5">#FF1E42</div>
                                     </div>
-                                    <input type="color" id="logo-border-color" value="#FF1E42" title="เลือกสีเส้นกรอบโลโก้">
+                                    <input type="color" id="logo-border-color" value="#FF1E42"
+                                        title="เลือกสีเส้นกรอบโลโก้">
                                 </div>
                             </div>
 
@@ -632,7 +563,8 @@
                                 class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
                                 <i class="fa-solid fa-shield-halved text-amber-600 text-sm mt-0.5 shrink-0"></i>
                                 <div id="logo-ecc-notice-text" class="leading-relaxed">
-                                    ระบบปรับระดับกู้คืนข้อมูล (ECC) เป็น <strong>Q / H</strong> อัตโนมัติเพื่อให้กล้องสแกนติดแม้มีโลโก้บังตรงกลาง
+                                    ระบบปรับระดับกู้คืนข้อมูล (ECC) เป็น <strong>Q / H</strong>
+                                    อัตโนมัติเพื่อให้กล้องสแกนติดแม้มีโลโก้บังตรงกลาง
                                 </div>
                             </div>
                         </div>
@@ -645,32 +577,40 @@
                 <div>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">03</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">ปรับแต่งสี (Colors)</span>
+                            <span
+                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">03</span>
+                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">ปรับแต่งสี
+                                (Colors)</span>
                         </div>
 
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-mono text-tech-muted">ชุดสีแนะนำ:</span>
-                            <button type="button" class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                            <button type="button"
+                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                 style="background:#000000;" title="ขาว-ดำ มาตรฐาน (แนะนำที่สุด)"
                                 onclick="applyColorPreset('#000000', '#ffffff')"></button>
-                            <button type="button" class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                            <button type="button"
+                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                 style="background:#991B1B;" title="Crimson Red (ธีม CLEVERTENSAI)"
                                 onclick="applyColorPreset('#991B1B', '#ffffff')"></button>
-                            <button type="button" class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                            <button type="button"
+                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                 style="background:#0F172A;" title="Dark Slate"
                                 onclick="applyColorPreset('#0F172A', '#ffffff')"></button>
-                            <button type="button" class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                            <button type="button"
+                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                 style="background:#065f46;" title="เขียวเข้มบนพื้นขาว"
                                 onclick="applyColorPreset('#065f46', '#ffffff')"></button>
-                            <button type="button" class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                            <button type="button"
+                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
                                 style="background:#1e3a8a;" title="น้ำเงินเข้มบนพื้นขาว"
                                 onclick="applyColorPreset('#1e3a8a', '#ffffff')"></button>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                        <div class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
+                        <div
+                            class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
                             <div>
                                 <div class="text-xs font-bold text-tech-dark">สีจุด QR Code (Foreground)</div>
                                 <div id="fg-hex-label" class="font-mono text-xs text-tech-muted mt-0.5">#000000</div>
@@ -678,7 +618,8 @@
                             <input type="color" id="qr-fg-color" value="#000000">
                         </div>
 
-                        <div class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
+                        <div
+                            class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
                             <div>
                                 <div class="text-xs font-bold text-tech-dark">สีพื้นหลัง (Background)</div>
                                 <div id="bg-hex-label" class="font-mono text-xs text-tech-muted mt-0.5">#FFFFFF</div>
@@ -691,7 +632,8 @@
                     <div id="contrast-warning"
                         class="hidden mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2.5">
                         <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
-                        <span>สีจุด QR และสีพื้นหลังใกล้เคียงกันเกินไป อาจทำให้กล้องมือถือสแกนติดยาก แนะนำให้ใช้สีเข้มบนพื้นหลังสีสว่าง</span>
+                        <span>สีจุด QR และสีพื้นหลังใกล้เคียงกันเกินไป อาจทำให้กล้องมือถือสแกนติดยาก
+                            แนะนำให้ใช้สีเข้มบนพื้นหลังสีสว่าง</span>
                     </div>
                 </div>
 
@@ -702,14 +644,18 @@
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
-                                <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">04</span>
-                                <label class="text-sm font-bold text-tech-dark uppercase tracking-wide" for="qr-size">ขนาดรูปภาพ</label>
+                                <span
+                                    class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">04</span>
+                                <label class="text-sm font-bold text-tech-dark uppercase tracking-wide"
+                                    for="qr-size">ขนาดรูปภาพ</label>
                             </div>
-                            <span id="size-label" class="px-2.5 py-0.5 rounded-md bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-bold">
+                            <span id="size-label"
+                                class="px-2.5 py-0.5 rounded-md bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-bold">
                                 300 x 300 px
                             </span>
                         </div>
-                        <input type="range" id="qr-size" min="200" max="600" step="50" value="300" class="w-full cursor-pointer my-2">
+                        <input type="range" id="qr-size" min="200" max="600" step="50" value="300"
+                            class="w-full cursor-pointer my-2">
                         <div class="flex justify-between font-mono text-[11px] text-tech-muted">
                             <span>200px</span>
                             <span>400px</span>
@@ -718,7 +664,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-tech-dark uppercase tracking-wide mb-2" for="qr-level">
+                        <label class="block text-sm font-bold text-tech-dark uppercase tracking-wide mb-2"
+                            for="qr-level">
                             ระดับกู้คืนข้อมูล (ECC Level)
                         </label>
                         <select id="qr-level"
@@ -739,7 +686,8 @@
             <div class="lg:col-span-5 tech-card rounded-2xl overflow-hidden lg:sticky lg:top-24">
 
                 <!-- Dark Tech Header Bar -->
-                <div class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex items-center justify-between text-white">
+                <div
+                    class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex items-center justify-between text-white">
                     <div class="flex items-center gap-2.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-crimson-500"></span>
                         <h2 class="font-bold text-sm tracking-wider uppercase font-mono">LIVE QR MATRIX PREVIEW</h2>
@@ -751,15 +699,19 @@
                     <p class="text-xs text-tech-muted mb-4">หยิบกล้องสมาร์ทโฟนขึ้นมาสแกนทดสอบจากหน้าจอได้ทันที</p>
 
                     <!-- Canvas Frame with Tech Grid & Scanline -->
-                    <div class="relative w-full max-w-[290px] aspect-square bg-gray-950 border-2 border-gray-900 rounded-2xl p-4 flex items-center justify-center overflow-hidden shadow-inner">
+                    <div
+                        class="relative w-full max-w-[290px] aspect-square bg-gray-950 border-2 border-gray-900 rounded-2xl p-4 flex items-center justify-center overflow-hidden shadow-inner">
                         <div class="absolute inset-0 opacity-20 pointer-events-none"
-                             style="background-image: radial-gradient(#FF1E42 1px, transparent 1px); background-size: 16px 16px;"></div>
+                            style="background-image: radial-gradient(#FF1E42 1px, transparent 1px); background-size: 16px 16px;">
+                        </div>
                         <div class="scanline absolute inset-0 pointer-events-none"></div>
 
                         <canvas id="qr-canvas" class="relative z-10"></canvas>
 
-                        <div id="empty-state" class="hidden relative z-10 flex flex-col items-center justify-center text-gray-400 text-xs gap-2 p-4">
-                            <div class="w-12 h-12 rounded-2xl bg-gray-900 border border-gray-800 text-crimson-500 flex items-center justify-center text-2xl">
+                        <div id="empty-state"
+                            class="hidden relative z-10 flex flex-col items-center justify-center text-gray-400 text-xs gap-2 p-4">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-gray-900 border border-gray-800 text-crimson-500 flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-qrcode"></i>
                             </div>
                             <span class="font-mono">กรุณาพิมพ์ข้อความหรือลิงก์เพื่อสร้าง QR</span>
@@ -777,21 +729,26 @@
                     <div class="w-full grid grid-cols-2 gap-2.5 mt-4 text-left">
                         <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border">
                             <div class="text-[10px] font-mono text-tech-muted uppercase">Resolution</div>
-                            <div id="preview-resolution" class="text-xs font-bold text-tech-dark font-mono mt-0.5">300 × 300 พิกเซล</div>
+                            <div id="preview-resolution" class="text-xs font-bold text-tech-dark font-mono mt-0.5">300 ×
+                                300 พิกเซล</div>
                         </div>
                         <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border">
                             <div class="text-[10px] font-mono text-tech-muted uppercase">Data / Logo Mode</div>
-                            <div id="encoded-badge" class="text-xs font-bold text-crimson-600 font-mono mt-0.5 truncate">ข้อความ (UTF-8)</div>
+                            <div id="encoded-badge"
+                                class="text-xs font-bold text-crimson-600 font-mono mt-0.5 truncate">ข้อความ (UTF-8)
+                            </div>
                         </div>
                     </div>
 
                     <!-- กล่องแสดงข้อมูลจริงที่เข้ารหัส (Payload Inspector) -->
                     <div class="w-full mt-3 bg-gray-950 text-gray-200 border border-gray-800 rounded-xl p-3 text-left">
-                        <div class="flex items-center justify-between text-[10px] font-mono text-gray-400 pb-1.5 mb-1.5 border-b border-gray-800">
+                        <div
+                            class="flex items-center justify-between text-[10px] font-mono text-gray-400 pb-1.5 mb-1.5 border-b border-gray-800">
                             <span><i class="fa-solid fa-terminal text-crimson-500 mr-1"></i>PAYLOAD INSPECTOR</span>
                             <span id="byte-length-label" class="text-red-400 font-bold">0 bytes</span>
                         </div>
-                        <pre id="payload-preview" class="m-0 font-mono text-xs text-gray-100 whitespace-pre-wrap break-all max-h-20 overflow-y-auto"></pre>
+                        <pre id="payload-preview"
+                            class="m-0 font-mono text-xs text-gray-100 whitespace-pre-wrap break-all max-h-20 overflow-y-auto"></pre>
                     </div>
 
                     <!-- ปุ่มดาวน์โหลดและคัดลอก -->
@@ -829,714 +786,714 @@
          ฝังในไฟล์โดยตรงเพื่อความแม่นยำตามมาตรฐาน ISO/IEC 18004 และทำงานได้ 100%
          ===================================================================== -->
     <script>
-    /*!
-     * qrcode-generator v1.4.4 (c) 2009 Kazuhiko Arase
-     * URL: http://www.d-project.com/
-     * Licensed under the MIT license:
-     *   http://www.opensource.org/licenses/mit-license.php
-     * The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED
-     */
-    var qrcode = function() {
-        var qrcode = function(typeNumber, errorCorrectionLevel) {
-            var PAD0 = 0xEC;
-            var PAD1 = 0x11;
-            var _typeNumber = typeNumber;
-            var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
-            var _modules = null;
-            var _moduleCount = 0;
-            var _dataCache = null;
-            var _dataList = [];
-            var _this = {};
+        /*!
+         * qrcode-generator v1.4.4 (c) 2009 Kazuhiko Arase
+         * URL: http://www.d-project.com/
+         * Licensed under the MIT license:
+         *   http://www.opensource.org/licenses/mit-license.php
+         * The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED
+         */
+        var qrcode = function () {
+            var qrcode = function (typeNumber, errorCorrectionLevel) {
+                var PAD0 = 0xEC;
+                var PAD1 = 0x11;
+                var _typeNumber = typeNumber;
+                var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+                var _modules = null;
+                var _moduleCount = 0;
+                var _dataCache = null;
+                var _dataList = [];
+                var _this = {};
 
-            var makeImpl = function(test, maskPattern) {
-                _moduleCount = _typeNumber * 4 + 17;
-                _modules = function(moduleCount) {
-                    var modules = new Array(moduleCount);
-                    for (var row = 0; row < moduleCount; row += 1) {
-                        modules[row] = new Array(moduleCount);
-                        for (var col = 0; col < moduleCount; col += 1) {
-                            modules[row][col] = null;
+                var makeImpl = function (test, maskPattern) {
+                    _moduleCount = _typeNumber * 4 + 17;
+                    _modules = function (moduleCount) {
+                        var modules = new Array(moduleCount);
+                        for (var row = 0; row < moduleCount; row += 1) {
+                            modules[row] = new Array(moduleCount);
+                            for (var col = 0; col < moduleCount; col += 1) {
+                                modules[row][col] = null;
+                            }
+                        }
+                        return modules;
+                    }(_moduleCount);
+
+                    setupPositionProbePattern(0, 0);
+                    setupPositionProbePattern(_moduleCount - 7, 0);
+                    setupPositionProbePattern(0, _moduleCount - 7);
+                    setupPositionAdjustPattern();
+                    setupTimingPattern();
+                    setupTypeInfo(test, maskPattern);
+
+                    if (_typeNumber >= 7) {
+                        setupTypeNumber(test);
+                    }
+
+                    if (_dataCache == null) {
+                        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+                    }
+
+                    mapData(_dataCache, maskPattern);
+                };
+
+                var setupPositionProbePattern = function (row, col) {
+                    for (var r = -1; r <= 7; r += 1) {
+                        if (row + r <= -1 || _moduleCount <= row + r) continue;
+                        for (var c = -1; c <= 7; c += 1) {
+                            if (col + c <= -1 || _moduleCount <= col + c) continue;
+                            if ((0 <= r && r <= 6 && (c == 0 || c == 6)) ||
+                                (0 <= c && c <= 6 && (r == 0 || r == 6)) ||
+                                (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
+                                _modules[row + r][col + c] = true;
+                            } else {
+                                _modules[row + r][col + c] = false;
+                            }
                         }
                     }
-                    return modules;
-                }(_moduleCount);
+                };
 
-                setupPositionProbePattern(0, 0);
-                setupPositionProbePattern(_moduleCount - 7, 0);
-                setupPositionProbePattern(0, _moduleCount - 7);
-                setupPositionAdjustPattern();
-                setupTimingPattern();
-                setupTypeInfo(test, maskPattern);
-
-                if (_typeNumber >= 7) {
-                    setupTypeNumber(test);
-                }
-
-                if (_dataCache == null) {
-                    _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
-                }
-
-                mapData(_dataCache, maskPattern);
-            };
-
-            var setupPositionProbePattern = function(row, col) {
-                for (var r = -1; r <= 7; r += 1) {
-                    if (row + r <= -1 || _moduleCount <= row + r) continue;
-                    for (var c = -1; c <= 7; c += 1) {
-                        if (col + c <= -1 || _moduleCount <= col + c) continue;
-                        if ((0 <= r && r <= 6 && (c == 0 || c == 6)) ||
-                            (0 <= c && c <= 6 && (r == 0 || r == 6)) ||
-                            (2 <= r && r <= 4 && 2 <= c && c <= 4)) {
-                            _modules[row + r][col + c] = true;
-                        } else {
-                            _modules[row + r][col + c] = false;
+                var getBestMaskPattern = function () {
+                    var minLostPoint = 0;
+                    var pattern = 0;
+                    for (var i = 0; i < 8; i += 1) {
+                        makeImpl(true, i);
+                        var lostPoint = QRUtil.getLostPoint(_this);
+                        if (i == 0 || minLostPoint > lostPoint) {
+                            minLostPoint = lostPoint;
+                            pattern = i;
                         }
                     }
-                }
-            };
+                    return pattern;
+                };
 
-            var getBestMaskPattern = function() {
-                var minLostPoint = 0;
-                var pattern = 0;
-                for (var i = 0; i < 8; i += 1) {
-                    makeImpl(true, i);
-                    var lostPoint = QRUtil.getLostPoint(_this);
-                    if (i == 0 || minLostPoint > lostPoint) {
-                        minLostPoint = lostPoint;
-                        pattern = i;
+                var setupTimingPatternFixed = function () {
+                    for (var r = 8; r < _moduleCount - 8; r += 1) {
+                        if (_modules[r][6] != null) continue;
+                        _modules[r][6] = (r % 2 == 0);
                     }
-                }
-                return pattern;
-            };
+                    for (var c = 8; c < _moduleCount - 8; c += 1) {
+                        if (_modules[6][c] != null) continue;
+                        _modules[6][c] = (c % 2 == 0);
+                    }
+                };
+                var setupTimingPattern = setupTimingPatternFixed;
 
-            var setupTimingPatternFixed = function() {
-                for (var r = 8; r < _moduleCount - 8; r += 1) {
-                    if (_modules[r][6] != null) continue;
-                    _modules[r][6] = (r % 2 == 0);
-                }
-                for (var c = 8; c < _moduleCount - 8; c += 1) {
-                    if (_modules[6][c] != null) continue;
-                    _modules[6][c] = (c % 2 == 0);
-                }
-            };
-            var setupTimingPattern = setupTimingPatternFixed;
-
-            var setupPositionAdjustPattern = function() {
-                var pos = QRUtil.getPatternPosition(_typeNumber);
-                for (var i = 0; i < pos.length; i += 1) {
-                    for (var j = 0; j < pos.length; j += 1) {
-                        var row = pos[i];
-                        var col = pos[j];
-                        if (_modules[row][col] != null) continue;
-                        for (var r = -2; r <= 2; r += 1) {
-                            for (var c = -2; c <= 2; c += 1) {
-                                if (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0)) {
-                                    _modules[row + r][col + c] = true;
-                                } else {
-                                    _modules[row + r][col + c] = false;
+                var setupPositionAdjustPattern = function () {
+                    var pos = QRUtil.getPatternPosition(_typeNumber);
+                    for (var i = 0; i < pos.length; i += 1) {
+                        for (var j = 0; j < pos.length; j += 1) {
+                            var row = pos[i];
+                            var col = pos[j];
+                            if (_modules[row][col] != null) continue;
+                            for (var r = -2; r <= 2; r += 1) {
+                                for (var c = -2; c <= 2; c += 1) {
+                                    if (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0)) {
+                                        _modules[row + r][col + c] = true;
+                                    } else {
+                                        _modules[row + r][col + c] = false;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            var setupTypeNumber = function(test) {
-                var bits = QRUtil.getBCHTypeNumber(_typeNumber);
-                for (var i = 0; i < 18; i += 1) {
-                    var mod = (!test && ((bits >> i) & 1) == 1);
-                    _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
-                }
-                for (var i = 0; i < 18; i += 1) {
-                    var mod = (!test && ((bits >> i) & 1) == 1);
-                    _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
-                }
-            };
-
-            var setupTypeInfo = function(test, maskPattern) {
-                var data = (_errorCorrectionLevel << 3) | maskPattern;
-                var bits = QRUtil.getBCHTypeInfo(data);
-                for (var i = 0; i < 15; i += 1) {
-                    var mod = (!test && ((bits >> i) & 1) == 1);
-                    if (i < 6) {
-                        _modules[i][8] = mod;
-                    } else if (i < 8) {
-                        _modules[i + 1][8] = mod;
-                    } else {
-                        _modules[_moduleCount - 15 + i][8] = mod;
+                var setupTypeNumber = function (test) {
+                    var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+                    for (var i = 0; i < 18; i += 1) {
+                        var mod = (!test && ((bits >> i) & 1) == 1);
+                        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
                     }
-                }
-                for (var i = 0; i < 15; i += 1) {
-                    var mod = (!test && ((bits >> i) & 1) == 1);
-                    if (i < 8) {
-                        _modules[8][_moduleCount - i - 1] = mod;
-                    } else if (i < 9) {
-                        _modules[8][15 - i - 1 + 1] = mod;
-                    } else {
-                        _modules[8][15 - i - 1] = mod;
+                    for (var i = 0; i < 18; i += 1) {
+                        var mod = (!test && ((bits >> i) & 1) == 1);
+                        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
                     }
-                }
-                _modules[_moduleCount - 8][8] = (!test);
-            };
+                };
 
-            var mapData = function(data, maskPattern) {
-                var inc = -1;
-                var row = _moduleCount - 1;
-                var bitIndex = 7;
-                var byteIndex = 0;
-                var maskFunc = QRUtil.getMaskFunction(maskPattern);
+                var setupTypeInfo = function (test, maskPattern) {
+                    var data = (_errorCorrectionLevel << 3) | maskPattern;
+                    var bits = QRUtil.getBCHTypeInfo(data);
+                    for (var i = 0; i < 15; i += 1) {
+                        var mod = (!test && ((bits >> i) & 1) == 1);
+                        if (i < 6) {
+                            _modules[i][8] = mod;
+                        } else if (i < 8) {
+                            _modules[i + 1][8] = mod;
+                        } else {
+                            _modules[_moduleCount - 15 + i][8] = mod;
+                        }
+                    }
+                    for (var i = 0; i < 15; i += 1) {
+                        var mod = (!test && ((bits >> i) & 1) == 1);
+                        if (i < 8) {
+                            _modules[8][_moduleCount - i - 1] = mod;
+                        } else if (i < 9) {
+                            _modules[8][15 - i - 1 + 1] = mod;
+                        } else {
+                            _modules[8][15 - i - 1] = mod;
+                        }
+                    }
+                    _modules[_moduleCount - 8][8] = (!test);
+                };
 
-                for (var col = _moduleCount - 1; col > 0; col -= 2) {
-                    if (col == 6) col -= 1;
+                var mapData = function (data, maskPattern) {
+                    var inc = -1;
+                    var row = _moduleCount - 1;
+                    var bitIndex = 7;
+                    var byteIndex = 0;
+                    var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+                    for (var col = _moduleCount - 1; col > 0; col -= 2) {
+                        if (col == 6) col -= 1;
+                        while (true) {
+                            for (var c = 0; c < 2; c += 1) {
+                                if (_modules[row][col - c] == null) {
+                                    var dark = false;
+                                    if (byteIndex < data.length) {
+                                        dark = (((data[byteIndex] >>> bitIndex) & 1) == 1);
+                                    }
+                                    var mask = maskFunc(row, col - c);
+                                    if (mask) {
+                                        dark = !dark;
+                                    }
+                                    _modules[row][col - c] = dark;
+                                    bitIndex -= 1;
+                                    if (bitIndex == -1) {
+                                        byteIndex += 1;
+                                        bitIndex = 7;
+                                    }
+                                }
+                            }
+                            row += inc;
+                            if (row < 0 || _moduleCount <= row) {
+                                row -= inc;
+                                inc = -inc;
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                var createBytes = function (buffer, rsBlocks) {
+                    var offset = 0;
+                    var maxDcCount = 0;
+                    var maxEcCount = 0;
+                    var dcdata = new Array(rsBlocks.length);
+                    var ecdata = new Array(rsBlocks.length);
+
+                    for (var r = 0; r < rsBlocks.length; r += 1) {
+                        var dcCount = rsBlocks[r].dataCount;
+                        var ecCount = rsBlocks[r].totalCount - dcCount;
+                        maxDcCount = Math.max(maxDcCount, dcCount);
+                        maxEcCount = Math.max(maxEcCount, ecCount);
+                        dcdata[r] = new Array(dcCount);
+                        for (var i = 0; i < dcdata[r].length; i += 1) {
+                            dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+                        }
+                        offset += dcCount;
+                        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+                        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+                        var modPoly = rawPoly.mod(rsPoly);
+                        ecdata[r] = new Array(rsPoly.getLength() - 1);
+                        for (var i = 0; i < ecdata[r].length; i += 1) {
+                            var modIndex = i + modPoly.getLength() - ecdata[r].length;
+                            ecdata[r][i] = (modIndex >= 0) ? modPoly.getAt(modIndex) : 0;
+                        }
+                    }
+
+                    var totalCodeCount = 0;
+                    for (var i = 0; i < rsBlocks.length; i += 1) {
+                        totalCodeCount += rsBlocks[i].totalCount;
+                    }
+
+                    var data = new Array(totalCodeCount);
+                    var index = 0;
+                    for (var i = 0; i < maxDcCount; i += 1) {
+                        for (var r = 0; r < rsBlocks.length; r += 1) {
+                            if (i < dcdata[r].length) {
+                                data[index] = dcdata[r][i];
+                                index += 1;
+                            }
+                        }
+                    }
+                    for (var i = 0; i < maxEcCount; i += 1) {
+                        for (var r = 0; r < rsBlocks.length; r += 1) {
+                            if (i < ecdata[r].length) {
+                                data[index] = ecdata[r][i];
+                                index += 1;
+                            }
+                        }
+                    }
+                    return data;
+                };
+
+                var createData = function (typeNumber, errorCorrectionLevel, dataList) {
+                    var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+                    var buffer = qrBitBuffer();
+
+                    for (var i = 0; i < dataList.length; i += 1) {
+                        var data = dataList[i];
+                        buffer.put(data.getMode(), 4);
+                        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
+                        data.write(buffer);
+                    }
+
+                    var totalDataCount = 0;
+                    for (var i = 0; i < rsBlocks.length; i += 1) {
+                        totalDataCount += rsBlocks[i].dataCount;
+                    }
+
+                    if (buffer.getLengthInBits() > totalDataCount * 8) {
+                        throw new Error('code length overflow. (' + buffer.getLengthInBits() + '>' + totalDataCount * 8 + ')');
+                    }
+
+                    if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+                        buffer.put(0, 4);
+                    }
+
+                    while (buffer.getLengthInBits() % 8 != 0) {
+                        buffer.putBit(false);
+                    }
+
                     while (true) {
-                        for (var c = 0; c < 2; c += 1) {
-                            if (_modules[row][col - c] == null) {
-                                var dark = false;
-                                if (byteIndex < data.length) {
-                                    dark = (((data[byteIndex] >>> bitIndex) & 1) == 1);
-                                }
-                                var mask = maskFunc(row, col - c);
-                                if (mask) {
-                                    dark = !dark;
-                                }
-                                _modules[row][col - c] = dark;
-                                bitIndex -= 1;
-                                if (bitIndex == -1) {
-                                    byteIndex += 1;
-                                    bitIndex = 7;
-                                }
+                        if (buffer.getLengthInBits() >= totalDataCount * 8) break;
+                        buffer.put(PAD0, 8);
+                        if (buffer.getLengthInBits() >= totalDataCount * 8) break;
+                        buffer.put(PAD1, 8);
+                    }
+
+                    return createBytes(buffer, rsBlocks);
+                };
+
+                _this.addData = function (data, mode) {
+                    mode = mode || 'Byte';
+                    var newData = null;
+                    switch (mode) {
+                        case 'Numeric': newData = qrNumber(data); break;
+                        case 'Alphanumeric': newData = qrAlphaNum(data); break;
+                        case 'Byte': newData = qr8BitByte(data); break;
+                        case 'Kanji': newData = qrKanji(data); break;
+                        default: throw new Error('mode:' + mode);
+                    }
+                    _dataList.push(newData);
+                    _dataCache = null;
+                };
+
+                _this.isDark = function (row, col) {
+                    if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+                        throw new Error(row + ',' + col);
+                    }
+                    return _modules[row][col];
+                };
+
+                _this.getModuleCount = function () {
+                    return _moduleCount;
+                };
+
+                _this.make = function () {
+                    if (_typeNumber < 1) {
+                        var typeNumber = 1;
+                        for (; typeNumber < 40; typeNumber++) {
+                            var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+                            var buffer = qrBitBuffer();
+                            for (var i = 0; i < _dataList.length; i++) {
+                                var data = _dataList[i];
+                                buffer.put(data.getMode(), 4);
+                                buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
+                                data.write(buffer);
+                            }
+                            var totalDataCount = 0;
+                            for (var i = 0; i < rsBlocks.length; i++) {
+                                totalDataCount += rsBlocks[i].dataCount;
+                            }
+                            if (buffer.getLengthInBits() <= totalDataCount * 8) {
+                                break;
                             }
                         }
-                        row += inc;
-                        if (row < 0 || _moduleCount <= row) {
-                            row -= inc;
-                            inc = -inc;
-                            break;
-                        }
+                        _typeNumber = typeNumber;
                     }
-                }
+                    makeImpl(false, getBestMaskPattern());
+                };
+
+                return _this;
             };
 
-            var createBytes = function(buffer, rsBlocks) {
-                var offset = 0;
-                var maxDcCount = 0;
-                var maxEcCount = 0;
-                var dcdata = new Array(rsBlocks.length);
-                var ecdata = new Array(rsBlocks.length);
-
-                for (var r = 0; r < rsBlocks.length; r += 1) {
-                    var dcCount = rsBlocks[r].dataCount;
-                    var ecCount = rsBlocks[r].totalCount - dcCount;
-                    maxDcCount = Math.max(maxDcCount, dcCount);
-                    maxEcCount = Math.max(maxEcCount, ecCount);
-                    dcdata[r] = new Array(dcCount);
-                    for (var i = 0; i < dcdata[r].length; i += 1) {
-                        dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+            qrcode.stringToBytesFuncs = {
+                'default': function (s) {
+                    var bytes = [];
+                    for (var i = 0; i < s.length; i += 1) {
+                        var c = s.charCodeAt(i);
+                        bytes.push(c & 0xff);
                     }
-                    offset += dcCount;
-                    var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-                    var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
-                    var modPoly = rawPoly.mod(rsPoly);
-                    ecdata[r] = new Array(rsPoly.getLength() - 1);
-                    for (var i = 0; i < ecdata[r].length; i += 1) {
-                        var modIndex = i + modPoly.getLength() - ecdata[r].length;
-                        ecdata[r][i] = (modIndex >= 0) ? modPoly.getAt(modIndex) : 0;
-                    }
-                }
-
-                var totalCodeCount = 0;
-                for (var i = 0; i < rsBlocks.length; i += 1) {
-                    totalCodeCount += rsBlocks[i].totalCount;
-                }
-
-                var data = new Array(totalCodeCount);
-                var index = 0;
-                for (var i = 0; i < maxDcCount; i += 1) {
-                    for (var r = 0; r < rsBlocks.length; r += 1) {
-                        if (i < dcdata[r].length) {
-                            data[index] = dcdata[r][i];
-                            index += 1;
-                        }
-                    }
-                }
-                for (var i = 0; i < maxEcCount; i += 1) {
-                    for (var r = 0; r < rsBlocks.length; r += 1) {
-                        if (i < ecdata[r].length) {
-                            data[index] = ecdata[r][i];
-                            index += 1;
-                        }
-                    }
-                }
-                return data;
-            };
-
-            var createData = function(typeNumber, errorCorrectionLevel, dataList) {
-                var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
-                var buffer = qrBitBuffer();
-
-                for (var i = 0; i < dataList.length; i += 1) {
-                    var data = dataList[i];
-                    buffer.put(data.getMode(), 4);
-                    buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
-                    data.write(buffer);
-                }
-
-                var totalDataCount = 0;
-                for (var i = 0; i < rsBlocks.length; i += 1) {
-                    totalDataCount += rsBlocks[i].dataCount;
-                }
-
-                if (buffer.getLengthInBits() > totalDataCount * 8) {
-                    throw new Error('code length overflow. (' + buffer.getLengthInBits() + '>' + totalDataCount * 8 + ')');
-                }
-
-                if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-                    buffer.put(0, 4);
-                }
-
-                while (buffer.getLengthInBits() % 8 != 0) {
-                    buffer.putBit(false);
-                }
-
-                while (true) {
-                    if (buffer.getLengthInBits() >= totalDataCount * 8) break;
-                    buffer.put(PAD0, 8);
-                    if (buffer.getLengthInBits() >= totalDataCount * 8) break;
-                    buffer.put(PAD1, 8);
-                }
-
-                return createBytes(buffer, rsBlocks);
-            };
-
-            _this.addData = function(data, mode) {
-                mode = mode || 'Byte';
-                var newData = null;
-                switch (mode) {
-                    case 'Numeric': newData = qrNumber(data); break;
-                    case 'Alphanumeric': newData = qrAlphaNum(data); break;
-                    case 'Byte': newData = qr8BitByte(data); break;
-                    case 'Kanji': newData = qrKanji(data); break;
-                    default: throw new Error('mode:' + mode);
-                }
-                _dataList.push(newData);
-                _dataCache = null;
-            };
-
-            _this.isDark = function(row, col) {
-                if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
-                    throw new Error(row + ',' + col);
-                }
-                return _modules[row][col];
-            };
-
-            _this.getModuleCount = function() {
-                return _moduleCount;
-            };
-
-            _this.make = function() {
-                if (_typeNumber < 1) {
-                    var typeNumber = 1;
-                    for (; typeNumber < 40; typeNumber++) {
-                        var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
-                        var buffer = qrBitBuffer();
-                        for (var i = 0; i < _dataList.length; i++) {
-                            var data = _dataList[i];
-                            buffer.put(data.getMode(), 4);
-                            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber));
-                            data.write(buffer);
-                        }
-                        var totalDataCount = 0;
-                        for (var i = 0; i < rsBlocks.length; i++) {
-                            totalDataCount += rsBlocks[i].dataCount;
-                        }
-                        if (buffer.getLengthInBits() <= totalDataCount * 8) {
-                            break;
-                        }
-                    }
-                    _typeNumber = typeNumber;
-                }
-                makeImpl(false, getBestMaskPattern());
-            };
-
-            return _this;
-        };
-
-        qrcode.stringToBytesFuncs = {
-            'default': function(s) {
-                var bytes = [];
-                for (var i = 0; i < s.length; i += 1) {
-                    var c = s.charCodeAt(i);
-                    bytes.push(c & 0xff);
-                }
-                return bytes;
-            },
-            'UTF-8': function(s) {
-                function toUTF8Array(str) {
-                    var utf8 = [];
-                    for (var i = 0; i < str.length; i++) {
-                        var charcode = str.charCodeAt(i);
-                        if (charcode < 0x80) utf8.push(charcode);
-                        else if (charcode < 0x800) {
-                            utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
-                        } else if (charcode < 0xd800 || charcode >= 0xe000) {
-                            utf8.push(0xe0 | (charcode >> 12), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
-                        } else {
-                            i++;
-                            charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
-                            utf8.push(0xf0 | (charcode >> 18), 0x80 | ((charcode >> 12) & 0x3f), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
-                        }
-                    }
-                    return utf8;
-                }
-                return toUTF8Array(s);
-            }
-        };
-
-        qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
-
-        var QRMode = {
-            MODE_NUMBER: 1 << 0,
-            MODE_ALPHA_NUM: 1 << 1,
-            MODE_8BIT_BYTE: 1 << 2,
-            MODE_KANJI: 1 << 3
-        };
-
-        var QRErrorCorrectionLevel = { L: 1, M: 0, Q: 3, H: 2 };
-
-        var QRMaskPattern = {
-            PATTERN000: 0, PATTERN001: 1, PATTERN010: 2, PATTERN011: 3,
-            PATTERN100: 4, PATTERN101: 5, PATTERN110: 6, PATTERN111: 7
-        };
-
-        var QRUtil = function() {
-            var PATTERN_POSITION_TABLE = [
-                [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34],
-                [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62],
-                [6, 26, 46, 66], [6, 26, 48, 70], [6, 26, 50, 74], [6, 30, 54, 78], [6, 30, 56, 82], [6, 30, 58, 86], [6, 34, 62, 90],
-                [6, 28, 50, 72, 94], [6, 26, 50, 74, 98], [6, 30, 54, 78, 102], [6, 28, 54, 80, 106], [6, 32, 58, 84, 110], [6, 30, 58, 86, 114], [6, 34, 62, 90, 118],
-                [6, 26, 50, 74, 98, 122], [6, 30, 54, 78, 102, 126], [6, 26, 52, 78, 104, 130], [6, 30, 56, 82, 108, 134], [6, 34, 60, 86, 112, 138], [6, 30, 58, 86, 114, 142], [6, 34, 62, 90, 118, 146],
-                [6, 30, 54, 78, 102, 126, 150], [6, 24, 50, 76, 102, 128, 154], [6, 28, 54, 80, 106, 132, 158], [6, 32, 58, 84, 110, 136, 162], [6, 26, 54, 82, 110, 138, 166], [6, 30, 58, 86, 114, 142, 170]
-            ];
-            var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
-            var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
-            var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
-
-            var _this = {};
-            var getBCHDigit = function(data) {
-                var digit = 0;
-                while (data != 0) {
-                    digit += 1;
-                    data >>>= 1;
-                }
-                return digit;
-            };
-
-            _this.getBCHTypeInfo = function(data) {
-                var d = data << 10;
-                while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
-                    d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15)));
-                }
-                return ((data << 10) | d) ^ G15_MASK;
-            };
-
-            _this.getBCHTypeNumber = function(data) {
-                var d = data << 12;
-                while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
-                    d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18)));
-                }
-                return (data << 12) | d;
-            };
-
-            _this.getPatternPosition = function(typeNumber) {
-                return PATTERN_POSITION_TABLE[typeNumber - 1];
-            };
-
-            _this.getMaskFunction = function(maskPattern) {
-                switch (maskPattern) {
-                    case QRMaskPattern.PATTERN000: return function(i, j) { return (i + j) % 2 == 0; };
-                    case QRMaskPattern.PATTERN001: return function(i, j) { return i % 2 == 0; };
-                    case QRMaskPattern.PATTERN010: return function(i, j) { return j % 3 == 0; };
-                    case QRMaskPattern.PATTERN011: return function(i, j) { return (i + j) % 3 == 0; };
-                    case QRMaskPattern.PATTERN100: return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0; };
-                    case QRMaskPattern.PATTERN101: return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
-                    case QRMaskPattern.PATTERN110: return function(i, j) { return ((i * j) % 2 + (i * j) % 3) % 2 == 0; };
-                    case QRMaskPattern.PATTERN111: return function(i, j) { return ((i * j) % 3 + (i + j) % 2) % 2 == 0; };
-                    default: throw new Error('bad maskPattern:' + maskPattern);
-                }
-            };
-
-            _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
-                var a = qrPolynomial([1], 0);
-                for (var i = 0; i < errorCorrectLength; i += 1) {
-                    a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0));
-                }
-                return a;
-            };
-
-            _this.getLengthInBits = function(mode, type) {
-                if (1 <= type && type < 10) {
-                    switch (mode) {
-                        case QRMode.MODE_NUMBER: return 10;
-                        case QRMode.MODE_ALPHA_NUM: return 9;
-                        case QRMode.MODE_8BIT_BYTE: return 8;
-                        case QRMode.MODE_KANJI: return 8;
-                        default: throw new Error('mode:' + mode);
-                    }
-                } else if (type < 27) {
-                    switch (mode) {
-                        case QRMode.MODE_NUMBER: return 12;
-                        case QRMode.MODE_ALPHA_NUM: return 11;
-                        case QRMode.MODE_8BIT_BYTE: return 16;
-                        case QRMode.MODE_KANJI: return 10;
-                        default: throw new Error('mode:' + mode);
-                    }
-                } else if (type < 41) {
-                    switch (mode) {
-                        case QRMode.MODE_NUMBER: return 14;
-                        case QRMode.MODE_ALPHA_NUM: return 13;
-                        case QRMode.MODE_8BIT_BYTE: return 16;
-                        case QRMode.MODE_KANJI: return 12;
-                        default: throw new Error('mode:' + mode);
-                    }
-                } else {
-                    throw new Error('type:' + type);
-                }
-            };
-
-            _this.getLostPoint = function(qrcode) {
-                var moduleCount = qrcode.getModuleCount();
-                var lostPoint = 0;
-                for (var row = 0; row < moduleCount; row += 1) {
-                    for (var col = 0; col < moduleCount; col += 1) {
-                        var sameCount = 0;
-                        var dark = qrcode.isDark(row, col);
-                        for (var r = -1; r <= 1; r += 1) {
-                            if (row + r < 0 || moduleCount <= row + r) continue;
-                            for (var c = -1; c <= 1; c += 1) {
-                                if (col + c < 0 || moduleCount <= col + c) continue;
-                                if (r == 0 && c == 0) continue;
-                                if (dark == qrcode.isDark(row + r, col + c)) sameCount += 1;
+                    return bytes;
+                },
+                'UTF-8': function (s) {
+                    function toUTF8Array(str) {
+                        var utf8 = [];
+                        for (var i = 0; i < str.length; i++) {
+                            var charcode = str.charCodeAt(i);
+                            if (charcode < 0x80) utf8.push(charcode);
+                            else if (charcode < 0x800) {
+                                utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
+                            } else if (charcode < 0xd800 || charcode >= 0xe000) {
+                                utf8.push(0xe0 | (charcode >> 12), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
+                            } else {
+                                i++;
+                                charcode = 0x10000 + (((charcode & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+                                utf8.push(0xf0 | (charcode >> 18), 0x80 | ((charcode >> 12) & 0x3f), 0x80 | ((charcode >> 6) & 0x3f), 0x80 | (charcode & 0x3f));
                             }
                         }
-                        if (sameCount > 5) lostPoint += (3 + sameCount - 5);
+                        return utf8;
                     }
+                    return toUTF8Array(s);
                 }
-                for (var row = 0; row < moduleCount - 1; row += 1) {
-                    for (var col = 0; col < moduleCount - 1; col += 1) {
-                        var count = 0;
-                        if (qrcode.isDark(row, col)) count += 1;
-                        if (qrcode.isDark(row + 1, col)) count += 1;
-                        if (qrcode.isDark(row, col + 1)) count += 1;
-                        if (qrcode.isDark(row + 1, col + 1)) count += 1;
-                        if (count == 0 || count == 4) lostPoint += 3;
+            };
+
+            qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+
+            var QRMode = {
+                MODE_NUMBER: 1 << 0,
+                MODE_ALPHA_NUM: 1 << 1,
+                MODE_8BIT_BYTE: 1 << 2,
+                MODE_KANJI: 1 << 3
+            };
+
+            var QRErrorCorrectionLevel = {L: 1, M: 0, Q: 3, H: 2};
+
+            var QRMaskPattern = {
+                PATTERN000: 0, PATTERN001: 1, PATTERN010: 2, PATTERN011: 3,
+                PATTERN100: 4, PATTERN101: 5, PATTERN110: 6, PATTERN111: 7
+            };
+
+            var QRUtil = function () {
+                var PATTERN_POSITION_TABLE = [
+                    [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34],
+                    [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62],
+                    [6, 26, 46, 66], [6, 26, 48, 70], [6, 26, 50, 74], [6, 30, 54, 78], [6, 30, 56, 82], [6, 30, 58, 86], [6, 34, 62, 90],
+                    [6, 28, 50, 72, 94], [6, 26, 50, 74, 98], [6, 30, 54, 78, 102], [6, 28, 54, 80, 106], [6, 32, 58, 84, 110], [6, 30, 58, 86, 114], [6, 34, 62, 90, 118],
+                    [6, 26, 50, 74, 98, 122], [6, 30, 54, 78, 102, 126], [6, 26, 52, 78, 104, 130], [6, 30, 56, 82, 108, 134], [6, 34, 60, 86, 112, 138], [6, 30, 58, 86, 114, 142], [6, 34, 62, 90, 118, 146],
+                    [6, 30, 54, 78, 102, 126, 150], [6, 24, 50, 76, 102, 128, 154], [6, 28, 54, 80, 106, 132, 158], [6, 32, 58, 84, 110, 136, 162], [6, 26, 54, 82, 110, 138, 166], [6, 30, 58, 86, 114, 142, 170]
+                ];
+                var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+                var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+                var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+                var _this = {};
+                var getBCHDigit = function (data) {
+                    var digit = 0;
+                    while (data != 0) {
+                        digit += 1;
+                        data >>>= 1;
                     }
-                }
-                for (var row = 0; row < moduleCount; row += 1) {
-                    for (var col = 0; col < moduleCount - 6; col += 1) {
-                        if (qrcode.isDark(row, col) && !qrcode.isDark(row, col + 1) && qrcode.isDark(row, col + 2) &&
-                            qrcode.isDark(row, col + 3) && qrcode.isDark(row, col + 4) && !qrcode.isDark(row, col + 5) &&
-                            qrcode.isDark(row, col + 6)) {
-                            lostPoint += 40;
+                    return digit;
+                };
+
+                _this.getBCHTypeInfo = function (data) {
+                    var d = data << 10;
+                    while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+                        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15)));
+                    }
+                    return ((data << 10) | d) ^ G15_MASK;
+                };
+
+                _this.getBCHTypeNumber = function (data) {
+                    var d = data << 12;
+                    while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+                        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18)));
+                    }
+                    return (data << 12) | d;
+                };
+
+                _this.getPatternPosition = function (typeNumber) {
+                    return PATTERN_POSITION_TABLE[typeNumber - 1];
+                };
+
+                _this.getMaskFunction = function (maskPattern) {
+                    switch (maskPattern) {
+                        case QRMaskPattern.PATTERN000: return function (i, j) {return (i + j) % 2 == 0;};
+                        case QRMaskPattern.PATTERN001: return function (i, j) {return i % 2 == 0;};
+                        case QRMaskPattern.PATTERN010: return function (i, j) {return j % 3 == 0;};
+                        case QRMaskPattern.PATTERN011: return function (i, j) {return (i + j) % 3 == 0;};
+                        case QRMaskPattern.PATTERN100: return function (i, j) {return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0;};
+                        case QRMaskPattern.PATTERN101: return function (i, j) {return (i * j) % 2 + (i * j) % 3 == 0;};
+                        case QRMaskPattern.PATTERN110: return function (i, j) {return ((i * j) % 2 + (i * j) % 3) % 2 == 0;};
+                        case QRMaskPattern.PATTERN111: return function (i, j) {return ((i * j) % 3 + (i + j) % 2) % 2 == 0;};
+                        default: throw new Error('bad maskPattern:' + maskPattern);
+                    }
+                };
+
+                _this.getErrorCorrectPolynomial = function (errorCorrectLength) {
+                    var a = qrPolynomial([1], 0);
+                    for (var i = 0; i < errorCorrectLength; i += 1) {
+                        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0));
+                    }
+                    return a;
+                };
+
+                _this.getLengthInBits = function (mode, type) {
+                    if (1 <= type && type < 10) {
+                        switch (mode) {
+                            case QRMode.MODE_NUMBER: return 10;
+                            case QRMode.MODE_ALPHA_NUM: return 9;
+                            case QRMode.MODE_8BIT_BYTE: return 8;
+                            case QRMode.MODE_KANJI: return 8;
+                            default: throw new Error('mode:' + mode);
                         }
-                    }
-                }
-                for (var col = 0; col < moduleCount; col += 1) {
-                    for (var row = 0; row < moduleCount - 6; row += 1) {
-                        if (qrcode.isDark(row, col) && !qrcode.isDark(row + 1, col) && qrcode.isDark(row + 2, col) &&
-                            qrcode.isDark(row + 3, col) && qrcode.isDark(row + 4, col) && !qrcode.isDark(row + 5, col) &&
-                            qrcode.isDark(row + 6, col)) {
-                            lostPoint += 40;
+                    } else if (type < 27) {
+                        switch (mode) {
+                            case QRMode.MODE_NUMBER: return 12;
+                            case QRMode.MODE_ALPHA_NUM: return 11;
+                            case QRMode.MODE_8BIT_BYTE: return 16;
+                            case QRMode.MODE_KANJI: return 10;
+                            default: throw new Error('mode:' + mode);
                         }
+                    } else if (type < 41) {
+                        switch (mode) {
+                            case QRMode.MODE_NUMBER: return 14;
+                            case QRMode.MODE_ALPHA_NUM: return 13;
+                            case QRMode.MODE_8BIT_BYTE: return 16;
+                            case QRMode.MODE_KANJI: return 12;
+                            default: throw new Error('mode:' + mode);
+                        }
+                    } else {
+                        throw new Error('type:' + type);
                     }
-                }
-                var darkCount = 0;
-                for (var col = 0; col < moduleCount; col += 1) {
+                };
+
+                _this.getLostPoint = function (qrcode) {
+                    var moduleCount = qrcode.getModuleCount();
+                    var lostPoint = 0;
                     for (var row = 0; row < moduleCount; row += 1) {
-                        if (qrcode.isDark(row, col)) darkCount += 1;
+                        for (var col = 0; col < moduleCount; col += 1) {
+                            var sameCount = 0;
+                            var dark = qrcode.isDark(row, col);
+                            for (var r = -1; r <= 1; r += 1) {
+                                if (row + r < 0 || moduleCount <= row + r) continue;
+                                for (var c = -1; c <= 1; c += 1) {
+                                    if (col + c < 0 || moduleCount <= col + c) continue;
+                                    if (r == 0 && c == 0) continue;
+                                    if (dark == qrcode.isDark(row + r, col + c)) sameCount += 1;
+                                }
+                            }
+                            if (sameCount > 5) lostPoint += (3 + sameCount - 5);
+                        }
                     }
-                }
-                var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
-                lostPoint += ratio * 10;
-                return lostPoint;
-            };
+                    for (var row = 0; row < moduleCount - 1; row += 1) {
+                        for (var col = 0; col < moduleCount - 1; col += 1) {
+                            var count = 0;
+                            if (qrcode.isDark(row, col)) count += 1;
+                            if (qrcode.isDark(row + 1, col)) count += 1;
+                            if (qrcode.isDark(row, col + 1)) count += 1;
+                            if (qrcode.isDark(row + 1, col + 1)) count += 1;
+                            if (count == 0 || count == 4) lostPoint += 3;
+                        }
+                    }
+                    for (var row = 0; row < moduleCount; row += 1) {
+                        for (var col = 0; col < moduleCount - 6; col += 1) {
+                            if (qrcode.isDark(row, col) && !qrcode.isDark(row, col + 1) && qrcode.isDark(row, col + 2) &&
+                                qrcode.isDark(row, col + 3) && qrcode.isDark(row, col + 4) && !qrcode.isDark(row, col + 5) &&
+                                qrcode.isDark(row, col + 6)) {
+                                lostPoint += 40;
+                            }
+                        }
+                    }
+                    for (var col = 0; col < moduleCount; col += 1) {
+                        for (var row = 0; row < moduleCount - 6; row += 1) {
+                            if (qrcode.isDark(row, col) && !qrcode.isDark(row + 1, col) && qrcode.isDark(row + 2, col) &&
+                                qrcode.isDark(row + 3, col) && qrcode.isDark(row + 4, col) && !qrcode.isDark(row + 5, col) &&
+                                qrcode.isDark(row + 6, col)) {
+                                lostPoint += 40;
+                            }
+                        }
+                    }
+                    var darkCount = 0;
+                    for (var col = 0; col < moduleCount; col += 1) {
+                        for (var row = 0; row < moduleCount; row += 1) {
+                            if (qrcode.isDark(row, col)) darkCount += 1;
+                        }
+                    }
+                    var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+                    lostPoint += ratio * 10;
+                    return lostPoint;
+                };
 
-            return _this;
-        }();
-
-        var QRMath = function() {
-            var EXP_TABLE = new Array(256);
-            var LOG_TABLE = new Array(256);
-            for (var i = 0; i < 8; i += 1) EXP_TABLE[i] = 1 << i;
-            for (var i = 8; i < 256; i += 1) {
-                EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
-            }
-            for (var i = 0; i < 255; i += 1) LOG_TABLE[EXP_TABLE[i]] = i;
-
-            var _this = {};
-            _this.glog = function(n) {
-                if (n < 1) throw new Error('glog(' + n + ')');
-                return LOG_TABLE[n];
-            };
-            _this.gexp = function(n) {
-                while (n < 0) n += 255;
-                while (n >= 256) n -= 255;
-                return EXP_TABLE[n];
-            };
-            return _this;
-        }();
-
-        function qrPolynomial(num, shift) {
-            if (typeof num.length == 'undefined') throw new Error(num.length + '/' + shift);
-            var _num = function() {
-                var offset = 0;
-                while (offset < num.length && num[offset] == 0) offset += 1;
-                var _num = new Array(num.length - offset + shift);
-                for (var i = 0; i < num.length - offset; i += 1) _num[i] = num[i + offset];
-                return _num;
+                return _this;
             }();
-            var _this = {};
-            _this.getAt = function(index) { return _num[index]; };
-            _this.getLength = function() { return _num.length; };
-            _this.multiply = function(e) {
-                var num = new Array(_this.getLength() + e.getLength() - 1);
-                for (var i = 0; i < _this.getLength(); i += 1) {
-                    for (var j = 0; j < e.getLength(); j += 1) {
-                        num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)));
-                    }
-                }
-                return qrPolynomial(num, 0);
-            };
-            _this.mod = function(e) {
-                if (_this.getLength() - e.getLength() < 0) return _this;
-                var ratio = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
-                var num = new Array(_this.getLength());
-                for (var i = 0; i < _this.getLength(); i += 1) num[i] = _this.getAt(i);
-                for (var i = 0; i < e.getLength(); i += 1) num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i)) + ratio);
-                return qrPolynomial(num, 0).mod(e);
-            };
-            return _this;
-        }
 
-        var QRRSBlock = function() {
-            var RS_BLOCK_TABLE = [
-                [1, 26, 19], [1, 26, 16], [1, 26, 13], [1, 26, 9],
-                [1, 44, 34], [1, 44, 28], [1, 44, 22], [1, 44, 16],
-                [1, 70, 55], [1, 70, 44], [2, 35, 17], [2, 35, 13],
-                [1, 100, 80], [2, 50, 32], [2, 50, 24], [4, 25, 9],
-                [1, 134, 108], [2, 67, 43], [2, 33, 15, 2, 34, 16], [2, 33, 11, 2, 34, 12],
-                [2, 86, 68], [4, 43, 27], [4, 43, 19], [4, 43, 15],
-                [2, 98, 78], [4, 49, 31], [2, 32, 14, 4, 33, 15], [4, 39, 13, 1, 40, 14],
-                [2, 121, 97], [2, 60, 38, 2, 61, 39], [4, 40, 18, 2, 41, 19], [4, 40, 14, 2, 41, 15],
-                [2, 146, 116], [3, 58, 36, 2, 59, 37], [4, 36, 16, 4, 37, 17], [4, 36, 12, 4, 37, 13],
-                [2, 86, 68, 2, 87, 69], [4, 69, 43, 1, 70, 44], [6, 43, 19, 2, 44, 20], [6, 43, 15, 2, 44, 16],
-                [4, 101, 81], [1, 80, 50, 4, 81, 51], [4, 50, 22, 4, 51, 23], [3, 36, 12, 8, 37, 13],
-                [2, 116, 92, 2, 117, 93], [6, 58, 36, 2, 59, 37], [4, 46, 20, 6, 47, 21], [7, 42, 14, 4, 43, 15],
-                [4, 133, 107], [8, 59, 37, 1, 60, 38], [8, 44, 20, 4, 45, 21], [12, 33, 11, 4, 34, 12],
-                [3, 145, 115, 1, 146, 116], [4, 64, 40, 5, 65, 41], [11, 36, 16, 5, 37, 17], [11, 36, 12, 5, 37, 13],
-                [5, 109, 87, 1, 110, 88], [5, 65, 41, 5, 66, 42], [5, 54, 24, 7, 55, 25], [11, 36, 12, 7, 37, 13],
-                [5, 122, 98, 1, 123, 99], [7, 73, 45, 3, 74, 46], [15, 43, 19, 2, 44, 20], [3, 45, 15, 13, 46, 16],
-                [1, 135, 107, 5, 136, 108], [10, 74, 46, 1, 75, 47], [1, 50, 22, 15, 51, 23], [2, 42, 14, 17, 43, 15],
-                [5, 150, 120, 1, 151, 121], [9, 69, 43, 4, 70, 44], [17, 50, 22, 1, 51, 23], [2, 42, 14, 19, 43, 15],
-                [3, 141, 113, 4, 142, 114], [3, 70, 44, 11, 71, 45], [17, 47, 21, 4, 48, 22], [9, 39, 13, 16, 40, 14],
-                [3, 135, 107, 5, 136, 108], [3, 67, 41, 13, 68, 42], [15, 54, 24, 5, 55, 25], [15, 43, 15, 10, 44, 16],
-                [4, 144, 116, 4, 145, 117], [17, 68, 42], [17, 50, 22, 6, 51, 23], [19, 46, 16, 6, 47, 17],
-                [2, 139, 111, 7, 140, 112], [17, 74, 46], [7, 54, 24, 16, 55, 25], [34, 37, 13],
-                [4, 151, 121, 5, 152, 122], [4, 75, 47, 14, 76, 48], [11, 54, 24, 14, 55, 25], [16, 45, 15, 14, 46, 16],
-                [6, 147, 117, 4, 148, 118], [6, 73, 45, 14, 74, 46], [11, 54, 24, 16, 55, 25], [30, 46, 16, 2, 47, 17],
-                [8, 132, 106, 4, 133, 107], [8, 75, 47, 13, 76, 48], [7, 54, 24, 22, 55, 25], [22, 45, 15, 13, 46, 16],
-                [10, 142, 114, 2, 143, 115], [19, 74, 46, 4, 75, 47], [28, 50, 22, 6, 51, 23], [33, 46, 16, 4, 47, 17],
-                [8, 152, 122, 4, 153, 123], [22, 73, 45, 3, 74, 46], [8, 53, 23, 26, 54, 24], [12, 45, 15, 28, 46, 16],
-                [3, 147, 117, 10, 148, 118], [3, 73, 45, 23, 74, 46], [4, 54, 24, 31, 55, 25], [11, 45, 15, 31, 46, 16],
-                [7, 146, 116, 7, 147, 117], [21, 73, 45, 7, 74, 46], [1, 53, 23, 37, 54, 24], [19, 45, 15, 26, 46, 16],
-                [5, 145, 115, 10, 146, 116], [19, 75, 47, 10, 76, 48], [15, 54, 24, 25, 55, 25], [23, 45, 15, 25, 46, 16],
-                [13, 145, 115, 3, 146, 116], [2, 74, 46, 29, 75, 47], [42, 54, 24, 1, 55, 25], [23, 45, 15, 28, 46, 16],
-                [17, 145, 115], [10, 74, 46, 23, 75, 47], [10, 54, 24, 35, 55, 25], [19, 45, 15, 35, 46, 16],
-                [17, 145, 115, 1, 146, 116], [14, 74, 46, 21, 75, 47], [29, 54, 24, 19, 55, 25], [11, 45, 15, 46, 46, 16],
-                [13, 145, 115, 6, 146, 116], [14, 74, 46, 23, 75, 47], [44, 54, 24, 7, 55, 25], [59, 46, 16, 1, 47, 17],
-                [12, 151, 121, 7, 152, 122], [12, 75, 47, 26, 76, 48], [39, 54, 24, 14, 55, 25], [22, 45, 15, 41, 46, 16],
-                [6, 151, 121, 14, 152, 122], [6, 75, 47, 34, 76, 48], [46, 54, 24, 10, 55, 25], [2, 45, 15, 64, 46, 16],
-                [17, 152, 122, 4, 153, 123], [29, 74, 46, 14, 75, 47], [49, 54, 24, 10, 55, 25], [24, 45, 15, 46, 46, 16],
-                [4, 152, 122, 18, 153, 123], [13, 74, 46, 32, 75, 47], [48, 54, 24, 14, 55, 25], [42, 45, 15, 32, 46, 16],
-                [20, 147, 117, 4, 148, 118], [40, 75, 47, 7, 76, 48], [43, 54, 24, 22, 55, 25], [10, 45, 15, 67, 46, 16],
-                [19, 148, 118, 6, 149, 119], [18, 75, 47, 31, 76, 48], [34, 54, 24, 34, 55, 25], [20, 45, 15, 61, 46, 16]
-            ];
+            var QRMath = function () {
+                var EXP_TABLE = new Array(256);
+                var LOG_TABLE = new Array(256);
+                for (var i = 0; i < 8; i += 1) EXP_TABLE[i] = 1 << i;
+                for (var i = 8; i < 256; i += 1) {
+                    EXP_TABLE[i] = EXP_TABLE[i - 4] ^ EXP_TABLE[i - 5] ^ EXP_TABLE[i - 6] ^ EXP_TABLE[i - 8];
+                }
+                for (var i = 0; i < 255; i += 1) LOG_TABLE[EXP_TABLE[i]] = i;
 
-            var _this = {};
-            var qrRSBlock = function(totalCount, dataCount) {
-                return { totalCount: totalCount, dataCount: dataCount };
-            };
-            _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
-                var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
-                if (typeof rsBlock == 'undefined') {
-                    throw new Error('bad rs block @ typeNumber:' + typeNumber + '/errorCorrectionLevel:' + errorCorrectionLevel);
-                }
-                var length = rsBlock.length / 3;
-                var list = [];
-                for (var i = 0; i < length; i += 1) {
-                    var count = rsBlock[i * 3 + 0];
-                    var totalCount = rsBlock[i * 3 + 1];
-                    var dataCount = rsBlock[i * 3 + 2];
-                    for (var j = 0; j < count; j += 1) {
-                        list.push(qrRSBlock(totalCount, dataCount));
+                var _this = {};
+                _this.glog = function (n) {
+                    if (n < 1) throw new Error('glog(' + n + ')');
+                    return LOG_TABLE[n];
+                };
+                _this.gexp = function (n) {
+                    while (n < 0) n += 255;
+                    while (n >= 256) n -= 255;
+                    return EXP_TABLE[n];
+                };
+                return _this;
+            }();
+
+            function qrPolynomial(num, shift) {
+                if (typeof num.length == 'undefined') throw new Error(num.length + '/' + shift);
+                var _num = function () {
+                    var offset = 0;
+                    while (offset < num.length && num[offset] == 0) offset += 1;
+                    var _num = new Array(num.length - offset + shift);
+                    for (var i = 0; i < num.length - offset; i += 1) _num[i] = num[i + offset];
+                    return _num;
+                }();
+                var _this = {};
+                _this.getAt = function (index) {return _num[index];};
+                _this.getLength = function () {return _num.length;};
+                _this.multiply = function (e) {
+                    var num = new Array(_this.getLength() + e.getLength() - 1);
+                    for (var i = 0; i < _this.getLength(); i += 1) {
+                        for (var j = 0; j < e.getLength(); j += 1) {
+                            num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i)) + QRMath.glog(e.getAt(j)));
+                        }
                     }
-                }
-                return list;
+                    return qrPolynomial(num, 0);
+                };
+                _this.mod = function (e) {
+                    if (_this.getLength() - e.getLength() < 0) return _this;
+                    var ratio = QRMath.glog(_this.getAt(0)) - QRMath.glog(e.getAt(0));
+                    var num = new Array(_this.getLength());
+                    for (var i = 0; i < _this.getLength(); i += 1) num[i] = _this.getAt(i);
+                    for (var i = 0; i < e.getLength(); i += 1) num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i)) + ratio);
+                    return qrPolynomial(num, 0).mod(e);
+                };
+                return _this;
+            }
+
+            var QRRSBlock = function () {
+                var RS_BLOCK_TABLE = [
+                    [1, 26, 19], [1, 26, 16], [1, 26, 13], [1, 26, 9],
+                    [1, 44, 34], [1, 44, 28], [1, 44, 22], [1, 44, 16],
+                    [1, 70, 55], [1, 70, 44], [2, 35, 17], [2, 35, 13],
+                    [1, 100, 80], [2, 50, 32], [2, 50, 24], [4, 25, 9],
+                    [1, 134, 108], [2, 67, 43], [2, 33, 15, 2, 34, 16], [2, 33, 11, 2, 34, 12],
+                    [2, 86, 68], [4, 43, 27], [4, 43, 19], [4, 43, 15],
+                    [2, 98, 78], [4, 49, 31], [2, 32, 14, 4, 33, 15], [4, 39, 13, 1, 40, 14],
+                    [2, 121, 97], [2, 60, 38, 2, 61, 39], [4, 40, 18, 2, 41, 19], [4, 40, 14, 2, 41, 15],
+                    [2, 146, 116], [3, 58, 36, 2, 59, 37], [4, 36, 16, 4, 37, 17], [4, 36, 12, 4, 37, 13],
+                    [2, 86, 68, 2, 87, 69], [4, 69, 43, 1, 70, 44], [6, 43, 19, 2, 44, 20], [6, 43, 15, 2, 44, 16],
+                    [4, 101, 81], [1, 80, 50, 4, 81, 51], [4, 50, 22, 4, 51, 23], [3, 36, 12, 8, 37, 13],
+                    [2, 116, 92, 2, 117, 93], [6, 58, 36, 2, 59, 37], [4, 46, 20, 6, 47, 21], [7, 42, 14, 4, 43, 15],
+                    [4, 133, 107], [8, 59, 37, 1, 60, 38], [8, 44, 20, 4, 45, 21], [12, 33, 11, 4, 34, 12],
+                    [3, 145, 115, 1, 146, 116], [4, 64, 40, 5, 65, 41], [11, 36, 16, 5, 37, 17], [11, 36, 12, 5, 37, 13],
+                    [5, 109, 87, 1, 110, 88], [5, 65, 41, 5, 66, 42], [5, 54, 24, 7, 55, 25], [11, 36, 12, 7, 37, 13],
+                    [5, 122, 98, 1, 123, 99], [7, 73, 45, 3, 74, 46], [15, 43, 19, 2, 44, 20], [3, 45, 15, 13, 46, 16],
+                    [1, 135, 107, 5, 136, 108], [10, 74, 46, 1, 75, 47], [1, 50, 22, 15, 51, 23], [2, 42, 14, 17, 43, 15],
+                    [5, 150, 120, 1, 151, 121], [9, 69, 43, 4, 70, 44], [17, 50, 22, 1, 51, 23], [2, 42, 14, 19, 43, 15],
+                    [3, 141, 113, 4, 142, 114], [3, 70, 44, 11, 71, 45], [17, 47, 21, 4, 48, 22], [9, 39, 13, 16, 40, 14],
+                    [3, 135, 107, 5, 136, 108], [3, 67, 41, 13, 68, 42], [15, 54, 24, 5, 55, 25], [15, 43, 15, 10, 44, 16],
+                    [4, 144, 116, 4, 145, 117], [17, 68, 42], [17, 50, 22, 6, 51, 23], [19, 46, 16, 6, 47, 17],
+                    [2, 139, 111, 7, 140, 112], [17, 74, 46], [7, 54, 24, 16, 55, 25], [34, 37, 13],
+                    [4, 151, 121, 5, 152, 122], [4, 75, 47, 14, 76, 48], [11, 54, 24, 14, 55, 25], [16, 45, 15, 14, 46, 16],
+                    [6, 147, 117, 4, 148, 118], [6, 73, 45, 14, 74, 46], [11, 54, 24, 16, 55, 25], [30, 46, 16, 2, 47, 17],
+                    [8, 132, 106, 4, 133, 107], [8, 75, 47, 13, 76, 48], [7, 54, 24, 22, 55, 25], [22, 45, 15, 13, 46, 16],
+                    [10, 142, 114, 2, 143, 115], [19, 74, 46, 4, 75, 47], [28, 50, 22, 6, 51, 23], [33, 46, 16, 4, 47, 17],
+                    [8, 152, 122, 4, 153, 123], [22, 73, 45, 3, 74, 46], [8, 53, 23, 26, 54, 24], [12, 45, 15, 28, 46, 16],
+                    [3, 147, 117, 10, 148, 118], [3, 73, 45, 23, 74, 46], [4, 54, 24, 31, 55, 25], [11, 45, 15, 31, 46, 16],
+                    [7, 146, 116, 7, 147, 117], [21, 73, 45, 7, 74, 46], [1, 53, 23, 37, 54, 24], [19, 45, 15, 26, 46, 16],
+                    [5, 145, 115, 10, 146, 116], [19, 75, 47, 10, 76, 48], [15, 54, 24, 25, 55, 25], [23, 45, 15, 25, 46, 16],
+                    [13, 145, 115, 3, 146, 116], [2, 74, 46, 29, 75, 47], [42, 54, 24, 1, 55, 25], [23, 45, 15, 28, 46, 16],
+                    [17, 145, 115], [10, 74, 46, 23, 75, 47], [10, 54, 24, 35, 55, 25], [19, 45, 15, 35, 46, 16],
+                    [17, 145, 115, 1, 146, 116], [14, 74, 46, 21, 75, 47], [29, 54, 24, 19, 55, 25], [11, 45, 15, 46, 46, 16],
+                    [13, 145, 115, 6, 146, 116], [14, 74, 46, 23, 75, 47], [44, 54, 24, 7, 55, 25], [59, 46, 16, 1, 47, 17],
+                    [12, 151, 121, 7, 152, 122], [12, 75, 47, 26, 76, 48], [39, 54, 24, 14, 55, 25], [22, 45, 15, 41, 46, 16],
+                    [6, 151, 121, 14, 152, 122], [6, 75, 47, 34, 76, 48], [46, 54, 24, 10, 55, 25], [2, 45, 15, 64, 46, 16],
+                    [17, 152, 122, 4, 153, 123], [29, 74, 46, 14, 75, 47], [49, 54, 24, 10, 55, 25], [24, 45, 15, 46, 46, 16],
+                    [4, 152, 122, 18, 153, 123], [13, 74, 46, 32, 75, 47], [48, 54, 24, 14, 55, 25], [42, 45, 15, 32, 46, 16],
+                    [20, 147, 117, 4, 148, 118], [40, 75, 47, 7, 76, 48], [43, 54, 24, 22, 55, 25], [10, 45, 15, 67, 46, 16],
+                    [19, 148, 118, 6, 149, 119], [18, 75, 47, 31, 76, 48], [34, 54, 24, 34, 55, 25], [20, 45, 15, 61, 46, 16]
+                ];
+
+                var _this = {};
+                var qrRSBlock = function (totalCount, dataCount) {
+                    return {totalCount: totalCount, dataCount: dataCount};
+                };
+                _this.getRSBlocks = function (typeNumber, errorCorrectionLevel) {
+                    var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+                    if (typeof rsBlock == 'undefined') {
+                        throw new Error('bad rs block @ typeNumber:' + typeNumber + '/errorCorrectionLevel:' + errorCorrectionLevel);
+                    }
+                    var length = rsBlock.length / 3;
+                    var list = [];
+                    for (var i = 0; i < length; i += 1) {
+                        var count = rsBlock[i * 3 + 0];
+                        var totalCount = rsBlock[i * 3 + 1];
+                        var dataCount = rsBlock[i * 3 + 2];
+                        for (var j = 0; j < count; j += 1) {
+                            list.push(qrRSBlock(totalCount, dataCount));
+                        }
+                    }
+                    return list;
+                };
+                var getRsBlockTable = function (typeNumber, errorCorrectionLevel) {
+                    switch (errorCorrectionLevel) {
+                        case QRErrorCorrectionLevel.L: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+                        case QRErrorCorrectionLevel.M: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+                        case QRErrorCorrectionLevel.Q: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+                        case QRErrorCorrectionLevel.H: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+                        default: return undefined;
+                    }
+                };
+                return _this;
+            }();
+
+            var qrBitBuffer = function () {
+                var _buffer = [];
+                var _length = 0;
+                var _this = {};
+                _this.getBuffer = function () {return _buffer;};
+                _this.getAt = function (index) {
+                    var bufIndex = Math.floor(index / 8);
+                    return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1;
+                };
+                _this.put = function (num, length) {
+                    for (var i = 0; i < length; i += 1) {
+                        _this.putBit(((num >>> (length - i - 1)) & 1) == 1);
+                    }
+                };
+                _this.getLengthInBits = function () {return _length;};
+                _this.putBit = function (bit) {
+                    var bufIndex = Math.floor(_length / 8);
+                    if (_buffer.length <= bufIndex) _buffer.push(0);
+                    if (bit) _buffer[bufIndex] |= (0x80 >>> (_length % 8));
+                    _length += 1;
+                };
+                return _this;
             };
-            var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
-                switch (errorCorrectionLevel) {
-                    case QRErrorCorrectionLevel.L: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-                    case QRErrorCorrectionLevel.M: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-                    case QRErrorCorrectionLevel.Q: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-                    case QRErrorCorrectionLevel.H: return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-                    default: return undefined;
-                }
+
+            var qr8BitByte = function (data) {
+                var _mode = QRMode.MODE_8BIT_BYTE;
+                var _bytes = qrcode.stringToBytes(data);
+                var _this = {};
+                _this.getMode = function () {return _mode;};
+                _this.getLength = function () {return _bytes.length;};
+                _this.write = function (buffer) {
+                    for (var i = 0; i < _bytes.length; i += 1) {
+                        buffer.put(_bytes[i], 8);
+                    }
+                };
+                return _this;
             };
-            return _this;
+
+            return qrcode;
         }();
 
-        var qrBitBuffer = function() {
-            var _buffer = [];
-            var _length = 0;
-            var _this = {};
-            _this.getBuffer = function() { return _buffer; };
-            _this.getAt = function(index) {
-                var bufIndex = Math.floor(index / 8);
-                return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1;
-            };
-            _this.put = function(num, length) {
-                for (var i = 0; i < length; i += 1) {
-                    _this.putBit(((num >>> (length - i - 1)) & 1) == 1);
-                }
-            };
-            _this.getLengthInBits = function() { return _length; };
-            _this.putBit = function(bit) {
-                var bufIndex = Math.floor(_length / 8);
-                if (_buffer.length <= bufIndex) _buffer.push(0);
-                if (bit) _buffer[bufIndex] |= (0x80 >>> (_length % 8));
-                _length += 1;
-            };
-            return _this;
-        };
-
-        var qr8BitByte = function(data) {
-            var _mode = QRMode.MODE_8BIT_BYTE;
-            var _bytes = qrcode.stringToBytes(data);
-            var _this = {};
-            _this.getMode = function() { return _mode; };
-            _this.getLength = function() { return _bytes.length; };
-            _this.write = function(buffer) {
-                for (var i = 0; i < _bytes.length; i += 1) {
-                    buffer.put(_bytes[i], 8);
-                }
-            };
-            return _this;
-        };
-
-        return qrcode;
-    }();
-
-    // บังคับใช้การเข้ารหัส UTF-8 สำหรับภาษาไทยและอักขระสากลทุกตัว
-    qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+        // บังคับใช้การเข้ารหัส UTF-8 สำหรับภาษาไทยและอักขระสากลทุกตัว
+        qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
     </script>
 
     <!-- =====================================================================
@@ -1603,13 +1560,7 @@
         let activeLogoDataUrl = null;
         let activeLogoName = '';
 
-        /**
-         * เปิด/ปิด Popup All Web Apps Hub
-         */
-        function toggleNavPopup() {
-            const modal = document.getElementById('navPopupModal');
-            if (modal) modal.classList.toggle('hidden');
-        }
+
 
         /**
          * สลับโหมดการสร้าง QR Code ('text' | 'url' | 'wifi')
@@ -2120,7 +2071,7 @@
                 const version = (moduleCount - 17) / 4;
 
                 const finderValid = qr.isDark(0, 0) && qr.isDark(3, 3) &&
-                                    qr.isDark(0, moduleCount - 1) && qr.isDark(moduleCount - 1, 0);
+                    qr.isDark(0, moduleCount - 1) && qr.isDark(moduleCount - 1, 0);
 
                 qrCanvas.classList.remove('hidden');
                 emptyState.classList.add('hidden');
@@ -2219,7 +2170,7 @@
                         if (!blob) return;
                         try {
                             await navigator.clipboard.write([
-                                new ClipboardItem({ 'image/png': blob })
+                                new ClipboardItem({'image/png': blob})
                             ]);
                             showToast('คัดลอกรูปภาพ QR Code ลงคลิปบอร์ดแล้ว');
                         } catch (e) {
@@ -2274,6 +2225,7 @@
             setLogoShape('circle');
         };
     </script>
+    
 </body>
 
 </html>
