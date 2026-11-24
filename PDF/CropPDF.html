@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop PDF — CLEVERTENSAI PDF Studio Suite</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Space Grotesk, JetBrains Mono & Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- PDF.js (สำหรับเรนเดอร์หน้า PDF เป็น Canvas ความคมชัดสูง) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- pdf-lib (สำหรับแก้ไข CropBox/MediaBox และสร้างไฟล์ PDF จริง) -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    },
+                    colors: {
+                        crimson: {
+                            50: '#FFF5F5',
+                            100: '#FFE3E3',
+                            500: '#FF1E42',
+                            600: '#E63946',
+                            700: '#DC2626',
+                            900: '#991B1B'
+                        },
+                        tech: {
+                            white: '#FFFFFF',
+                            bg: '#FAF9F6',
+                            panel: '#F3F4F6',
+                            border: '#E5E7EB',
+                            dark: '#0F172A',
+                            muted: '#64748B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #0F172A;
+            background-image:
+                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
+                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
+            background-size: 24px 24px, 48px 48px, 48px 48px;
+        }
+
+        /* High-tech custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF1E42;
+            border-radius: 3px;
+        }
+
+        .tech-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+        }
+
+        .red-glow {
+            box-shadow: 0 6px 20px rgba(255, 30, 66, 0.28);
+        }
+
+        /* ===================================================================== */
+        /* INTERACTIVE CROP OVERLAY & HANDLES STYLING                            */
+        /* ===================================================================== */
+        .canvas-stage-bg {
+            background-color: #111827;
+            background-image:
+                radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+
+        #cropWrapper {
+            position: relative;
+            display: inline-block;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        #pdfCanvas {
+            display: block;
+            background: #FFFFFF;
+        }
+
+        /* Darkened Masks Outside Crop Box */
+        .crop-mask {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.62);
+            backdrop-filter: blur(0.5px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Active Crop Box */
+        #cropBox {
+            position: absolute;
+            border: 2px solid #FF1E42;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+            cursor: move;
+            z-index: 20;
+            touch-action: none;
+        }
+
+        /* Rule of Thirds Grid Lines */
+        .grid-line-h1,
+        .grid-line-h2,
+        .grid-line-v1,
+        .grid-line-v2 {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.45);
+            pointer-events: none;
+        }
+
+        .grid-line-h1 {
+            top: 33.33%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            border-top: 1px dashed rgba(255, 30, 66, 0.45);
+        }
+
+        .grid-line-h2 {
+            top: 66.66%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            border-top: 1px dashed rgba(255, 30, 66, 0.45);
+        }
+
+        .grid-line-v1 {
+            left: 33.33%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            border-left: 1px dashed rgba(255, 30, 66, 0.45);
+        }
+
+        .grid-line-v2 {
+            left: 66.66%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            border-left: 1px dashed rgba(255, 30, 66, 0.45);
+        }
+
+        /* 8-Way Resize Handles */
+        .resize-handle {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #FFFFFF;
+            border: 2.5px solid #FF1E42;
+            border-radius: 3px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            z-index: 30;
+            transition: transform 0.12s ease, background-color 0.12s ease;
+        }
+
+        .resize-handle:hover,
+        .resize-handle:active {
+            background: #FF1E42;
+            transform: scale(1.22);
+        }
+
+        /* Corner Handles */
+        .handle-nw {
+            top: -7px;
+            left: -7px;
+            cursor: nwse-resize;
+        }
+
+        .handle-ne {
+            top: -7px;
+            right: -7px;
+            cursor: nesw-resize;
+        }
+
+        .handle-sw {
+            bottom: -7px;
+            left: -7px;
+            cursor: nesw-resize;
+        }
+
+        .handle-se {
+            bottom: -7px;
+            right: -7px;
+            cursor: nwse-resize;
+        }
+
+        /* Edge Handles */
+        .handle-n {
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 10px;
+            cursor: ns-resize;
+        }
+
+        .handle-n:hover {
+            transform: translateX(-50%) scale(1.15);
+        }
+
+        .handle-s {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 10px;
+            cursor: ns-resize;
+        }
+
+        .handle-s:hover {
+            transform: translateX(-50%) scale(1.15);
+        }
+
+        .handle-w {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 24px;
+            cursor: ew-resize;
+        }
+
+        .handle-w:hover {
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        .handle-e {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 24px;
+            cursor: ew-resize;
+        }
+
+        .handle-e:hover {
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        /* Floating Dimensions Tag inside CropBox */
+        #cropSizePill {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(15, 23, 42, 0.88);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 30, 66, 0.5);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Remove number input arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- ===================================================================== -->
+    <!-- SHARED PDF NAVBAR & DUAL-ZONE HUB MODAL (ดึงจาก JS/NavbarPDF.js)      -->
+    <!-- ===================================================================== -->
+    <div id="navbar-container"></div>
+    <script src="JS/NavbarPDF.js"></script>
+
+    <!-- ===================================================================== -->
+    <!-- [START: FALLBACK SCRIPT สำหรับทดสอบ Interactive Preview เท่านั้น]      -->
+    <!-- หมายเหตุ: เมื่อนำไปวางในโฟลเดอร์ PDF/ คู่กับไฟล์ JS/NavbarPDF.js จริง     -->
+    <!-- สามารถลบแท็ก <script> บล็อกนี้ทิ้งได้เลยครับ                           -->
+    <!-- ===================================================================== -->
+    <script>
+        (function () {
+            const container = document.getElementById("navbar-container");
+            if (!container || container.innerHTML.trim() !== "") return;
+
+            const PDF_TOOLS_MENU = [
+                {
+                    title: "Merge PDF",
+                    desc: "รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว",
+                    url: "MergePDF.html",
+                    icon: "fa-solid fa-object-ungroup",
+                    isNew: false
+                },
+                {
+                    title: "Split PDF",
+                    desc: "แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF",
+                    url: "SplitPDF.html",
+                    icon: "fa-solid fa-scissors",
+                    isNew: false
+                },
+                {
+                    title: "Crop PDF",
+                    desc: "ตัดขอบหน้าเอกสาร ปรับสัดส่วน และตัดขอบขาวอัตโนมัติ",
+                    url: "CropPDF.html",
+                    icon: "fa-solid fa-crop-simple",
+                    isNew: true
+                },
+                {
+                    title: "Edit PDF",
+                    desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF",
+                    url: "EditPDF.html",
+                    icon: "fa-solid fa-pen-to-square",
+                    isNew: false
+                },
+                {
+                    title: "Compress PDF",
+                    desc: "ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร",
+                    url: "CompressPDF.html",
+                    icon: "fa-solid fa-file-zipper",
+                    isNew: false
+                },
+                {
+                    title: "Convert to PDF",
+                    desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF",
+                    url: "ConvertToPDF.html",
+                    icon: "fa-solid fa-file-import",
+                    isNew: false
+                }
+            ];
+
+            const OTHER_WORKSPACES = [
+                {
+                    title: "Excel Unlock Pro",
+                    desc: "ปลดล็อกชีตและสมุดงาน Excel",
+                    url: "../HomeExcelUnlock.html",
+                    icon: "fa-solid fa-file-excel",
+                    colorClass: "bg-emerald-500/20 text-emerald-400"
+                },
+                {
+                    title: "QR Code Generator",
+                    desc: "สร้าง QR Code ภาษาไทย/Wi-Fi",
+                    url: "../HomeQRcode.html",
+                    icon: "fa-solid fa-qrcode",
+                    colorClass: "bg-blue-500/20 text-blue-400"
+                },
+                {
+                    title: "Unit Converter Suite",
+                    desc: "แปลงมาตราวัดสากลและมาตราไทย",
+                    url: "../UnitConverter.html",
+                    icon: "fa-solid fa-ruler-combined",
+                    colorClass: "bg-crimson-500/20 text-crimson-500"
+                },
+                {
+                    title: "Color Mixer Studio",
+                    desc: "ผสมสีและคำนวณสูตรแม่สี 12 ระบบ",
+                    url: "../HomeMixColor.html",
+                    icon: "fa-solid fa-droplet",
+                    colorClass: "bg-purple-500/20 text-purple-400"
+                }
+            ];
+
+            container.innerHTML = `
+                <nav class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <a href="HomePDF.html" class="flex items-center gap-2.5 group" title="กลับสู่หน้าหลัก PDF Studio Suite">
+                            <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span class="text-red-500">TENSAI</span></span>
+                                <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">PDF STUDIO SUITE</span>
+                            </div>
+                        </a>
+                        <span class="hidden md:inline-block text-gray-700">|</span>
+                    </div>
+
+                    <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
+                        <button type="button" onclick="toggleNavPopup()"
+                            class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
+                            <i class="fa-solid fa-th text-red-500 group-hover:scale-110 transition-transform"></i>
+                            <span>All Tools Hub</span>
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2 sm:gap-2.5">
+                        <button type="button" onclick="toggleNavPopup()"
+                            class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
+                            <i class="fa-solid fa-th text-red-500"></i>
+                            <span>Hub</span>
+                        </button>
+
+                        <div class="hidden xl:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>SYSTEM ONLINE</span>
+                        </div>
+
+                        <a href="../index.html"
+                            class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all"
+                            title="กลับสู่หน้าหลัก CLEVERTENSAI Portal">
+                            <i class="fa-solid fa-house text-red-500"></i>
+                            <span class="hidden sm:inline">หน้าหลัก Portal</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
+                    class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+                        <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
+                                    <i class="fa-solid fa-th"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
+                                        Select PDF Tool &amp; Workspace
+                                    </h3>
+                                    <p class="text-sm text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังระบบอื่น</p>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="toggleNavPopup()"
+                                class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <div class="overflow-y-auto py-6 space-y-6">
+                            <div>
+                                <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 6 โมดูล)</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                                    ${PDF_TOOLS_MENU.map(tool => `
+                                        <a href="${tool.url}"
+                                            class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex items-center gap-4 group shadow-lg relative">
+                                            ${tool.isNew ? '<span class="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">NEW</span>' : ''}
+                                            <div class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-xl shrink-0 transition-all duration-200 group-hover:scale-110 shadow-md">
+                                                <i class="${tool.icon}"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="font-extrabold text-sm text-gray-100 group-hover:text-red-400 tracking-wide">${tool.title}</div>
+                                                <div class="text-[11px] text-gray-400 mt-1 leading-relaxed">${tool.desc}</div>
+                                            </div>
+                                        </a>
+                                    `).join("")}
+                                </div>
+                            </div>
+
+                            <div class="pt-5 border-t border-gray-800">
+                                <div class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
+                                    <i class="fa-solid fa-cubes text-red-500"></i>
+                                    <span>QUICK SWITCH WORKSPACE (สลับระบบอื่น)</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    <a href="../index.html"
+                                        class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                                        <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-base shrink-0">
+                                            <i class="fa-solid fa-house"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">Main Portal</div>
+                                            <div class="text-[11px] text-gray-400 truncate">หน้ารวมเว็บแอปทั้งหมด</div>
+                                        </div>
+                                    </a>
+                                    ${OTHER_WORKSPACES.map(ws => `
+                                        <a href="${ws.url}"
+                                            class="p-3.5 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
+                                            <div class="w-10 h-10 rounded-xl ${ws.colorClass} flex items-center justify-center text-base shrink-0">
+                                                <i class="${ws.icon}"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="font-bold text-sm text-gray-100 group-hover:text-red-400 truncate">${ws.title}</div>
+                                                <div class="text-[11px] text-gray-400 truncate">${ws.desc}</div>
+                                            </div>
+                                        </a>
+                                    `).join("")}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            window.toggleNavPopup = function () {
+                const modal = document.getElementById("navPopupModal");
+                if (modal) modal.classList.toggle("hidden");
+            };
+
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    const modal = document.getElementById("navPopupModal");
+                    if (modal && !modal.classList.contains("hidden")) {
+                        modal.classList.add("hidden");
+                    }
+                }
+            });
+        })();
+    </script>
+    <!-- [END: FALLBACK SCRIPT สำหรับทดสอบ Interactive Preview เท่านั้น]        -->
+    <!-- ===================================================================== -->
+
+    <!-- ===================================================================== -->
+    <!-- MAIN CROP PDF STUDIO WORKSPACE                                        -->
+    <!-- ===================================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+        <!-- Workspace Header -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b border-tech-border">
+            <div>
+                <div class="flex flex-wrap items-center gap-2.5 mb-2.5">
+                    <a href="HomePDF.html"
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-gray-950 border border-tech-border hover:border-gray-950 text-tech-dark hover:text-white font-mono text-xs font-semibold transition">
+                        <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                        <span>กลับหน้าหลัก</span>
+                    </a>
+                    <span
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold">
+                        <i class="fa-solid fa-crop-simple text-[11px]"></i>
+                        <span>PDF WORKSPACE &bull; CROP &amp; TRIM</span>
+                    </span>
+                </div>
+
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark flex items-center gap-3">
+                    <span>ตัดขอบเอกสาร <span class="text-crimson-500">PDF</span> (Crop PDF)</span>
+                </h1>
+                <p class="text-tech-muted text-sm mt-1.5 max-w-2xl leading-relaxed">
+                    กำหนดพื้นที่ตัดขอบหน้าเอกสาร PDF แบบอินเทอร์แอคทีฟ ปรับสัดส่วนมาตรฐาน หรือใช้ระบบตรวจจับขอบขาวอัตโนมัติ ประมวลผลภายในเบราว์เซอร์ 100%
+                </p>
+            </div>
+
+            <!-- Active File Status Pill (Hidden until file loaded) -->
+            <div id="headerFileActions" class="hidden flex-wrap items-center gap-2.5 shrink-0">
+                <div class="px-3.5 py-2 rounded-xl bg-white border border-tech-border flex items-center gap-2.5 shadow-sm max-w-[260px]">
+                    <i class="fa-solid fa-file-pdf text-crimson-500 text-sm"></i>
+                    <div class="min-w-0">
+                        <div id="activeFileName" class="font-mono text-xs font-bold text-tech-dark truncate">document.pdf</div>
+                        <div id="activeFileMeta" class="font-mono text-[10px] text-tech-muted">3 หน้า &bull; 124 KB</div>
+                    </div>
+                </div>
+                <button type="button" onclick="triggerNewUpload()"
+                    class="px-4 py-2.5 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs flex items-center gap-2 transition shadow-sm cursor-pointer">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>เปลี่ยนไฟล์ PDF</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hidden File Input -->
+        <input type="file" id="pdfFileInput" accept="application/pdf" class="hidden">
+
+        <!-- ================================================================= -->
+        <!-- STATE 1: UPLOAD & SAMPLE GENERATOR DROPZONE                       -->
+        <!-- ================================================================= -->
+        <section id="uploadSection" class="mt-8">
+            <div id="dropZone"
+                class="tech-card rounded-3xl p-8 sm:p-14 text-center border-2 border-dashed border-gray-300 hover:border-crimson-500 transition-all cursor-pointer relative overflow-hidden group">
+
+                <!-- Subtle Corner Brackets -->
+                <div class="absolute top-4 left-4 w-5 h-5 border-t-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute top-4 right-4 w-5 h-5 border-t-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute bottom-4 left-4 w-5 h-5 border-b-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute bottom-4 right-4 w-5 h-5 border-b-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+
+                <div class="max-w-xl mx-auto">
+                    <div class="w-20 h-20 rounded-3xl bg-crimson-50 border border-crimson-100 text-crimson-500 group-hover:bg-crimson-500 group-hover:text-white flex items-center justify-center text-3xl mx-auto mb-6 transition-all duration-300 shadow-sm group-hover:scale-105">
+                        <i class="fa-solid fa-crop-simple"></i>
+                    </div>
+
+                    <div class="font-mono text-xs text-crimson-600 font-bold tracking-widest uppercase mb-2">
+                        DROP PDF DOCUMENT HERE
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-tech-dark mb-3">
+                        ลากไฟล์ PDF มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+                    </h2>
+                    <p class="text-sm text-tech-muted leading-relaxed mb-8">
+                        รองรับไฟล์เอกสาร .PDF ทุกขนาดหน้า (A4, Letter, Legal, ใบเสร็จ, สไลด์งานนำเสนอ) ข้อมูลทั้งหมดถูกประมวลผลบนเครื่องของคุณโดยตรง
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                        <button type="button" onclick="event.stopPropagation(); triggerNewUpload();"
+                            class="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition red-glow cursor-pointer">
+                            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
+                            <span>เลือกไฟล์ PDF จากเครื่อง</span>
+                        </button>
+
+                        <button type="button" id="btnLoadSample" onclick="event.stopPropagation(); loadSamplePDF();"
+                            class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gray-950 hover:bg-gray-800 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition shadow-md cursor-pointer">
+                            <i class="fa-solid fa-wand-magic-sparkles text-crimson-500"></i>
+                            <span>ทดลองใช้ไฟล์ตัวอย่าง (Sample PDF)</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-tech-border/80 flex flex-wrap items-center justify-center gap-4 font-mono text-[11px] text-tech-muted">
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>ปรับกรอบ 8 ทิศทาง</span>
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>Auto-Trim ตัดขอบขาวอัตโนมัติ</span>
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>ตั้งค่า CropBox มาตรฐาน PDF</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- STATE 2: INTERACTIVE CROP WORKSPACE (2 COLUMNS)                   -->
+        <!-- ================================================================= -->
+        <section id="workspaceSection" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- LEFT/CENTER COLUMN (8 cols): INTERACTIVE CROP VIEWPORT -->
+            <div class="lg:col-span-8 tech-card rounded-3xl overflow-hidden flex flex-col">
+
+                <!-- Top Viewport Toolbar: Page Navigation & Zoom Controls -->
+                <div class="bg-gray-950 text-white px-4 py-3 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3">
+                    <!-- Page Selector -->
+                    <div class="flex items-center gap-1.5 bg-gray-900 border border-gray-800 p-1 rounded-xl">
+                        <button type="button" id="btnPrevPage" onclick="changePage(-1)"
+                            class="w-8 h-8 rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center text-gray-300 hover:text-white transition cursor-pointer"
+                            title="หน้าก่อนหน้า">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <div class="px-2.5 font-mono text-xs flex items-center gap-1.5">
+                            <span class="text-gray-400">หน้า</span>
+                            <span id="currentPageLabel" class="font-bold text-crimson-500">1</span>
+                            <span class="text-gray-500">จาก</span>
+                            <span id="totalPagesLabel" class="font-bold text-white">1</span>
+                        </div>
+                        <button type="button" id="btnNextPage" onclick="changePage(1)"
+                            class="w-8 h-8 rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center text-gray-300 hover:text-white transition cursor-pointer"
+                            title="หน้าถัดไป">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Real-time Crop Dimensions Badge -->
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-900 border border-gray-800 font-mono text-[11px]">
+                        <span class="w-2 h-2 rounded-full bg-crimson-500"></span>
+                        <span class="text-gray-400">ขนาดกรอบตัด:</span>
+                        <span id="toolbarDimMm" class="text-white font-bold">210.0 &times; 297.0 mm</span>
+                        <span class="text-gray-600">|</span>
+                        <span id="toolbarDimPx" class="text-crimson-400">595 &times; 842 pt</span>
+                    </div>
+
+                    <!-- Zoom Controls -->
+                    <div class="flex items-center gap-1 bg-gray-900 border border-gray-800 p-1 rounded-xl">
+                        <button type="button" onclick="adjustZoom(-0.15)"
+                            class="w-8 h-8 rounded-lg hover:bg-gray-800 flex items-center justify-center text-gray-300 hover:text-white transition cursor-pointer"
+                            title="ย่อ (Zoom Out)">
+                            <i class="fa-solid fa-magnifying-glass-minus text-xs"></i>
+                        </button>
+                        <span id="zoomLevelLabel" class="px-2 font-mono text-xs font-bold text-gray-200 min-w-[48px] text-center">100%</span>
+                        <button type="button" onclick="adjustZoom(0.15)"
+                            class="w-8 h-8 rounded-lg hover:bg-gray-800 flex items-center justify-center text-gray-300 hover:text-white transition cursor-pointer"
+                            title="ขยาย (Zoom In)">
+                            <i class="fa-solid fa-magnifying-glass-plus text-xs"></i>
+                        </button>
+                        <button type="button" onclick="fitToScreen()"
+                            class="px-2.5 h-8 rounded-lg bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white font-mono text-[11px] font-bold transition cursor-pointer"
+                            title="ปรับพอดีหน้าจอ (Fit to Screen)">
+                            FIT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Canvas Viewport Container -->
+                <div id="canvasViewport"
+                    class="canvas-stage-bg relative w-full h-[540px] sm:h-[620px] overflow-auto flex items-center justify-center p-6 sm:p-10">
+
+                    <!-- Loading Overlay inside Viewport -->
+                    <div id="viewportLoader" class="hidden absolute inset-0 z-40 bg-gray-950/80 backdrop-blur-sm flex flex-col items-center justify-center text-white">
+                        <div class="w-12 h-12 rounded-2xl border-4 border-gray-700 border-t-crimson-500 animate-spin mb-3"></div>
+                        <span class="font-mono text-xs tracking-wider text-gray-300">RENDERING PDF PAGE...</span>
+                    </div>
+
+                    <!-- PDF Canvas + Interactive Crop Overlay -->
+                    <div id="cropWrapper">
+                        <canvas id="pdfCanvas"></canvas>
+
+                        <!-- 4 Darkened Masks Surrounding the Crop Box -->
+                        <div id="maskTop" class="crop-mask"></div>
+                        <div id="maskBottom" class="crop-mask"></div>
+                        <div id="maskLeft" class="crop-mask"></div>
+                        <div id="maskRight" class="crop-mask"></div>
+
+                        <!-- Interactive Red Crop Box -->
+                        <div id="cropBox" data-action="move">
+                            <!-- Rule of Thirds Grid -->
+                            <div class="grid-line-h1"></div>
+                            <div class="grid-line-h2"></div>
+                            <div class="grid-line-v1"></div>
+                            <div class="grid-line-v2"></div>
+
+                            <!-- Live Dimension Tag -->
+                            <div id="cropSizePill">210 &times; 297 mm</div>
+
+                            <!-- 8-Way Resize Handles -->
+                            <div class="resize-handle handle-nw" data-action="nw" title="ปรับมุมบนซ้าย"></div>
+                            <div class="resize-handle handle-n" data-action="n" title="ปรับขอบบน"></div>
+                            <div class="resize-handle handle-ne" data-action="ne" title="ปรับมุมบนขวา"></div>
+                            <div class="resize-handle handle-e" data-action="e" title="ปรับขอบขวา"></div>
+                            <div class="resize-handle handle-se" data-action="se" title="ปรับมุมล่างขวา"></div>
+                            <div class="resize-handle handle-s" data-action="s" title="ปรับขอบล่าง"></div>
+                            <div class="resize-handle handle-sw" data-action="sw" title="ปรับมุมล่างซ้าย"></div>
+                            <div class="resize-handle handle-w" data-action="w" title="ปรับขอบซ้าย"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Viewport Status Bar -->
+                <div class="bg-tech-panel px-4 py-2.5 border-t border-tech-border flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-tech-muted">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-hand-pointer text-crimson-500"></i>
+                        <span>ลากตรงกลางกรอบเพื่อย้ายตำแหน่ง หรือดึงจุดสีขาว 8 ทิศทางเพื่อปรับขนาด</span>
+                    </div>
+                    <div>
+                        <span>PAGE ORIGIN: </span>
+                        <span id="pageOriginalDimLabel" class="text-tech-dark font-bold">210.0 &times; 297.0 mm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN (4 cols): CROP SETTINGS & EXPORT PANEL -->
+            <aside class="lg:col-span-4 space-y-5">
+
+                <!-- Card 1: Aspect Ratio & Smart Auto-Trim -->
+                <div class="tech-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-vector-square"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-sm font-extrabold text-tech-dark">สัดส่วนการตัด (Aspect Ratio)</h2>
+                                <p class="font-mono text-[10px] text-tech-muted">PRESETS &amp; AUTO-DETECT</p>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="resetCropBox()"
+                            class="px-2.5 py-1.5 rounded-lg bg-tech-panel hover:bg-gray-950 text-tech-dark hover:text-white font-mono text-[11px] font-bold transition flex items-center gap-1.5 cursor-pointer"
+                            title="คืนค่าเต็มหน้ากระดาษ">
+                            <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                            <span>รีเซ็ตกรอบ</span>
+                        </button>
+                    </div>
+
+                    <!-- Auto-Trim White Margins Button -->
+                    <button type="button" onclick="autoTrimMargins()"
+                        class="w-full mb-3.5 py-2.5 px-4 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm cursor-pointer group">
+                        <i class="fa-solid fa-wand-magic-sparkles text-crimson-500 group-hover:text-white transition-colors"></i>
+                        <span>ตัดขอบขาวอัตโนมัติ (Auto-Trim Margins)</span>
+                    </button>
+
+                    <!-- Aspect Ratio Preset Grid -->
+                    <div class="grid grid-cols-2 gap-2" id="ratioPresetGroup">
+                        <button type="button" data-ratio="free" onclick="setAspectRatioPreset('free')"
+                            class="ratio-btn active px-3 py-2 rounded-xl border-2 border-crimson-500 bg-crimson-50 text-crimson-600 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-expand text-[11px]"></i>
+                            <span>อิสระ (Free)</span>
+                        </button>
+                        <button type="button" data-ratio="a4-portrait" onclick="setAspectRatioPreset('a4-portrait')"
+                            class="ratio-btn px-3 py-2 rounded-xl border border-tech-border bg-white hover:border-crimson-500/50 text-tech-dark font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <span>A4 Portrait</span>
+                            <span class="font-mono text-[9px] text-tech-muted">1:1.414</span>
+                        </button>
+                        <button type="button" data-ratio="a4-landscape" onclick="setAspectRatioPreset('a4-landscape')"
+                            class="ratio-btn px-3 py-2 rounded-xl border border-tech-border bg-white hover:border-crimson-500/50 text-tech-dark font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <span>A4 Landscape</span>
+                            <span class="font-mono text-[9px] text-tech-muted">1.414:1</span>
+                        </button>
+                        <button type="button" data-ratio="1:1" onclick="setAspectRatioPreset('1:1')"
+                            class="ratio-btn px-3 py-2 rounded-xl border border-tech-border bg-white hover:border-crimson-500/50 text-tech-dark font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                            <span>1:1 Square</span>
+                            <span class="font-mono text-[9px] text-tech-muted">จัตุรัส</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Precision Margins (Two-Way Binding in mm) -->
+                <div class="tech-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-ruler-combined"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-sm font-extrabold text-tech-dark">ระยะตัดขอบ (Margins)</h2>
+                                <p class="font-mono text-[10px] text-tech-muted">PRECISION MILLIMETERS (MM)</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded bg-tech-panel border border-tech-border font-mono text-[10px] font-bold text-tech-muted">UNIT: MM</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Top Margin -->
+                        <div class="bg-tech-panel/70 border border-tech-border rounded-xl p-2.5 focus-within:border-crimson-500 transition">
+                            <label for="inputMarginTop" class="flex items-center justify-between font-mono text-[10px] text-tech-muted mb-1">
+                                <span><i class="fa-solid fa-arrow-down text-crimson-500 mr-1"></i>ขอบบน (TOP)</span>
+                                <span>mm</span>
+                            </label>
+                            <input type="number" id="inputMarginTop" step="0.5" min="0" value="0.0"
+                                onchange="applyMarginsFromInputs()" oninput="applyMarginsFromInputs()"
+                                class="w-full bg-white border border-tech-border rounded-lg px-2.5 py-1.5 font-mono text-sm font-bold text-tech-dark focus:outline-none focus:border-crimson-500">
+                        </div>
+
+                        <!-- Bottom Margin -->
+                        <div class="bg-tech-panel/70 border border-tech-border rounded-xl p-2.5 focus-within:border-crimson-500 transition">
+                            <label for="inputMarginBottom" class="flex items-center justify-between font-mono text-[10px] text-tech-muted mb-1">
+                                <span><i class="fa-solid fa-arrow-up text-crimson-500 mr-1"></i>ขอบล่าง (BOTTOM)</span>
+                                <span>mm</span>
+                            </label>
+                            <input type="number" id="inputMarginBottom" step="0.5" min="0" value="0.0"
+                                onchange="applyMarginsFromInputs()" oninput="applyMarginsFromInputs()"
+                                class="w-full bg-white border border-tech-border rounded-lg px-2.5 py-1.5 font-mono text-sm font-bold text-tech-dark focus:outline-none focus:border-crimson-500">
+                        </div>
+
+                        <!-- Left Margin -->
+                        <div class="bg-tech-panel/70 border border-tech-border rounded-xl p-2.5 focus-within:border-crimson-500 transition">
+                            <label for="inputMarginLeft" class="flex items-center justify-between font-mono text-[10px] text-tech-muted mb-1">
+                                <span><i class="fa-solid fa-arrow-right text-crimson-500 mr-1"></i>ขอบซ้าย (LEFT)</span>
+                                <span>mm</span>
+                            </label>
+                            <input type="number" id="inputMarginLeft" step="0.5" min="0" value="0.0"
+                                onchange="applyMarginsFromInputs()" oninput="applyMarginsFromInputs()"
+                                class="w-full bg-white border border-tech-border rounded-lg px-2.5 py-1.5 font-mono text-sm font-bold text-tech-dark focus:outline-none focus:border-crimson-500">
+                        </div>
+
+                        <!-- Right Margin -->
+                        <div class="bg-tech-panel/70 border border-tech-border rounded-xl p-2.5 focus-within:border-crimson-500 transition">
+                            <label for="inputMarginRight" class="flex items-center justify-between font-mono text-[10px] text-tech-muted mb-1">
+                                <span><i class="fa-solid fa-arrow-left text-crimson-500 mr-1"></i>ขอบขวา (RIGHT)</span>
+                                <span>mm</span>
+                            </label>
+                            <input type="number" id="inputMarginRight" step="0.5" min="0" value="0.0"
+                                onchange="applyMarginsFromInputs()" oninput="applyMarginsFromInputs()"
+                                class="w-full bg-white border border-tech-border rounded-lg px-2.5 py-1.5 font-mono text-sm font-bold text-tech-dark focus:outline-none focus:border-crimson-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Page Range & Export Action -->
+                <div class="tech-card rounded-3xl p-5 sm:p-6">
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <div class="w-8 h-8 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-extrabold text-tech-dark">ขอบเขตหน้าที่จะตัด (Apply To)</h2>
+                            <p class="font-mono text-[10px] text-tech-muted">TARGET PAGES &amp; EXPORT</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 mb-5">
+                        <!-- Option 1: All Pages -->
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-tech-border hover:border-crimson-500/50 bg-white cursor-pointer transition has-[:checked]:border-crimson-500 has-[:checked]:bg-crimson-50/40">
+                            <input type="radio" name="applyScope" value="all" checked onchange="toggleCustomRangeInput()"
+                                class="w-4 h-4 accent-crimson-500">
+                            <div class="flex-grow">
+                                <div class="text-xs font-bold text-tech-dark">ทุกหน้าในเอกสาร (All Pages)</div>
+                                <div class="font-mono text-[10px] text-tech-muted">ใช้ขนาดกรอบตัดนี้กับทุกหน้าพร้อมกัน</div>
+                            </div>
+                        </label>
+
+                        <!-- Option 2: Current Page Only -->
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-tech-border hover:border-crimson-500/50 bg-white cursor-pointer transition has-[:checked]:border-crimson-500 has-[:checked]:bg-crimson-50/40">
+                            <input type="radio" name="applyScope" value="current" onchange="toggleCustomRangeInput()"
+                                class="w-4 h-4 accent-crimson-500">
+                            <div class="flex-grow">
+                                <div class="text-xs font-bold text-tech-dark">เฉพาะหน้าปัจจุบัน (Current Page Only)</div>
+                                <div class="font-mono text-[10px] text-tech-muted">ตัดเฉพาะหน้าที่กำลังแสดงอยู่ (หน้า <span id="scopeCurrentPageNum">1</span>)</div>
+                            </div>
+                        </label>
+
+                        <!-- Option 3: Custom Page Range -->
+                        <label class="flex flex-col gap-2 p-3 rounded-xl border border-tech-border hover:border-crimson-500/50 bg-white cursor-pointer transition has-[:checked]:border-crimson-500 has-[:checked]:bg-crimson-50/40">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="applyScope" value="custom" onchange="toggleCustomRangeInput()"
+                                    class="w-4 h-4 accent-crimson-500">
+                                <div class="flex-grow">
+                                    <div class="text-xs font-bold text-tech-dark">ระบุช่วงหน้าเอง (Custom Range)</div>
+                                    <div class="font-mono text-[10px] text-tech-muted">เช่น 1-2, 3 หรือ 1, 3</div>
+                                </div>
+                            </div>
+                            <div id="customRangeWrapper" class="hidden pl-7 pt-1">
+                                <input type="text" id="customPageRangeInput" placeholder="ตัวอย่าง: 1-2, 3"
+                                    class="w-full bg-white border border-tech-border rounded-lg px-3 py-1.5 font-mono text-xs font-semibold text-tech-dark focus:outline-none focus:border-crimson-500">
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Primary Export Button -->
+                    <button type="button" id="btnExportPdf" onclick="exportCroppedPDF()"
+                        class="w-full py-4 px-5 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-extrabold text-sm tracking-wide flex items-center justify-center gap-2.5 transition red-glow cursor-pointer">
+                        <i class="fa-solid fa-file-arrow-down text-base"></i>
+                        <span>ประมวลผลและดาวน์โหลด PDF</span>
+                    </button>
+
+                    <!-- Status Feedback Box (Replaces alert) -->
+                    <div id="statusFeedbackBox" class="hidden mt-4 p-3.5 rounded-2xl border text-xs leading-relaxed"></div>
+                </div>
+
+            </aside>
+        </section>
+
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- UNIVERSAL FOOTER (International Standard Copyright)                   -->
+    <!-- ===================================================================== -->
+    <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
+            &copy; 2026 Clever Tensai. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- CORE APPLICATION LOGIC (PDF.js + pdf-lib + Interactive Crop Engine)   -->
+    <!-- ===================================================================== -->
+    <script>
+        // Configure PDF.js Worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Conversion Constant: 1 PDF Point = 1/72 inch = 0.352777778 mm
+        const PT_TO_MM = 25.4 / 72;
+        const MM_TO_PT = 72 / 25.4;
+
+        // Global Application State
+        const state = {
+            pdfBytes: null,          // Uint8Array of the loaded PDF
+            pdfDocProxy: null,       // PDF.js document proxy
+            fileName: 'document.pdf',
+            totalPages: 0,
+            currentPage: 1,
+            zoom: 1.0,
+            // Actual PDF Page Dimensions in Points (72 DPI)
+            pageWidthPt: 595.28,
+            pageHeightPt: 841.89,
+            // Normalized Crop Box (0.0 to 1.0 relative to full PDF page)
+            // Persists seamlessly across zoom changes and page switches
+            cropNorm: {
+                x: 0.08,
+                y: 0.08,
+                w: 0.84,
+                h: 0.84
+            },
+            aspectRatioPreset: 'free', // 'free' | 'a4-portrait' | 'a4-landscape' | '1:1' | '16:9'
+            isDragging: false,
+            dragAction: null,
+            dragStartMouse: { x: 0, y: 0 },
+            dragStartCropNorm: null
+        };
+
+        // DOM References
+        const els = {
+            fileInput: document.getElementById('pdfFileInput'),
+            dropZone: document.getElementById('dropZone'),
+            uploadSection: document.getElementById('uploadSection'),
+            workspaceSection: document.getElementById('workspaceSection'),
+            headerFileActions: document.getElementById('headerFileActions'),
+            activeFileName: document.getElementById('activeFileName'),
+            activeFileMeta: document.getElementById('activeFileMeta'),
+            canvasViewport: document.getElementById('canvasViewport'),
+            viewportLoader: document.getElementById('viewportLoader'),
+            cropWrapper: document.getElementById('cropWrapper'),
+            pdfCanvas: document.getElementById('pdfCanvas'),
+            cropBox: document.getElementById('cropBox'),
+            cropSizePill: document.getElementById('cropSizePill'),
+            maskTop: document.getElementById('maskTop'),
+            maskBottom: document.getElementById('maskBottom'),
+            maskLeft: document.getElementById('maskLeft'),
+            maskRight: document.getElementById('maskRight'),
+            currentPageLabel: document.getElementById('currentPageLabel'),
+            totalPagesLabel: document.getElementById('totalPagesLabel'),
+            scopeCurrentPageNum: document.getElementById('scopeCurrentPageNum'),
+            btnPrevPage: document.getElementById('btnPrevPage'),
+            btnNextPage: document.getElementById('btnNextPage'),
+            zoomLevelLabel: document.getElementById('zoomLevelLabel'),
+            toolbarDimMm: document.getElementById('toolbarDimMm'),
+            toolbarDimPx: document.getElementById('toolbarDimPx'),
+            pageOriginalDimLabel: document.getElementById('pageOriginalDimLabel'),
+            inputMarginTop: document.getElementById('inputMarginTop'),
+            inputMarginBottom: document.getElementById('inputMarginBottom'),
+            inputMarginLeft: document.getElementById('inputMarginLeft'),
+            inputMarginRight: document.getElementById('inputMarginRight'),
+            statusFeedbackBox: document.getElementById('statusFeedbackBox')
+        };
+
+        // =====================================================================
+        // 1. FILE UPLOAD & SAMPLE PDF GENERATOR
+        // =====================================================================
+
+        function triggerNewUpload() {
+            els.fileInput.value = '';
+            els.fileInput.click();
+        }
+
+        els.fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                await handleFileUpload(file);
+            }
+        });
+
+        // Drag and Drop Handlers
+        els.dropZone.addEventListener('click', () => triggerNewUpload());
+
+        ['dragenter', 'dragover'].forEach(evtName => {
+            els.dropZone.addEventListener(evtName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                els.dropZone.classList.add('border-crimson-500', 'bg-crimson-50/30');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(evtName => {
+            els.dropZone.addEventListener(evtName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                els.dropZone.classList.remove('border-crimson-500', 'bg-crimson-50/30');
+            });
+        });
+
+        els.dropZone.addEventListener('drop', async (e) => {
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                await handleFileUpload(file);
+            } else {
+                showFeedback('error', 'กรุณาเลือกไฟล์เอกสารนามสกุล .PDF เท่านั้น');
+            }
+        });
+
+        async function handleFileUpload(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const bytes = new Uint8Array(arrayBuffer);
+                await initializePdfWorkspace(bytes, file.name);
+            } catch (err) {
+                console.error(err);
+                showFeedback('error', 'ไม่สามารถอ่านไฟล์ PDF นี้ได้ กรุณาตรวจสอบว่าไฟล์ไม่เสียหายหรือติดรหัสผ่าน');
+            }
+        }
+
+        /**
+         * สร้างไฟล์ Sample PDF 3 หน้าด้วย pdf-lib เพื่อให้ผู้ใช้ทดสอบ Crop ได้ทันที
+         */
+        async function loadSamplePDF() {
+            const btn = document.getElementById('btnLoadSample');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังสร้างเอกสารตัวอย่าง...</span>';
+            btn.disabled = true;
+
+            try {
+                const { PDFDocument, rgb, StandardFonts } = PDFLib;
+                const pdfDoc = await PDFDocument.create();
+                const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+                const pagesConfig = [
+                    {
+                        title: 'CLEVERTENSAI — TECHNICAL SPECIFICATION',
+                        subtitle: 'DOCUMENT PAGE 01 // EXECUTIVE SUMMARY & CROP TEST',
+                        tag: 'SAMPLE A4 DOCUMENT (WIDE MARGINS)',
+                        accent: rgb(0.90, 0.22, 0.27)
+                    },
+                    {
+                        title: 'FINANCIAL & SYSTEM METRICS REPORT',
+                        subtitle: 'DOCUMENT PAGE 02 // DATA TABLE & GRID BOUNDARY',
+                        tag: 'AUTO-TRIM MARGIN DETECTION READY',
+                        accent: rgb(0.06, 0.09, 0.16)
+                    },
+                    {
+                        title: 'ARCHITECTURE & EXPORT VERIFICATION',
+                        subtitle: 'DOCUMENT PAGE 03 // FINAL SIGN-OFF SHEET',
+                        tag: 'CLIENT-SIDE PDF CROPBOX ENGINE',
+                        accent: rgb(0.90, 0.22, 0.27)
+                    }
+                ];
+
+                pagesConfig.forEach((cfg, idx) => {
+                    // A4 Size: 595.28 x 841.89 pt
+                    const page = pdfDoc.addPage([595.28, 841.89]);
+                    const { width, height } = page.getSize();
+
+                    // Outer Margin Guide Marks (Shows wide white margins around content)
+                    const margin = 65;
+                    page.drawRectangle({
+                        x: margin,
+                        y: margin,
+                        width: width - margin * 2,
+                        height: height - margin * 2,
+                        borderColor: rgb(0.82, 0.84, 0.88),
+                        borderWidth: 1.5,
+                        color: rgb(0.985, 0.985, 0.99)
+                    });
+
+                    // Top Header Banner inside content area
+                    page.drawRectangle({
+                        x: margin + 20,
+                        y: height - margin - 85,
+                        width: width - (margin + 20) * 2,
+                        height: 65,
+                        color: rgb(0.06, 0.09, 0.16)
+                    });
+
+                    // Red Accent Strip
+                    page.drawRectangle({
+                        x: margin + 20,
+                        y: height - margin - 85,
+                        width: 8,
+                        height: 65,
+                        color: cfg.accent
+                    });
+
+                    page.drawText(cfg.title, {
+                        x: margin + 42,
+                        y: height - margin - 48,
+                        size: 14,
+                        font: fontBold,
+                        color: rgb(1, 1, 1)
+                    });
+
+                    page.drawText(cfg.subtitle, {
+                        x: margin + 42,
+                        y: height - margin - 68,
+                        size: 9,
+                        font: fontRegular,
+                        color: rgb(0.98, 0.45, 0.5)
+                    });
+
+                    // Simulated Content Blocks & Table Rows
+                    let cursorY = height - margin - 130;
+                    for (let row = 0; row < 6; row++) {
+                        page.drawRectangle({
+                            x: margin + 20,
+                            y: cursorY - 52,
+                            width: width - (margin + 20) * 2,
+                            height: 44,
+                            color: row % 2 === 0 ? rgb(1, 1, 1) : rgb(0.95, 0.96, 0.98),
+                            borderColor: rgb(0.88, 0.90, 0.93),
+                            borderWidth: 1
+                        });
+
+                        page.drawText(`SECTION 0${idx + 1}.${row + 1}  —  ${cfg.tag}`, {
+                            x: margin + 35,
+                            y: cursorY - 27,
+                            size: 10,
+                            font: fontBold,
+                            color: rgb(0.1, 0.14, 0.22)
+                        });
+
+                        page.drawText(`Simulated vector content block for testing interactive PDF CropBox boundaries & auto-trim.`, {
+                            x: margin + 35,
+                            y: cursorY - 42,
+                            size: 8.5,
+                            font: fontRegular,
+                            color: rgb(0.4, 0.45, 0.55)
+                        });
+
+                        cursorY -= 62;
+                    }
+
+                    // Footer inside content box
+                    page.drawText(`CLEVERTENSAI PDF STUDIO SUITE  |  PAGE ${idx + 1} OF 3`, {
+                        x: margin + 20,
+                        y: margin + 22,
+                        size: 8.5,
+                        font: fontBold,
+                        color: rgb(0.45, 0.5, 0.58)
+                    });
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                await initializePdfWorkspace(pdfBytes, 'Sample_Document_3Pages.pdf');
+            } catch (err) {
+                console.error(err);
+                showFeedback('error', 'เกิดข้อผิดพลาดในการสร้างไฟล์ตัวอย่าง');
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+
+        /**
+         * เริ่มต้น Workspace เมื่อโหลดไฟล์ PDF สำเร็จ
+         */
+        async function initializePdfWorkspace(bytes, fileName) {
+            state.pdfBytes = bytes;
+            state.fileName = fileName;
+            state.currentPage = 1;
+            state.aspectRatioPreset = 'free';
+
+            // Load into PDF.js for high-res canvas rendering
+            const loadingTask = pdfjsLib.getDocument({ data: bytes.slice(0) });
+            state.pdfDocProxy = await loadingTask.promise;
+            state.totalPages = state.pdfDocProxy.numPages;
+
+            // Update Header & UI State
+            els.uploadSection.classList.add('hidden');
+            els.workspaceSection.classList.remove('hidden');
+            els.headerFileActions.classList.remove('hidden');
+            els.headerFileActions.classList.add('flex');
+
+            els.activeFileName.textContent = fileName;
+            els.activeFileMeta.textContent = `${state.totalPages} หน้า • ${formatBytes(bytes.byteLength)}`;
+            els.totalPagesLabel.textContent = state.totalPages;
+
+            // Default initial crop box (full page with slight 5% margin or full page)
+            state.cropNorm = { x: 0.05, y: 0.05, w: 0.90, h: 0.90 };
+            updatePresetButtonsUI('free');
+            hideFeedback();
+
+            await fitToScreen();
+        }
+
+        // =====================================================================
+        // 2. PDF RENDERING & ZOOM MANAGEMENT
+        // =====================================================================
+
+        async function fitToScreen() {
+            if (!state.pdfDocProxy) return;
+            const page = await state.pdfDocProxy.getPage(state.currentPage);
+            const unscaledViewport = page.getViewport({ scale: 1.0 });
+
+            const availableWidth = els.canvasViewport.clientWidth - 64;
+            const availableHeight = els.canvasViewport.clientHeight - 64;
+
+            const scaleX = availableWidth / unscaledViewport.width;
+            const scaleY = availableHeight / unscaledViewport.height;
+            state.zoom = Math.max(0.25, Math.min(2.5, Math.min(scaleX, scaleY)));
+
+            await renderCurrentPage();
+        }
+
+        async function adjustZoom(delta) {
+            if (!state.pdfDocProxy) return;
+            state.zoom = Math.max(0.25, Math.min(3.0, +(state.zoom + delta).toFixed(2)));
+            await renderCurrentPage();
+        }
+
+        async function changePage(delta) {
+            const target = state.currentPage + delta;
+            if (target < 1 || target > state.totalPages) return;
+            state.currentPage = target;
+            await renderCurrentPage();
+        }
+
+        async function renderCurrentPage() {
+            if (!state.pdfDocProxy) return;
+            els.viewportLoader.classList.remove('hidden');
+
+            try {
+                const page = await state.pdfDocProxy.getPage(state.currentPage);
+                const unscaledViewport = page.getViewport({ scale: 1.0 });
+                state.pageWidthPt = unscaledViewport.width;
+                state.pageHeightPt = unscaledViewport.height;
+
+                // Use devicePixelRatio for crisp retina rendering
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const viewport = page.getViewport({ scale: state.zoom });
+
+                const canvas = els.pdfCanvas;
+                const ctx = canvas.getContext('2d');
+
+                canvas.width = Math.floor(viewport.width * dpr);
+                canvas.height = Math.floor(viewport.height * dpr);
+                canvas.style.width = `${Math.floor(viewport.width)}px`;
+                canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+                await page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                }).promise;
+
+                // Update Navigation & Dimension Labels
+                els.currentPageLabel.textContent = state.currentPage;
+                els.scopeCurrentPageNum.textContent = state.currentPage;
+                els.btnPrevPage.disabled = state.currentPage <= 1;
+                els.btnNextPage.disabled = state.currentPage >= state.totalPages;
+                els.zoomLevelLabel.textContent = `${Math.round(state.zoom * 100)}%`;
+
+                const origWmm = (state.pageWidthPt * PT_TO_MM).toFixed(1);
+                const origHmm = (state.pageHeightPt * PT_TO_MM).toFixed(1);
+                els.pageOriginalDimLabel.textContent = `${origWmm} × ${origHmm} mm`;
+
+                syncCropUI(true);
+            } finally {
+                els.viewportLoader.classList.add('hidden');
+            }
+        }
+
+        // =====================================================================
+        // 3. INTERACTIVE CROP BOX ENGINE (8-WAY RESIZE + DRAG + 2-WAY BINDING)
+        // =====================================================================
+
+        function syncCropUI(updateInputs = true) {
+            const dispW = els.pdfCanvas.offsetWidth;
+            const dispH = els.pdfCanvas.offsetHeight;
+            if (!dispW || !dispH) return;
+
+            const leftPx = state.cropNorm.x * dispW;
+            const topPx = state.cropNorm.y * dispH;
+            const widthPx = state.cropNorm.w * dispW;
+            const heightPx = state.cropNorm.h * dispH;
+
+            // Position Crop Box
+            els.cropBox.style.left = `${leftPx}px`;
+            els.cropBox.style.top = `${topPx}px`;
+            els.cropBox.style.width = `${widthPx}px`;
+            els.cropBox.style.height = `${heightPx}px`;
+
+            // Position 4 Surrounding Darkened Masks
+            els.maskTop.style.left = '0px';
+            els.maskTop.style.top = '0px';
+            els.maskTop.style.width = `${dispW}px`;
+            els.maskTop.style.height = `${Math.max(0, topPx)}px`;
+
+            els.maskBottom.style.left = '0px';
+            els.maskBottom.style.top = `${topPx + heightPx}px`;
+            els.maskBottom.style.width = `${dispW}px`;
+            els.maskBottom.style.height = `${Math.max(0, dispH - (topPx + heightPx))}px`;
+
+            els.maskLeft.style.left = '0px';
+            els.maskLeft.style.top = `${topPx}px`;
+            els.maskLeft.style.width = `${Math.max(0, leftPx)}px`;
+            els.maskLeft.style.height = `${heightPx}px`;
+
+            els.maskRight.style.left = `${leftPx + widthPx}px`;
+            els.maskRight.style.top = `${topPx}px`;
+            els.maskRight.style.width = `${Math.max(0, dispW - (leftPx + widthPx))}px`;
+            els.maskRight.style.height = `${heightPx}px`;
+
+            // Calculate Real-world Dimensions (Points & Millimeters)
+            const cropWPt = state.cropNorm.w * state.pageWidthPt;
+            const cropHPt = state.cropNorm.h * state.pageHeightPt;
+            const cropWMm = (cropWPt * PT_TO_MM).toFixed(1);
+            const cropHMm = (cropHPt * PT_TO_MM).toFixed(1);
+
+            els.cropSizePill.textContent = `${cropWMm} × ${cropHMm} mm`;
+            els.toolbarDimMm.textContent = `${cropWMm} × ${cropHMm} mm`;
+            els.toolbarDimPx.textContent = `${Math.round(cropWPt)} × ${Math.round(cropHPt)} pt`;
+
+            // Update Margin Inputs (Two-way Binding)
+            if (updateInputs) {
+                const mLeftMm = (state.cropNorm.x * state.pageWidthPt * PT_TO_MM).toFixed(1);
+                const mTopMm = (state.cropNorm.y * state.pageHeightPt * PT_TO_MM).toFixed(1);
+                const mRightMm = ((1 - (state.cropNorm.x + state.cropNorm.w)) * state.pageWidthPt * PT_TO_MM).toFixed(1);
+                const mBottomMm = ((1 - (state.cropNorm.y + state.cropNorm.h)) * state.pageHeightPt * PT_TO_MM).toFixed(1);
+
+                els.inputMarginLeft.value = mLeftMm;
+                els.inputMarginTop.value = mTopMm;
+                els.inputMarginRight.value = mRightMm;
+                els.inputMarginBottom.value = mBottomMm;
+            }
+        }
+
+        // Pointer Events (Unified Mouse & Touch Support)
+        els.cropBox.addEventListener('pointerdown', (e) => {
+            const action = e.target.getAttribute('data-action') || 'move';
+            e.preventDefault();
+            e.stopPropagation();
+
+            state.isDragging = true;
+            state.dragAction = action;
+            state.dragStartMouse = { x: e.clientX, y: e.clientY };
+            state.dragStartCropNorm = { ...state.cropNorm };
+
+            els.cropBox.setPointerCapture(e.pointerId);
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!state.isDragging) return;
+
+            const dispW = els.pdfCanvas.offsetWidth;
+            const dispH = els.pdfCanvas.offsetHeight;
+            if (!dispW || !dispH) return;
+
+            const dxNorm = (e.clientX - state.dragStartMouse.x) / dispW;
+            const dyNorm = (e.clientY - state.dragStartMouse.y) / dispH;
+
+            const start = state.dragStartCropNorm;
+            const minSizeNorm = 0.05; // Minimum 5% size
+            let { x, y, w, h } = start;
+
+            if (state.dragAction === 'move') {
+                x = clamp(start.x + dxNorm, 0, 1 - start.w);
+                y = clamp(start.y + dyNorm, 0, 1 - start.h);
+            } else {
+                // Handle 8-way resize
+                if (state.dragAction.includes('e')) {
+                    w = clamp(start.w + dxNorm, minSizeNorm, 1 - start.x);
+                }
+                if (state.dragAction.includes('s')) {
+                    h = clamp(start.h + dyNorm, minSizeNorm, 1 - start.y);
+                }
+                if (state.dragAction.includes('w')) {
+                    const maxLeft = start.x + start.w - minSizeNorm;
+                    const newX = clamp(start.x + dxNorm, 0, maxLeft);
+                    w = start.w + (start.x - newX);
+                    x = newX;
+                }
+                if (state.dragAction.includes('n')) {
+                    const maxTop = start.y + start.h - minSizeNorm;
+                    const newY = clamp(start.y + dyNorm, 0, maxTop);
+                    h = start.h + (start.y - newY);
+                    y = newY;
+                }
+
+                // Enforce Aspect Ratio Lock if Preset is Active
+                const targetRatio = getTargetAspectRatio();
+                if (targetRatio) {
+                    const pageAspect = state.pageWidthPt / state.pageHeightPt;
+                    // Real aspect = (w * pageW) / (h * pageH) = (w / h) * pageAspect = targetRatio
+                    // => w / h = targetRatio / pageAspect
+                    const normRatio = targetRatio / pageAspect;
+
+                    if (state.dragAction === 'n' || state.dragAction === 's') {
+                        w = h * normRatio;
+                        if (x + w > 1) {
+                            w = 1 - x;
+                            h = w / normRatio;
+                        }
+                    } else {
+                        h = w / normRatio;
+                        if (y + h > 1) {
+                            h = 1 - y;
+                            w = h * normRatio;
+                        }
+                    }
+                }
+            }
+
+            state.cropNorm = { x, y, w, h };
+            syncCropUI(true);
+        });
+
+        window.addEventListener('pointerup', () => {
+            if (state.isDragging) {
+                state.isDragging = false;
+                state.dragAction = null;
+            }
+        });
+
+        // =====================================================================
+        // 4. ASPECT RATIO PRESETS, MANUAL MARGINS & AUTO-TRIM WHITE MARGINS
+        // =====================================================================
+
+        function getTargetAspectRatio() {
+            switch (state.aspectRatioPreset) {
+                case 'a4-portrait': return 1 / 1.4142;
+                case 'a4-landscape': return 1.4142;
+                case '1:1': return 1.0;
+                case '16:9': return 16 / 9;
+                default: return null;
+            }
+        }
+
+        function updatePresetButtonsUI(activeKey) {
+            document.querySelectorAll('.ratio-btn').forEach(btn => {
+                const isMatch = btn.getAttribute('data-ratio') === activeKey;
+                if (isMatch) {
+                    btn.className = 'ratio-btn active px-3 py-2 rounded-xl border-2 border-crimson-500 bg-crimson-50 text-crimson-600 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer';
+                } else {
+                    btn.className = 'ratio-btn px-3 py-2 rounded-xl border border-tech-border bg-white hover:border-crimson-500/50 text-tech-dark font-semibold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer';
+                }
+            });
+        }
+
+        function setAspectRatioPreset(preset) {
+            state.aspectRatioPreset = preset;
+            updatePresetButtonsUI(preset);
+
+            const targetRatio = getTargetAspectRatio();
+            if (!targetRatio) return;
+
+            const pageAspect = state.pageWidthPt / state.pageHeightPt;
+            const normRatio = targetRatio / pageAspect;
+
+            // Center a well-proportioned crop box with the requested ratio
+            let w = 0.80;
+            let h = w / normRatio;
+
+            if (h > 0.85) {
+                h = 0.85;
+                w = h * normRatio;
+            }
+
+            state.cropNorm = {
+                x: (1 - w) / 2,
+                y: (1 - h) / 2,
+                w,
+                h
+            };
+            syncCropUI(true);
+        }
+
+        function resetCropBox() {
+            state.aspectRatioPreset = 'free';
+            updatePresetButtonsUI('free');
+            state.cropNorm = { x: 0, y: 0, w: 1, h: 1 };
+            syncCropUI(true);
+            showFeedback('info', 'รีเซ็ตกรอบตัดขอบให้เต็มขนาดหน้าเอกสารต้นฉบับเรียบร้อยแล้ว');
+        }
+
+        /**
+         * Two-Way Binding: อัปเดตกรอบบน Canvas ทันทีเมื่อผู้ใช้พิมพ์ค่า mm ในช่อง Margins
+         */
+        function applyMarginsFromInputs() {
+            const pageWMm = state.pageWidthPt * PT_TO_MM;
+            const pageHMm = state.pageHeightPt * PT_TO_MM;
+
+            let mLeft = Math.max(0, parseFloat(els.inputMarginLeft.value) || 0);
+            let mRight = Math.max(0, parseFloat(els.inputMarginRight.value) || 0);
+            let mTop = Math.max(0, parseFloat(els.inputMarginTop.value) || 0);
+            let mBottom = Math.max(0, parseFloat(els.inputMarginBottom.value) || 0);
+
+            // Prevent margins from overlapping completely
+            if (mLeft + mRight > pageWMm - 10) {
+                mRight = Math.max(0, pageWMm - 10 - mLeft);
+            }
+            if (mTop + mBottom > pageHMm - 10) {
+                mBottom = Math.max(0, pageHMm - 10 - mTop);
+            }
+
+            state.aspectRatioPreset = 'free';
+            updatePresetButtonsUI('free');
+
+            state.cropNorm = {
+                x: mLeft / pageWMm,
+                y: mTop / pageHMm,
+                w: (pageWMm - mLeft - mRight) / pageWMm,
+                h: (pageHMm - mTop - mBottom) / pageHMm
+            };
+
+            syncCropUI(false);
+        }
+
+        /**
+         * Smart Auto-Trim: สแกนพิกเซลบน Canvas เพื่อค้นหาขอบเขตเนื้อหาที่ไม่ใช่สีขาวอัตโนมัติ
+         */
+        function autoTrimMargins() {
+            const canvas = els.pdfCanvas;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            if (!w || !h) return;
+
+            const imgData = ctx.getImageData(0, 0, w, h).data;
+            let minX = w, minY = h, maxX = 0, maxY = 0;
+            let foundContent = false;
+
+            // Threshold for non-white pixel (RGB < 245)
+            const threshold = 245;
+
+            for (let y = 0; y < h; y += 2) {
+                for (let x = 0; x < w; x += 2) {
+                    const idx = (y * w + x) * 4;
+                    const r = imgData[idx];
+                    const g = imgData[idx + 1];
+                    const b = imgData[idx + 2];
+                    const a = imgData[idx + 3];
+
+                    if (a > 20 && (r < threshold || g < threshold || b < threshold)) {
+                        foundContent = true;
+                        if (x < minX) minX = x;
+                        if (x > maxX) maxX = x;
+                        if (y < minY) minY = y;
+                        if (y > maxY) maxY = y;
+                    }
+                }
+            }
+
+            if (!foundContent) {
+                showFeedback('info', 'ไม่พบเนื้อหาสีเข้มบนหน้านี้ ระบบคงขนาดกรอบเดิมไว้');
+                return;
+            }
+
+            // Add comfortable 3mm safety padding around detected content
+            const padX = Math.round((3 * MM_TO_PT / state.pageWidthPt) * w);
+            const padY = Math.round((3 * MM_TO_PT / state.pageHeightPt) * h);
+
+            minX = Math.max(0, minX - padX);
+            minY = Math.max(0, minY - padY);
+            maxX = Math.min(w, maxX + padX);
+            maxY = Math.min(h, maxY + padY);
+
+            state.aspectRatioPreset = 'free';
+            updatePresetButtonsUI('free');
+
+            state.cropNorm = {
+                x: minX / w,
+                y: minY / h,
+                w: Math.max(0.05, (maxX - minX) / w),
+                h: Math.max(0.05, (maxY - minY) / h)
+            };
+
+            syncCropUI(true);
+            showFeedback('success', 'ตรวจจับขอบเขตเนื้อหาและตัดขอบขาวอัตโนมัติ (เผื่อระยะปลอดภัย 3 mm) เรียบร้อยแล้ว');
+        }
+
+        function toggleCustomRangeInput() {
+            const scope = document.querySelector('input[name="applyScope"]:checked').value;
+            const wrapper = document.getElementById('customRangeWrapper');
+            if (scope === 'custom') {
+                wrapper.classList.remove('hidden');
+                document.getElementById('customPageRangeInput').focus();
+            } else {
+                wrapper.classList.add('hidden');
+            }
+        }
+
+        // =====================================================================
+        // 5. PDF-LIB CROP ENGINE & EXPORT DOWNLOAD
+        // =====================================================================
+
+        function parsePageRange(rangeStr, maxPages) {
+            const pages = new Set();
+            const parts = rangeStr.split(',');
+            for (let part of parts) {
+                part = part.trim();
+                if (!part) continue;
+                if (part.includes('-')) {
+                    const [startStr, endStr] = part.split('-');
+                    const start = parseInt(startStr, 10);
+                    const end = parseInt(endStr, 10);
+                    if (!isNaN(start) && !isNaN(end)) {
+                        const lo = Math.max(1, Math.min(start, end));
+                        const hi = Math.min(maxPages, Math.max(start, end));
+                        for (let i = lo; i <= hi; i++) pages.add(i - 1);
+                    }
+                } else {
+                    const num = parseInt(part, 10);
+                    if (!isNaN(num) && num >= 1 && num <= maxPages) {
+                        pages.add(num - 1);
+                    }
+                }
+            }
+            return Array.from(pages).sort((a, b) => a - b);
+        }
+
+        async function exportCroppedPDF() {
+            if (!state.pdfBytes) return;
+
+            const btn = document.getElementById('btnExportPdf');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังประมวลผลตัดขอบ PDF...</span>';
+            btn.disabled = true;
+
+            try {
+                const { PDFDocument } = PDFLib;
+                const pdfDoc = await PDFDocument.load(state.pdfBytes);
+                const pages = pdfDoc.getPages();
+                const scope = document.querySelector('input[name="applyScope"]:checked').value;
+
+                // Determine target page indices (0-based)
+                let targetIndices = [];
+                if (scope === 'all') {
+                    targetIndices = pages.map((_, idx) => idx);
+                } else if (scope === 'current') {
+                    targetIndices = [state.currentPage - 1];
+                } else if (scope === 'custom') {
+                    const rawRange = document.getElementById('customPageRangeInput').value;
+                    targetIndices = parsePageRange(rawRange, pages.length);
+                    if (targetIndices.length === 0) {
+                        showFeedback('error', `กรุณาระบุช่วงหน้าให้ถูกต้อง (เช่น 1-${pages.length})`);
+                        return;
+                    }
+                }
+
+                // Apply CropBox & MediaBox to selected pages
+                // Note: PDF Coordinate origin (0,0) is Bottom-Left, while Canvas origin (0,0) is Top-Left
+                targetIndices.forEach((pageIdx) => {
+                    const page = pages[pageIdx];
+                    const { width, height } = page.getSize();
+
+                    const cropX = state.cropNorm.x * width;
+                    const cropW = state.cropNorm.w * width;
+                    const cropH = state.cropNorm.h * height;
+                    // Invert Y axis for PDF bottom-left coordinate space
+                    const cropY = height - ((state.cropNorm.y + state.cropNorm.h) * height);
+
+                    page.setCropBox(cropX, cropY, cropW, cropH);
+                    page.setMediaBox(cropX, cropY, cropW, cropH);
+                });
+
+                const modifiedPdfBytes = await pdfDoc.save();
+                const outFileName = `cropped_${state.fileName}`;
+
+                // Trigger Browser File Download
+                const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = outFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+                const newSizeFormatted = formatBytes(modifiedPdfBytes.byteLength);
+                showFeedback(
+                    'success',
+                    `<strong>ตัดขอบสำเร็จ (${targetIndices.length} หน้า)!</strong><br>บันทึกไฟล์ <span class="font-mono underline">${outFileName}</span> (${newSizeFormatted}) ลงเครื่องเรียบร้อยแล้ว`
+                );
+            } catch (err) {
+                console.error(err);
+                showFeedback('error', 'เกิดข้อผิดพลาดในการบันทึกไฟล์ PDF กรุณาลองใหม่อีกครั้ง');
+            } finally {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+
+        // =====================================================================
+        // 6. UTILITY HELPERS
+        // =====================================================================
+
+        function clamp(val, min, max) {
+            return Math.max(min, Math.min(max, val));
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function showFeedback(type, htmlMessage) {
+            const box = els.statusFeedbackBox;
+            box.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-800', 'bg-red-50', 'border-red-200', 'text-red-800', 'bg-gray-100', 'border-gray-200', 'text-gray-800');
+
+            if (type === 'success') {
+                box.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                box.innerHTML = `<div class="flex items-start gap-2.5"><i class="fa-solid fa-circle-check text-emerald-500 text-sm mt-0.5"></i><div>${htmlMessage}</div></div>`;
+            } else if (type === 'error') {
+                box.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+                box.innerHTML = `<div class="flex items-start gap-2.5"><i class="fa-solid fa-triangle-exclamation text-crimson-500 text-sm mt-0.5"></i><div>${htmlMessage}</div></div>`;
+            } else {
+                box.classList.add('bg-gray-100', 'border-gray-200', 'text-gray-800');
+                box.innerHTML = `<div class="flex items-start gap-2.5"><i class="fa-solid fa-circle-info text-crimson-500 text-sm mt-0.5"></i><div>${htmlMessage}</div></div>`;
+            }
+        }
+
+        function hideFeedback() {
+            els.statusFeedbackBox.classList.add('hidden');
+        }
+
+        // Responsive Window Resize Sync
+        window.addEventListener('resize', () => {
+            if (state.pdfDocProxy) {
+                syncCropUI(false);
+            }
+        });
+    </script>
+</body>
+
+</html>
