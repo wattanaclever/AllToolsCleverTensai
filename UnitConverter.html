@@ -184,70 +184,15 @@
 
 <body class="min-h-screen flex flex-col">
 
-    <!-- ===================================================================== -->
-    <!-- START: CLEVERTENSAI Global Navbar & All Web Apps Hub                  -->
-    <!-- ===================================================================== -->
-    <nav
-        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
-        <!-- ฝั่งซ้าย: โลโก้แบรนด์ (คลิกเพื่อกลับหน้าหลัก index.html) -->
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-2.5 group">
-                <div
-                    class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-ruler-combined"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span
-                            class="text-red-500">TENSAI</span></span>
-                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">UNIT CONVERTER ENGINE</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเว็บแอปทั้งหมด -->
-        <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-            <button type="button" onclick="toggleNavPopup()"
-                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
-                <span>All Web Apps Hub</span>
-                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-            </button>
-        </div>
-
-        <!-- ฝั่งขวา: ปุ่มเปลี่ยนหมวดหมู่, ปุ่ม Hub (มือถือ), สถานะระบบ และปุ่มกลับหน้าหลัก Portal -->
-        <div class="flex items-center gap-2.5">
-            <button id="navBackToCatsBtn" type="button" onclick="backToCategories()"
-                class="hidden px-3.5 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm">
-                <i class="fa-solid fa-table-cells-large"></i>
-                <span class="hidden md:inline">เปลี่ยนหมวดหมู่</span>
-            </button>
-
-            <button type="button" onclick="toggleNavPopup()"
-                class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500"></i>
-                <span>Hub</span>
-            </button>
-
-            <span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                UNIT ENGINE
-            </span>
-
-            <a href="index.html"
-                class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-house text-red-500"></i>
-                <span class="hidden sm:inline">หน้าหลัก Portal</span>
-            </a>
-        </div>
-    </nav>
+    <!-- ดึง NAVBAR & ALL WEB APPS HUB MODAL จากโฟลเดอร์ JS/Navbar.js -->
+    <div id="navbar-container"></div>
+    <script src="JS/Navbar.js"></script>
 
     <!-- Popup Modal สลับหน้าเครื่องมือ (All Web Apps Hub) -->
-    <div id="navPopupModal" onclick="if(event.target === this) toggleNavPopup()"
+    <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
         class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
         <div
             class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-
-            <!-- Header ของ Modal -->
             <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
                 <div class="flex items-center gap-3.5">
                     <div
@@ -256,9 +201,9 @@
                     </div>
                     <div>
                         <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            CLEVERTENSAI Web Apps Hub
+                            Select Web Application
                         </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันอื่นในระบบได้ทันที</p>
+                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันภายใน CLEVERTENSAI ได้ทันที</p>
                     </div>
                 </div>
 
@@ -268,66 +213,15 @@
                 </button>
             </div>
 
-            <!-- รายการเว็บแอปหลัก 5 ระบบ -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 py-6 overflow-y-auto">
-                <!-- 1. กลับหน้าหลัก -->
-                <a href="index.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Main Portal</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">กลับสู่หน้ารวมเว็บแอปพลิเคชันทั้งหมด</span>
-                </a>
-
-                <!-- 2. PDF Tools -->
-                <a href="./PDF/HomePDF.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-pdf"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">PDF Studio Suite</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์ แยกหน้า และแก้ไขเอกสาร PDF</span>
-                </a>
-
-                <!-- 3. Excel Unlock -->
-                <a href="HomeExcelUnlock.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Excel Unlock Pro</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ปลดล็อกชีตและจัดการโครงสร้าง Excel</span>
-                </a>
-
-                <!-- 4. QR Code -->
-                <a href="HomeQRcode.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">QR Code Generator</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">สร้าง QR Code ภาษาไทย ลิงก์ และ Wi-Fi</span>
-                </a>
-
-                <!-- 5. Unit Converter (Current) -->
-                <a href="UnitConverter.html"
-                    class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
-                        <i class="fa-solid fa-ruler-combined"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-red-400">Unit Converter</span>
-                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
-                </a>
+            <div id="hubModalGrid"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 py-6 overflow-y-auto">
+                <!-- Rendered dynamically from WEB_APPS -->
             </div>
         </div>
     </div>
     <!-- END: Global Navbar & Navigation Hub -->
+
+
 
 
     <!-- ===================================================================== -->
@@ -354,12 +248,14 @@
                     ระบบแปลงมาตราวัด<span class="text-crimson-500">อัจฉริยะ</span>
                 </h1>
                 <p class="text-tech-muted text-sm sm:text-base mt-1.5 max-w-2xl leading-relaxed">
-                    ครอบคลุมทั้งมาตราวัดสากลและมาตราวัดไทย (วา ศอก ไร่ งาน บาททองคำ) เลือกหมวดหมู่ที่ต้องการเพื่อเริ่มคำนวณได้ทันที
+                    ครอบคลุมทั้งมาตราวัดสากลและมาตราวัดไทย (วา ศอก ไร่ งาน บาททองคำ)
+                    เลือกหมวดหมู่ที่ต้องการเพื่อเริ่มคำนวณได้ทันที
                 </p>
             </div>
 
             <!-- Telemetry Status Pill -->
-            <div class="bg-gray-950 text-white rounded-2xl px-4 py-3 border border-gray-800 flex items-center gap-4 shrink-0 self-start lg:self-auto shadow-md">
+            <div
+                class="bg-gray-950 text-white rounded-2xl px-4 py-3 border border-gray-800 flex items-center gap-4 shrink-0 self-start lg:self-auto shadow-md">
                 <div>
                     <div class="font-mono text-[10px] text-gray-400 uppercase tracking-widest">SYSTEM STATUS</div>
                     <div class="font-mono text-xs font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
@@ -388,8 +284,10 @@
                         เลือกหมวดหมู่มาตราวัดที่ต้องการแปลง
                     </h2>
                 </div>
-                <span class="font-mono text-xs text-tech-muted bg-white px-3.5 py-2 rounded-xl border border-tech-border shadow-sm">
-                    <i class="fa-solid fa-hand-pointer text-crimson-500 mr-1.5"></i>คลิกที่การ์ดหมวดหมู่เพื่อเปิดหน้าเครื่องมือ
+                <span
+                    class="font-mono text-xs text-tech-muted bg-white px-3.5 py-2 rounded-xl border border-tech-border shadow-sm">
+                    <i
+                        class="fa-solid fa-hand-pointer text-crimson-500 mr-1.5"></i>คลิกที่การ์ดหมวดหมู่เพื่อเปิดหน้าเครื่องมือ
                 </span>
             </div>
 
@@ -412,7 +310,8 @@
                     <span>กลับไปเลือกหมวดหมู่อื่น (12 หมวด)</span>
                 </button>
 
-                <div class="flex items-center gap-2 font-mono text-xs bg-white px-3.5 py-2 rounded-xl border border-tech-border">
+                <div
+                    class="flex items-center gap-2 font-mono text-xs bg-white px-3.5 py-2 rounded-xl border border-tech-border">
                     <span class="text-crimson-500 font-bold">STEP 02</span>
                     <span class="text-gray-300">/</span>
                     <span id="breadcrumbCategoryName" class="text-tech-dark font-bold">ความยาว &amp; ระยะทาง</span>
@@ -422,7 +321,8 @@
             <!-- MAIN FUTURISTIC HUD CONVERTER CARD -->
             <section class="tech-card hud-frame rounded-3xl p-5 sm:p-8 relative overflow-hidden">
                 <!-- Header ของกล่องแปลงหลัก + ตัวเลือกทศนิยม/คั่นหลักพัน -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-tech-border">
+                <div
+                    class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-tech-border">
                     <div class="flex items-center gap-3.5">
                         <div id="activeCatIconBox"
                             class="w-12 h-12 rounded-2xl bg-gray-950 border border-gray-800 text-crimson-500 flex items-center justify-center text-xl shrink-0 shadow-md">
@@ -468,7 +368,8 @@
                 </div>
 
                 <!-- แถบเลือกคู่แปลงยอดนิยม (Quick Presets) ด้านบนเพื่อให้กดเปลี่ยนหน่วยได้ในคลิกเดียว -->
-                <div class="mt-5 flex flex-wrap items-center gap-2 bg-tech-bg/90 border border-tech-border rounded-2xl px-4 py-3">
+                <div
+                    class="mt-5 flex flex-wrap items-center gap-2 bg-tech-bg/90 border border-tech-border rounded-2xl px-4 py-3">
                     <span class="font-mono text-[11px] text-tech-dark font-extrabold flex items-center gap-1.5 mr-1">
                         <i class="fa-solid fa-bolt text-crimson-500"></i>
                         <span>คู่แปลงยอดนิยม:</span>
@@ -533,8 +434,7 @@
                                 <div id="leftTextboxWrapper"
                                     class="cyber-textbox is-active-box rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
                                     <input id="leftValueInput" type="number" step="any" value="10"
-                                        onfocus="setActiveSide('left')"
-                                        oninput="handleSideInput('left')"
+                                        onfocus="setActiveSide('left')" oninput="handleSideInput('left')"
                                         placeholder="พิมพ์ตัวเลข เช่น 10, 25.5..."
                                         class="w-full bg-transparent font-mono text-2xl sm:text-3xl font-extrabold text-tech-dark outline-none placeholder:text-gray-300 placeholder:text-base placeholder:font-normal" />
                                     <span id="leftUnitSymbolTag"
@@ -546,7 +446,8 @@
                         </div>
 
                         <!-- ปุ่มตัวเลขด่วน & ปุ่ม +/- สำหรับฝั่งซ้าย -->
-                        <div class="mt-3 pt-3 border-t border-gray-200/80 flex flex-wrap items-center justify-between gap-2">
+                        <div
+                            class="mt-3 pt-3 border-t border-gray-200/80 flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-1">
                                 <span class="font-mono text-[10px] text-tech-muted font-bold mr-0.5">ค่าลัด:</span>
                                 <button type="button" onclick="setQuickNumber('left', 1)"
@@ -634,8 +535,7 @@
                                 <div id="rightTextboxWrapper"
                                     class="cyber-textbox rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
                                     <input id="rightValueInput" type="number" step="any"
-                                        onfocus="setActiveSide('right')"
-                                        oninput="handleSideInput('right')"
+                                        onfocus="setActiveSide('right')" oninput="handleSideInput('right')"
                                         placeholder="ผลลัพธ์หรือพิมพ์ตัวเลข..."
                                         class="w-full bg-transparent font-mono text-2xl sm:text-3xl font-extrabold text-crimson-600 outline-none placeholder:text-gray-300 placeholder:text-base placeholder:font-normal" />
                                     <span id="rightUnitSymbolTag"
@@ -647,7 +547,8 @@
                         </div>
 
                         <!-- ปุ่มตัวเลขด่วน & ปุ่ม +/- สำหรับฝั่งขวา -->
-                        <div class="mt-3 pt-3 border-t border-crimson-200/60 flex flex-wrap items-center justify-between gap-2">
+                        <div
+                            class="mt-3 pt-3 border-t border-crimson-200/60 flex flex-wrap items-center justify-between gap-2">
                             <div class="flex items-center gap-1">
                                 <span class="font-mono text-[10px] text-tech-muted font-bold mr-0.5">ค่าลัด:</span>
                                 <button type="button" onclick="setQuickNumber('right', 1)"
@@ -673,8 +574,10 @@
                 </div>
 
                 <!-- แถบแสดงสูตรคำนวณแบบ Live Formula Display -->
-                <div class="mt-6 pt-5 border-t border-tech-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div class="flex flex-wrap items-center gap-2.5 bg-gray-950 text-white px-4 py-3 rounded-2xl border border-gray-800 shadow-sm">
+                <div
+                    class="mt-6 pt-5 border-t border-tech-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div
+                        class="flex flex-wrap items-center gap-2.5 bg-gray-950 text-white px-4 py-3 rounded-2xl border border-gray-800 shadow-sm">
                         <span class="px-2 py-0.5 rounded bg-crimson-500 font-mono text-[10px] font-bold tracking-wider">
                             LIVE RATIO
                         </span>
@@ -696,18 +599,21 @@
             <section class="tech-card rounded-3xl p-4 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-gray-950 text-crimson-500 flex items-center justify-center text-base shrink-0">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gray-950 text-crimson-500 flex items-center justify-center text-base shrink-0">
                             <i class="fa-solid fa-table-cells"></i>
                         </div>
                         <div>
                             <h3 class="text-base sm:text-lg font-extrabold text-tech-dark flex items-center gap-2">
                                 <span>ตารางเทียบผลลัพธ์ทุกหน่วยพร้อมกัน</span>
-                                <span id="matrixUnitCountBadge" class="px-2 py-0.5 rounded-md bg-tech-panel border border-tech-border font-mono text-[10px] text-tech-muted font-bold">
+                                <span id="matrixUnitCountBadge"
+                                    class="px-2 py-0.5 rounded-md bg-tech-panel border border-tech-border font-mono text-[10px] text-tech-muted font-bold">
                                     18 UNITS
                                 </span>
                             </h3>
                             <p class="text-xs text-tech-muted">
-                                เทียบค่า <strong id="matrixBaseLabel" class="text-tech-dark font-mono">10 เซนติเมตร (cm)</strong> กับทุกหน่วยในหมวดนี้
+                                เทียบค่า <strong id="matrixBaseLabel" class="text-tech-dark font-mono">10 เซนติเมตร
+                                    (cm)</strong> กับทุกหน่วยในหมวดนี้
                             </p>
                         </div>
                     </div>
@@ -732,10 +638,12 @@
                 <div id="inlineMatrixBody" class="hidden mt-5 pt-5 border-t border-tech-border">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <span class="text-xs text-tech-muted">
-                            <i class="fa-regular fa-lightbulb text-amber-500 mr-1"></i>คลิกที่การ์ดเพื่อคัดลอกค่า หรือกดปุ่ม <strong>FROM / TO</strong> เพื่อเปลี่ยนหน่วยคำนวณ
+                            <i class="fa-regular fa-lightbulb text-amber-500 mr-1"></i>คลิกที่การ์ดเพื่อคัดลอกค่า
+                            หรือกดปุ่ม <strong>FROM / TO</strong> เพื่อเปลี่ยนหน่วยคำนวณ
                         </span>
                         <div class="relative w-full sm:w-64">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-tech-muted text-xs"></i>
+                            <i
+                                class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-tech-muted text-xs"></i>
                             <input id="unitFilterInput" type="text" oninput="renderAllUnitsMatrix()"
                                 placeholder="กรองชื่อหน่วยในหมวดนี้..."
                                 class="w-full pl-9 pr-3.5 py-2 rounded-xl bg-tech-bg border border-tech-border focus:border-crimson-500 outline-none text-xs font-medium text-tech-dark" />
@@ -758,11 +666,14 @@
     <!-- ===================================================================== -->
     <div id="matrixModal" onclick="if(event.target === this) closeMatrixModal()"
         class="hidden fixed inset-0 z-50 bg-gray-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
-        <div class="bg-tech-bg border border-tech-border rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div
+            class="bg-tech-bg border border-tech-border rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <!-- Modal Header -->
-            <div class="bg-gray-950 text-white px-5 sm:px-7 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+            <div
+                class="bg-gray-950 text-white px-5 sm:px-7 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-crimson-500/20 border border-crimson-500/40 text-crimson-500 flex items-center justify-center text-lg shrink-0">
+                    <div
+                        class="w-11 h-11 rounded-2xl bg-crimson-500/20 border border-crimson-500/40 text-crimson-500 flex items-center justify-center text-lg shrink-0">
                         <i class="fa-solid fa-table-cells"></i>
                     </div>
                     <div>
@@ -770,19 +681,22 @@
                             <h3 id="modalMatrixTitle" class="text-lg sm:text-xl font-extrabold tracking-wide">
                                 ตารางเทียบทุกหน่วยพร้อมกัน
                             </h3>
-                            <span id="modalMatrixBadge" class="px-2 py-0.5 rounded bg-crimson-500 font-mono text-[10px] font-bold">
+                            <span id="modalMatrixBadge"
+                                class="px-2 py-0.5 rounded bg-crimson-500 font-mono text-[10px] font-bold">
                                 LENGTH
                             </span>
                         </div>
                         <p class="text-xs text-gray-300 mt-0.5">
-                            ค่าตั้งต้น: <strong id="modalMatrixBaseLabel" class="text-white font-mono">10 เซนติเมตร (cm)</strong>
+                            ค่าตั้งต้น: <strong id="modalMatrixBaseLabel" class="text-white font-mono">10 เซนติเมตร
+                                (cm)</strong>
                         </p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2.5">
                     <div class="relative flex-grow sm:w-64">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                         <input id="modalUnitFilterInput" type="text" oninput="renderModalMatrix()"
                             placeholder="ค้นหาชื่อหน่วย / สัญลักษณ์..."
                             class="w-full pl-9 pr-3.5 py-2 rounded-xl bg-gray-900 border border-gray-700 focus:border-crimson-500 outline-none text-xs text-white placeholder-gray-400" />
@@ -798,13 +712,15 @@
 
             <!-- Modal Body (Scrollable Grid) -->
             <div class="p-5 sm:p-6 overflow-y-auto flex-grow">
-                <div id="modalUnitsMatrixGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+                <div id="modalUnitsMatrixGrid"
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
                     <!-- Rendered by JS -->
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="bg-white border-t border-tech-border px-5 sm:px-7 py-3.5 flex items-center justify-between text-xs text-tech-muted shrink-0">
+            <div
+                class="bg-white border-t border-tech-border px-5 sm:px-7 py-3.5 flex items-center justify-between text-xs text-tech-muted shrink-0">
                 <span>คลิกที่การ์ดใดก็ได้เพื่อคัดลอกตัวเลขทันที หรือกดปุ่ม <strong>Esc</strong> เพื่อปิด</span>
                 <button type="button" onclick="closeMatrixModal()"
                     class="px-4 py-2 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-xs transition cursor-pointer">
@@ -858,31 +774,31 @@
                 defaultTo: 'in',
                 defaultValue: 10,
                 presets: [
-                    { label: 'cm → นิ้ว', from: 'cm', to: 'in', val: 10 },
-                    { label: 'นิ้ว → cm', from: 'in', to: 'cm', val: 1 },
-                    { label: 'ฟุต → เมตร', from: 'ft', to: 'm', val: 1 },
-                    { label: 'วา → เมตร', from: 'wa', to: 'm', val: 1 },
-                    { label: 'ไมล์ → กม.', from: 'mi', to: 'km', val: 1 }
+                    {label: 'cm → นิ้ว', from: 'cm', to: 'in', val: 10},
+                    {label: 'นิ้ว → cm', from: 'in', to: 'cm', val: 1},
+                    {label: 'ฟุต → เมตร', from: 'ft', to: 'm', val: 1},
+                    {label: 'วา → เมตร', from: 'wa', to: 'm', val: 1},
+                    {label: 'ไมล์ → กม.', from: 'mi', to: 'km', val: 1}
                 ],
                 units: [
-                    { id: 'mm', name: 'มิลลิเมตร', symbol: 'mm', factor: 0.001, group: 'เมตริก' },
-                    { id: 'cm', name: 'เซนติเมตร', symbol: 'cm', factor: 0.01, group: 'เมตริก' },
-                    { id: 'm', name: 'เมตร', symbol: 'm', factor: 1, group: 'เมตริก' },
-                    { id: 'km', name: 'กิโลเมตร', symbol: 'km', factor: 1000, group: 'เมตริก' },
-                    { id: 'um', name: 'ไมโครเมตร (ไมครอน)', symbol: 'µm', factor: 1e-6, group: 'เมตริก' },
-                    { id: 'nm', name: 'นาโนเมตร', symbol: 'nm', factor: 1e-9, group: 'เมตริก' },
-                    { id: 'in', name: 'นิ้ว', symbol: 'in', factor: 0.0254, group: 'อิมพีเรียล / US' },
-                    { id: 'ft', name: 'ฟุต', symbol: 'ft', factor: 0.3048, group: 'อิมพีเรียล / US' },
-                    { id: 'yd', name: 'หลา', symbol: 'yd', factor: 0.9144, group: 'อิมพีเรียล / US' },
-                    { id: 'mi', name: 'ไมล์', symbol: 'mi', factor: 1609.344, group: 'อิมพีเรียล / US' },
-                    { id: 'nmi', name: 'ไมล์ทะเล (Nautical Mile)', symbol: 'nmi', factor: 1852, group: 'เดินเรือ / การบิน' },
-                    { id: 'krabiat', name: 'กระเบียด (ไทย)', symbol: 'กระเบียด', factor: 0.0052083333, group: 'มาตราวัดไทย' },
-                    { id: 'nio_thai', name: 'นิ้วไทย (4 กระเบียด)', symbol: 'นิ้วไทย', factor: 0.0208333333, group: 'มาตราวัดไทย' },
-                    { id: 'khuep', name: 'คืบ (12 นิ้วไทย)', symbol: 'คืบ', factor: 0.25, group: 'มาตราวัดไทย' },
-                    { id: 'sok', name: 'ศอก (2 คืบ)', symbol: 'ศอก', factor: 0.5, group: 'มาตราวัดไทย' },
-                    { id: 'wa', name: 'วา (4 ศอก)', symbol: 'วา', factor: 2, group: 'มาตราวัดไทย' },
-                    { id: 'sen', name: 'เส้น (20 วา)', symbol: 'เส้น', factor: 40, group: 'มาตราวัดไทย' },
-                    { id: 'yot', name: 'โยชน์ (400 เส้น)', symbol: 'โยชน์', factor: 16000, group: 'มาตราวัดไทย' }
+                    {id: 'mm', name: 'มิลลิเมตร', symbol: 'mm', factor: 0.001, group: 'เมตริก'},
+                    {id: 'cm', name: 'เซนติเมตร', symbol: 'cm', factor: 0.01, group: 'เมตริก'},
+                    {id: 'm', name: 'เมตร', symbol: 'm', factor: 1, group: 'เมตริก'},
+                    {id: 'km', name: 'กิโลเมตร', symbol: 'km', factor: 1000, group: 'เมตริก'},
+                    {id: 'um', name: 'ไมโครเมตร (ไมครอน)', symbol: 'µm', factor: 1e-6, group: 'เมตริก'},
+                    {id: 'nm', name: 'นาโนเมตร', symbol: 'nm', factor: 1e-9, group: 'เมตริก'},
+                    {id: 'in', name: 'นิ้ว', symbol: 'in', factor: 0.0254, group: 'อิมพีเรียล / US'},
+                    {id: 'ft', name: 'ฟุต', symbol: 'ft', factor: 0.3048, group: 'อิมพีเรียล / US'},
+                    {id: 'yd', name: 'หลา', symbol: 'yd', factor: 0.9144, group: 'อิมพีเรียล / US'},
+                    {id: 'mi', name: 'ไมล์', symbol: 'mi', factor: 1609.344, group: 'อิมพีเรียล / US'},
+                    {id: 'nmi', name: 'ไมล์ทะเล (Nautical Mile)', symbol: 'nmi', factor: 1852, group: 'เดินเรือ / การบิน'},
+                    {id: 'krabiat', name: 'กระเบียด (ไทย)', symbol: 'กระเบียด', factor: 0.0052083333, group: 'มาตราวัดไทย'},
+                    {id: 'nio_thai', name: 'นิ้วไทย (4 กระเบียด)', symbol: 'นิ้วไทย', factor: 0.0208333333, group: 'มาตราวัดไทย'},
+                    {id: 'khuep', name: 'คืบ (12 นิ้วไทย)', symbol: 'คืบ', factor: 0.25, group: 'มาตราวัดไทย'},
+                    {id: 'sok', name: 'ศอก (2 คืบ)', symbol: 'ศอก', factor: 0.5, group: 'มาตราวัดไทย'},
+                    {id: 'wa', name: 'วา (4 ศอก)', symbol: 'วา', factor: 2, group: 'มาตราวัดไทย'},
+                    {id: 'sen', name: 'เส้น (20 วา)', symbol: 'เส้น', factor: 40, group: 'มาตราวัดไทย'},
+                    {id: 'yot', name: 'โยชน์ (400 เส้น)', symbol: 'โยชน์', factor: 16000, group: 'มาตราวัดไทย'}
                 ]
             },
             {
@@ -895,27 +811,27 @@
                 defaultTo: 'lb',
                 defaultValue: 1,
                 presets: [
-                    { label: 'kg → ปอนด์', from: 'kg', to: 'lb', val: 1 },
-                    { label: 'บาททอง → กรัม', from: 'baht_gold', to: 'g', val: 1 },
-                    { label: 'ออนซ์ → กรัม', from: 'oz', to: 'g', val: 1 },
-                    { label: 'ปอนด์ → kg', from: 'lb', to: 'kg', val: 100 }
+                    {label: 'kg → ปอนด์', from: 'kg', to: 'lb', val: 1},
+                    {label: 'บาททอง → กรัม', from: 'baht_gold', to: 'g', val: 1},
+                    {label: 'ออนซ์ → กรัม', from: 'oz', to: 'g', val: 1},
+                    {label: 'ปอนด์ → kg', from: 'lb', to: 'kg', val: 100}
                 ],
                 units: [
-                    { id: 'mg', name: 'มิลลิกรัม', symbol: 'mg', factor: 0.001, group: 'เมตริก' },
-                    { id: 'g', name: 'กรัม', symbol: 'g', factor: 1, group: 'เมตริก' },
-                    { id: 'khit', name: 'ขีด (100 กรัม)', symbol: 'ขีด', factor: 100, group: 'ไทย / ตลาดสด' },
-                    { id: 'kg', name: 'กิโลกรัม', symbol: 'kg', factor: 1000, group: 'เมตริก' },
-                    { id: 'ton', name: 'ตันเมตริก (Metric Ton)', symbol: 't', factor: 1000000, group: 'เมตริก' },
-                    { id: 'oz', name: 'ออนซ์ (Avoirdupois oz)', symbol: 'oz', factor: 28.349523125, group: 'อิมพีเรียล / US' },
-                    { id: 'ozt', name: 'ทรอยออนซ์ (ทองคำสากล)', symbol: 'oz t', factor: 31.1034768, group: 'อัญมณี / ทองคำ' },
-                    { id: 'lb', name: 'ปอนด์ (Pound)', symbol: 'lb', factor: 453.59237, group: 'อิมพีเรียล / US' },
-                    { id: 'st', name: 'สโตน (Stone UK)', symbol: 'st', factor: 6350.29318, group: 'อิมพีเรียล / US' },
-                    { id: 'ct', name: 'กะรัต (Carat เพชร/พลอย)', symbol: 'ct', factor: 0.2, group: 'อัญมณี / ทองคำ' },
-                    { id: 'baht_gold', name: 'บาททองคำ (ทองรูปพรรณ/แท่ง)', symbol: 'บาททอง', factor: 15.244, group: 'มาตราชั่งตวงไทย' },
-                    { id: 'salueng', name: 'สลึง (1/4 บาททอง)', symbol: 'สลึง', factor: 3.811, group: 'มาตราชั่งตวงไทย' },
-                    { id: 'fueang', name: 'เฟื้อง (1/8 บาททอง)', symbol: 'เฟื้อง', factor: 1.9055, group: 'มาตราชั่งตวงไทย' },
-                    { id: 'chang', name: 'ชั่งไทย (80 บาท)', symbol: 'ชั่ง', factor: 1200, group: 'มาตราชั่งตวงไทย' },
-                    { id: 'hap', name: 'หาบไทย (50 ชั่ง)', symbol: 'หาบ', factor: 60000, group: 'มาตราชั่งตวงไทย' }
+                    {id: 'mg', name: 'มิลลิกรัม', symbol: 'mg', factor: 0.001, group: 'เมตริก'},
+                    {id: 'g', name: 'กรัม', symbol: 'g', factor: 1, group: 'เมตริก'},
+                    {id: 'khit', name: 'ขีด (100 กรัม)', symbol: 'ขีด', factor: 100, group: 'ไทย / ตลาดสด'},
+                    {id: 'kg', name: 'กิโลกรัม', symbol: 'kg', factor: 1000, group: 'เมตริก'},
+                    {id: 'ton', name: 'ตันเมตริก (Metric Ton)', symbol: 't', factor: 1000000, group: 'เมตริก'},
+                    {id: 'oz', name: 'ออนซ์ (Avoirdupois oz)', symbol: 'oz', factor: 28.349523125, group: 'อิมพีเรียล / US'},
+                    {id: 'ozt', name: 'ทรอยออนซ์ (ทองคำสากล)', symbol: 'oz t', factor: 31.1034768, group: 'อัญมณี / ทองคำ'},
+                    {id: 'lb', name: 'ปอนด์ (Pound)', symbol: 'lb', factor: 453.59237, group: 'อิมพีเรียล / US'},
+                    {id: 'st', name: 'สโตน (Stone UK)', symbol: 'st', factor: 6350.29318, group: 'อิมพีเรียล / US'},
+                    {id: 'ct', name: 'กะรัต (Carat เพชร/พลอย)', symbol: 'ct', factor: 0.2, group: 'อัญมณี / ทองคำ'},
+                    {id: 'baht_gold', name: 'บาททองคำ (ทองรูปพรรณ/แท่ง)', symbol: 'บาททอง', factor: 15.244, group: 'มาตราชั่งตวงไทย'},
+                    {id: 'salueng', name: 'สลึง (1/4 บาททอง)', symbol: 'สลึง', factor: 3.811, group: 'มาตราชั่งตวงไทย'},
+                    {id: 'fueang', name: 'เฟื้อง (1/8 บาททอง)', symbol: 'เฟื้อง', factor: 1.9055, group: 'มาตราชั่งตวงไทย'},
+                    {id: 'chang', name: 'ชั่งไทย (80 บาท)', symbol: 'ชั่ง', factor: 1200, group: 'มาตราชั่งตวงไทย'},
+                    {id: 'hap', name: 'หาบไทย (50 ชั่ง)', symbol: 'หาบ', factor: 60000, group: 'มาตราชั่งตวงไทย'}
                 ]
             },
             {
@@ -928,26 +844,26 @@
                 defaultTo: 'sqm',
                 defaultValue: 1,
                 presets: [
-                    { label: 'ไร่ → ตร.ม.', from: 'rai', to: 'sqm', val: 1 },
-                    { label: 'ไร่ → ตร.วา', from: 'rai', to: 'sqwa', val: 1 },
-                    { label: 'ตร.วา → ตร.ม.', from: 'sqwa', to: 'sqm', val: 1 },
-                    { label: 'เอเคอร์ → ไร่', from: 'acre', to: 'rai', val: 1 },
-                    { label: 'ตร.ม. → ตร.ฟุต', from: 'sqm', to: 'sqft', val: 1 }
+                    {label: 'ไร่ → ตร.ม.', from: 'rai', to: 'sqm', val: 1},
+                    {label: 'ไร่ → ตร.วา', from: 'rai', to: 'sqwa', val: 1},
+                    {label: 'ตร.วา → ตร.ม.', from: 'sqwa', to: 'sqm', val: 1},
+                    {label: 'เอเคอร์ → ไร่', from: 'acre', to: 'rai', val: 1},
+                    {label: 'ตร.ม. → ตร.ฟุต', from: 'sqm', to: 'sqft', val: 1}
                 ],
                 units: [
-                    { id: 'sqmm', name: 'ตารางมิลลิเมตร', symbol: 'mm²', factor: 1e-6, group: 'เมตริก' },
-                    { id: 'sqcm', name: 'ตารางเซนติเมตร', symbol: 'cm²', factor: 1e-4, group: 'เมตริก' },
-                    { id: 'sqm', name: 'ตารางเมตร', symbol: 'm²', factor: 1, group: 'เมตริก' },
-                    { id: 'ha', name: 'เฮกตาร์ (Hectare)', symbol: 'ha', factor: 10000, group: 'เมตริก' },
-                    { id: 'sqkm', name: 'ตารางกิโลเมตร', symbol: 'km²', factor: 1e6, group: 'เมตริก' },
-                    { id: 'sqwa', name: 'ตารางวา', symbol: 'ตร.วา', factor: 4, group: 'มาตราวัดที่ดินไทย' },
-                    { id: 'ngan', name: 'งาน (100 ตารางวา)', symbol: 'งาน', factor: 400, group: 'มาตราวัดที่ดินไทย' },
-                    { id: 'rai', name: 'ไร่ (4 งาน / 400 ตร.วา)', symbol: 'ไร่', factor: 1600, group: 'มาตราวัดที่ดินไทย' },
-                    { id: 'sqin', name: 'ตารางนิ้ว', symbol: 'in²', factor: 0.00064516, group: 'อิมพีเรียล / US' },
-                    { id: 'sqft', name: 'ตารางฟุต', symbol: 'ft²', factor: 0.09290304, group: 'อิมพีเรียล / US' },
-                    { id: 'sqyd', name: 'ตารางหลา', symbol: 'yd²', factor: 0.83612736, group: 'อิมพีเรียล / US' },
-                    { id: 'acre', name: 'เอเคอร์ (Acre)', symbol: 'ac', factor: 4046.8564224, group: 'อิมพีเรียล / US' },
-                    { id: 'sqmi', name: 'ตารางไมล์', symbol: 'mi²', factor: 2589988.110336, group: 'อิมพีเรียล / US' }
+                    {id: 'sqmm', name: 'ตารางมิลลิเมตร', symbol: 'mm²', factor: 1e-6, group: 'เมตริก'},
+                    {id: 'sqcm', name: 'ตารางเซนติเมตร', symbol: 'cm²', factor: 1e-4, group: 'เมตริก'},
+                    {id: 'sqm', name: 'ตารางเมตร', symbol: 'm²', factor: 1, group: 'เมตริก'},
+                    {id: 'ha', name: 'เฮกตาร์ (Hectare)', symbol: 'ha', factor: 10000, group: 'เมตริก'},
+                    {id: 'sqkm', name: 'ตารางกิโลเมตร', symbol: 'km²', factor: 1e6, group: 'เมตริก'},
+                    {id: 'sqwa', name: 'ตารางวา', symbol: 'ตร.วา', factor: 4, group: 'มาตราวัดที่ดินไทย'},
+                    {id: 'ngan', name: 'งาน (100 ตารางวา)', symbol: 'งาน', factor: 400, group: 'มาตราวัดที่ดินไทย'},
+                    {id: 'rai', name: 'ไร่ (4 งาน / 400 ตร.วา)', symbol: 'ไร่', factor: 1600, group: 'มาตราวัดที่ดินไทย'},
+                    {id: 'sqin', name: 'ตารางนิ้ว', symbol: 'in²', factor: 0.00064516, group: 'อิมพีเรียล / US'},
+                    {id: 'sqft', name: 'ตารางฟุต', symbol: 'ft²', factor: 0.09290304, group: 'อิมพีเรียล / US'},
+                    {id: 'sqyd', name: 'ตารางหลา', symbol: 'yd²', factor: 0.83612736, group: 'อิมพีเรียล / US'},
+                    {id: 'acre', name: 'เอเคอร์ (Acre)', symbol: 'ac', factor: 4046.8564224, group: 'อิมพีเรียล / US'},
+                    {id: 'sqmi', name: 'ตารางไมล์', symbol: 'mi²', factor: 2589988.110336, group: 'อิมพีเรียล / US'}
                 ]
             },
             {
@@ -960,26 +876,26 @@
                 defaultTo: 'ml',
                 defaultValue: 1,
                 presets: [
-                    { label: 'ลิตร → ml', from: 'l', to: 'ml', val: 1 },
-                    { label: 'แกลลอน US → ลิตร', from: 'gal_us', to: 'l', val: 1 },
-                    { label: 'ถ้วยตวง → ml', from: 'cup', to: 'ml', val: 1 },
-                    { label: 'ลบ.ม. → ลิตร', from: 'm3', to: 'l', val: 1 }
+                    {label: 'ลิตร → ml', from: 'l', to: 'ml', val: 1},
+                    {label: 'แกลลอน US → ลิตร', from: 'gal_us', to: 'l', val: 1},
+                    {label: 'ถ้วยตวง → ml', from: 'cup', to: 'ml', val: 1},
+                    {label: 'ลบ.ม. → ลิตร', from: 'm3', to: 'l', val: 1}
                 ],
                 units: [
-                    { id: 'ml', name: 'มิลลิลิตร / ซีซี (cc)', symbol: 'ml', factor: 0.001, group: 'เมตริก' },
-                    { id: 'l', name: 'ลิตร', symbol: 'L', factor: 1, group: 'เมตริก' },
-                    { id: 'm3', name: 'ลูกบาศก์เมตร (คิว)', symbol: 'm³', factor: 1000, group: 'เมตริก / ก่อสร้าง' },
-                    { id: 'tsp', name: 'ช้อนชา (Teaspoon)', symbol: 'tsp', factor: 0.00492892, group: 'ตวงอาหาร / เบเกอรี่' },
-                    { id: 'tbsp', name: 'ช้อนโต๊ะ (Tablespoon)', symbol: 'tbsp', factor: 0.0147868, group: 'ตวงอาหาร / เบเกอรี่' },
-                    { id: 'floz_us', name: 'ออนซ์ของเหลว (US fl oz)', symbol: 'fl oz', factor: 0.0295735, group: 'ตวงอาหาร / เบเกอรี่' },
-                    { id: 'cup', name: 'ถ้วยตวง (US Cup)', symbol: 'cup', factor: 0.236588, group: 'ตวงอาหาร / เบเกอรี่' },
-                    { id: 'pt_us', name: 'ไพนต์ (US Pint)', symbol: 'pt', factor: 0.473176, group: 'อิมพีเรียล / US' },
-                    { id: 'qt_us', name: 'ควอร์ต (US Quart)', symbol: 'qt', factor: 0.946353, group: 'อิมพีเรียล / US' },
-                    { id: 'gal_us', name: 'แกลลอน (US Gallon)', symbol: 'gal US', factor: 3.785411784, group: 'อิมพีเรียล / US' },
-                    { id: 'gal_uk', name: 'แกลลอนอังกฤษ (UK Imperial)', symbol: 'gal UK', factor: 4.54609, group: 'อิมพีเรียล / US' },
-                    { id: 'bbl', name: 'บาร์เรลน้ำมัน (Oil Barrel)', symbol: 'bbl', factor: 158.987295, group: 'อุตสาหกรรม' },
-                    { id: 'thang', name: 'ถัง (ตวงข้าวไทย 20 ลิตร)', symbol: 'ถัง', factor: 20, group: 'มาตราตวงไทย' },
-                    { id: 'kwian', name: 'เกวียน (100 ถัง)', symbol: 'เกวียน', factor: 2000, group: 'มาตราตวงไทย' }
+                    {id: 'ml', name: 'มิลลิลิตร / ซีซี (cc)', symbol: 'ml', factor: 0.001, group: 'เมตริก'},
+                    {id: 'l', name: 'ลิตร', symbol: 'L', factor: 1, group: 'เมตริก'},
+                    {id: 'm3', name: 'ลูกบาศก์เมตร (คิว)', symbol: 'm³', factor: 1000, group: 'เมตริก / ก่อสร้าง'},
+                    {id: 'tsp', name: 'ช้อนชา (Teaspoon)', symbol: 'tsp', factor: 0.00492892, group: 'ตวงอาหาร / เบเกอรี่'},
+                    {id: 'tbsp', name: 'ช้อนโต๊ะ (Tablespoon)', symbol: 'tbsp', factor: 0.0147868, group: 'ตวงอาหาร / เบเกอรี่'},
+                    {id: 'floz_us', name: 'ออนซ์ของเหลว (US fl oz)', symbol: 'fl oz', factor: 0.0295735, group: 'ตวงอาหาร / เบเกอรี่'},
+                    {id: 'cup', name: 'ถ้วยตวง (US Cup)', symbol: 'cup', factor: 0.236588, group: 'ตวงอาหาร / เบเกอรี่'},
+                    {id: 'pt_us', name: 'ไพนต์ (US Pint)', symbol: 'pt', factor: 0.473176, group: 'อิมพีเรียล / US'},
+                    {id: 'qt_us', name: 'ควอร์ต (US Quart)', symbol: 'qt', factor: 0.946353, group: 'อิมพีเรียล / US'},
+                    {id: 'gal_us', name: 'แกลลอน (US Gallon)', symbol: 'gal US', factor: 3.785411784, group: 'อิมพีเรียล / US'},
+                    {id: 'gal_uk', name: 'แกลลอนอังกฤษ (UK Imperial)', symbol: 'gal UK', factor: 4.54609, group: 'อิมพีเรียล / US'},
+                    {id: 'bbl', name: 'บาร์เรลน้ำมัน (Oil Barrel)', symbol: 'bbl', factor: 158.987295, group: 'อุตสาหกรรม'},
+                    {id: 'thang', name: 'ถัง (ตวงข้าวไทย 20 ลิตร)', symbol: 'ถัง', factor: 20, group: 'มาตราตวงไทย'},
+                    {id: 'kwian', name: 'เกวียน (100 ถัง)', symbol: 'เกวียน', factor: 2000, group: 'มาตราตวงไทย'}
                 ]
             },
             {
@@ -993,16 +909,16 @@
                 defaultValue: 25,
                 isCustomFormula: true,
                 presets: [
-                    { label: '25°C → °F', from: 'c', to: 'f', val: 25 },
-                    { label: '100°C → °F', from: 'c', to: 'f', val: 100 },
-                    { label: '98.6°F → °C', from: 'f', to: 'c', val: 98.6 },
-                    { label: '0°C → เคลวิน', from: 'c', to: 'k', val: 0 }
+                    {label: '25°C → °F', from: 'c', to: 'f', val: 25},
+                    {label: '100°C → °F', from: 'c', to: 'f', val: 100},
+                    {label: '98.6°F → °C', from: 'f', to: 'c', val: 98.6},
+                    {label: '0°C → เคลวิน', from: 'c', to: 'k', val: 0}
                 ],
                 units: [
-                    { id: 'c', name: 'องศาเซลเซียส', symbol: '°C', group: 'สากล' },
-                    { id: 'f', name: 'องศาฟาเรนไฮต์', symbol: '°F', group: 'US / อิมพีเรียล' },
-                    { id: 'k', name: 'เคลวิน (Kelvin)', symbol: 'K', group: 'วิทยาศาสตร์ SI' },
-                    { id: 'r', name: 'แรงคิน (Rankine)', symbol: '°R', group: 'วิศวกรรม' }
+                    {id: 'c', name: 'องศาเซลเซียส', symbol: '°C', group: 'สากล'},
+                    {id: 'f', name: 'องศาฟาเรนไฮต์', symbol: '°F', group: 'US / อิมพีเรียล'},
+                    {id: 'k', name: 'เคลวิน (Kelvin)', symbol: 'K', group: 'วิทยาศาสตร์ SI'},
+                    {id: 'r', name: 'แรงคิน (Rankine)', symbol: '°R', group: 'วิศวกรรม'}
                 ]
             },
             {
@@ -1015,18 +931,18 @@
                 defaultTo: 'mph',
                 defaultValue: 100,
                 presets: [
-                    { label: '100 km/h → mph', from: 'kmh', to: 'mph', val: 100 },
-                    { label: 'm/s → km/h', from: 'ms', to: 'kmh', val: 10 },
-                    { label: 'นอต → km/h', from: 'knot', to: 'kmh', val: 20 },
-                    { label: 'มัค 1 → km/h', from: 'mach', to: 'kmh', val: 1 }
+                    {label: '100 km/h → mph', from: 'kmh', to: 'mph', val: 100},
+                    {label: 'm/s → km/h', from: 'ms', to: 'kmh', val: 10},
+                    {label: 'นอต → km/h', from: 'knot', to: 'kmh', val: 20},
+                    {label: 'มัค 1 → km/h', from: 'mach', to: 'kmh', val: 1}
                 ],
                 units: [
-                    { id: 'ms', name: 'เมตรต่อวินาที', symbol: 'm/s', factor: 1, group: 'SI / วิทยาศาสตร์' },
-                    { id: 'kmh', name: 'กิโลเมตรต่อชั่วโมง', symbol: 'km/h', factor: 0.277777778, group: 'การเดินทาง' },
-                    { id: 'mph', name: 'ไมล์ต่อชั่วโมง', symbol: 'mph', factor: 0.44704, group: 'US / UK' },
-                    { id: 'fps', name: 'ฟุตต่อวินาที', symbol: 'ft/s', factor: 0.3048, group: 'วิศวกรรม' },
-                    { id: 'knot', name: 'นอต (Knot เดินเรือ/การบิน)', symbol: 'kn', factor: 0.514444444, group: 'เดินเรือ / การบิน' },
-                    { id: 'mach', name: 'มัค (Mach ความเร็วเสียง)', symbol: 'Mach', factor: 340.3, group: 'การบิน / อวกาศ' }
+                    {id: 'ms', name: 'เมตรต่อวินาที', symbol: 'm/s', factor: 1, group: 'SI / วิทยาศาสตร์'},
+                    {id: 'kmh', name: 'กิโลเมตรต่อชั่วโมง', symbol: 'km/h', factor: 0.277777778, group: 'การเดินทาง'},
+                    {id: 'mph', name: 'ไมล์ต่อชั่วโมง', symbol: 'mph', factor: 0.44704, group: 'US / UK'},
+                    {id: 'fps', name: 'ฟุตต่อวินาที', symbol: 'ft/s', factor: 0.3048, group: 'วิศวกรรม'},
+                    {id: 'knot', name: 'นอต (Knot เดินเรือ/การบิน)', symbol: 'kn', factor: 0.514444444, group: 'เดินเรือ / การบิน'},
+                    {id: 'mach', name: 'มัค (Mach ความเร็วเสียง)', symbol: 'Mach', factor: 340.3, group: 'การบิน / อวกาศ'}
                 ]
             },
             {
@@ -1039,25 +955,25 @@
                 defaultTo: 'mb',
                 defaultValue: 1,
                 presets: [
-                    { label: '1 GB → MB', from: 'gb', to: 'mb', val: 1 },
-                    { label: '1 TB → GB', from: 'tb', to: 'gb', val: 1 },
-                    { label: '100 Mbps → MB/s', from: 'mbit', to: 'mb', val: 100 },
-                    { label: '1 GiB → GB', from: 'gib', to: 'gb', val: 1 }
+                    {label: '1 GB → MB', from: 'gb', to: 'mb', val: 1},
+                    {label: '1 TB → GB', from: 'tb', to: 'gb', val: 1},
+                    {label: '100 Mbps → MB/s', from: 'mbit', to: 'mb', val: 100},
+                    {label: '1 GiB → GB', from: 'gib', to: 'gb', val: 1}
                 ],
                 units: [
-                    { id: 'bit', name: 'บิต (Bit)', symbol: 'bit', factor: 0.125, group: 'พื้นฐาน' },
-                    { id: 'byte', name: 'ไบต์ (Byte)', symbol: 'B', factor: 1, group: 'พื้นฐาน' },
-                    { id: 'kb', name: 'กิโลไบต์ (Decimal KB)', symbol: 'KB', factor: 1e3, group: 'ฐาน 10 (SI)' },
-                    { id: 'mb', name: 'เมกะไบต์ (Decimal MB)', symbol: 'MB', factor: 1e6, group: 'ฐาน 10 (SI)' },
-                    { id: 'gb', name: 'กิกะไบต์ (Decimal GB)', symbol: 'GB', factor: 1e9, group: 'ฐาน 10 (SI)' },
-                    { id: 'tb', name: 'เทระไบต์ (Decimal TB)', symbol: 'TB', factor: 1e12, group: 'ฐาน 10 (SI)' },
-                    { id: 'pb', name: 'เพตะไบต์ (Decimal PB)', symbol: 'PB', factor: 1e15, group: 'ฐาน 10 (SI)' },
-                    { id: 'kib', name: 'กิบิไบต์ (Binary 1024 B)', symbol: 'KiB', factor: 1024, group: 'ฐาน 2 (Binary)' },
-                    { id: 'mib', name: 'เมบิไบต์ (Binary 1024 KiB)', symbol: 'MiB', factor: 1048576, group: 'ฐาน 2 (Binary)' },
-                    { id: 'gib', name: 'กิบิไบต์ (Binary 1024 MiB)', symbol: 'GiB', factor: 1073741824, group: 'ฐาน 2 (Binary)' },
-                    { id: 'tib', name: 'เทบิไบต์ (Binary 1024 GiB)', symbol: 'TiB', factor: 1099511627776, group: 'ฐาน 2 (Binary)' },
-                    { id: 'mbit', name: 'เมกะบิต (Megabit)', symbol: 'Mbit', factor: 125000, group: 'ความเร็วเน็ต' },
-                    { id: 'gbit', name: 'กิกะบิต (Gigabit)', symbol: 'Gbit', factor: 125000000, group: 'ความเร็วเน็ต' }
+                    {id: 'bit', name: 'บิต (Bit)', symbol: 'bit', factor: 0.125, group: 'พื้นฐาน'},
+                    {id: 'byte', name: 'ไบต์ (Byte)', symbol: 'B', factor: 1, group: 'พื้นฐาน'},
+                    {id: 'kb', name: 'กิโลไบต์ (Decimal KB)', symbol: 'KB', factor: 1e3, group: 'ฐาน 10 (SI)'},
+                    {id: 'mb', name: 'เมกะไบต์ (Decimal MB)', symbol: 'MB', factor: 1e6, group: 'ฐาน 10 (SI)'},
+                    {id: 'gb', name: 'กิกะไบต์ (Decimal GB)', symbol: 'GB', factor: 1e9, group: 'ฐาน 10 (SI)'},
+                    {id: 'tb', name: 'เทระไบต์ (Decimal TB)', symbol: 'TB', factor: 1e12, group: 'ฐาน 10 (SI)'},
+                    {id: 'pb', name: 'เพตะไบต์ (Decimal PB)', symbol: 'PB', factor: 1e15, group: 'ฐาน 10 (SI)'},
+                    {id: 'kib', name: 'กิบิไบต์ (Binary 1024 B)', symbol: 'KiB', factor: 1024, group: 'ฐาน 2 (Binary)'},
+                    {id: 'mib', name: 'เมบิไบต์ (Binary 1024 KiB)', symbol: 'MiB', factor: 1048576, group: 'ฐาน 2 (Binary)'},
+                    {id: 'gib', name: 'กิบิไบต์ (Binary 1024 MiB)', symbol: 'GiB', factor: 1073741824, group: 'ฐาน 2 (Binary)'},
+                    {id: 'tib', name: 'เทบิไบต์ (Binary 1024 GiB)', symbol: 'TiB', factor: 1099511627776, group: 'ฐาน 2 (Binary)'},
+                    {id: 'mbit', name: 'เมกะบิต (Megabit)', symbol: 'Mbit', factor: 125000, group: 'ความเร็วเน็ต'},
+                    {id: 'gbit', name: 'กิกะบิต (Gigabit)', symbol: 'Gbit', factor: 125000000, group: 'ความเร็วเน็ต'}
                 ]
             },
             {
@@ -1070,20 +986,20 @@
                 defaultTo: 'min',
                 defaultValue: 1,
                 presets: [
-                    { label: 'ชั่วโมง → นาที', from: 'hr', to: 'min', val: 1 },
-                    { label: 'วัน → ชั่วโมง', from: 'day', to: 'hr', val: 1 },
-                    { label: 'ปี → วัน', from: 'yr', to: 'day', val: 1 },
-                    { label: 'สัปดาห์ → ชั่วโมง', from: 'wk', to: 'hr', val: 1 }
+                    {label: 'ชั่วโมง → นาที', from: 'hr', to: 'min', val: 1},
+                    {label: 'วัน → ชั่วโมง', from: 'day', to: 'hr', val: 1},
+                    {label: 'ปี → วัน', from: 'yr', to: 'day', val: 1},
+                    {label: 'สัปดาห์ → ชั่วโมง', from: 'wk', to: 'hr', val: 1}
                 ],
                 units: [
-                    { id: 'ms', name: 'มิลลิวินาที', symbol: 'ms', factor: 0.001, group: 'ละเอียด' },
-                    { id: 's', name: 'วินาที', symbol: 's', factor: 1, group: 'พื้นฐาน' },
-                    { id: 'min', name: 'นาที', symbol: 'min', factor: 60, group: 'พื้นฐาน' },
-                    { id: 'hr', name: 'ชั่วโมง', symbol: 'hr', factor: 3600, group: 'พื้นฐาน' },
-                    { id: 'day', name: 'วัน (24 ชั่วโมง)', symbol: 'day', factor: 86400, group: 'ปฏิทิน' },
-                    { id: 'wk', name: 'สัปดาห์ (7 วัน)', symbol: 'wk', factor: 604800, group: 'ปฏิทิน' },
-                    { id: 'mo', name: 'เดือนเฉลี่ย (30.4375 วัน)', symbol: 'mo', factor: 2629800, group: 'ปฏิทิน' },
-                    { id: 'yr', name: 'ปี (365.25 วัน)', symbol: 'yr', factor: 31557600, group: 'ปฏิทิน' }
+                    {id: 'ms', name: 'มิลลิวินาที', symbol: 'ms', factor: 0.001, group: 'ละเอียด'},
+                    {id: 's', name: 'วินาที', symbol: 's', factor: 1, group: 'พื้นฐาน'},
+                    {id: 'min', name: 'นาที', symbol: 'min', factor: 60, group: 'พื้นฐาน'},
+                    {id: 'hr', name: 'ชั่วโมง', symbol: 'hr', factor: 3600, group: 'พื้นฐาน'},
+                    {id: 'day', name: 'วัน (24 ชั่วโมง)', symbol: 'day', factor: 86400, group: 'ปฏิทิน'},
+                    {id: 'wk', name: 'สัปดาห์ (7 วัน)', symbol: 'wk', factor: 604800, group: 'ปฏิทิน'},
+                    {id: 'mo', name: 'เดือนเฉลี่ย (30.4375 วัน)', symbol: 'mo', factor: 2629800, group: 'ปฏิทิน'},
+                    {id: 'yr', name: 'ปี (365.25 วัน)', symbol: 'yr', factor: 31557600, group: 'ปฏิทิน'}
                 ]
             },
             {
@@ -1096,20 +1012,20 @@
                 defaultTo: 'bar',
                 defaultValue: 32,
                 presets: [
-                    { label: '32 PSI → Bar', from: 'psi', to: 'bar', val: 32 },
-                    { label: '32 PSI → kPa', from: 'psi', to: 'kpa', val: 32 },
-                    { label: '1 Bar → PSI', from: 'bar', to: 'psi', val: 1 },
-                    { label: '1 atm → mmHg', from: 'atm', to: 'mmhg', val: 1 }
+                    {label: '32 PSI → Bar', from: 'psi', to: 'bar', val: 32},
+                    {label: '32 PSI → kPa', from: 'psi', to: 'kpa', val: 32},
+                    {label: '1 Bar → PSI', from: 'bar', to: 'psi', val: 1},
+                    {label: '1 atm → mmHg', from: 'atm', to: 'mmhg', val: 1}
                 ],
                 units: [
-                    { id: 'pa', name: 'ปาสคาล (Pascal)', symbol: 'Pa', factor: 1, group: 'SI' },
-                    { id: 'kpa', name: 'กิโลปาสคาล', symbol: 'kPa', factor: 1000, group: 'SI / ลมยาง' },
-                    { id: 'mpa', name: 'เมกะปาสคาล', symbol: 'MPa', factor: 1e6, group: 'วิศวกรรม' },
-                    { id: 'bar', name: 'บาร์ (Bar)', symbol: 'bar', factor: 100000, group: 'อุตสาหกรรม / ลมยาง' },
-                    { id: 'mbar', name: 'มิลลิบาร์ / เฮกโตปาสคาล', symbol: 'mbar', factor: 100, group: 'อุตุนิยมวิทยา' },
-                    { id: 'psi', name: 'ปอนด์ต่อตารางนิ้ว (PSI)', symbol: 'PSI', factor: 6894.757293, group: 'ลมยาง / US' },
-                    { id: 'atm', name: 'บรรยากาศมาตรฐาน (atm)', symbol: 'atm', factor: 101325, group: 'วิทยาศาสตร์' },
-                    { id: 'mmhg', name: 'มิลลิเมตรปรอท (mmHg / Torr)', symbol: 'mmHg', factor: 133.322387, group: 'การแพทย์ / ความดันเลือด' }
+                    {id: 'pa', name: 'ปาสคาล (Pascal)', symbol: 'Pa', factor: 1, group: 'SI'},
+                    {id: 'kpa', name: 'กิโลปาสคาล', symbol: 'kPa', factor: 1000, group: 'SI / ลมยาง'},
+                    {id: 'mpa', name: 'เมกะปาสคาล', symbol: 'MPa', factor: 1e6, group: 'วิศวกรรม'},
+                    {id: 'bar', name: 'บาร์ (Bar)', symbol: 'bar', factor: 100000, group: 'อุตสาหกรรม / ลมยาง'},
+                    {id: 'mbar', name: 'มิลลิบาร์ / เฮกโตปาสคาล', symbol: 'mbar', factor: 100, group: 'อุตุนิยมวิทยา'},
+                    {id: 'psi', name: 'ปอนด์ต่อตารางนิ้ว (PSI)', symbol: 'PSI', factor: 6894.757293, group: 'ลมยาง / US'},
+                    {id: 'atm', name: 'บรรยากาศมาตรฐาน (atm)', symbol: 'atm', factor: 101325, group: 'วิทยาศาสตร์'},
+                    {id: 'mmhg', name: 'มิลลิเมตรปรอท (mmHg / Torr)', symbol: 'mmHg', factor: 133.322387, group: 'การแพทย์ / ความดันเลือด'}
                 ]
             },
             {
@@ -1122,19 +1038,19 @@
                 defaultTo: 'kj',
                 defaultValue: 500,
                 presets: [
-                    { label: 'kcal → kJ', from: 'kcal', to: 'kj', val: 100 },
-                    { label: '1 หน่วยไฟ (kWh) → MJ', from: 'kwh', to: 'mj', val: 1 },
-                    { label: 'BTU → kWh', from: 'btu', to: 'kwh', val: 12000 }
+                    {label: 'kcal → kJ', from: 'kcal', to: 'kj', val: 100},
+                    {label: '1 หน่วยไฟ (kWh) → MJ', from: 'kwh', to: 'mj', val: 1},
+                    {label: 'BTU → kWh', from: 'btu', to: 'kwh', val: 12000}
                 ],
                 units: [
-                    { id: 'j', name: 'จูล (Joule)', symbol: 'J', factor: 1, group: 'SI' },
-                    { id: 'kj', name: 'กิโลจูล', symbol: 'kJ', factor: 1000, group: 'SI / โภชนาการ' },
-                    { id: 'mj', name: 'เมกะจูล', symbol: 'MJ', factor: 1e6, group: 'อุตสาหกรรม' },
-                    { id: 'cal', name: 'แคลอรีเล็ก (gram calorie)', symbol: 'cal', factor: 4.184, group: 'วิทยาศาสตร์' },
-                    { id: 'kcal', name: 'กิโลแคลอรี (แคลอรีอาหาร)', symbol: 'kcal', factor: 4184, group: 'โภชนาการ / ออกกำลังกาย' },
-                    { id: 'wh', name: 'วัตต์-ชั่วโมง', symbol: 'Wh', factor: 3600, group: 'ไฟฟ้า / แบตเตอรี่' },
-                    { id: 'kwh', name: 'กิโลวัตต์-ชั่วโมง (หน่วยค่าไฟ)', symbol: 'kWh', factor: 3600000, group: 'ไฟฟ้า' },
-                    { id: 'btu', name: 'บีทียู (BTU เครื่องปรับอากาศ)', symbol: 'BTU', factor: 1055.05585, group: 'ความร้อน / แอร์' }
+                    {id: 'j', name: 'จูล (Joule)', symbol: 'J', factor: 1, group: 'SI'},
+                    {id: 'kj', name: 'กิโลจูล', symbol: 'kJ', factor: 1000, group: 'SI / โภชนาการ'},
+                    {id: 'mj', name: 'เมกะจูล', symbol: 'MJ', factor: 1e6, group: 'อุตสาหกรรม'},
+                    {id: 'cal', name: 'แคลอรีเล็ก (gram calorie)', symbol: 'cal', factor: 4.184, group: 'วิทยาศาสตร์'},
+                    {id: 'kcal', name: 'กิโลแคลอรี (แคลอรีอาหาร)', symbol: 'kcal', factor: 4184, group: 'โภชนาการ / ออกกำลังกาย'},
+                    {id: 'wh', name: 'วัตต์-ชั่วโมง', symbol: 'Wh', factor: 3600, group: 'ไฟฟ้า / แบตเตอรี่'},
+                    {id: 'kwh', name: 'กิโลวัตต์-ชั่วโมง (หน่วยค่าไฟ)', symbol: 'kWh', factor: 3600000, group: 'ไฟฟ้า'},
+                    {id: 'btu', name: 'บีทียู (BTU เครื่องปรับอากาศ)', symbol: 'BTU', factor: 1055.05585, group: 'ความร้อน / แอร์'}
                 ]
             },
             {
@@ -1147,17 +1063,17 @@
                 defaultTo: 'kw',
                 defaultValue: 150,
                 presets: [
-                    { label: '150 แรงม้า → kW', from: 'hp', to: 'kw', val: 150 },
-                    { label: '1 kW → แรงม้า', from: 'kw', to: 'hp', val: 1 },
-                    { label: '12,000 BTU/h → kW', from: 'btuh', to: 'kw', val: 12000 }
+                    {label: '150 แรงม้า → kW', from: 'hp', to: 'kw', val: 150},
+                    {label: '1 kW → แรงม้า', from: 'kw', to: 'hp', val: 1},
+                    {label: '12,000 BTU/h → kW', from: 'btuh', to: 'kw', val: 12000}
                 ],
                 units: [
-                    { id: 'w', name: 'วัตต์ (Watt)', symbol: 'W', factor: 1, group: 'SI / ไฟฟ้า' },
-                    { id: 'kw', name: 'กิโลวัตต์', symbol: 'kW', factor: 1000, group: 'SI / รถยนต์ไฟฟ้า EV' },
-                    { id: 'mw', name: 'เมกะวัตต์', symbol: 'MW', factor: 1e6, group: 'โรงไฟฟ้า' },
-                    { id: 'hp', name: 'แรงม้าเครื่องกล (Mechanical HP)', symbol: 'HP', factor: 745.699872, group: 'ยานยนต์' },
-                    { id: 'ps', name: 'แรงม้าเมตริก (PS / CV)', symbol: 'PS', factor: 735.49875, group: 'ยานยนต์' },
-                    { id: 'btuh', name: 'บีทียูต่อชั่วโมง (ขนาดแอร์)', symbol: 'BTU/h', factor: 0.29307107, group: 'เครื่องปรับอากาศ' }
+                    {id: 'w', name: 'วัตต์ (Watt)', symbol: 'W', factor: 1, group: 'SI / ไฟฟ้า'},
+                    {id: 'kw', name: 'กิโลวัตต์', symbol: 'kW', factor: 1000, group: 'SI / รถยนต์ไฟฟ้า EV'},
+                    {id: 'mw', name: 'เมกะวัตต์', symbol: 'MW', factor: 1e6, group: 'โรงไฟฟ้า'},
+                    {id: 'hp', name: 'แรงม้าเครื่องกล (Mechanical HP)', symbol: 'HP', factor: 745.699872, group: 'ยานยนต์'},
+                    {id: 'ps', name: 'แรงม้าเมตริก (PS / CV)', symbol: 'PS', factor: 735.49875, group: 'ยานยนต์'},
+                    {id: 'btuh', name: 'บีทียูต่อชั่วโมง (ขนาดแอร์)', symbol: 'BTU/h', factor: 0.29307107, group: 'เครื่องปรับอากาศ'}
                 ]
             },
             {
@@ -1170,17 +1086,17 @@
                 defaultTo: 'rad',
                 defaultValue: 180,
                 presets: [
-                    { label: '180° → เรเดียน', from: 'deg', to: 'rad', val: 180 },
-                    { label: '90° → เรเดียน', from: 'deg', to: 'rad', val: 90 },
-                    { label: '1 รอบวงกลม → องศา', from: 'turn', to: 'deg', val: 1 }
+                    {label: '180° → เรเดียน', from: 'deg', to: 'rad', val: 180},
+                    {label: '90° → เรเดียน', from: 'deg', to: 'rad', val: 90},
+                    {label: '1 รอบวงกลม → องศา', from: 'turn', to: 'deg', val: 1}
                 ],
                 units: [
-                    { id: 'deg', name: 'องศา (Degree)', symbol: '°', factor: 1, group: 'ทั่วไป' },
-                    { id: 'rad', name: 'เรเดียน (Radian)', symbol: 'rad', factor: 57.29577951308232, group: 'คณิตศาสตร์' },
-                    { id: 'grad', name: 'แกรเดียน (Gradian / Gon)', symbol: 'grad', factor: 0.9, group: 'สำรวจ / วิศวกรรม' },
-                    { id: 'arcmin', name: 'ลิปดา (Arcminute)', symbol: '′', factor: 1 / 60, group: 'ดาราศาสตร์ / พิกัด' },
-                    { id: 'arcsec', name: 'ฟิลิปดา (Arcsecond)', symbol: '″', factor: 1 / 3600, group: 'ดาราศาสตร์ / พิกัด' },
-                    { id: 'turn', name: 'รอบวงกลม (Full Turn / Revolution)', symbol: 'rev', factor: 360, group: 'การหมุน' }
+                    {id: 'deg', name: 'องศา (Degree)', symbol: '°', factor: 1, group: 'ทั่วไป'},
+                    {id: 'rad', name: 'เรเดียน (Radian)', symbol: 'rad', factor: 57.29577951308232, group: 'คณิตศาสตร์'},
+                    {id: 'grad', name: 'แกรเดียน (Gradian / Gon)', symbol: 'grad', factor: 0.9, group: 'สำรวจ / วิศวกรรม'},
+                    {id: 'arcmin', name: 'ลิปดา (Arcminute)', symbol: '′', factor: 1 / 60, group: 'ดาราศาสตร์ / พิกัด'},
+                    {id: 'arcsec', name: 'ฟิลิปดา (Arcsecond)', symbol: '″', factor: 1 / 3600, group: 'ดาราศาสตร์ / พิกัด'},
+                    {id: 'turn', name: 'รอบวงกลม (Full Turn / Revolution)', symbol: 'rev', factor: 360, group: 'การหมุน'}
                 ]
             }
         ];
@@ -1576,13 +1492,7 @@
             renderAllUnitsMatrix();
         }
 
-        // =====================================================================
-        // USER INTERACTION HANDLERS
-        // =====================================================================
-        function toggleNavPopup() {
-            const modal = document.getElementById('navPopupModal');
-            if (modal) modal.classList.toggle('hidden');
-        }
+
 
         function backToCategories() {
             state.hasSelectedCategory = false;
@@ -1595,7 +1505,7 @@
             if (navBtn) navBtn.classList.add('hidden');
 
             closeMatrixModal();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function setInlineMatrixOpen(isOpen) {
@@ -1677,7 +1587,7 @@
                 leftInputEl.value = state.leftValue;
             }
             syncAllViews('left');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function handleSideInput(side) {
@@ -1878,6 +1788,7 @@
             }
         });
     </script>
+    
 </body>
 
 </html>
