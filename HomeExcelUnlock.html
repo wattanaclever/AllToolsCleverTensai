@@ -109,144 +109,9 @@
 
 <body class="min-h-screen flex flex-col">
 
-    <!-- ===================================================================== -->
-    <!-- START: CLEVERTENSAI Global Navbar & All Web Apps Hub                  -->
-    <!-- ===================================================================== -->
-    <nav
-        class="bg-gray-950 border-b border-gray-800 h-16 flex-shrink-0 z-40 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white sticky top-0">
-        <!-- ฝั่งซ้าย: โลโก้แบรนด์ (คลิกเพื่อกลับหน้าหลัก index.html) -->
-        <div class="flex items-center gap-3">
-            <a href="index.html" class="flex items-center gap-2.5 group">
-                <div
-                    class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:bg-crimson-500 transition-colors">
-                    <i class="fa-solid fa-file-excel"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-extrabold tracking-wider leading-none">CLEVER<span
-                            class="text-red-500">TENSAI</span></span>
-                    <span class="font-mono text-[10px] text-gray-400 tracking-widest mt-0.5">EXCEL UNLOCK ENGINE</span>
-                </div>
-            </a>
-        </div>
-
-        <!-- ตรงกลาง: ปุ่มเปิด Popup สลับหน้าเว็บแอปทั้งหมด -->
-        <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-            <button onclick="toggleNavPopup()"
-                class="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2.5 text-gray-100 transition-all shadow-md group text-sm cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500 group-hover:scale-110 transition-transform"></i>
-                <span>All Web Apps Hub</span>
-                <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
-            </button>
-        </div>
-
-        <!-- ฝั่งขวา: ปุ่มกลับหน้าหลัก Portal และสถานะระบบ -->
-        <div class="flex items-center gap-2.5">
-            <button onclick="toggleNavPopup()"
-                class="sm:hidden px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
-                <i class="fa-solid fa-grip text-red-500"></i>
-                <span>Hub</span>
-            </button>
-
-            <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[11px]">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                XML ENGINE
-            </span>
-
-            <a href="index.html"
-                class="px-3.5 py-2 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-xs flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-house text-red-500"></i>
-                <span class="hidden sm:inline">หน้าหลัก Portal</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Popup Modal สลับหน้าเครื่องมือ (All Web Apps Hub) -->
-    <div id="navPopupModal"
-        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-        <div
-            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-
-            <!-- Header ของ Modal -->
-            <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
-                <div class="flex items-center gap-3.5">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
-                        <i class="fa-solid fa-grip"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            CLEVERTENSAI Web Apps Hub
-                        </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันอื่นในระบบได้ทันที</p>
-                    </div>
-                </div>
-
-                <button onclick="toggleNavPopup()"
-                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- รายการเว็บแอปหลัก -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-6 overflow-y-auto">
-                <!-- กลับหน้าหลัก -->
-                <a href="index.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Main Portal</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">กลับสู่หน้ารวมเว็บแอปพลิเคชันทั้งหมด</span>
-                </a>
-
-                <!-- PDF Tools -->
-                <a href="./PDF/HomePDF.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-file-pdf"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">PDF Studio Suite</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">รวมไฟล์ แยกหน้า และแก้ไขเอกสาร PDF</span>
-                </a>
-
-                <!-- Excel Unlock (Current) -->
-                <a href="HomeExcelUnlock.html"
-                    class="p-5 rounded-2xl bg-red-600/15 border-2 border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl mb-3 shadow-md">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-red-400">Excel Unlock Pro</span>
-                    <span class="text-xs text-gray-300 mt-1.5 leading-relaxed">กำลังใช้งานอยู่ขณะนี้</span>
-                </a>
-
-                <!-- QR Code -->
-                <a href="HomeQRcode.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">QR Code Generator</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">สร้าง QR Code ภาษาไทย ลิงก์ และ Wi-Fi</span>
-                </a>
-
-                <!-- 5. Unit Converter (Current) -->
-                <a href="UnitConverter.html"
-                    class="p-5 rounded-2xl bg-gray-800/60 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg">
-                    <div
-                        class="w-14 h-14 rounded-2xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-2xl mb-3 transition-all duration-200 group-hover:scale-110">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
-                    <span class="font-extrabold text-base text-gray-100 group-hover:text-red-400">Unit Converter</span>
-                    <span class="text-xs text-gray-400 mt-1.5 leading-relaxed">ระบบแปลงมาตราวัด</span>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- END: Global Navbar & Navigation Hub -->
+    <!-- ดึง NAVBAR & ALL WEB APPS HUB MODAL จากโฟลเดอร์ JS/Navbar.js -->
+    <div id="navbar-container"></div>
+    <script src="JS/Navbar.js"></script>
 
 
     <!-- ===================================================================== -->
@@ -254,7 +119,8 @@
     <!-- ===================================================================== -->
     <div id="toast-notification" role="status" aria-live="polite"
         class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-mono">
-        <span id="toast-icon" class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
+        <span id="toast-icon"
+            class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
         <span id="toast-message">ดำเนินการสำเร็จ</span>
     </div>
 
@@ -267,7 +133,8 @@
         <!-- Hero Sub-header -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-tech-border">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
                     <i class="fa-solid fa-unlock-keyhole text-[11px]"></i>
                     <span>EXCEL XML STRUCTURE & UNLOCK STUDIO</span>
                 </div>
@@ -275,12 +142,14 @@
                     ปลดล็อก & จัดการโครงสร้าง <span class="text-crimson-500">Excel</span>
                 </h1>
                 <p class="text-tech-muted text-sm mt-1">
-                    ปลดล็อกชีต/สมุดงาน, แสดงชีตที่ถูกซ่อน (VeryHidden), ลบตัวล็อก Dropdown และล้างข้อมูลส่วนตัวผู้สร้างไฟล์ในคลิกเดียว
+                    ปลดล็อกชีต/สมุดงาน, แสดงชีตที่ถูกซ่อน (VeryHidden), ลบตัวล็อก Dropdown
+                    และล้างข้อมูลส่วนตัวผู้สร้างไฟล์ในคลิกเดียว
                 </p>
             </div>
 
             <div class="flex items-center gap-2 font-mono text-xs">
-                <span class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
+                <span
+                    class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
                     <i class="fa-solid fa-shield-halved text-crimson-500 mr-1.5"></i>100% Client-Side
                 </span>
                 <span class="px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold shadow-sm">
@@ -292,14 +161,21 @@
         <!-- กล่องแจ้งเตือนข้อจำกัด (Important Notice) -->
         <div class="tech-card rounded-2xl p-4 sm:p-5 border-l-4 border-l-crimson-500">
             <div class="flex items-start gap-3.5">
-                <div class="w-9 h-9 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 mt-0.5">
+                <div
+                    class="w-9 h-9 rounded-xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 mt-0.5">
                     <i class="fa-solid fa-circle-info text-base"></i>
                 </div>
                 <div class="text-xs sm:text-sm text-tech-muted space-y-1">
                     <h3 class="font-bold text-tech-dark">ขอบเขตการทำงานของระบบ (XML Level Processing)</h3>
                     <ul class="list-disc list-inside space-y-1 leading-relaxed">
-                        <li><strong class="text-tech-dark">รองรับเต็มรูปแบบ:</strong> ปลดล็อก Sheet Protection, Workbook Protection, Read-only Recommended, ยกเลิกการซ่อนชีต (Hidden / VeryHidden), ลบ Data Validation (Dropdown ล็อกค่า), ลบ External Links ค้าง และล้าง Metadata ผู้สร้างไฟล์ ในนามสกุล <code class="font-mono text-crimson-600 font-semibold">.xlsx</code> และ <code class="font-mono text-crimson-600 font-semibold">.xlsm</code></li>
-                        <li><strong class="text-tech-dark">ข้อจำกัด:</strong> ไม่รองรับไฟล์ที่ใส่รหัสผ่านตั้งแต่ตอนเปิดไฟล์ (<span class="font-mono">Password to Open / Encryption</span>) หรือไฟล์รุ่นเก่า (<span class="font-mono">.xls</span>)</li>
+                        <li><strong class="text-tech-dark">รองรับเต็มรูปแบบ:</strong> ปลดล็อก Sheet Protection, Workbook
+                            Protection, Read-only Recommended, ยกเลิกการซ่อนชีต (Hidden / VeryHidden), ลบ Data
+                            Validation (Dropdown ล็อกค่า), ลบ External Links ค้าง และล้าง Metadata ผู้สร้างไฟล์
+                            ในนามสกุล <code class="font-mono text-crimson-600 font-semibold">.xlsx</code> และ <code
+                                class="font-mono text-crimson-600 font-semibold">.xlsm</code></li>
+                        <li><strong class="text-tech-dark">ข้อจำกัด:</strong>
+                            ไม่รองรับไฟล์ที่ใส่รหัสผ่านตั้งแต่ตอนเปิดไฟล์ (<span class="font-mono">Password to Open /
+                                Encryption</span>) หรือไฟล์รุ่นเก่า (<span class="font-mono">.xls</span>)</li>
                     </ul>
                 </div>
             </div>
@@ -316,18 +192,24 @@
                     <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
                 </div>
                 <div>
-                    <p class="text-lg sm:text-xl font-bold text-tech-dark group-hover:text-crimson-500 transition-colors">
-                        ลากไฟล์ Excel มาวางที่นี่ หรือ <span class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
+                    <p
+                        class="text-lg sm:text-xl font-bold text-tech-dark group-hover:text-crimson-500 transition-colors">
+                        ลากไฟล์ Excel มาวางที่นี่ หรือ <span
+                            class="text-crimson-500 underline decoration-2 underline-offset-4">คลิกเพื่อเลือกไฟล์</span>
                     </p>
                     <p class="text-xs sm:text-sm text-tech-muted mt-2 font-mono">
-                        SUPPORTED FORMATS: <span class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSX</span> &bull; <span class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSM</span>
+                        SUPPORTED FORMATS: <span
+                            class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSX</span>
+                        &bull; <span
+                            class="bg-tech-panel px-2 py-0.5 rounded border border-tech-border text-tech-dark font-semibold">.XLSM</span>
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- กล่องแสดงข้อความแจ้งเตือนข้อผิดพลาด (Error Message Box - ไม่ใช้ alert) -->
-        <div id="errorBox" class="hidden bg-crimson-50 border border-crimson-500/40 rounded-2xl p-4 flex items-start justify-between shadow-sm">
+        <div id="errorBox"
+            class="hidden bg-crimson-50 border border-crimson-500/40 rounded-2xl p-4 flex items-start justify-between shadow-sm">
             <div class="flex items-start gap-3">
                 <i class="fa-solid fa-circle-xmark text-crimson-500 text-lg mt-0.5"></i>
                 <div>
@@ -335,17 +217,20 @@
                     <p id="errorText" class="text-xs sm:text-sm text-crimson-700 mt-0.5"></p>
                 </div>
             </div>
-            <button onclick="hideError()" class="text-crimson-500 hover:text-crimson-700 p-1 rounded-lg transition-colors cursor-pointer">
+            <button onclick="hideError()"
+                class="text-crimson-500 hover:text-crimson-700 p-1 rounded-lg transition-colors cursor-pointer">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
         <!-- สถานะกำลังวิเคราะห์โครงสร้างไฟล์ (Loading State) -->
         <div id="loadingBox" class="hidden tech-card rounded-2xl p-10 text-center space-y-4">
-            <div class="inline-block animate-spin rounded-full h-11 w-11 border-4 border-gray-200 border-t-crimson-500"></div>
+            <div class="inline-block animate-spin rounded-full h-11 w-11 border-4 border-gray-200 border-t-crimson-500">
+            </div>
             <div>
                 <h3 class="font-bold text-tech-dark text-lg">กำลังสแกนโครงสร้าง XML ภายในไฟล์ Excel...</h3>
-                <p class="text-xs sm:text-sm text-tech-muted font-mono mt-1">INSPECTING WORKBOOK, WORKSHEETS, HIDDEN STATES & METADATA</p>
+                <p class="text-xs sm:text-sm text-tech-muted font-mono mt-1">INSPECTING WORKBOOK, WORKSHEETS, HIDDEN
+                    STATES & METADATA</p>
             </div>
         </div>
 
@@ -356,10 +241,12 @@
 
             <!-- แถบข้อมูลไฟล์และปุ่มดาวน์โหลดหลัก -->
             <div class="tech-card rounded-2xl overflow-hidden">
-                <div class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div
+                    class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex flex-wrap items-center justify-between gap-3 text-white">
                     <div class="flex items-center gap-2.5">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="font-mono text-xs tracking-wider uppercase font-bold">FILE STRUCTURE INSPECTOR READY</span>
+                        <span class="font-mono text-xs tracking-wider uppercase font-bold">FILE STRUCTURE INSPECTOR
+                            READY</span>
                     </div>
                     <button onclick="resetApp()"
                         class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 font-mono text-xs flex items-center gap-1.5 transition cursor-pointer">
@@ -370,14 +257,17 @@
 
                 <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                     <div class="flex items-center gap-4 min-w-0">
-                        <div class="w-14 h-14 rounded-2xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 text-2xl">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-crimson-50 border border-crimson-100 text-crimson-500 flex items-center justify-center shrink-0 text-2xl">
                             <i class="fa-solid fa-file-excel"></i>
                         </div>
                         <div class="min-w-0">
-                            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono text-[10px] font-bold uppercase mb-1">
+                            <div
+                                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700 font-mono text-[10px] font-bold uppercase mb-1">
                                 <i class="fa-solid fa-check"></i> สแกนโครงสร้างสำเร็จ
                             </div>
-                            <h2 id="fileNameDisplay" class="text-lg sm:text-xl font-extrabold text-tech-dark truncate" title="">filename.xlsx</h2>
+                            <h2 id="fileNameDisplay" class="text-lg sm:text-xl font-extrabold text-tech-dark truncate"
+                                title="">filename.xlsx</h2>
                             <p id="fileSizeDisplay" class="text-xs text-tech-muted font-mono mt-0.5">SIZE: 0 KB</p>
                         </div>
                     </div>
@@ -418,64 +308,94 @@
                 <!-- ฟีเจอร์ระดับสมุดงานและโครงสร้าง (7 Cols) -->
                 <div class="lg:col-span-7 tech-card rounded-2xl p-6 space-y-4">
                     <div class="flex items-center gap-2 pb-3 border-b border-tech-border">
-                        <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
-                        <h3 class="text-sm font-bold text-tech-dark uppercase tracking-wide">ตัวเลือกจัดการโครงสร้างสมุดงาน (Workbook & XML Tools)</h3>
+                        <span
+                            class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
+                        <h3 class="text-sm font-bold text-tech-dark uppercase tracking-wide">
+                            ตัวเลือกจัดการโครงสร้างสมุดงาน (Workbook & XML Tools)</h3>
                     </div>
 
                     <div class="space-y-3">
                         <!-- Option 1: Workbook & Read-Only Protection -->
-                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                        <label
+                            class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
                             <div class="flex items-start gap-3">
-                                <input type="checkbox" id="optWorkbookUnlock" checked class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <input type="checkbox" id="optWorkbookUnlock" checked
+                                    class="mt-1 w-4 h-4 rounded cursor-pointer">
                                 <div>
-                                    <div class="text-sm font-bold text-tech-dark">ปลดล็อกการป้องกันสมุดงาน & Read-Only</div>
-                                    <p class="text-xs text-tech-muted mt-0.5">ลบ <code class="font-mono text-crimson-600">&lt;workbookProtection&gt;</code> และ <code class="font-mono text-crimson-600">&lt;fileSharing&gt;</code> เพื่อให้เพิ่ม/ย้าย/เปลี่ยนชื่อชีตและบันทึกทับได้ทันที</p>
+                                    <div class="text-sm font-bold text-tech-dark">ปลดล็อกการป้องกันสมุดงาน & Read-Only
+                                    </div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ลบ <code
+                                            class="font-mono text-crimson-600">&lt;workbookProtection&gt;</code> และ
+                                        <code class="font-mono text-crimson-600">&lt;fileSharing&gt;</code>
+                                        เพื่อให้เพิ่ม/ย้าย/เปลี่ยนชื่อชีตและบันทึกทับได้ทันที
+                                    </p>
                                 </div>
                             </div>
-                            <span id="badgeWorkbookOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">READY</span>
+                            <span id="badgeWorkbookOpt"
+                                class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">READY</span>
                         </label>
 
                         <!-- Option 2: Unhide All Hidden & VeryHidden Sheets -->
-                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                        <label
+                            class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
                             <div class="flex items-start gap-3">
-                                <input type="checkbox" id="optUnhideSheets" checked class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <input type="checkbox" id="optUnhideSheets" checked
+                                    class="mt-1 w-4 h-4 rounded cursor-pointer">
                                 <div>
-                                    <div class="text-sm font-bold text-tech-dark">แสดงชีตที่ถูกซ่อนทั้งหมด (Unhide Hidden & VeryHidden)</div>
-                                    <p class="text-xs text-tech-muted mt-0.5">ยกเลิกสถานะ <code class="font-mono text-crimson-600">state="hidden"</code> และ <code class="font-mono text-crimson-600">state="veryHidden"</code> (ชีตลับที่ซ่อนผ่าน VBA) ให้กลับมาแสดงครบทุกชีต</p>
+                                    <div class="text-sm font-bold text-tech-dark">แสดงชีตที่ถูกซ่อนทั้งหมด (Unhide
+                                        Hidden & VeryHidden)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ยกเลิกสถานะ <code
+                                            class="font-mono text-crimson-600">state="hidden"</code> และ <code
+                                            class="font-mono text-crimson-600">state="veryHidden"</code>
+                                        (ชีตลับที่ซ่อนผ่าน VBA) ให้กลับมาแสดงครบทุกชีต</p>
                                 </div>
                             </div>
-                            <span id="badgeHiddenOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0 HIDDEN</span>
+                            <span id="badgeHiddenOpt"
+                                class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0
+                                HIDDEN</span>
                         </label>
 
                         <!-- Option 3: Break External Links -->
-                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                        <label
+                            class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
                             <div class="flex items-start gap-3">
                                 <input type="checkbox" id="optBreakLinks" class="mt-1 w-4 h-4 rounded cursor-pointer">
                                 <div>
-                                    <div class="text-sm font-bold text-tech-dark">ตัดการเชื่อมโยงไฟล์ภายนอก (Break External Links)</div>
-                                    <p class="text-xs text-tech-muted mt-0.5">ลบลิงก์อ้างอิงข้ามไฟล์ (<code class="font-mono text-crimson-600">externalLinks</code>) เพื่อแก้ปัญหาเปิดไฟล์แล้วขึ้นแจ้งเตือน Update Links หรือไฟล์ค้าง</p>
+                                    <div class="text-sm font-bold text-tech-dark">ตัดการเชื่อมโยงไฟล์ภายนอก (Break
+                                        External Links)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ลบลิงก์อ้างอิงข้ามไฟล์ (<code
+                                            class="font-mono text-crimson-600">externalLinks</code>)
+                                        เพื่อแก้ปัญหาเปิดไฟล์แล้วขึ้นแจ้งเตือน Update Links หรือไฟล์ค้าง</p>
                                 </div>
                             </div>
-                            <span id="badgeExtLinksOpt" class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0 LINKS</span>
+                            <span id="badgeExtLinksOpt"
+                                class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">0
+                                LINKS</span>
                         </label>
 
                         <!-- Option 4: Clean Document Metadata -->
-                        <label class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
+                        <label
+                            class="flex items-start justify-between gap-3 p-3.5 rounded-xl bg-tech-panel/50 hover:bg-crimson-50/40 border border-tech-border cursor-pointer transition">
                             <div class="flex items-start gap-3">
-                                <input type="checkbox" id="optCleanMetadata" class="mt-1 w-4 h-4 rounded cursor-pointer">
+                                <input type="checkbox" id="optCleanMetadata"
+                                    class="mt-1 w-4 h-4 rounded cursor-pointer">
                                 <div>
-                                    <div class="text-sm font-bold text-tech-dark">ลบข้อมูลส่วนตัวผู้สร้างไฟล์ (Clean Metadata)</div>
-                                    <p class="text-xs text-tech-muted mt-0.5">ล้างชื่อผู้สร้าง (Author), ผู้แก้ไขล่าสุด (Last Modified By) และชื่อบริษัทออกจากคุณสมบัติไฟล์ก่อนส่งต่อ</p>
+                                    <div class="text-sm font-bold text-tech-dark">ลบข้อมูลส่วนตัวผู้สร้างไฟล์ (Clean
+                                        Metadata)</div>
+                                    <p class="text-xs text-tech-muted mt-0.5">ล้างชื่อผู้สร้าง (Author), ผู้แก้ไขล่าสุด
+                                        (Last Modified By) และชื่อบริษัทออกจากคุณสมบัติไฟล์ก่อนส่งต่อ</p>
                                 </div>
                             </div>
-                            <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">PRIVACY</span>
+                            <span
+                                class="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-gray-200 text-gray-700 shrink-0">PRIVACY</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Document Properties / Metadata Inspector (5 Cols) -->
                 <div class="lg:col-span-5 tech-card rounded-2xl overflow-hidden flex flex-col">
-                    <div class="bg-gray-950 px-5 py-3.5 border-b border-gray-800 flex items-center justify-between text-white">
+                    <div
+                        class="bg-gray-950 px-5 py-3.5 border-b border-gray-800 flex items-center justify-between text-white">
                         <span class="font-mono text-xs font-bold tracking-wider uppercase">
                             <i class="fa-solid fa-user-secret text-crimson-500 mr-1.5"></i>METADATA INSPECTOR
                         </span>
@@ -483,27 +403,34 @@
                     </div>
                     <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
                         <div class="space-y-2.5 text-xs">
-                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                            <div
+                                class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
                                 <span class="font-mono text-tech-muted">ผู้สร้าง (Creator):</span>
                                 <span id="metaCreator" class="font-semibold text-tech-dark truncate">-</span>
                             </div>
-                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                            <div
+                                class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
                                 <span class="font-mono text-tech-muted">แก้ไขล่าสุดโดย:</span>
                                 <span id="metaLastModifiedBy" class="font-semibold text-tech-dark truncate">-</span>
                             </div>
-                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                            <div
+                                class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
                                 <span class="font-mono text-tech-muted">บริษัท (Company):</span>
                                 <span id="metaCompany" class="font-semibold text-tech-dark truncate">-</span>
                             </div>
-                            <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
+                            <div
+                                class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border flex justify-between gap-2">
                                 <span class="font-mono text-tech-muted">วันที่แก้ไขล่าสุด:</span>
-                                <span id="metaModifiedDate" class="font-mono font-semibold text-tech-dark truncate">-</span>
+                                <span id="metaModifiedDate"
+                                    class="font-mono font-semibold text-tech-dark truncate">-</span>
                             </div>
                         </div>
 
-                        <div class="p-3 rounded-xl bg-crimson-50/70 border border-crimson-100 text-[11px] text-tech-muted leading-relaxed">
+                        <div
+                            class="p-3 rounded-xl bg-crimson-50/70 border border-crimson-100 text-[11px] text-tech-muted leading-relaxed">
                             <i class="fa-solid fa-lightbulb text-crimson-500 mr-1"></i>
-                            หากต้องการซ่อนชื่อผู้จัดทำไฟล์ก่อนส่งให้บุคคลภายนอก สามารถติ๊กเลือก <strong>"ลบข้อมูลส่วนตัวผู้สร้างไฟล์"</strong> ทางด้านซ้ายได้ทันที
+                            หากต้องการซ่อนชื่อผู้จัดทำไฟล์ก่อนส่งให้บุคคลภายนอก สามารถติ๊กเลือก
+                            <strong>"ลบข้อมูลส่วนตัวผู้สร้างไฟล์"</strong> ทางด้านซ้ายได้ทันที
                         </div>
                     </div>
                 </div>
@@ -516,10 +443,13 @@
             <div class="tech-card rounded-2xl overflow-hidden">
                 <div class="p-5 sm:p-6 border-b border-tech-border flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center gap-2.5">
-                        <span class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
+                        <span
+                            class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
                         <div>
-                            <h3 class="text-sm sm:text-base font-bold text-tech-dark uppercase tracking-wide">รายการชีตทั้งหมดในไฟล์ (Selective Worksheet Control)</h3>
-                            <p class="text-xs text-tech-muted">เลือกปลดล็อกเฉพาะชีตที่ต้องการ หรือสั่งลบ Data Validation (Dropdown ล็อกการกรอกค่า) รายชีตได้</p>
+                            <h3 class="text-sm sm:text-base font-bold text-tech-dark uppercase tracking-wide">
+                                รายการชีตทั้งหมดในไฟล์ (Selective Worksheet Control)</h3>
+                            <p class="text-xs text-tech-muted">เลือกปลดล็อกเฉพาะชีตที่ต้องการ หรือสั่งลบ Data Validation
+                                (Dropdown ล็อกการกรอกค่า) รายชีตได้</p>
                         </div>
                     </div>
 
@@ -556,7 +486,8 @@
             <!-- กล่องแสดงบันทึกการประมวลผลล่าสุด (Activity Log) -->
             <div id="processLogBox" class="hidden tech-card rounded-2xl p-5 bg-gray-950 text-gray-200 border-gray-800">
                 <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-800 font-mono text-xs">
-                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-terminal mr-1.5"></i>EXECUTION LOG // COMPLETED</span>
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-terminal mr-1.5"></i>EXECUTION LOG //
+                        COMPLETED</span>
                     <span id="outputFileNameBadge" class="text-red-400 font-semibold"></span>
                 </div>
                 <ul id="processLogList" class="space-y-1.5 font-mono text-xs text-gray-300"></ul>
@@ -596,11 +527,7 @@
         let externalLinkPaths = [];
         let toastTimer = null;
 
-        // เปิด/ปิด Popup All Web Apps Hub
-        function toggleNavPopup() {
-            const modal = document.getElementById('navPopupModal');
-            if (modal) modal.classList.toggle('hidden');
-        }
+
 
         // แสดง Toast แจ้งเตือน
         function showToast(message) {
@@ -1102,7 +1029,7 @@
                     type: 'blob',
                     mimeType: mimeType,
                     compression: 'DEFLATE',
-                    compressionOptions: { level: 6 }
+                    compressionOptions: {level: 6}
                 });
 
                 const lastDot = origName.lastIndexOf('.');
@@ -1134,6 +1061,7 @@
             }
         }
     </script>
+    
 </body>
 
 </html>
