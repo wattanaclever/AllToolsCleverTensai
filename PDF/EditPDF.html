@@ -13,18 +13,20 @@
                 if (localStorage.getItem('clevertensai_editpdf_theme') === 'dark') {
                     document.documentElement.classList.add('dark');
                 }
-            } catch (_) { }
+            } catch (_) {
+                // Ignore storage access errors in sandboxed iframes
+            }
         })();
     </script>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: UI + Thai & English Fonts for Text Studio -->
+    <!-- Google Fonts: 15 Thai & English Studio Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,400;0,600;0,700;1,400&family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=Charm:wght@400;700&family=Inter:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Kanit:ital,wght@0,400;0,600;0,700;1,400&family=Mali:ital,wght@0,400;0,600;0,700;1,400&family=Mitr:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;600;700&family=Bai+Jamjuree:ital,wght@0,400;0,600;0,700;1,400&family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Inter:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Kanit:ital,wght@0,400;0,600;0,700;1,400&family=Mitr:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=Pridi:wght@400;600;700&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- FontAwesome 6.4.0 CDN -->
@@ -36,49 +38,52 @@
     <!-- pdf-lib 1.17.1 CDN -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
-    <!-- JSZip 3.10.1 CDN (for Exporting Pages as ZIP) -->
+    <!-- JSZip 3.10.1 CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
+    <!-- Safe CDN Configuration -->
     <script>
-        if (window.pdfjsLib) {
+        if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
 
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                        thai: ['"Prompt"', '"Sarabun"', 'sans-serif']
-                    },
-                    colors: {
-                        crimson: {
-                            400: '#FF4D6D',
-                            500: '#E61E43',
-                            600: '#C81436',
-                            700: '#9E0E2A'
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                            mono: ['"JetBrains Mono"', 'monospace'],
+                            thai: ['"Prompt"', '"Sarabun"', 'sans-serif']
+                        },
+                        colors: {
+                            crimson: {
+                                400: '#FB7185',
+                                500: '#E11D48',
+                                600: '#BE123C',
+                                700: '#9F1239'
+                            }
                         }
                     }
                 }
-            }
-        };
+            };
+        }
     </script>
 
     <style>
         /* ===================================================================== */
-        /* MINIMAL LUXURY THEME TOKENS (ALABASTER LIGHT DEFAULT / VELVET DARK)   */
+        /* MINIMAL LUXURY DESIGN TOKENS (ALABASTER LIGHT / VELVET MIDNIGHT DARK) */
         /* ===================================================================== */
         :root {
             --bg-workspace: #FAF9F6;
-            --bg-stage: #F3F2EE;
+            --bg-stage: #F4F3EF;
             --bg-panel: #FFFFFF;
-            --bg-panel-subtle: #F8F7F4;
-            --border-color: #E5E7EB;
-            --border-strong: #CBD5E1;
+            --bg-panel-subtle: #F8FAFC;
+            --border-color: #E2E8F0;
             --text-primary: #0F172A;
             --text-secondary: #64748B;
+            --accent: #E11D48;
             --dot-pattern: rgba(15, 23, 42, 0.08);
             --paper-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.08);
         }
@@ -89,9 +94,9 @@
             --bg-panel: #111827;
             --bg-panel-subtle: #0F172A;
             --border-color: #1F2937;
-            --border-strong: #374151;
             --text-primary: #F8FAFC;
             --text-secondary: #94A3B8;
+            --accent: #E11D48;
             --dot-pattern: rgba(255, 255, 255, 0.07);
             --paper-shadow: 0 26px 64px -12px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 255, 255, 0.10);
         }
@@ -120,16 +125,15 @@
             border-color: var(--border-color);
         }
 
-        /* Studio Stage Dot Background */
         .stage-bg {
             background-color: var(--bg-stage);
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(230, 30, 67, 0.05), transparent 55%),
+                radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.05), transparent 55%),
                 radial-gradient(var(--dot-pattern) 1px, transparent 0);
             background-size: 100% 100%, 24px 24px;
         }
 
-        /* High-Visibility Custom Scrollbars */
+        /* Custom Scrollbars */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -145,9 +149,10 @@
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #E61E43;
+            background: #E11D48;
         }
 
+        /* Dedicated 10px Workspace Scrollbars for Wide/Long Documents */
         #pdfWorkspace::-webkit-scrollbar {
             width: 10px;
             height: 10px;
@@ -165,7 +170,7 @@
         }
 
         #pdfWorkspace::-webkit-scrollbar-thumb:hover {
-            background: #E61E43;
+            background: #E11D48;
             background-clip: content-box;
         }
 
@@ -180,22 +185,22 @@
             cursor: grabbing !important;
         }
 
-        /* Left Rail Active State */
+        /* Left Rail Buttons */
         .rail-btn {
             transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .rail-btn.active {
-            background: #E61E43;
+            background: #E11D48;
             color: #FFFFFF !important;
-            box-shadow: 0 6px 16px -3px rgba(230, 30, 67, 0.45);
+            box-shadow: 0 6px 16px -3px rgba(225, 29, 72, 0.42);
         }
 
         .rail-btn.active i {
             color: #FFFFFF !important;
         }
 
-        /* Paper Sheet Container */
+        /* PDF Page Sheet */
         .page-sheet {
             position: relative;
             background: #FFFFFF;
@@ -203,12 +208,17 @@
             flex-shrink: 0;
         }
 
-        /* Mobile 1-Finger Editing Lock (prevents accidental 1-finger scrolling) */
+        /* Strict Mobile 1-Finger Touch Isolation */
         @media (max-width: 767px) {
             #pdfWorkspace,
             .overlay-canvas {
                 touch-action: none !important;
             }
+        }
+
+        /* GPU Transform Origin for 60fps Pinch-to-Zoom */
+        #canvasPagesContainer {
+            transform-origin: 0 0;
         }
 
         /* Strict Full-Frame Fit for Overview Thumbnails */
@@ -219,12 +229,12 @@
         }
 
         .thumb-item.is-active .thumb-frame {
-            border-color: #E61E43 !important;
-            box-shadow: 0 0 0 2.5px rgba(230, 30, 67, 0.28), 0 8px 18px -4px rgba(230, 30, 67, 0.22);
+            border-color: #E11D48 !important;
+            box-shadow: 0 0 0 2.5px rgba(225, 29, 72, 0.28), 0 8px 18px -4px rgba(225, 29, 72, 0.22);
         }
 
         .thumb-item.is-active .thumb-num {
-            color: #E61E43;
+            color: #E11D48;
             font-weight: 800;
         }
 
@@ -270,7 +280,7 @@
 
         .inline-editor-textarea {
             background: rgba(255, 255, 255, 0.98);
-            border: 2px solid #E61E43;
+            border: 2px solid #E11D48;
             border-radius: 6px;
             padding: 4px 8px;
             outline: none;
@@ -279,17 +289,17 @@
             line-height: 1.35;
             white-space: pre-wrap;
             word-break: break-word;
-            box-shadow: 0 12px 28px rgba(230, 30, 67, 0.25);
+            box-shadow: 0 12px 28px rgba(225, 29, 72, 0.25);
             user-select: text !important;
             -webkit-user-select: text !important;
         }
 
-        /* Eraser Preview Ring */
+        /* Eraser Cursor Ring */
         #eraserCursor {
             position: fixed;
             pointer-events: none;
-            border: 1.5px solid #E61E43;
-            background: rgba(230, 30, 67, 0.14);
+            border: 1.5px solid #E11D48;
+            background: rgba(225, 29, 72, 0.14);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             display: none;
@@ -302,7 +312,7 @@
             margin: 0;
         }
 
-        /* WYSIWYG Direct Print */
+        /* WYSIWYG Print Styles */
         @page {
             size: auto;
             margin: 0;
@@ -341,32 +351,32 @@
     </style>
 </head>
 
-<body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E61E43] selection:text-white">
+<body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
     <!-- ===================================================================== -->
-    <!-- 1. SHARED EXTERNAL PDF NAVBAR (ดึงจาก PDF/JS/NavbarPDF.js)            -->
+    <!-- 1. EXTERNAL SHARED NAVBAR (Loaded from JS/NavbarPDF.js)               -->
     <!-- ===================================================================== -->
     <div id="navbar-container" class="shrink-0"></div>
-    <script src="JS/NavbarPDF.js"></script>
+    <script src="JS/NavbarPDF.js" defer onerror="this.remove()"></script>
 
-    <!-- Hidden File Inputs (Root-Level of <body> to prevent event bubbling conflicts) -->
+    <!-- Root-Level Hidden File Inputs -->
     <input type="file" id="pdfFileInput" accept="application/pdf,.pdf" onchange="handleMainPdfUpload(event)" class="hidden">
-    <input type="file" id="imageUploadInput" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
+    <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/webp,image/*" onchange="handleImageUpload(event)" class="hidden">
     <input type="file" id="insertFileInput" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp" onchange="handleInsertFileUpload(event)" class="hidden">
 
     <!-- ===================================================================== -->
-    <!-- 2. SCOPED UPLOAD SCREEN (#dropZone ONLY triggers file selection)      -->
+    <!-- 2. SCOPED UPLOAD SCREEN (Visible when no document is loaded)          -->
     <!-- ===================================================================== -->
     <main id="uploadScreen" class="stage-bg flex-1 overflow-y-auto flex flex-col justify-between p-4 sm:p-8">
         <div class="max-w-3xl w-full mx-auto my-auto">
             <div class="text-center mb-7">
                 <div class="inline-flex items-center gap-2 mb-3">
-                    <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full panel-surface border text-[11px] font-mono font-bold shadow-xs">
-                        <span class="w-2 h-2 rounded-full bg-[#E61E43]"></span>
-                        <span>MINIMAL LUXURY PDF EDITOR</span>
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full panel-surface border text-[11px] font-mono font-bold shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-[#E11D48]"></span>
+                        <span>CLEVERTENSAI — EDIT PDF STUDIO</span>
                     </span>
                     <button type="button" onclick="toggleTheme()"
-                        class="w-8 h-8 rounded-full panel-surface border hover:border-[#E61E43] flex items-center justify-center shadow-xs transition cursor-pointer"
+                        class="w-8 h-8 rounded-full panel-surface border hover:border-[#E11D48] flex items-center justify-center shadow-sm transition cursor-pointer"
                         title="สลับโหมด Alabaster Light / Velvet Midnight">
                         <i class="fa-solid fa-moon dark:hidden text-xs text-slate-700"></i>
                         <i class="fa-solid fa-sun hidden dark:inline text-xs text-amber-300"></i>
@@ -374,40 +384,40 @@
                 </div>
 
                 <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                    แก้ไขและตกแต่งเอกสาร <span class="text-[#E61E43]">PDF</span>
+                    แก้ไขและตกแต่งเอกสาร <span class="text-[#E11D48]">PDF</span>
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto">
-                    พิมพ์ข้อความภาษาไทย แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน และแทรกหน้าเอกสารได้ทันทีในเบราว์เซอร์ 100% Client-Side
+                    พิมพ์ข้อความภาษาไทย 15 ฟอนต์ แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน และแทรกหน้าเอกสารได้ทันทีบนเบราว์เซอร์ 100% Client-Side
                 </p>
             </div>
 
-            <!-- Scoped Dropzone Card: ONLY clicking inside #dropZone opens file picker -->
+            <!-- Scoped Dropzone -->
             <div id="dropZone" onclick="triggerPdfImport(event)"
-                class="panel-surface rounded-3xl p-8 sm:p-14 text-center border-2 border-dashed border-[#E61E43]/45 hover:border-[#E61E43] transition-all cursor-pointer shadow-xl group relative">
-                <div class="w-16 h-16 rounded-2xl bg-[#E61E43]/10 border border-[#E61E43]/25 text-[#E61E43] group-hover:bg-[#E61E43] group-hover:text-white flex items-center justify-center text-2xl mx-auto mb-5 transition-all">
+                class="panel-surface rounded-3xl p-8 sm:p-14 text-center border-2 border-dashed border-[#E11D48]/45 hover:border-[#E11D48] transition-all cursor-pointer shadow-xl group relative">
+                <div class="w-16 h-16 rounded-2xl bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] group-hover:bg-[#E11D48] group-hover:text-white flex items-center justify-center text-2xl mx-auto mb-5 transition-all">
                     <i class="fa-solid fa-file-arrow-up"></i>
                 </div>
 
-                <div class="font-mono text-[11px] font-bold tracking-[0.18em] text-[#E61E43] uppercase mb-1.5">
-                    CLICK INSIDE THIS BOX OR DRAG &amp; DROP PDF
+                <div class="font-mono text-[11px] font-bold tracking-[0.18em] text-[#E11D48] uppercase mb-1.5">
+                    CLICK OR DRAG &amp; DROP PDF HERE
                 </div>
                 <h2 class="text-lg sm:text-2xl font-extrabold mb-2">
-                    คลิกตรงไหนก็ได้ในกรอบนี้เพื่อเลือกไฟล์ PDF
+                    ลากไฟล์ PDF มาวาง หรือคลิกในกรอบนี้เพื่อเลือกไฟล์
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-7">
-                    ปลอดภัย 100% ไฟล์ถูกประมวลผลบนเครื่องของคุณโดยตรง ไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์
+                    ประมวลผลภายในอุปกรณ์ของคุณ 100% ไม่มีการส่งไฟล์ไปยังเซิร์ฟเวอร์ภายนอก
                 </p>
 
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
                     <button type="button" onclick="event.stopPropagation(); triggerPdfImport();"
-                        class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#E61E43] hover:bg-[#C81436] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition cursor-pointer">
+                        class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition cursor-pointer">
                         <i class="fa-solid fa-folder-open"></i>
                         <span>เลือกไฟล์ PDF จากเครื่อง</span>
                     </button>
 
                     <button type="button" onclick="event.stopPropagation(); createBlankDemoDocument();"
-                        class="w-full sm:w-auto px-5 py-3 rounded-2xl panel-subtle border hover:border-[#E61E43] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer">
-                        <i class="fa-regular fa-file-lines text-[#E61E43]"></i>
+                        class="w-full sm:w-auto px-5 py-3 rounded-2xl panel-subtle border hover:border-[#E11D48] font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i class="fa-regular fa-file-lines text-[#E11D48]"></i>
                         <span>สร้างเอกสารเปล่า A4 ทดลองใช้</span>
                     </button>
                 </div>
@@ -420,83 +430,83 @@
     </main>
 
     <!-- ===================================================================== -->
-    <!-- 3. STUDIO WORKSPACE (HIDDEN UNTIL DOCUMENT LOADED)                    -->
+    <!-- 3. STUDIO WORKSPACE (Hidden until document is loaded)                 -->
     <!-- ===================================================================== -->
     <section id="studioWorkspace" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
 
-        <!-- Secondary Action Bar -->
+        <!-- Top Studio Action Bar -->
         <header class="h-12 panel-surface border-b px-2.5 sm:px-4 flex items-center justify-between gap-2 shrink-0 z-30">
-            <!-- Left: Undo/Redo + Filename + Pages Toggle -->
+            <!-- Left: Undo/Redo, Filename Badge, Page Count & Overview Toggle -->
             <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                 <div class="flex items-center panel-subtle border rounded-xl p-0.5">
                     <button type="button" id="btnUndo" onclick="performUndo()" disabled
                         class="px-2 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-35 disabled:pointer-events-none text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
                         title="ย้อนกลับ (Ctrl+Z)">
-                        <i class="fa-solid fa-rotate-left text-[#E61E43]"></i>
+                        <i class="fa-solid fa-rotate-left text-[#E11D48]"></i>
                         <span class="hidden lg:inline">Undo</span>
                     </button>
                     <button type="button" id="btnRedo" onclick="performRedo()" disabled
                         class="px-2 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-35 disabled:pointer-events-none text-xs font-mono font-bold flex items-center gap-1 cursor-pointer"
                         title="ทำซ้ำ (Ctrl+Y)">
-                        <i class="fa-solid fa-rotate-right text-[#E61E43]"></i>
+                        <i class="fa-solid fa-rotate-right text-[#E11D48]"></i>
                         <span class="hidden lg:inline">Redo</span>
                     </button>
                 </div>
 
                 <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl panel-subtle border max-w-[180px] lg:max-w-[240px]">
-                    <i class="fa-solid fa-file-pdf text-[#E61E43] text-xs shrink-0"></i>
+                    <i class="fa-solid fa-file-pdf text-[#E11D48] text-xs shrink-0"></i>
                     <span id="filenameBadge" class="font-mono text-[11px] font-bold truncate">document.pdf</span>
                 </div>
 
                 <button type="button" id="btnToggleOverview" onclick="toggleOverviewSidebar()"
-                    class="px-2.5 py-1 rounded-xl panel-subtle border hover:border-[#E61E43] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0"
+                    class="px-2.5 py-1 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shrink-0"
                     title="เปิด/ปิด Pages Overview">
-                    <i class="fa-regular fa-rectangle-list text-[#E61E43]"></i>
+                    <i class="fa-regular fa-rectangle-list text-[#E11D48]"></i>
                     <span class="hidden md:inline">Pages</span>
-                    <span id="headerPageCount" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#E61E43]/15 text-[#E61E43] font-bold">0</span>
+                    <span id="headerPageCount" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0</span>
                 </button>
             </div>
 
-            <!-- Right: Theme Toggle + Import + Print + Export Dropdown (PDF / ZIP) -->
+            <!-- Right: Theme Toggle, Import, Print, Export Dropdown -->
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button type="button" onclick="toggleTheme()"
-                    class="w-8 h-8 rounded-xl panel-subtle border hover:border-[#E61E43] flex items-center justify-center transition cursor-pointer"
+                    class="w-8 h-8 rounded-xl panel-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer"
                     title="สลับโหมด Alabaster Light / Velvet Midnight">
                     <i class="fa-solid fa-moon dark:hidden text-xs"></i>
                     <i class="fa-solid fa-sun hidden dark:inline text-xs text-amber-300"></i>
                 </button>
 
                 <button type="button" onclick="triggerPdfImport()"
-                    class="px-2.5 py-1.5 rounded-xl panel-subtle border hover:border-[#E61E43] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                    class="px-2.5 py-1.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
                     title="นำเข้าไฟล์ PDF ใหม่">
-                    <i class="fa-solid fa-folder-open text-[#E61E43]"></i>
+                    <i class="fa-solid fa-folder-open text-[#E11D48]"></i>
                     <span class="hidden md:inline">นำเข้าเอกสาร</span>
                 </button>
 
                 <button type="button" onclick="triggerPrint()"
-                    class="px-2.5 py-1.5 rounded-xl panel-subtle border hover:border-[#E61E43] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer"
+                    class="px-2.5 py-1.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer"
                     title="พิมพ์เอกสาร (WYSIWYG Print)">
-                    <i class="fa-solid fa-print text-[#E61E43]"></i>
+                    <i class="fa-solid fa-print text-[#E11D48]"></i>
                     <span class="hidden sm:inline">PRINT</span>
                 </button>
 
                 <!-- Export Dropdown -->
                 <div class="relative" id="exportDropdownWrap">
                     <button type="button" onclick="toggleExportMenu(event)"
-                        class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#E61E43] hover:bg-[#C81436] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer">
+                        class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-download"></i>
                         <span>ส่งออก</span>
                         <i class="fa-solid fa-chevron-down text-[9px] opacity-90"></i>
                     </button>
 
                     <div id="exportDropdownMenu"
-                        class="hidden absolute right-0 mt-1.5 w-52 z-50 opacity-100 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl p-1.5 text-xs">
+                        class="hidden absolute right-0 mt-1.5 w-56 z-50 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
                         <button type="button" onclick="closeExportMenu(); exportPdfDocument();"
                             class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
-                            <i class="fa-solid fa-file-pdf text-[#E61E43] w-4 text-center"></i>
+                            <i class="fa-solid fa-file-pdf text-[#E11D48] w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>บันทึกเป็น PDF</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไข</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไขคมชัด</span>
                             </div>
                         </button>
                         <button type="button" onclick="closeExportMenu(); exportPagesAsZip();"
@@ -504,7 +514,7 @@
                             <i class="fa-solid fa-file-zipper text-amber-500 w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>ส่งออกรูปทุกหน้า (ZIP)</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพ PNG คมชัดรายหน้า</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพ PNG ความละเอียดสูงรายหน้า</span>
                             </div>
                         </button>
                     </div>
@@ -512,16 +522,16 @@
             </div>
         </header>
 
-        <!-- Main Flex Row (Left Rail | Docked Sub-Tool Panel | Center Workspace | Right Overview) -->
+        <!-- Studio Body Row -->
         <div class="flex-1 flex min-h-0 overflow-hidden relative">
 
-            <!-- Left Slim Icon Rail (60px Desktop / Fixed 64px Bottom Dock Mobile) -->
+            <!-- Left Slim Tool Rail (Desktop) / Bottom Fixed Dock (Mobile) -->
             <aside id="leftIconRail"
-                class="fixed bottom-0 inset-x-0 h-[64px] z-40 panel-surface border-t px-2 flex flex-row items-center justify-around md:static md:inset-auto md:h-auto md:w-[60px] md:shrink-0 md:border-t-0 md:border-r md:px-0 md:py-3 md:flex-col md:justify-between md:z-20">
+                class="fixed bottom-0 inset-x-0 h-[64px] z-40 panel-surface border-t px-2 flex flex-row items-center justify-around md:static md:inset-auto md:h-auto md:w-[62px] md:shrink-0 md:border-t-0 md:border-r md:px-0 md:py-3 md:flex-col md:justify-between md:z-20">
                 <div class="w-full md:w-auto grid grid-cols-6 gap-1 md:flex md:flex-col md:items-center md:gap-2">
                     <button type="button" id="rail_select" onclick="onRailToolClick('select')"
                         class="rail-btn active h-11 md:w-11 rounded-xl flex flex-col items-center justify-center gap-0.5 text-slate-500 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
-                        title="เลือกและย้ายวัตถุ">
+                        title="เลือกและจัดตำแหน่งวัตถุ">
                         <i class="fa-solid fa-arrow-pointer text-xs sm:text-sm"></i>
                         <span class="text-[9px] font-bold">เลือก</span>
                     </button>
@@ -562,82 +572,80 @@
                     </button>
                 </div>
 
-                <!-- Desktop Inspector Toggle -->
+                <!-- Desktop Sub-Tool Drawer Toggle -->
                 <button type="button" onclick="toggleSubToolPanel()"
-                    class="hidden md:flex w-10 h-10 rounded-xl panel-subtle border hover:border-[#E61E43] items-center justify-center transition cursor-pointer"
-                    title="เปิด/ปิดแผงเครื่องมือเสริม">
-                    <i class="fa-solid fa-sliders text-xs text-[#E61E43]"></i>
+                    class="hidden md:flex w-10 h-10 rounded-xl panel-subtle border hover:border-[#E11D48] items-center justify-center transition cursor-pointer"
+                    title="เปิด/ปิดแผงตัวเลือกเครื่องมือ">
+                    <i class="fa-solid fa-sliders text-xs text-[#E11D48]"></i>
                 </button>
             </aside>
 
-            <!-- Contextual Sub-Tool Panel (#subToolPopover) -->
-            <!-- Desktop: static w-72 docked beside left rail (never overlaps navbar/canvas/right sidebar) -->
-            <!-- Mobile: fixed bottom sheet inset-x-0 bottom-[64px] max-h-[55dvh] overflow-y-auto -->
+            <!-- Tool Options Drawer (Desktop Docked Left / Mobile Collapsible Bottom Sheet) -->
             <div id="subToolPopover"
                 class="hidden fixed inset-x-0 bottom-[64px] max-h-[55dvh] z-40 rounded-t-2xl shadow-2xl border-t md:static md:inset-auto md:bottom-auto md:max-h-none md:w-72 md:shrink-0 md:rounded-none md:shadow-none md:border-t-0 md:border-r md:z-20 panel-surface flex-col overflow-hidden">
 
-                <!-- Panel Header -->
+                <!-- Drawer Header -->
                 <div class="px-4 py-2.5 panel-subtle border-b flex items-center justify-between gap-2 shrink-0">
                     <div class="flex items-center gap-2 min-w-0">
-                        <span class="w-2 h-2 rounded-full bg-[#E61E43] shrink-0"></span>
+                        <span class="w-2 h-2 rounded-full bg-[#E11D48] shrink-0"></span>
                         <span id="subToolTitle" class="font-mono text-[11px] font-extrabold uppercase tracking-wider truncate">SELECT STUDIO</span>
                     </div>
                     <button type="button" onclick="hideSubToolPanel()"
-                        class="px-2.5 py-1 rounded-lg panel-surface border hover:border-[#E61E43] text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
+                        class="px-2.5 py-1 rounded-lg panel-surface border hover:border-[#E11D48] text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
                         title="ซ่อนแผงตัวเลือก">
-                        <i class="fa-solid fa-eye-slash text-[10px] text-[#E61E43]"></i>
+                        <i class="fa-solid fa-eye-slash text-[10px] text-[#E11D48]"></i>
                         <span>ซ่อน</span>
                     </button>
                 </div>
 
-                <!-- Scrollable Sub-Tool Content -->
+                <!-- Scrollable Tool Options Body -->
                 <div class="overflow-y-auto p-4 space-y-4 text-xs flex-1">
 
                     <!-- SELECT PANEL -->
                     <div id="panel_select" class="space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Selection Mode</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection Mode</div>
                         <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                            <p><i class="fa-solid fa-hand-pointer text-[#E61E43] mr-1.5"></i>แตะวัตถุ 1 นิ้วเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
-                            <p><i class="fa-solid fa-i-cursor text-[#E61E43] mr-1.5"></i>แตะซ้ำ 2 ครั้ง หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
-                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i>กด <strong>Spacebar + ลาก</strong> เพื่อเลื่อนเอกสาร หรือใช้ <strong>2 นิ้ว</strong> บนมือถือ</p>
+                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>แตะวัตถุ 1 นิ้วเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
+                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i>แตะซ้ำ 2 ครั้ง หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
+                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i>กด <strong>Spacebar + ลาก</strong> บนคอม หรือใช้ <strong>2 นิ้ว</strong> บนมือถือเพื่อเลื่อน/ซูมเอกสาร</p>
                         </div>
                     </div>
 
                     <!-- TEXT PANEL -->
                     <div id="panel_text" class="hidden space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Text Studio</span>
+                            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Text Studio</span>
                             <button type="button" id="btnPanelEditText" onclick="editSelectedTextInline()"
-                                class="hidden px-2 py-0.5 rounded-md bg-[#E61E43] text-white text-[10px] font-bold cursor-pointer">
+                                class="hidden px-2 py-0.5 rounded-md bg-[#E11D48] text-white text-[10px] font-bold cursor-pointer">
                                 ✎ แก้คำพิมพ์
                             </button>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                            คลิกหรือแตะบนหน้ากระดาษเพื่อวางกล่องข้อความ กล่องจะขยายตามตัวอักษรอัตโนมัติ (กด Enter ขึ้นบรรทัดใหม่)
+                            แตะบนหน้ากระดาษเพื่อวางกล่องข้อความ กด Enter เพื่อขึ้นบรรทัดใหม่
                         </p>
 
                         <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT FAMILY</label>
+                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT FAMILY (15 FONTS)</label>
                             <select id="textFont" onchange="onTextStyleInput('fontFamily', this.value)"
-                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-medium outline-none focus:border-[#E61E43]">
+                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-medium outline-none focus:border-[#E11D48]">
                                 <optgroup label="ฟอนต์ภาษาไทย (Thai Fonts)">
-                                    <option value="Prompt" selected>Prompt (พร้อม - โมเดิร์น)</option>
-                                    <option value="Sarabun">Sarabun (สารบรรณ - ทางการ)</option>
-                                    <option value="Kanit">Kanit (คนิต - คมชัด)</option>
+                                    <option value="Prompt" selected>Prompt (พร้อม)</option>
+                                    <option value="Sarabun">Sarabun (สารบรรณ)</option>
+                                    <option value="Kanit">Kanit (คนิต)</option>
                                     <option value="Noto Sans Thai">Noto Sans Thai (โนโต้ไทย)</option>
                                     <option value="Noto Serif Thai">Noto Serif Thai (โนโต้มีหัว)</option>
-                                    <option value="Mali">Mali (มะลิ - ลายมือน่ารัก)</option>
-                                    <option value="Mitr">Mitr (มิตร - อ่านง่าย)</option>
-                                    <option value="Chakra Petch">Chakra Petch (จักรเพชร - ไฮเทค)</option>
-                                    <option value="Bai Jamjuree">Bai Jamjuree (ใบจามจุรี - เรียบหรู)</option>
-                                    <option value="Charm">Charm (ชาม - ลายมือทางการ)</option>
+                                    <option value="Chakra Petch">Chakra Petch (จักรเพชร)</option>
+                                    <option value="Bai Jamjuree">Bai Jamjuree (ใบจามจุรี)</option>
+                                    <option value="IBM Plex Sans Thai">IBM Plex Sans Thai</option>
+                                    <option value="Pridi">Pridi (ปรีดี)</option>
+                                    <option value="Mitr">Mitr (มิตร)</option>
+                                    <option value="Athiti">Athiti (อทิติ)</option>
                                 </optgroup>
                                 <optgroup label="English Studio Fonts">
                                     <option value="Space Grotesk">Space Grotesk</option>
                                     <option value="Inter">Inter</option>
-                                    <option value="Playfair Display">Playfair Display (Serif)</option>
-                                    <option value="JetBrains Mono">JetBrains Mono (Code)</option>
                                     <option value="Roboto">Roboto</option>
+                                    <option value="JetBrains Mono">JetBrains Mono</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -647,10 +655,10 @@
                                 <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE (PX)</label>
                                 <input type="number" id="textSize" value="20" min="8" max="140"
                                     oninput="onTextStyleInput('fontSize', parseInt(this.value, 10) || 20)"
-                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E61E43]">
+                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">COLOR</label>
+                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT COLOR</label>
                                 <input type="color" id="textColor" value="#0F172A"
                                     oninput="onTextStyleInput('color', this.value)"
                                     class="w-full h-8 panel-subtle border rounded-xl cursor-pointer p-0.5">
@@ -659,7 +667,7 @@
 
                         <div class="grid grid-cols-6 gap-1.5">
                             <button type="button" onclick="applyTextSwatch('#0F172A')" class="h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark Slate"></button>
-                            <button type="button" onclick="applyTextSwatch('#E61E43')" class="h-6 rounded-lg bg-[#E61E43] border border-slate-300 cursor-pointer" title="Crimson"></button>
+                            <button type="button" onclick="applyTextSwatch('#E11D48')" class="h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
                             <button type="button" onclick="applyTextSwatch('#1D4ED8')" class="h-6 rounded-lg bg-[#1D4ED8] border border-slate-300 cursor-pointer" title="Blue"></button>
                             <button type="button" onclick="applyTextSwatch('#047857')" class="h-6 rounded-lg bg-[#047857] border border-slate-300 cursor-pointer" title="Green"></button>
                             <button type="button" onclick="applyTextSwatch('#B45309')" class="h-6 rounded-lg bg-[#B45309] border border-slate-300 cursor-pointer" title="Amber"></button>
@@ -671,17 +679,24 @@
                                 class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition">Bold</button>
                             <button type="button" id="btnTextItalic" onclick="toggleTextFlag('italic')"
                                 class="py-1.5 rounded-xl panel-subtle border italic text-center cursor-pointer transition">Italic</button>
-                            <button type="button" id="btnTextHighlight" onclick="toggleTextFlag('highlight')"
+                            <button type="button" id="btnTextBg" onclick="toggleTextFlag('hasBg')"
                                 class="py-1.5 rounded-xl panel-subtle border font-semibold text-center cursor-pointer transition">
-                                <i class="fa-solid fa-highlighter text-amber-500 mr-1"></i>BG
+                                <i class="fa-solid fa-fill-drip text-amber-500 mr-1"></i>พื้นหลัง
                             </button>
+                        </div>
+
+                        <div id="textBgColorRow" class="hidden flex items-center justify-between gap-2 p-2 rounded-xl panel-subtle border">
+                            <span class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">BG FILL COLOR</span>
+                            <input type="color" id="textBgColor" value="#FEF08A"
+                                oninput="onTextStyleInput('bgColor', this.value)"
+                                class="w-14 h-6 rounded border border-slate-300 cursor-pointer p-0.5">
                         </div>
 
                         <div>
                             <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ALIGNMENT</label>
                             <div class="grid grid-cols-3 gap-1.5">
                                 <button type="button" id="btnAlign_left" onclick="setTextAlign('left')"
-                                    class="py-1.5 rounded-xl bg-[#E61E43] text-white font-bold text-center cursor-pointer transition" title="ชิดซ้าย">
+                                    class="py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-center cursor-pointer transition" title="ชิดซ้าย">
                                     <i class="fa-solid fa-align-left"></i>
                                 </button>
                                 <button type="button" id="btnAlign_center" onclick="setTextAlign('center')"
@@ -696,18 +711,20 @@
                         </div>
                     </div>
 
-                    <!-- IMAGE PANEL (Browse-First Workflow) -->
+                    <!-- IMAGE PANEL -->
                     <div id="panel_image" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Image Insertion</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Image Insertion</div>
                         <button type="button" onclick="triggerImagePicker()"
-                            class="w-full py-2.5 px-3 rounded-xl bg-[#E61E43] hover:bg-[#C81436] text-white font-bold flex items-center justify-center gap-2 shadow-md transition cursor-pointer">
+                            class="w-full py-2.5 px-3 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold flex items-center justify-center gap-2 shadow-md transition cursor-pointer">
                             <i class="fa-solid fa-folder-open"></i>
-                            <span>เลือกรูปภาพจากเครื่อง</span>
+                            <span>เลือกรูปภาพจากเครื่อง (PNG/JPG)</span>
                         </button>
 
                         <div id="pendingImageCard" class="hidden p-2.5 rounded-xl panel-subtle border space-y-2.5">
                             <div class="flex items-center justify-between text-[10px]">
-                                <span class="font-bold text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i>พร้อมวางภาพ</span>
+                                <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                                    <i class="fa-solid fa-circle-check mr-1"></i>พร้อมวางภาพ
+                                </span>
                                 <span id="pendingImageName" class="text-slate-500 truncate max-w-[130px]">image.png</span>
                             </div>
                             <div class="w-full h-28 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden p-1">
@@ -721,38 +738,38 @@
                         </div>
 
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                            1. กด <strong>เลือกรูปภาพจากเครื่อง</strong> ก่อน<br>
-                            2. แตะตำแหน่งที่ต้องการบนกระดาษ หรือกดปุ่ม <strong>วางตรงกลางหน้าปัจจุบันทันที</strong>
+                            1. กด <strong>เลือกรูปภาพจากเครื่อง</strong><br>
+                            2. แตะตำแหน่งที่ต้องการบนหน้ากระดาษ หรือกดปุ่มวางตรงกลางหน้า
                         </p>
                     </div>
 
                     <!-- WATERMARK PANEL -->
                     <div id="panel_watermark" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Watermark Studio</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Watermark Studio</div>
 
                         <div>
                             <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT</label>
                             <input type="text" id="wmText" value="สำเนาถูกต้อง"
-                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-bold outline-none focus:border-[#E61E43]">
+                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-bold outline-none focus:border-[#E11D48]">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE (PX)</label>
                                 <input type="number" id="wmSize" value="52" min="12" max="200"
-                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E61E43]">
+                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
                             <div>
                                 <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ANGLE (°)</label>
                                 <input type="number" id="wmAngle" value="-45" min="-180" max="180"
-                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E61E43]">
+                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 items-end">
                             <div>
                                 <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">COLOR</label>
-                                <input type="color" id="wmColor" value="#E61E43"
+                                <input type="color" id="wmColor" value="#E11D48"
                                     class="w-full h-8 panel-subtle border rounded-xl cursor-pointer p-0.5">
                             </div>
                             <div>
@@ -762,7 +779,7 @@
                                 </div>
                                 <input type="range" id="wmOpacity" min="5" max="100" value="28"
                                     oninput="document.getElementById('wmOpacityLabel').textContent = this.value + '%'"
-                                    class="w-full accent-[#E61E43] cursor-pointer">
+                                    class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                         </div>
 
@@ -775,7 +792,7 @@
                         </div>
 
                         <button type="button" onclick="applyWatermarkAction()"
-                            class="w-full py-2.5 rounded-xl bg-[#E61E43] hover:bg-[#C81436] text-white font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer">
+                            class="w-full py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold flex items-center justify-center gap-2 shadow-md cursor-pointer">
                             <i class="fa-solid fa-stamp"></i>
                             <span>ประทับ / อัปเดตลายน้ำ</span>
                         </button>
@@ -783,11 +800,11 @@
 
                     <!-- DRAW & HIGHLIGHTER PANEL -->
                     <div id="panel_draw" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Draw &amp; Highlighter</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Draw &amp; Highlighter</div>
 
                         <div class="grid grid-cols-3 gap-1.5">
                             <button type="button" id="drawStyle_solid" onclick="setDrawStyle('solid')"
-                                class="py-1.5 rounded-xl bg-[#E61E43] text-white font-bold text-[11px] cursor-pointer">เส้นทึบ</button>
+                                class="py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-[11px] cursor-pointer">เส้นทึบ</button>
                             <button type="button" id="drawStyle_dashed" onclick="setDrawStyle('dashed')"
                                 class="py-1.5 rounded-xl panel-subtle border font-bold text-[11px] cursor-pointer">เส้นประ</button>
                             <button type="button" id="drawStyle_highlighter" onclick="setDrawStyle('highlighter')"
@@ -801,7 +818,7 @@
                                 </div>
                                 <input type="range" id="drawSize" min="1" max="36" value="4"
                                     oninput="document.getElementById('drawSizeLabel').textContent = this.value + 'px'"
-                                    class="w-full accent-[#E61E43] cursor-pointer">
+                                    class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                             <div>
                                 <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
@@ -809,28 +826,28 @@
                                 </div>
                                 <input type="range" id="drawOpacity" min="15" max="100" value="100"
                                     oninput="document.getElementById('drawOpacityLabel').textContent = this.value + '%'"
-                                    class="w-full accent-[#E61E43] cursor-pointer">
+                                    class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                         </div>
 
                         <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="setDrawColor('#E61E43')" class="w-6 h-6 rounded-lg bg-[#E61E43] border border-slate-300 cursor-pointer"></button>
-                            <button type="button" onclick="setDrawColor('#0F172A')" class="w-6 h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer"></button>
-                            <button type="button" onclick="setDrawColor('#2563EB')" class="w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer"></button>
-                            <button type="button" onclick="setDrawColor('#10B981')" class="w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer"></button>
-                            <button type="button" onclick="setDrawColor('#FACC15')" class="w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer"></button>
-                            <input type="color" id="drawColor" value="#E61E43"
+                            <button type="button" onclick="setDrawColor('#E11D48')" class="w-6 h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
+                            <button type="button" onclick="setDrawColor('#0F172A')" class="w-6 h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark"></button>
+                            <button type="button" onclick="setDrawColor('#2563EB')" class="w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer" title="Blue"></button>
+                            <button type="button" onclick="setDrawColor('#10B981')" class="w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer" title="Green"></button>
+                            <button type="button" onclick="setDrawColor('#FACC15')" class="w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer" title="Yellow"></button>
+                            <input type="color" id="drawColor" value="#E11D48"
                                 class="flex-1 h-6 panel-subtle border rounded-lg cursor-pointer p-0.5">
                         </div>
                     </div>
 
-                    <!-- ERASER PANEL (Partial Precision Default + Whole-Stroke Toggle) -->
+                    <!-- ERASER PANEL -->
                     <div id="panel_eraser" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E61E43]">Precision Eraser</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Precision Eraser</div>
 
                         <div class="grid grid-cols-2 gap-1.5">
                             <button type="button" id="eraserMode_partial" onclick="setEraserMode('partial')"
-                                class="py-1.5 px-2 rounded-xl bg-[#E61E43] text-white font-bold text-[11px] cursor-pointer">
+                                class="py-1.5 px-2 rounded-xl bg-[#E11D48] text-white font-bold text-[11px] cursor-pointer">
                                 ลบเฉพาะส่วน (อิสระ)
                             </button>
                             <button type="button" id="eraserMode_whole" onclick="setEraserMode('whole')"
@@ -841,11 +858,11 @@
 
                         <div>
                             <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
-                                <span>BRUSH SIZE</span><span id="eraserSizeLabel">26px</span>
+                                <span>ERASER SIZE</span><span id="eraserSizeLabel">26px</span>
                             </div>
                             <input type="range" id="eraserSize" min="8" max="90" value="26"
                                 oninput="onEraserSizeChange(this.value)"
-                                class="w-full accent-[#E61E43] cursor-pointer">
+                                class="w-full accent-[#E11D48] cursor-pointer">
                         </div>
 
                         <p id="eraserHintText" class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -853,7 +870,7 @@
                         </p>
                     </div>
 
-                    <!-- SELECTED OBJECT ACTIONS (Layer Order, Opacity, Duplicate, Delete) -->
+                    <!-- SELECTED OBJECT CONTROLS -->
                     <div id="selectedObjectControls" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
                         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Selected Object</div>
 
@@ -863,17 +880,17 @@
                             </div>
                             <input type="range" id="selOpacitySlider" min="10" max="100" value="100"
                                 oninput="onSelectedOpacityInput(this.value)"
-                                class="w-full accent-[#E61E43] cursor-pointer">
+                                class="w-full accent-[#E11D48] cursor-pointer">
                         </div>
 
                         <div class="grid grid-cols-2 gap-1.5">
                             <button type="button" onclick="reorderSelectedObject(1)"
-                                class="py-1.5 rounded-xl panel-subtle border hover:border-[#E61E43] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
+                                class="py-1.5 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 title="นำมาด้านหน้า">
-                                <i class="fa-solid fa-layer-group text-[#E61E43]"></i> ไว้ด้านหน้า
+                                <i class="fa-solid fa-layer-group text-[#E11D48]"></i> ไว้ด้านหน้า
                             </button>
                             <button type="button" onclick="reorderSelectedObject(-1)"
-                                class="py-1.5 rounded-xl panel-subtle border hover:border-[#E61E43] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
+                                class="py-1.5 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
                                 title="ส่งไปด้านหลัง">
                                 <i class="fa-solid fa-arrow-down-short-wide text-slate-500"></i> ไว้ด้านหลัง
                             </button>
@@ -881,11 +898,11 @@
 
                         <div class="grid grid-cols-2 gap-1.5">
                             <button type="button" onclick="duplicateSelectedObject()"
-                                class="py-2 rounded-xl panel-subtle border hover:border-[#E61E43] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer">
-                                <i class="fa-regular fa-clone text-[#E61E43]"></i> ทำซ้ำ
+                                class="py-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-regular fa-clone text-[#E11D48]"></i> ทำซ้ำ
                             </button>
                             <button type="button" onclick="deleteSelectedObject()"
-                                class="py-2 rounded-xl bg-[#E61E43]/15 hover:bg-[#E61E43] text-[#E61E43] hover:text-white border border-[#E61E43]/30 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                class="py-2 rounded-xl bg-[#E11D48]/15 hover:bg-[#E11D48] text-[#E11D48] hover:text-white border border-[#E11D48]/30 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-regular fa-trash-can"></i> ลบวัตถุ
                             </button>
                         </div>
@@ -893,18 +910,18 @@
                 </div>
             </div>
 
-            <!-- Center PDF Workspace (#pdfWorkspace) -->
+            <!-- Center Document Workspace -->
             <main id="pdfWorkspace" class="stage-bg flex-1 relative overflow-auto min-w-0 select-none">
                 <div id="eraserCursor"></div>
 
-                <!-- Wide/Long Scroll-Safe Stack Container -->
+                <!-- Scroll-Safe & Mobile-Centered Container -->
                 <div id="canvasPagesContainer"
-                    class="min-w-full w-max mx-auto px-8 py-8 pb-36 md:pb-24 flex flex-col items-center gap-8">
+                    class="min-w-full w-max mx-auto px-3 md:px-8 py-6 pb-36 md:pb-24 flex flex-col items-center gap-8">
                     <!-- Rendered PDF Pages -->
                 </div>
             </main>
 
-            <!-- Right Sidebar — Pages Overview & Page Insertion -->
+            <!-- Right Sidebar — Pages Overview -->
             <div id="overviewBackdrop" onclick="setOverviewOpen(false)"
                 class="hidden fixed inset-0 bg-black/50 z-40 md:hidden"></div>
 
@@ -916,7 +933,7 @@
                     <div class="flex items-center justify-between gap-2">
                         <span class="font-mono text-[11px] font-extrabold uppercase tracking-wider">Pages Overview</span>
                         <div class="flex items-center gap-1.5">
-                            <span id="overviewCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-[#E61E43]/15 text-[#E61E43] font-bold">0 หน้า</span>
+                            <span id="overviewCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0 หน้า</span>
                             <button type="button" onclick="setOverviewOpen(false)"
                                 class="md:hidden w-7 h-7 rounded-lg panel-surface border flex items-center justify-center cursor-pointer">
                                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -927,21 +944,21 @@
                     <!-- Filter Tabs -->
                     <div class="grid grid-cols-2 gap-1 panel-surface border p-0.5 rounded-xl font-mono text-[10px]">
                         <button type="button" id="tabFilterAll" onclick="setOverviewFilter('all')"
-                            class="py-1 rounded-lg bg-[#E61E43] text-white font-bold cursor-pointer">ทั้งหมด</button>
+                            class="py-1 rounded-lg bg-[#E11D48] text-white font-bold cursor-pointer">ทั้งหมด</button>
                         <button type="button" id="tabFilterEdited" onclick="setOverviewFilter('edited')"
                             class="py-1 rounded-lg text-slate-600 dark:text-slate-400 font-semibold cursor-pointer">แก้ไขแล้ว</button>
                     </div>
 
-                    <!-- Top "+ เพิ่มหน้า ⌄" Button -->
+                    <!-- Top "+ เพิ่มหน้า ⌄" Trigger -->
                     <button type="button" onclick="openInsertPopover(event, null, this)"
-                        class="insert-trigger w-full py-2 px-3 rounded-xl panel-surface border hover:border-[#E61E43] font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
-                        <i class="fa-solid fa-plus text-[#E61E43]"></i>
+                        class="insert-trigger w-full py-2 px-3 rounded-xl panel-surface border hover:border-[#E11D48] font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-plus text-[#E11D48]"></i>
                         <span>เพิ่มหน้า</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                     </button>
                 </div>
 
-                <!-- Scrollable Thumbnail List -->
+                <!-- Scrollable Thumbnails -->
                 <div id="thumbnailList" class="flex-1 overflow-y-auto p-3"></div>
                 <div id="overviewEmptyMsg" class="hidden p-6 text-center font-mono text-[11px] text-slate-500">
                     ยังไม่มีหน้าที่ถูกแก้ไข
@@ -951,26 +968,26 @@
     </section>
 
     <!-- ===================================================================== -->
-    <!-- HIGH-CONTRAST FLOATING UI CONTROLS (OPACITY-100 IN LIGHT & DARK)      -->
+    <!-- 4. HIGH-CONTRAST FLOATING UI CONTROLS (OPACITY-100)                   -->
     <!-- ===================================================================== -->
 
-    <!-- Mobile Floating "แสดงตัวเลือก" Unhide Pill -->
+    <!-- Mobile Floating Unhide Drawer Pill -->
     <button type="button" id="mobileUnhideDrawerPill" onclick="unhideMobileSubToolPanel()"
-        class="hidden md:hidden fixed right-3 bottom-[126px] z-30 opacity-100 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-2 border-[#E61E43] shadow-lg rounded-full px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer">
-        <i class="fa-solid fa-sliders text-[#E61E43]"></i>
+        class="hidden md:hidden fixed right-3 bottom-[126px] z-30 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border-2 border-[#E11D48] shadow-lg rounded-full px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-sliders text-[#E11D48]"></i>
         <span>แสดงตัวเลือก</span>
     </button>
 
-    <!-- High-Contrast Floating Insert Page Popover ("หน้าเปล่า" / "จากไฟล์") -->
+    <!-- Floating Insert Page Popover -->
     <div id="insertPagePopover" onclick="event.stopPropagation()"
-        class="hidden fixed z-[80] w-48 opacity-100 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-xl p-1.5 text-xs">
+        class="hidden fixed z-[80] w-48 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
         <div class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between mb-1">
             <span>แทรกหน้าใหม่</span>
-            <span id="insertTargetLabel" class="text-[#E61E43]">ต่อท้าย</span>
+            <span id="insertTargetLabel" class="text-[#E11D48]">ต่อท้าย</span>
         </div>
         <button type="button" onclick="insertBlankPageAtPending()"
             class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
-            <i class="fa-regular fa-file-lines text-[#E61E43] w-4 text-center"></i>
+            <i class="fa-regular fa-file-lines text-[#E11D48] w-4 text-center"></i>
             <span>หน้าเปล่า</span>
         </button>
         <button type="button" onclick="triggerInsertFromFile()"
@@ -980,9 +997,9 @@
         </button>
     </div>
 
-    <!-- High-Contrast Floating Bottom Navigation & Zoom Pill (#floatingNavPill) -->
+    <!-- Floating Bottom Page Nav & Zoom Pill -->
     <div id="floatingNavPill"
-        class="hidden fixed bottom-[72px] left-1/2 -translate-x-1/2 md:bottom-5 z-30 opacity-100 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 shadow-lg rounded-full px-3 sm:px-4 py-1.5 flex items-center gap-2 sm:gap-3 font-mono text-xs select-none max-w-[calc(100vw-1rem)]">
+        class="hidden fixed bottom-[72px] left-1/2 -translate-x-1/2 md:bottom-5 z-30 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 shadow-lg rounded-full px-3 sm:px-4 py-1.5 flex items-center gap-2 sm:gap-3 font-mono text-xs select-none max-w-[calc(100vw-1rem)]">
 
         <!-- Page Stepper -->
         <div class="flex items-center gap-1">
@@ -995,7 +1012,7 @@
             <input type="number" id="navPageInput" min="1" value="1"
                 onchange="jumpToInputPage()"
                 onkeydown="if (event.key === 'Enter') { this.blur(); jumpToInputPage(); }"
-                class="w-9 text-center bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md py-0.5 text-xs font-bold text-slate-900 dark:text-slate-100 outline-none focus:border-[#E61E43]">
+                class="w-9 text-center bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md py-0.5 text-xs font-bold text-slate-900 dark:text-slate-100 outline-none focus:border-[#E11D48]">
             <span class="text-slate-500 dark:text-slate-400 font-bold">/</span>
             <span id="navTotalPages" class="font-bold min-w-[16px] text-center">1</span>
 
@@ -1026,34 +1043,34 @@
                 <i class="fa-solid fa-plus text-[10px]"></i>
             </button>
             <button type="button" onclick="fitPageToViewport()"
-                class="px-2.5 py-1 rounded-full bg-[#E61E43] hover:bg-[#C81436] text-white font-bold text-[10px] shadow-xs cursor-pointer ml-0.5"
+                class="px-2.5 py-1 rounded-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-[10px] shadow-sm cursor-pointer ml-0.5"
                 title="พอดีหน้าจอ">
                 FIT
             </button>
         </div>
     </div>
 
-    <!-- Hidden Print Container -->
+    <!-- Hidden Print Section -->
     <div id="printSection" class="hidden"></div>
 
-    <!-- Toast Notification -->
+    <!-- Toast Message Box -->
     <div id="toast"
         class="fixed top-16 left-1/2 -translate-x-1/2 md:top-auto md:left-auto md:translate-x-0 md:bottom-6 md:right-6 z-[95] pointer-events-none opacity-0 transition-opacity duration-200">
-        <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white border border-slate-700 border-l-4 border-l-[#E61E43] shadow-xl font-mono text-xs font-bold flex items-center gap-2">
+        <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white border border-slate-700 border-l-4 border-l-[#E11D48] shadow-xl font-mono text-xs font-bold flex items-center gap-2">
             <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
             <span id="toastText">Ready</span>
         </div>
     </div>
 
     <!-- ===================================================================== -->
-    <!-- CORE APPLICATION SCRIPT (CLEAN, SELF-CONTAINED, NULL-SAFE)            -->
+    <!-- 5. MAIN STUDIO APPLICATION SCRIPT (CLEAN MULTI-LINE, ZERO ERRORS)     -->
     <!-- ===================================================================== -->
     <script>
         (function () {
             'use strict';
 
             // =================================================================
-            // 1. CENTRAL APPLICATION STATE
+            // 1. STATE & CONSTANTS
             // =================================================================
             const BASE_RENDER_SCALE = 1.5;
 
@@ -1068,42 +1085,48 @@
                 zoom: 1.0,
                 activePageId: null,
 
-                // Sub-tool panel & mobile drawer lock
+                // Panels & Mobile Drawer Lock
                 isSubToolOpen: false,
                 isMobileDrawerLockedHidden: false,
                 isOverviewOpen: false,
                 overviewFilter: 'all', // all | edited
 
-                // Selection & manipulation
+                // Selection & Dragging
                 selectedRef: null,   // { pageId, itemId }
-                dragState: null,     // { mode: 'move'|'resize', pageId, itemId, offsetX, offsetY, aspect }
+                dragState: null,     // { mode: 'move'|'resize', handle, pageId, itemId, startX, startY, origX, origY, origW, origH, aspect }
 
-                // Unified single global drawing / erasing state
+                // Active Freehand Draw / Erase
                 activeDraw: null,    // { pageId, pointerId, tool, strokeObj, changed }
 
-                // Text defaults & inline editing
-                textDefaults: { bold: false, italic: false, highlight: false, align: 'left' },
+                // Text Defaults & Inline Editor
+                textDefaults: {
+                    bold: false,
+                    italic: false,
+                    hasBg: false,
+                    bgColor: '#FEF08A',
+                    align: 'left'
+                },
                 inlineEditor: null,  // { wrapEl, pageId, itemId }
                 floatingEditPill: null,
 
-                // Custom double-tap tracker (350ms, <15px)
+                // Custom Double-Tap Detection (350ms, <15px)
                 lastTap: { time: 0, itemId: null, x: 0, y: 0 },
 
-                // Staged image (browse-first workflow)
+                // Staged Image Upload
                 pendingImage: null,  // { dataUrl, name, img }
 
-                // Page insertion target index (0..pages.length)
+                // Insert Page Popover State
                 pendingInsertIndex: 0,
                 activeDividerEl: null,
 
-                // Desktop Hand Panning (Spacebar + Drag / Middle Mouse)
+                // Desktop Hand Panning
                 isSpaceHeld: false,
-                handPan: null,       // { startX, startY, scrollLeft, scrollTop }
+                handPan: null,
 
-                // Mobile 2-finger gesture
-                twoFinger: null,     // { lastMidX, lastMidY, initDist, initZoom }
+                // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan
+                twoFinger: null,
 
-                // History (Undo / Redo)
+                // Undo / Redo History
                 history: [],
                 historyIndex: -1
             };
@@ -1117,10 +1140,11 @@
             let toastTimer = null;
             let zoomDebounceTimer = null;
             let scrollSyncRaf = null;
+            let gestureRaf = null;
             let isInitialized = false;
 
             // =================================================================
-            // 2. HELPERS
+            // 2. UTILITY HELPERS
             // =================================================================
             function $(id) {
                 return document.getElementById(id);
@@ -1159,6 +1183,16 @@
                 };
             }
 
+            function getMaxPageEffectiveWidth() {
+                if (state.pages.length === 0) return 595.28;
+                let maxW = 0;
+                for (const pg of state.pages) {
+                    const { w } = getPageEffectiveDims(pg);
+                    if (w > maxW) maxW = w;
+                }
+                return Math.max(200, maxW);
+            }
+
             function isPageEdited(page) {
                 return (
                     page.isNew ||
@@ -1189,6 +1223,15 @@
                 return img;
             }
 
+            function centerWorkspaceHorizontal() {
+                const vp = $('pdfWorkspace');
+                if (!vp) return;
+                requestAnimationFrame(() => {
+                    const maxScroll = Math.max(0, vp.scrollWidth - vp.clientWidth);
+                    vp.scrollLeft = Math.round(maxScroll / 2);
+                });
+            }
+
             function showToast(msg, type = 'success') {
                 const toast = $('toast');
                 const icon = $('toastIcon');
@@ -1203,9 +1246,12 @@
                 } else {
                     icon.className = 'fa-solid fa-circle-check text-emerald-400';
                 }
+
                 toast.classList.remove('opacity-0');
                 if (toastTimer) clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => toast.classList.add('opacity-0'), 2600);
+                toastTimer = setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                }, 2600);
             }
 
             // =================================================================
@@ -1215,7 +1261,9 @@
                 const isDark = document.documentElement.classList.toggle('dark');
                 try {
                     localStorage.setItem('clevertensai_editpdf_theme', isDark ? 'dark' : 'light');
-                } catch (_) { }
+                } catch (_) {
+                    // Ignore storage restrictions
+                }
                 showToast(isDark ? 'Velvet Midnight (Dark Mode)' : 'Alabaster Light Mode', 'info');
             }
 
@@ -1231,7 +1279,7 @@
             }
 
             // =================================================================
-            // 4. INITIALIZATION & GLOBAL LISTENERS
+            // 4. INITIALIZATION & GLOBAL EVENTS
             // =================================================================
             function init() {
                 if (isInitialized) return;
@@ -1240,13 +1288,12 @@
                 const dropZone = $('dropZone');
                 const workspace = $('pdfWorkspace');
 
-                // Scoped Dropzone Drag & Drop (Click is handled reliably via inline onclick="triggerPdfImport(event)")
                 if (dropZone) {
                     ['dragenter', 'dragover'].forEach(evt => {
                         dropZone.addEventListener(evt, (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            dropZone.classList.add('border-[#E61E43]', 'bg-[#E61E43]/5');
+                            dropZone.classList.add('border-[#E11D48]', 'bg-[#E11D48]/5');
                         });
                     });
 
@@ -1254,7 +1301,7 @@
                         dropZone.addEventListener(evt, (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            dropZone.classList.remove('border-[#E61E43]', 'bg-[#E61E43]/5');
+                            dropZone.classList.remove('border-[#E11D48]', 'bg-[#E11D48]/5');
                         });
                     });
 
@@ -1264,7 +1311,7 @@
                         if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
                             loadPdfFile(file);
                         } else {
-                            showToast('กรุณาเลือกไฟล์ .PDF เท่านั้น', 'error');
+                            showToast('กรุณาเลือกไฟล์นามสกุล .PDF เท่านั้น', 'error');
                         }
                     });
                 }
@@ -1289,10 +1336,10 @@
                 }
 
                 setupKeyboardShortcuts();
+
                 const eraserSlider = $('eraserSize');
                 if (eraserSlider) onEraserSizeChange(eraserSlider.value);
 
-                // Close popovers & dropdowns on outside click
                 window.addEventListener('click', (e) => {
                     const pop = $('insertPagePopover');
                     if (pop && !pop.classList.contains('hidden')) {
@@ -1300,6 +1347,7 @@
                             closeInsertPopover();
                         }
                     }
+
                     const expWrap = $('exportDropdownWrap');
                     if (expWrap && !expWrap.contains(e.target)) {
                         closeExportMenu();
@@ -1319,7 +1367,7 @@
             }
 
             // =================================================================
-            // 5. DESKTOP HAND PANNING & MOBILE 2-FINGER GESTURES
+            // 5. DESKTOP HAND PANNING & MOBILE 60FPS GPU PINCH-TO-ZOOM
             // =================================================================
             function setupDesktopHandPan(vp) {
                 window.addEventListener('keydown', (e) => {
@@ -1328,6 +1376,7 @@
                     if (tag === 'input' || tag === 'textarea' || tag === 'select' || state.inlineEditor) return;
                     const studio = $('studioWorkspace');
                     if (!studio || studio.classList.contains('hidden')) return;
+
                     e.preventDefault();
                     state.isSpaceHeld = true;
                     vp.classList.add('hand-pan-ready');
@@ -1387,46 +1436,112 @@
                         e.preventDefault();
                         const t1 = e.touches[0];
                         const t2 = e.touches[1];
+                        const vpRect = vp.getBoundingClientRect();
+                        const startMidX = (t1.clientX + t2.clientX) / 2;
+                        const startMidY = (t1.clientY + t2.clientY) / 2;
+
                         state.activeDraw = null;
                         state.dragState = null;
+
+                        const container = $('canvasPagesContainer');
+                        if (container) {
+                            container.style.willChange = 'transform';
+                        }
+
                         state.twoFinger = {
-                            lastMidX: (t1.clientX + t2.clientX) / 2,
-                            lastMidY: (t1.clientY + t2.clientY) / 2,
+                            startMidX,
+                            startMidY,
+                            currMidX: startMidX,
+                            currMidY: startMidY,
                             initDist: Math.max(12, Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY)),
-                            initZoom: state.zoom
+                            initZoom: state.zoom,
+                            currRatio: 1.0,
+                            focalContentX: vp.scrollLeft + (startMidX - vpRect.left),
+                            focalContentY: vp.scrollTop + (startMidY - vpRect.top)
                         };
                     }
                 }, { passive: false });
 
                 vp.addEventListener('touchmove', (e) => {
                     if (!isMobile()) return;
+
                     if (e.touches.length >= 2 && state.twoFinger) {
                         e.preventDefault();
                         const t1 = e.touches[0];
                         const t2 = e.touches[1];
                         const midX = (t1.clientX + t2.clientX) / 2;
                         const midY = (t1.clientY + t2.clientY) / 2;
-                        vp.scrollLeft -= (midX - state.twoFinger.lastMidX);
-                        vp.scrollTop -= (midY - state.twoFinger.lastMidY);
-                        state.twoFinger.lastMidX = midX;
-                        state.twoFinger.lastMidY = midY;
-
                         const dist = Math.max(12, Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY));
-                        const nextZoom = clamp(+(state.twoFinger.initZoom * (dist / state.twoFinger.initDist)).toFixed(2), 0.35, 2.5);
-                        if (Math.abs(nextZoom - state.zoom) >= 0.04) {
-                            setZoomLevel(nextZoom);
+
+                        const minRatio = 0.35 / state.twoFinger.initZoom;
+                        const maxRatio = 2.5 / state.twoFinger.initZoom;
+                        state.twoFinger.currMidX = midX;
+                        state.twoFinger.currMidY = midY;
+                        state.twoFinger.currRatio = clamp(dist / state.twoFinger.initDist, minRatio, maxRatio);
+
+                        if (!gestureRaf) {
+                            gestureRaf = requestAnimationFrame(() => {
+                                gestureRaf = null;
+                                if (!state.twoFinger) return;
+                                const container = $('canvasPagesContainer');
+                                if (!container) return;
+
+                                const ratio = state.twoFinger.currRatio;
+                                const panX = state.twoFinger.currMidX - state.twoFinger.startMidX;
+                                const panY = state.twoFinger.currMidY - state.twoFinger.startMidY;
+                                const tx = panX + state.twoFinger.focalContentX * (1 - ratio);
+                                const ty = panY + state.twoFinger.focalContentY * (1 - ratio);
+
+                                container.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${ratio})`;
+
+                                const zLbl = $('zoomLabel');
+                                if (zLbl) {
+                                    zLbl.textContent = `${Math.round(state.twoFinger.initZoom * ratio * 100)}%`;
+                                }
+                            });
                         }
                     } else if (e.touches.length === 1 && !state.inlineEditor) {
-                        // Block 1-finger page scroll on mobile
+                        // Strict 1-finger lock: block native scrolling so dragging/drawing stays steady
                         e.preventDefault();
                     }
                 }, { passive: false });
 
-                vp.addEventListener('touchend', (e) => {
-                    if (e.touches.length < 2) {
-                        state.twoFinger = null;
+                const finishTwoFinger = (e) => {
+                    if (!state.twoFinger || (e.touches && e.touches.length >= 2)) return;
+
+                    if (gestureRaf) {
+                        cancelAnimationFrame(gestureRaf);
+                        gestureRaf = null;
                     }
-                }, { passive: true });
+
+                    const tf = state.twoFinger;
+                    state.twoFinger = null;
+
+                    const container = $('canvasPagesContainer');
+                    if (container) {
+                        container.style.transform = '';
+                        container.style.willChange = '';
+                    }
+
+                    const nextZoom = clamp(+(tf.initZoom * tf.currRatio).toFixed(2), 0.35, 2.5);
+                    const appliedRatio = nextZoom / tf.initZoom;
+                    const vpRect = vp.getBoundingClientRect();
+
+                    if (Math.abs(nextZoom - state.zoom) >= 0.01) {
+                        setZoomLevel(nextZoom, true);
+                    } else {
+                        const zLbl = $('zoomLabel');
+                        if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
+                    }
+
+                    const targetScrollLeft = Math.max(0, tf.focalContentX * appliedRatio - (tf.currMidX - vpRect.left));
+                    const targetScrollTop = Math.max(0, tf.focalContentY * appliedRatio - (tf.currMidY - vpRect.top));
+                    vp.scrollLeft = targetScrollLeft;
+                    vp.scrollTop = targetScrollTop;
+                };
+
+                vp.addEventListener('touchend', finishTwoFinger, { passive: true });
+                vp.addEventListener('touchcancel', finishTwoFinger, { passive: true });
             }
 
             function setupKeyboardShortcuts() {
@@ -1459,7 +1574,7 @@
             }
 
             // =================================================================
-            // 6. FILE LOADING & BLANK SAMPLE CREATION
+            // 6. FILE IMPORT & BLANK A4 DEMO
             // =================================================================
             function triggerPdfImport(e) {
                 if (e && typeof e.stopPropagation === 'function') {
@@ -1471,14 +1586,11 @@
                 inp.click();
             }
 
-            function triggerPdfPicker(e) {
-                triggerPdfImport(e);
-            }
-
             function handleMainPdfUpload(e) {
                 const inp = (e && e.target) ? e.target : $('pdfFileInput');
                 const file = inp && inp.files && inp.files[0];
                 if (!file) return;
+
                 const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
                 if (!isPdf) {
                     showToast('กรุณาเลือกไฟล์นามสกุล .PDF เท่านั้น', 'error');
@@ -1510,6 +1622,10 @@
             }
 
             async function createBlankDemoDocument() {
+                if (typeof PDFLib === 'undefined') {
+                    showToast('ไม่พบไลบรารี pdf-lib กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
+                    return;
+                }
                 try {
                     showToast('กำลังสร้างเอกสาร A4 เปล่า...', 'info');
                     const doc = await PDFLib.PDFDocument.create();
@@ -1518,12 +1634,17 @@
                     const file = new File([bytes], 'CLEVERTENSAI_Blank_A4.pdf', { type: 'application/pdf' });
                     await loadPdfFile(file);
                 } catch (err) {
-                    console.error(err);
+                    console.error('Blank A4 creation error:', err);
                     showToast('ไม่สามารถสร้างเอกสารเปล่าได้', 'error');
                 }
             }
 
             async function loadPdfFile(file) {
+                if (typeof pdfjsLib === 'undefined') {
+                    showToast('ไม่พบไลบรารี PDF.js กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
+                    return;
+                }
+
                 try {
                     showToast('กำลังเปิดไฟล์ PDF...', 'info');
                     const buf = await file.arrayBuffer();
@@ -1558,19 +1679,22 @@
                     }
 
                     state.activePageId = state.pages[0].id;
+
                     const fnBadge = $('filenameBadge');
-                    if (fnBadge) fnBadge.textContent = file.name;
                     const up = $('uploadScreen');
                     const st = $('studioWorkspace');
                     const navPill = $('floatingNavPill');
+                    if (fnBadge) fnBadge.textContent = file.name;
                     if (up) up.classList.add('hidden');
                     if (st) st.classList.remove('hidden');
                     if (navPill) navPill.classList.remove('hidden');
 
+                    // Calculate initial fit zoom (Mobile uses clientWidth - 24 against max page width)
                     const vpEl = $('pdfWorkspace');
-                    const availW = Math.max(260, (vpEl ? vpEl.clientWidth : window.innerWidth) - (isMobile() ? 36 : 96));
-                    const firstW = state.pages[0].width * BASE_RENDER_SCALE;
-                    state.zoom = clamp(+(Math.min(1.0, availW / firstW)).toFixed(2), 0.35, 1.25);
+                    const availW = Math.max(240, (vpEl ? vpEl.clientWidth : window.innerWidth) - (isMobile() ? 24 : 96));
+                    const maxPageW = getMaxPageEffectiveWidth() * BASE_RENDER_SCALE;
+                    state.zoom = clamp(+(Math.min(1.0, availW / Math.max(1, maxPageW))).toFixed(2), 0.35, 1.25);
+
                     const zLbl = $('zoomLabel');
                     if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
 
@@ -1584,21 +1708,21 @@
                     await rebuildAllDOMAndRender();
                     if (vpEl) {
                         vpEl.scrollTop = 0;
-                        vpEl.scrollLeft = 0;
+                        centerWorkspaceHorizontal();
                     }
                     showToast(`โหลดสำเร็จ (${state.pages.length} หน้า)`, 'success');
                 } catch (err) {
                     console.error('Load PDF error:', err);
                     const isEncrypted = err && (err.name === 'PasswordException' || String(err.message || '').toLowerCase().includes('password'));
                     showToast(
-                        isEncrypted ? 'ไฟล์ PDF นี้ติดรหัสผ่าน ไม่สามารถเปิดได้' : 'ไฟล์ PDF ไม่ถูกต้องหรือเสียหาย ไม่สามารถเปิดได้',
+                        isEncrypted ? 'ไฟล์ PDF นี้ติดรหัสผ่าน ไม่สามารถเปิดได้' : 'ไฟล์ PDF ไม่ถูกต้องหรือเสียหาย',
                         'error'
                     );
                 }
             }
 
             // =================================================================
-            // 7. TOOL RAIL, SUB-TOOL PANEL & MOBILE DRAWER LOCK
+            // 7. TOOL RAIL, OPTIONS DRAWER & MOBILE DRAWER LOCK
             // =================================================================
             const TOOL_LABELS = {
                 select: 'SELECT STUDIO',
@@ -1613,8 +1737,7 @@
                 if (state.tool === tool) {
                     if (state.isSubToolOpen) {
                         hideSubToolPanel();
-                    } else {
-                        state.isMobileDrawerLockedHidden = false;
+                    } else if (!(isMobile() && state.isMobileDrawerLockedHidden)) {
                         openSubToolPanel(true);
                     }
                     return;
@@ -1700,7 +1823,9 @@
 
             function updateAllCanvasCursors() {
                 const eraserRing = $('eraserCursor');
-                if (eraserRing && state.tool !== 'eraser') eraserRing.style.display = 'none';
+                if (eraserRing && state.tool !== 'eraser') {
+                    eraserRing.style.display = 'none';
+                }
 
                 let cur = 'default';
                 if (state.tool === 'text') cur = 'text';
@@ -1719,7 +1844,7 @@
                     const btn = $(`drawStyle_${s}`);
                     if (!btn) return;
                     btn.className = s === style
-                        ? 'py-1.5 rounded-xl bg-[#E61E43] text-white font-bold text-[11px] cursor-pointer'
+                        ? 'py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-[11px] cursor-pointer'
                         : 'py-1.5 rounded-xl panel-subtle border font-bold text-[11px] cursor-pointer';
                 });
             }
@@ -1735,7 +1860,7 @@
                 const wBtn = $('eraserMode_whole');
                 const hint = $('eraserHintText');
 
-                const activeCls = 'py-1.5 px-2 rounded-xl bg-[#E61E43] text-white font-bold text-[11px] cursor-pointer';
+                const activeCls = 'py-1.5 px-2 rounded-xl bg-[#E11D48] text-white font-bold text-[11px] cursor-pointer';
                 const idleCls = 'py-1.5 px-2 rounded-xl panel-subtle border font-bold text-[11px] cursor-pointer';
 
                 if (pBtn) pBtn.className = state.eraserMode === 'partial' ? activeCls : idleCls;
@@ -1758,7 +1883,7 @@
             }
 
             // =================================================================
-            // 8. IMAGE BROWSE-FIRST STAGING & PLACEMENT
+            // 8. IMAGE STAGING & PLACEMENT
             // =================================================================
             function stageImageFile(file) {
                 const reader = new FileReader();
@@ -1774,7 +1899,7 @@
                         if (thumb) thumb.src = dataUrl;
                         if (nameEl) nameEl.textContent = state.pendingImage.name;
                         if (card) card.classList.remove('hidden');
-                        selectTool('image', !state.isMobileDrawerLockedHidden);
+                        selectTool('image', !(isMobile() && state.isMobileDrawerLockedHidden));
                         showToast('พร้อมวางภาพ แตะบนกระดาษหรือกดวางตรงกลางหน้า', 'success');
                     };
                     img.onerror = () => showToast('ไฟล์รูปภาพไม่ถูกต้อง', 'error');
@@ -1821,7 +1946,7 @@
                 if (card) card.classList.add('hidden');
 
                 pushHistorySnapshot();
-                selectTool('select', !state.isMobileDrawerLockedHidden);
+                selectTool('select', !(isMobile() && state.isMobileDrawerLockedHidden));
                 syncSelectionPanel();
                 redrawPageOverlay(pg.id);
                 updateOverviewBadges();
@@ -1829,7 +1954,7 @@
             }
 
             // =================================================================
-            // 9. WATERMARK ACTION
+            // 9. WATERMARK STUDIO
             // =================================================================
             function applyWatermarkAction() {
                 if (state.pages.length === 0) return;
@@ -1839,9 +1964,10 @@
                     showToast('กรุณากรอกข้อความลายน้ำ', 'error');
                     return;
                 }
+
                 const fontSize = parseInt(($('wmSize') && $('wmSize').value) || '52', 10) || 52;
                 const angle = parseInt(($('wmAngle') && $('wmAngle').value) || '-45', 10) || -45;
-                const color = ($('wmColor') && $('wmColor').value) || '#E61E43';
+                const color = ($('wmColor') && $('wmColor').value) || '#E11D48';
                 const opacity = (parseInt(($('wmOpacity') && $('wmOpacity').value) || '28', 10) || 28) / 100;
                 const scope = ($('wmScope') && $('wmScope').value) || 'all';
 
@@ -1879,7 +2005,7 @@
             }
 
             // =================================================================
-            // 10. AUTO-EXPANDING MULTI-LINE TEXT MEASUREMENT & INLINE EDITOR
+            // 10. MULTI-LINE TEXT MEASUREMENT & DUAL-ACCESS INLINE EDITOR
             // =================================================================
             function buildTextFontString(item, scale) {
                 return `${item.italic ? 'italic ' : ''}${item.bold ? 'bold ' : ''}${item.fontSize * scale}px "${item.fontFamily}", sans-serif`;
@@ -1935,8 +2061,12 @@
             }
 
             function onTextStyleInput(prop, val) {
+                if (prop === 'bgColor') {
+                    state.textDefaults.bgColor = val;
+                }
                 const item = getSelectedItem();
                 if (!item || item.type !== 'text') return;
+
                 item[prop] = val;
                 const pg = getPageById(state.selectedRef.pageId);
                 if (pg) {
@@ -1985,22 +2115,27 @@
                 const fEl = $('textFont');
                 const sEl = $('textSize');
                 const cEl = $('textColor');
+                const bgColorEl = $('textBgColor');
+                const bgRow = $('textBgColorRow');
+
                 if (fEl && src.fontFamily) fEl.value = src.fontFamily;
                 if (sEl && src.fontSize) sEl.value = src.fontSize;
                 if (cEl && src.color) cEl.value = src.color;
+                if (bgColorEl && src.bgColor) bgColorEl.value = src.bgColor;
+                if (bgRow) bgRow.classList.toggle('hidden', !src.hasBg);
 
                 const flagMap = [
                     ['btnTextBold', !!src.bold],
                     ['btnTextItalic', !!src.italic],
-                    ['btnTextHighlight', !!src.highlight]
+                    ['btnTextBg', !!src.hasBg]
                 ];
                 flagMap.forEach(([id, active]) => {
                     const el = $(id);
                     if (!el) return;
                     if (active) {
-                        el.classList.add('bg-[#E61E43]', 'text-white', 'border-[#E61E43]');
+                        el.classList.add('bg-[#E11D48]', 'text-white', 'border-[#E11D48]');
                     } else {
-                        el.classList.remove('bg-[#E61E43]', 'text-white', 'border-[#E61E43]');
+                        el.classList.remove('bg-[#E11D48]', 'text-white', 'border-[#E11D48]');
                     }
                 });
 
@@ -2009,7 +2144,7 @@
                     const btn = $(`btnAlign_${a}`);
                     if (!btn) return;
                     btn.className = a === activeAlign
-                        ? 'py-1.5 rounded-xl bg-[#E61E43] text-white font-bold text-center cursor-pointer transition'
+                        ? 'py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-center cursor-pointer transition'
                         : 'py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition';
                 });
             }
@@ -2037,12 +2172,13 @@
                 wrap.style.left = `${item.x * scale}px`;
                 wrap.style.top = `${item.y * scale}px`;
                 wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
+                wrap.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
                 const bar = document.createElement('div');
                 bar.className = 'flex items-center gap-2 mb-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono text-[10px] shadow-lg whitespace-nowrap';
                 bar.innerHTML = `
                     <span class="text-slate-300">Enter = ขึ้นบรรทัดใหม่</span>
-                    <button type="button" class="px-2 py-0.5 rounded bg-[#E61E43] text-white font-bold cursor-pointer">เสร็จสิ้น</button>
+                    <button type="button" class="px-2 py-0.5 rounded bg-[#E11D48] text-white font-bold cursor-pointer">เสร็จสิ้น</button>
                 `;
                 const doneBtn = bar.querySelector('button');
                 if (doneBtn) {
@@ -2066,7 +2202,7 @@
                 const autoResize = () => {
                     item.text = ta.value;
                     const { width, height } = measureTextItem(pg, item);
-                    ta.style.width = `${Math.max(96, Math.ceil(width * scale + 22))}px`;
+                    ta.style.width = `${Math.max(96, Math.ceil(width * scale + 24))}px`;
                     ta.style.height = 'auto';
                     ta.style.height = `${Math.max(Math.ceil(height * scale + 14), ta.scrollHeight)}px`;
                     renderThumbnailOverlay(pageId);
@@ -2126,13 +2262,14 @@
 
                 measureTextItem(pg, item);
                 const scale = state.zoom * BASE_RENDER_SCALE;
+
                 const pill = document.createElement('button');
                 pill.type = 'button';
                 pill.id = 'floatingTextEditPill';
-                pill.className = 'absolute z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap opacity-100 bg-[#E61E43] hover:bg-[#C81436] text-white border-2 border-white shadow-lg rounded-full px-3 py-1 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer';
+                pill.className = 'absolute z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border-2 border-[#E11D48] shadow-lg rounded-full px-3 py-1 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer';
                 pill.style.left = `${(item.x + item.width / 2) * scale}px`;
-                pill.style.top = `${Math.max(28, item.y * scale - 10)}px`;
-                pill.innerHTML = '<i class="fa-solid fa-pen text-[10px]"></i><span>✎ แก้ไขข้อความ</span>';
+                pill.style.top = `${Math.max(30, item.y * scale - 10)}px`;
+                pill.innerHTML = '<i class="fa-solid fa-pen text-[10px] text-[#E11D48]"></i><span>✎ แก้ไขข้อความ</span>';
                 pill.addEventListener('pointerdown', (e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -2144,7 +2281,7 @@
             }
 
             // =================================================================
-            // 11. SELECTION CONTROLS (LAYER ORDER, OPACITY, DUPLICATE, DELETE)
+            // 11. SELECTION ACTIONS
             // =================================================================
             function clearSelection(shouldRedraw = true) {
                 closeInlineEditor();
@@ -2200,11 +2337,12 @@
                 if (idx < 0) return;
                 const targetIdx = clamp(idx + delta, 0, pg.items.length - 1);
                 if (targetIdx === idx) return;
+
                 const [moved] = pg.items.splice(idx, 1);
                 pg.items.splice(targetIdx, 0, moved);
                 pushHistorySnapshot();
                 redrawPageOverlay(pg.id);
-                showToast(delta > 0 ? 'เลื่อนวัตถุขึ้นมาด้านหน้าแล้ว' : 'ส่งวัตถุไปด้านหลังแล้ว', 'info');
+                showToast(delta > 0 ? 'นำวัตถุขึ้นมาด้านหน้าแล้ว' : 'ส่งวัตถุไปด้านหลังแล้ว', 'info');
             }
 
             function duplicateSelectedObject() {
@@ -2212,12 +2350,14 @@
                 if (!item) return;
                 const pg = getPageById(state.selectedRef.pageId);
                 if (!pg) return;
+
                 const copy = JSON.parse(JSON.stringify(item));
                 copy.id = uid(copy.type);
                 copy.x += 18;
                 copy.y += 18;
                 pg.items.push(copy);
                 state.selectedRef = { pageId: pg.id, itemId: copy.id };
+
                 pushHistorySnapshot();
                 syncSelectionPanel();
                 redrawPageOverlay(pg.id);
@@ -2230,6 +2370,7 @@
                 const { pageId, itemId } = state.selectedRef;
                 const pg = getPageById(pageId);
                 if (!pg) return;
+
                 pg.items = pg.items.filter(it => it.id !== itemId);
                 clearSelection(false);
                 pushHistorySnapshot();
@@ -2239,13 +2380,14 @@
             }
 
             // =================================================================
-            // 12. CANVAS COMPOSITOR (ITEMS + ISOLATED INK LAYER / PARTIAL ERASE)
+            // 12. CANVAS COMPOSITOR (ITEMS + ISOLATED DESTINATION-OUT INK LAYER)
             // =================================================================
             function drawStrokeOnCtx(ctx, stroke, scale) {
                 if (!stroke.points || stroke.points.length < 2) return;
                 ctx.save();
                 ctx.beginPath();
                 ctx.moveTo(stroke.points[0].x * scale, stroke.points[0].y * scale);
+
                 if (stroke.points.length === 2) {
                     ctx.lineTo(stroke.points[1].x * scale, stroke.points[1].y * scale);
                 } else {
@@ -2279,21 +2421,23 @@
                         ctx.lineWidth = stroke.size * 2.4 * scale;
                     }
                 }
+
                 ctx.stroke();
                 ctx.restore();
             }
 
             function renderPageItemsAndInk(targetCtx, page, scale, skipItemId = null, liveStroke = null) {
-                // 1. Render non-ink items (watermarks, images, text)
+                // 1. Render Objects (Watermarks, Images, Text)
                 for (const item of page.items) {
                     if (item.id === skipItemId) continue;
+
                     if (item.type === 'watermark') {
                         targetCtx.save();
                         targetCtx.globalAlpha = item.opacity !== undefined ? item.opacity : 0.28;
                         targetCtx.translate(item.x * scale, item.y * scale);
                         targetCtx.rotate((item.angle || -45) * Math.PI / 180);
                         targetCtx.font = `bold ${item.fontSize * scale}px "Prompt", sans-serif`;
-                        targetCtx.fillStyle = item.color || '#E61E43';
+                        targetCtx.fillStyle = item.color || '#E11D48';
                         targetCtx.textAlign = 'center';
                         targetCtx.textBaseline = 'middle';
                         targetCtx.fillText(item.text || '', 0, 0);
@@ -2311,17 +2455,21 @@
                         const align = item.align || 'left';
                         targetCtx.save();
                         targetCtx.globalAlpha = item.opacity !== undefined ? item.opacity : 1.0;
-                        if (item.highlight) {
-                            targetCtx.fillStyle = 'rgba(250, 204, 21, 0.38)';
+
+                        if (item.hasBg) {
+                            targetCtx.fillStyle = item.bgColor || '#FEF08A';
                             targetCtx.fillRect((item.x - 4) * scale, (item.y - 2) * scale, (width + 8) * scale, (height + 4) * scale);
                         }
+
                         targetCtx.font = buildTextFontString(item, scale);
                         targetCtx.fillStyle = item.color || '#0F172A';
                         targetCtx.textAlign = align;
                         targetCtx.textBaseline = 'top';
+
                         let drawX = item.x * scale;
                         if (align === 'center') drawX = (item.x + width / 2) * scale;
                         else if (align === 'right') drawX = (item.x + width) * scale;
+
                         lines.forEach((ln, idx) => {
                             targetCtx.fillText(ln, drawX, (item.y + idx * lineH) * scale);
                         });
@@ -2329,7 +2477,7 @@
                     }
                 }
 
-                // 2. Render isolated Ink Layer (draw + partial destination-out erase)
+                // 2. Render Isolated Freehand Ink Layer (supports destination-out partial erasing)
                 const hasInk = page.inkStrokes.length > 0 || !!liveStroke;
                 if (!hasInk) return;
 
@@ -2378,22 +2526,28 @@
                 }
 
                 ctx.save();
-                ctx.strokeStyle = '#E61E43';
+                ctx.strokeStyle = '#E11D48';
                 ctx.lineWidth = 1.5;
                 ctx.setLineDash([5, 4]);
                 ctx.strokeRect(x * scale, y * scale, w * scale, h * scale);
                 ctx.setLineDash([]);
 
                 if (item.type === 'image') {
-                    const hx = (x + w) * scale;
-                    const hy = (y + h) * scale;
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.strokeStyle = '#E61E43';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(hx, hy, 6.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    const corners = [
+                        [x, y],
+                        [x + w, y],
+                        [x, y + h],
+                        [x + w, y + h]
+                    ];
+                    corners.forEach(([cx, cy]) => {
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.strokeStyle = '#E11D48';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(cx * scale, cy * scale, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                    });
                 }
                 ctx.restore();
             }
@@ -2446,11 +2600,18 @@
                 return null;
             }
 
-            function isHitImageResizeHandle(item, x, y) {
-                if (!item || item.type !== 'image') return false;
-                const hx = item.x + item.width;
-                const hy = item.y + item.height;
-                return Math.hypot(x - hx, y - hy) <= 16;
+            function hitTestImageCornerHandle(item, x, y) {
+                if (!item || item.type !== 'image') return null;
+                const handles = [
+                    { name: 'tl', x: item.x, y: item.y },
+                    { name: 'tr', x: item.x + item.width, y: item.y },
+                    { name: 'bl', x: item.x, y: item.y + item.height },
+                    { name: 'br', x: item.x + item.width, y: item.y + item.height }
+                ];
+                for (const h of handles) {
+                    if (Math.hypot(x - h.x, y - h.y) <= 16) return h.name;
+                }
+                return null;
             }
 
             function eraseWholeStrokeAt(page, x, y, radiusUnscaled) {
@@ -2469,7 +2630,7 @@
             }
 
             // =================================================================
-            // 14. UNIFIED POINTER EVENTS ON PAGE OVERLAY CANVAS
+            // 14. CANVAS POINTER EVENTS (1-FINGER EDITING + DOUBLE-TAP/DBLCLICK)
             // =================================================================
             function getUnscaledPos(canvas, clientX, clientY) {
                 const rect = canvas.getBoundingClientRect();
@@ -2481,6 +2642,21 @@
             }
 
             function attachCanvasPointerEvents(canvas, pageId) {
+                // Desktop dblclick backup for text editing
+                canvas.addEventListener('dblclick', (e) => {
+                    if (state.tool !== 'select') return;
+                    const pg = getPageById(pageId);
+                    if (!pg) return;
+                    const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
+                    const hit = hitTestItem(pg, pos.x, pos.y);
+                    if (hit && hit.type === 'text') {
+                        state.selectedRef = { pageId, itemId: hit.id };
+                        syncSelectionPanel();
+                        redrawPageOverlay(pageId);
+                        openInlineEditor(pageId, hit);
+                    }
+                });
+
                 canvas.addEventListener('pointerdown', (e) => {
                     if (state.twoFinger || state.isSpaceHeld || state.handPan) return;
                     if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -2495,10 +2671,23 @@
                         closeInlineEditor();
                         const curSel = getSelectedItem();
 
-                        if (curSel && state.selectedRef.pageId === pageId && isHitImageResizeHandle(curSel, pos.x, pos.y)) {
-                            state.dragState = { mode: 'resize', pageId, itemId: curSel.id, aspect: curSel.height / Math.max(1, curSel.width) };
-                            try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
-                            return;
+                        if (curSel && state.selectedRef.pageId === pageId) {
+                            const corner = hitTestImageCornerHandle(curSel, pos.x, pos.y);
+                            if (corner) {
+                                state.dragState = {
+                                    mode: 'resize',
+                                    handle: corner,
+                                    pageId,
+                                    itemId: curSel.id,
+                                    origX: curSel.x,
+                                    origY: curSel.y,
+                                    origW: curSel.width,
+                                    origH: curSel.height,
+                                    aspect: curSel.height / Math.max(1, curSel.width)
+                                };
+                                try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                                return;
+                            }
                         }
 
                         const hit = hitTestItem(pg, pos.x, pos.y);
@@ -2547,7 +2736,8 @@
                             color: ($('textColor') && $('textColor').value) || '#0F172A',
                             bold: state.textDefaults.bold,
                             italic: state.textDefaults.italic,
-                            highlight: state.textDefaults.highlight,
+                            hasBg: state.textDefaults.hasBg,
+                            bgColor: ($('textBgColor') && $('textBgColor').value) || state.textDefaults.bgColor,
                             align: state.textDefaults.align || 'left',
                             opacity: 1.0,
                             width: 120,
@@ -2566,8 +2756,9 @@
 
                     if (state.tool === 'image') {
                         if (!state.pendingImage) {
-                            state.isMobileDrawerLockedHidden = false;
-                            openSubToolPanel(true);
+                            if (!(isMobile() && state.isMobileDrawerLockedHidden)) {
+                                openSubToolPanel(false);
+                            }
                             showToast('กรุณากด "เลือกรูปภาพจากเครื่อง" ก่อนวางภาพ', 'info');
                             return;
                         }
@@ -2582,7 +2773,7 @@
                             id: uid('ink'),
                             kind: 'draw',
                             style: state.drawStyle,
-                            color: ($('drawColor') && $('drawColor').value) || '#E61E43',
+                            color: ($('drawColor') && $('drawColor').value) || '#E11D48',
                             size: parseInt(($('drawSize') && $('drawSize').value) || '4', 10) || 4,
                             opacity: (parseInt(($('drawOpacity') && $('drawOpacity').value) || '100', 10) || 100) / 100,
                             points: [{ x: pos.x, y: pos.y }]
@@ -2640,10 +2831,33 @@
                     if (state.dragState && state.dragState.pageId === pageId) {
                         const item = pg.items.find(it => it.id === state.dragState.itemId);
                         if (!item) return;
+
                         if (state.dragState.mode === 'resize' && item.type === 'image') {
-                            const newW = Math.max(28, pos.x - item.x);
-                            item.width = newW;
-                            item.height = newW * state.dragState.aspect;
+                            const d = state.dragState;
+                            if (d.handle === 'br') {
+                                const newW = Math.max(28, pos.x - d.origX);
+                                item.width = newW;
+                                item.height = newW * d.aspect;
+                            } else if (d.handle === 'tr') {
+                                const newW = Math.max(28, pos.x - d.origX);
+                                const newH = newW * d.aspect;
+                                item.width = newW;
+                                item.height = newH;
+                                item.y = (d.origY + d.origH) - newH;
+                            } else if (d.handle === 'bl') {
+                                const newW = Math.max(28, (d.origX + d.origW) - pos.x);
+                                const newH = newW * d.aspect;
+                                item.width = newW;
+                                item.height = newH;
+                                item.x = (d.origX + d.origW) - newW;
+                            } else if (d.handle === 'tl') {
+                                const newW = Math.max(28, (d.origX + d.origW) - pos.x);
+                                const newH = newW * d.aspect;
+                                item.width = newW;
+                                item.height = newH;
+                                item.x = (d.origX + d.origW) - newW;
+                                item.y = (d.origY + d.origH) - newH;
+                            }
                             redrawPageOverlay(pageId);
                         } else if (state.dragState.mode === 'move') {
                             item.x = pos.x - state.dragState.offsetX;
@@ -2714,7 +2928,7 @@
             }
 
             // =================================================================
-            // 15. RENDERING MAIN PAGES & ACCURATE PAGES OVERVIEW THUMBNAILS
+            // 15. MAIN PAGE & ACCURATE THUMBNAIL RENDERING
             // =================================================================
             async function rebuildAllDOMAndRender() {
                 buildMainPagesDOM();
@@ -2756,24 +2970,24 @@
                         <div class="flex items-center gap-1.5">
                             <span class="font-bold">หน้า ${pageNum} / ${total}</span>
                             ${pg.isNew ? '<span class="px-1.5 py-0.5 rounded bg-amber-500 text-white text-[9px] font-bold">NEW</span>' : ''}
-                            <span id="pageEditedBadge_${pg.id}" class="hidden px-1.5 py-0.5 rounded bg-[#E61E43] text-white text-[9px] font-bold">EDITED</span>
+                            <span id="pageEditedBadge_${pg.id}" class="hidden px-1.5 py-0.5 rounded bg-[#E11D48] text-white text-[9px] font-bold">EDITED</span>
                         </div>
                         <div class="flex items-center gap-1">
                             <button type="button" onclick="rotatePageById('${pg.id}', -90)"
-                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E61E43] text-[10px] font-bold cursor-pointer" title="หมุนซ้าย 90°">
+                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E11D48] text-[10px] font-bold cursor-pointer" title="หมุนซ้าย 90°">
                                 <i class="fa-solid fa-rotate-left"></i>
                             </button>
                             <button type="button" onclick="rotatePageById('${pg.id}', 90)"
-                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E61E43] text-[10px] font-bold cursor-pointer" title="หมุนขวา 90°">
+                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E11D48] text-[10px] font-bold cursor-pointer" title="หมุนขวา 90°">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </button>
                             <button type="button" onclick="duplicatePageById('${pg.id}')"
-                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E61E43] text-[10px] font-bold cursor-pointer" title="ทำซ้ำหน้านี้">
+                                class="px-2 py-1 rounded-lg panel-surface border hover:border-[#E11D48] text-[10px] font-bold cursor-pointer" title="ทำซ้ำหน้านี้">
                                 <i class="fa-regular fa-clone"></i>
                             </button>
                             ${total > 1 ? `
                                 <button type="button" onclick="deletePageById('${pg.id}')"
-                                    class="px-2 py-1 rounded-lg panel-surface border hover:bg-[#E61E43] hover:text-white text-[10px] font-bold cursor-pointer" title="ลบหน้านี้">
+                                    class="px-2 py-1 rounded-lg panel-surface border hover:bg-[#E11D48] hover:text-white text-[10px] font-bold cursor-pointer" title="ลบหน้านี้">
                                     <i class="fa-regular fa-trash-can"></i>
                                 </button>
                             ` : ''}
@@ -2790,13 +3004,13 @@
                     baseCanvas.id = `base_${pg.id}`;
                     baseCanvas.width = pxW;
                     baseCanvas.height = pxH;
-                    baseCanvas.className = 'absolute inset-0 block pointer-events-none';
+                    baseCanvas.className = 'absolute inset-0 w-full h-full block pointer-events-none';
 
                     const overlayCanvas = document.createElement('canvas');
                     overlayCanvas.id = `overlay_${pg.id}`;
                     overlayCanvas.width = pxW;
                     overlayCanvas.height = pxH;
-                    overlayCanvas.className = 'overlay-canvas absolute inset-0 block';
+                    overlayCanvas.className = 'overlay-canvas absolute inset-0 w-full h-full block';
 
                     attachCanvasPointerEvents(overlayCanvas, pg.id);
 
@@ -2829,6 +3043,7 @@
                     baseCanvas.height = pxH;
                     overlayCanvas.width = pxW;
                     overlayCanvas.height = pxH;
+
                     const ctx = baseCanvas.getContext('2d');
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = '#FFFFFF';
@@ -2872,9 +3087,9 @@
                 const div = document.createElement('div');
                 div.className = 'insert-divider relative h-6 flex items-center justify-center my-0.5 select-none';
                 div.innerHTML = `
-                    <div class="insert-line absolute inset-x-3 h-[1.5px] bg-[#E61E43]/60 rounded-full pointer-events-none"></div>
+                    <div class="insert-line absolute inset-x-3 h-[1.5px] bg-[#E11D48]/60 rounded-full pointer-events-none"></div>
                     <button type="button" onclick="openInsertPopover(event, ${insertIdx}, this)"
-                        class="insert-trigger insert-btn relative z-10 w-6 h-6 rounded-full bg-white dark:bg-slate-800 hover:bg-[#E61E43] text-[#E61E43] hover:text-white border border-[#E61E43]/70 shadow-sm flex items-center justify-center text-[11px] cursor-pointer"
+                        class="insert-trigger insert-btn relative z-10 w-6 h-6 rounded-full bg-white dark:bg-slate-800 hover:bg-[#E11D48] text-[#E11D48] hover:text-white border border-[#E11D48]/70 shadow-sm flex items-center justify-center text-[11px] cursor-pointer"
                         title="แทรกหน้าใหม่ตรงตำแหน่งนี้">
                         <i class="fa-solid fa-plus"></i>
                     </button>
@@ -2903,11 +3118,11 @@
 
                     item.innerHTML = `
                         <div id="thumbFrame_${pg.id}"
-                            class="thumb-frame relative bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 group-hover:border-[#E61E43]/70 shadow-sm overflow-hidden max-w-full"
+                            class="thumb-frame relative bg-white rounded-lg border-2 border-slate-200 dark:border-slate-700 group-hover:border-[#E11D48]/70 shadow-sm overflow-hidden max-w-full"
                             style="width:${boxW}px; height:${boxH}px; aspect-ratio:${w} / ${h};">
                             <div class="absolute top-1 left-1 z-20 flex items-center gap-1 pointer-events-none">
                                 ${pg.isNew ? '<span class="px-1 py-0.5 rounded bg-amber-500 text-white font-mono text-[8px] font-bold">NEW</span>' : ''}
-                                <span id="thumbEditedBadge_${pg.id}" class="hidden px-1 py-0.5 rounded bg-[#E61E43] text-white font-mono text-[8px] font-bold">EDITED</span>
+                                <span id="thumbEditedBadge_${pg.id}" class="hidden px-1 py-0.5 rounded bg-[#E11D48] text-white font-mono text-[8px] font-bold">EDITED</span>
                             </div>
                             <div class="opacity-0 group-hover:opacity-100 absolute top-1 right-1 z-20 flex items-center gap-1 transition">
                                 <button type="button" onclick="event.stopPropagation(); rotatePageById('${pg.id}', -90);"
@@ -2924,13 +3139,13 @@
                                 </button>
                                 ${total > 1 ? `
                                     <button type="button" onclick="event.stopPropagation(); deletePageById('${pg.id}');"
-                                        class="w-5 h-5 rounded bg-slate-900/85 hover:bg-[#E61E43] text-white flex items-center justify-center text-[9px] cursor-pointer" title="ลบหน้า">
+                                        class="w-5 h-5 rounded bg-slate-900/85 hover:bg-[#E11D48] text-white flex items-center justify-center text-[9px] cursor-pointer" title="ลบหน้า">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 ` : ''}
                             </div>
-                            <canvas id="thumbBase_${pg.id}" class="thumb-canvas-fit bg-white"></canvas>
-                            <canvas id="thumbOverlay_${pg.id}" class="thumb-canvas-fit absolute inset-0 pointer-events-none"></canvas>
+                            <canvas id="thumbBase_${pg.id}" class="thumb-canvas-fit w-full h-full block bg-white"></canvas>
+                            <canvas id="thumbOverlay_${pg.id}" class="thumb-canvas-fit w-full h-full block absolute inset-0 pointer-events-none"></canvas>
                         </div>
                         <span class="thumb-num font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-1.5">${pageNum}</span>
                     `;
@@ -2978,7 +3193,7 @@
                 const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                 const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
 
-                // Measure exact page viewport at scale 1.0 first to prevent clipping/zooming
+                // Measure true viewport at scale 1.0 so cropped or newly inserted pages fit cleanly
                 const vp1 = pdfPage.getViewport({ scale: 1.0, rotation: totalRot });
                 const { boxW, boxH } = getThumbCardDimensions(vp1.width, vp1.height);
                 frame.style.width = `${boxW}px`;
@@ -3023,7 +3238,7 @@
             }
 
             // =================================================================
-            // 16. PAGE OPERATIONS (ROTATE, INSERT, DUPLICATE, DELETE)
+            // 16. PAGE OPERATIONS (ROTATE, DUPLICATE, DELETE, INSERT)
             // =================================================================
             async function rotatePageById(pageId, delta) {
                 const pg = getPageById(pageId);
@@ -3097,7 +3312,7 @@
                 const rect = btnEl.getBoundingClientRect();
                 const pw = pop.offsetWidth || 192;
                 const ph = pop.offsetHeight || 112;
-                let left = clamp(rect.left + rect.width / 2 - pw / 2, 8, window.innerWidth - pw - 8);
+                const left = clamp(rect.left + rect.width / 2 - pw / 2, 8, window.innerWidth - pw - 8);
                 let top = rect.bottom + 6;
                 if (top + ph > window.innerHeight - 10) top = Math.max(64, rect.top - ph - 6);
                 pop.style.left = `${left}px`;
@@ -3115,15 +3330,11 @@
 
             async function insertBlankPageAtPending() {
                 closeInsertPopover();
-                const refIdx = Math.max(0, state.pendingInsertIndex - 1);
-                const refPg = state.pages[refIdx];
-                const dims = refPg ? getPageEffectiveDims(refPg) : { w: 595.28, h: 841.89 };
-
                 const blankPage = {
                     id: uid('pg'),
                     kind: 'blank',
-                    width: dims.w,
-                    height: dims.h,
+                    width: 595.28,
+                    height: 841.89,
                     rotation: 0,
                     isNew: true,
                     items: [],
@@ -3135,7 +3346,7 @@
                 pushHistorySnapshot();
                 await rebuildAllDOMAndRender();
                 scrollToPageId(blankPage.id);
-                showToast('แทรกหน้าเปล่าเรียบร้อย', 'success');
+                showToast('แทรกหน้าเปล่า A4 เรียบร้อย', 'success');
             }
 
             function triggerInsertFromFile() {
@@ -3149,6 +3360,10 @@
             async function handleInsertFromFile(file) {
                 try {
                     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                        if (typeof pdfjsLib === 'undefined') {
+                            showToast('ไม่พบไลบรารี PDF.js', 'error');
+                            return;
+                        }
                         showToast(`กำลังแทรกหน้าจาก ${file.name}...`, 'info');
                         const buf = await file.arrayBuffer();
                         const bytes = new Uint8Array(buf);
@@ -3184,7 +3399,7 @@
                         return;
                     }
 
-                    // Image file -> new page with centered image
+                    // Image file -> new A4 page with centered image
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         const dataUrl = ev.target.result;
@@ -3228,18 +3443,18 @@
                             scrollToPageId(imgPage.id);
                             showToast('แทรกหน้ารูปภาพสำเร็จ', 'success');
                         };
-                        img.onerror = () => showToast('รองรับเฉพาะไฟล์ PDF หรือรูปภาพ', 'error');
+                        img.onerror = () => showToast('รองรับเฉพาะไฟล์ PDF หรือรูปภาพ PNG/JPG', 'error');
                         img.src = dataUrl;
                     };
                     reader.readAsDataURL(file);
                 } catch (err) {
-                    console.error(err);
+                    console.error('Insert file error:', err);
                     showToast('เกิดข้อผิดพลาดในการแทรกไฟล์', 'error');
                 }
             }
 
             // =================================================================
-            // 17. OVERVIEW SIDEBAR, FILTERS, NAVIGATION & ZOOM
+            // 17. OVERVIEW SIDEBAR, NAVIGATION & ZOOM
             // =================================================================
             function setOverviewOpen(open) {
                 state.isOverviewOpen = open;
@@ -3259,10 +3474,10 @@
                 const btnEd = $('tabFilterEdited');
                 if (btnAll && btnEd) {
                     if (mode === 'all') {
-                        btnAll.className = 'py-1 rounded-lg bg-[#E61E43] text-white font-bold cursor-pointer';
+                        btnAll.className = 'py-1 rounded-lg bg-[#E11D48] text-white font-bold cursor-pointer';
                         btnEd.className = 'py-1 rounded-lg text-slate-600 dark:text-slate-400 font-semibold cursor-pointer';
                     } else {
-                        btnEd.className = 'py-1 rounded-lg bg-[#E61E43] text-white font-bold cursor-pointer';
+                        btnEd.className = 'py-1 rounded-lg bg-[#E11D48] text-white font-bold cursor-pointer';
                         btnAll.className = 'py-1 rounded-lg text-slate-600 dark:text-slate-400 font-semibold cursor-pointer';
                     }
                 }
@@ -3364,6 +3579,9 @@
                 if (el) {
                     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     setActivePage(pageId);
+                    if (isMobile()) {
+                        centerWorkspaceHorizontal();
+                    }
                 }
             }
 
@@ -3389,18 +3607,24 @@
             }
 
             function fitPageToViewport() {
-                const pg = getActivePage();
                 const vp = $('pdfWorkspace');
-                if (!pg || !vp) return;
-                const { w } = getPageEffectiveDims(pg);
-                const availW = Math.max(240, vp.clientWidth - (isMobile() ? 32 : 96));
-                setZoomLevel(clamp(+(availW / (w * BASE_RENDER_SCALE)).toFixed(2), 0.35, 2.5));
+                if (state.pages.length === 0 || !vp) return;
+
+                const targetW = isMobile()
+                    ? getMaxPageEffectiveWidth()
+                    : (getActivePage() ? getPageEffectiveDims(getActivePage()).w : getMaxPageEffectiveWidth());
+
+                const availW = Math.max(240, vp.clientWidth - (isMobile() ? 24 : 96));
+                const nextZoom = clamp(+(availW / Math.max(1, targetW * BASE_RENDER_SCALE)).toFixed(2), 0.35, 2.5);
+                setZoomLevel(nextZoom);
+                centerWorkspaceHorizontal();
             }
 
-            function setZoomLevel(nextZoom) {
+            function setZoomLevel(nextZoom, immediate = false) {
                 if (state.pages.length === 0) return;
                 closeInlineEditor();
                 state.zoom = nextZoom;
+
                 const zLbl = $('zoomLabel');
                 if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
 
@@ -3415,13 +3639,19 @@
                 });
                 updateFloatingTextEditPill();
 
-                if (zoomDebounceTimer) clearTimeout(zoomDebounceTimer);
-                zoomDebounceTimer = setTimeout(async () => {
+                const rerenderAll = async () => {
                     for (const pg of state.pages) {
                         await renderMainPageBase(pg.id);
                         redrawPageOverlay(pg.id);
                     }
-                }, 90);
+                };
+
+                if (zoomDebounceTimer) clearTimeout(zoomDebounceTimer);
+                if (immediate) {
+                    rerenderAll();
+                } else {
+                    zoomDebounceTimer = setTimeout(rerenderAll, 85);
+                }
             }
 
             // =================================================================
@@ -3523,6 +3753,11 @@
 
             async function exportPdfDocument() {
                 if (state.pages.length === 0) return;
+                if (typeof PDFLib === 'undefined') {
+                    showToast('ไม่พบไลบรารี pdf-lib กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
+                    return;
+                }
+
                 closeInlineEditor();
                 showToast('กำลังสร้างไฟล์ PDF คุณภาพสูง...', 'info');
 
@@ -3594,6 +3829,7 @@
                     showToast('ไม่พบไลบรารี JSZip กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
                     return;
                 }
+
                 closeInlineEditor();
                 showToast('กำลังสร้างไฟล์ ZIP ภาพทุกหน้า...', 'info');
 
@@ -3630,20 +3866,18 @@
             }
 
             // =================================================================
-            // 20. EXPOSE HANDLERS TO HTML ONCLICK ATTRIBUTES & BOOT
+            // 20. EXPOSE HANDLERS & SAFE BOOT
             // =================================================================
             Object.assign(window, {
                 toggleTheme,
                 toggleExportMenu,
                 closeExportMenu,
                 triggerPdfImport,
-                triggerPdfPicker,
                 handleMainPdfUpload,
                 triggerImagePicker,
                 handleImageUpload,
                 handleInsertFileUpload,
                 createBlankDemoDocument,
-                createBlankSampleDocument: createBlankDemoDocument,
                 performUndo,
                 performRedo,
                 toggleOverviewSidebar,
