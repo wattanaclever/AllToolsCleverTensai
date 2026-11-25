@@ -162,6 +162,13 @@
                     isNew: false
                 },
                 {
+                    title: "Crop & Rotate PDF",
+                    desc: "ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์",
+                    url: "CropPDF.html",
+                    icon: "fa-solid fa-crop-simple",
+                    isNew: true
+                },
+                {
                     title: "Edit PDF",
                     desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF",
                     url: "EditPDF.html",
@@ -180,7 +187,7 @@
                     desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF",
                     url: "ConvertToPDF.html",
                     icon: "fa-solid fa-file-import",
-                    isNew: true
+                    isNew: false
                 }
             ];
 
@@ -262,7 +269,7 @@
 
                 <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
                     class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
+                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-6xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
                         <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
                             <div class="flex items-center gap-3.5">
                                 <div class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
@@ -286,9 +293,9 @@
                             <div>
                                 <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                                     <i class="fa-solid fa-file-pdf"></i>
-                                    <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 5 โมดูล)</span>
+                                    <span>PDF STUDIO TOOLS (เครื่องมือจัดการ PDF ทั้ง 6 โมดูล)</span>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
                                     ${PDF_TOOLS_MENU.map(tool => `
                                         <a href="${tool.url}"
                                             class="p-4 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border-2 border-gray-800 hover:border-red-500/60 transition-all flex flex-col items-center text-center group shadow-lg relative">
@@ -388,7 +395,7 @@
 
             <div class="flex items-center gap-2.5 font-mono text-xs shrink-0">
                 <div class="px-3.5 py-2 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
-                    <span class="text-crimson-500 font-bold" id="toolCounter">5</span> MODULES READY
+                    <span class="text-crimson-500 font-bold" id="toolCounter">6</span> MODULES READY
                 </div>
             </div>
         </div>
@@ -412,11 +419,11 @@
 
 
     <!-- ===================================================================== -->
-    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารายการเครื่องมือ PDF ทั้ง 5 ตัวหลัก       -->
+    <!-- CONFIGURATION & SCRIPT: ตั้งค่ารายการเครื่องมือ PDF ทั้ง 6 ตัวหลัก       -->
     <!-- ===================================================================== -->
     <script>
         /**
-         * รายการเครื่องมือ PDF ทั้ง 5 โมดูลในชุด CLEVERTENSAI PDF Studio Suite
+         * รายการเครื่องมือ PDF ทั้ง 6 โมดูลในชุด CLEVERTENSAI PDF Studio Suite
          */
         const PDF_TOOLS = [
             {
@@ -478,6 +485,18 @@
                 icon: "fa-solid fa-file-import",
                 previewType: "convert",
                 tags: ["แปลงรูปภาพเป็น PDF", "รองรับ JPG / PNG / WebP", "จัดหน้าอัตโนมัติ"]
+            },
+            {
+                id: "crop-pdf",
+                title: "Crop & Rotate PDF",
+                subtitle: "CROP MARGINS & ROTATE PAGES",
+                badge: "MODULE 06 // CROP & ROTATE",
+                version: "NEW",
+                description: "ตัดขอบหน้าเอกสาร หมุนหน้ากระดาษ 90°/180° แบบเรียลไทม์ ปรับสัดส่วนมาตรฐาน และตัดขอบขาวอัตโนมัติ",
+                href: "CropPDF.html",
+                icon: "fa-solid fa-crop-simple",
+                previewType: "crop",
+                tags: ["ครอบตัดพื้นที่อิสระ", "หมุนหน้า 90° ซ้าย/ขวา", "ตัดขอบขาวอัตโนมัติ"]
             }
         ];
 
@@ -626,6 +645,37 @@
                             <div class="w-20 h-16 rounded-lg bg-crimson-500/20 border border-crimson-500/60 flex flex-col items-center justify-center p-1.5 shadow-inner">
                                 <i class="fa-solid fa-file-pdf text-crimson-500 text-lg mb-1"></i>
                                 <span class="font-mono text-[8px] text-white font-bold">OUTPUT.PDF</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (tool.previewType === 'crop') {
+                visualContent = `
+                    <div class="preview-zoom relative z-10 w-64 bg-gray-900/95 border border-gray-800 rounded-xl p-3.5 shadow-2xl">
+                        <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-gray-800">
+                            <span class="font-mono text-[9px] text-gray-400">CROP_&amp;_ROTATE</span>
+                            <span class="px-1.5 py-0.5 rounded bg-crimson-500/20 text-red-400 font-mono text-[8px] font-bold">AUTO-TRIM</span>
+                        </div>
+                        <div class="flex items-center justify-center relative py-0.5">
+                            <!-- แผ่นกระดาษสีขาวขนาดย่อ -->
+                            <div class="w-24 h-16 rounded bg-white border border-gray-300 shadow-md relative flex flex-col justify-center gap-1.5 px-3">
+                                <div class="h-1.5 w-12 bg-gray-300 rounded"></div>
+                                <div class="h-1.5 w-16 bg-gray-400 rounded"></div>
+                                <div class="h-1.5 w-10 bg-gray-300 rounded"></div>
+
+                                <!-- กรอบครอบตัดสีแดงเส้นประพร้อมจุดจับ 4 มุม -->
+                                <div class="absolute inset-x-1.5 inset-y-1 border-2 border-dashed border-crimson-500 bg-crimson-500/10 rounded-[2px]">
+                                    <span class="absolute -top-1 -left-1 w-2 h-2 bg-white border border-crimson-500 rounded-[1px]"></span>
+                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-white border border-crimson-500 rounded-[1px]"></span>
+                                    <span class="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-crimson-500 rounded-[1px]"></span>
+                                    <span class="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-crimson-500 rounded-[1px]"></span>
+                                </div>
+                            </div>
+
+                            <!-- ป้ายไอคอนหมุนหน้า 90 องศา -->
+                            <div class="absolute right-3 -bottom-0.5 px-1.5 py-1 rounded-lg bg-gray-800 border border-gray-700 text-sky-400 font-mono text-[8px] font-bold flex items-center gap-1 shadow-lg">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <span>90°</span>
                             </div>
                         </div>
                     </div>
