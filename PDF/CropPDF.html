@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop PDF — CLEVERTENSAI PDF Studio Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crop & Rotate PDF — CLEVERTENSAI PDF Studio Suite</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,6 +24,9 @@
 
     <!-- pdf-lib 1.17.1 CDN -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <!-- JSZip 3.10.1 CDN (For Multi-Page Image ZIP Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -169,18 +172,31 @@
         .grid-v1 { left: 33.33%; top: 0; bottom: 0; border-left: 1px dashed rgba(255, 255, 255, 0.75); }
         .grid-v2 { left: 66.66%; top: 0; bottom: 0; border-left: 1px dashed rgba(255, 255, 255, 0.75); }
 
-        /* 8-Way Resize Handles */
+        /* 8-Way Resize Handles with Expanded Touch Hit-Area */
         .resize-handle {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 13px;
+            height: 13px;
             background: #FFFFFF;
             border: 2px solid #FF1E42;
             border-radius: 3px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
             pointer-events: auto;
             z-index: 30;
+            touch-action: none;
             transition: transform 0.1s ease, background-color 0.1s ease;
+        }
+
+        /* Invisible 30x30px touch target around every handle for effortless mobile thumb dragging */
+        .resize-handle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            transform: translate(-50%, -50%);
+            background: transparent;
         }
 
         .resize-handle:hover, .resize-handle:active {
@@ -188,19 +204,19 @@
             transform: scale(1.2);
         }
 
-        .handle-nw { top: -6px; left: -6px; cursor: nwse-resize; }
-        .handle-ne { top: -6px; right: -6px; cursor: nesw-resize; }
-        .handle-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
-        .handle-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+        .handle-nw { top: -6.5px; left: -6.5px; cursor: nwse-resize; }
+        .handle-ne { top: -6.5px; right: -6.5px; cursor: nesw-resize; }
+        .handle-sw { bottom: -6.5px; left: -6.5px; cursor: nesw-resize; }
+        .handle-se { bottom: -6.5px; right: -6.5px; cursor: nwse-resize; }
 
-        .handle-n { top: -5px; left: 50%; transform: translateX(-50%); width: 22px; height: 9px; cursor: ns-resize; }
-        .handle-n:hover { transform: translateX(-50%) scale(1.15); }
-        .handle-s { bottom: -5px; left: 50%; transform: translateX(-50%); width: 22px; height: 9px; cursor: ns-resize; }
-        .handle-s:hover { transform: translateX(-50%) scale(1.15); }
-        .handle-w { left: -5px; top: 50%; transform: translateY(-50%); width: 9px; height: 22px; cursor: ew-resize; }
-        .handle-w:hover { transform: translateY(-50%) scale(1.15); }
-        .handle-e { right: -5px; top: 50%; transform: translateY(-50%); width: 9px; height: 22px; cursor: ew-resize; }
-        .handle-e:hover { transform: translateY(-50%) scale(1.15); }
+        .handle-n { top: -5px; left: 50%; transform: translateX(-50%); width: 24px; height: 10px; cursor: ns-resize; }
+        .handle-n:hover, .handle-n:active { transform: translateX(-50%) scale(1.15); }
+        .handle-s { bottom: -5px; left: 50%; transform: translateX(-50%); width: 24px; height: 10px; cursor: ns-resize; }
+        .handle-s:hover, .handle-s:active { transform: translateX(-50%) scale(1.15); }
+        .handle-w { left: -5px; top: 50%; transform: translateY(-50%); width: 10px; height: 24px; cursor: ew-resize; }
+        .handle-w:hover, .handle-w:active { transform: translateY(-50%) scale(1.15); }
+        .handle-e { right: -5px; top: 50%; transform: translateY(-50%); width: 10px; height: 24px; cursor: ew-resize; }
+        .handle-e:hover, .handle-e:active { transform: translateY(-50%) scale(1.15); }
 
         #draftDimPill {
             position: absolute;
@@ -298,7 +314,7 @@
     </style>
 </head>
 
-<body class="h-screen overflow-hidden flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
+<body class="h-[100dvh] overflow-hidden flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
 
     <!-- ===================================================================== -->
     <!-- SHARED PDF NAVBAR & ALL TOOLS HUB MODAL                               -->
@@ -315,7 +331,7 @@
             const PDF_TOOLS_MENU = [
                 { title: "Merge PDF", desc: "รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว", url: "MergePDF.html", icon: "fa-solid fa-object-ungroup", isNew: false },
                 { title: "Split PDF", desc: "แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF", url: "SplitPDF.html", icon: "fa-solid fa-scissors", isNew: false },
-                { title: "Crop PDF", desc: "ตัดขอบหน้าเอกสารและปรับสัดส่วนแบบเรียลไทม์", url: "CropPDF.html", icon: "fa-solid fa-crop-simple", isNew: true },
+                { title: "Crop & Rotate PDF", desc: "ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์", url: "CropPDF.html", icon: "fa-solid fa-crop-simple", isNew: true },
                 { title: "Edit PDF", desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF", url: "EditPDF.html", icon: "fa-solid fa-pen-to-square", isNew: false },
                 { title: "Compress PDF", desc: "ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร", url: "CompressPDF.html", icon: "fa-solid fa-file-zipper", isNew: false },
                 { title: "Convert to PDF", desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF", url: "ConvertToPDF.html", icon: "fa-solid fa-file-import", isNew: false }
@@ -329,15 +345,15 @@
             ];
 
             container.innerHTML = `
-                <nav class="bg-gray-950 border-b border-gray-800 h-14 flex-shrink-0 z-50 px-4 sm:px-6 flex items-center justify-between font-sans text-xs text-white relative">
-                    <div class="flex items-center gap-3">
-                        <a href="HomePDF.html" class="flex items-center gap-2.5 group" title="กลับสู่หน้าหลัก PDF Studio Suite">
+                <nav class="bg-gray-950 border-b border-gray-800 h-14 flex-shrink-0 z-50 px-3 sm:px-6 flex items-center justify-between font-sans text-xs text-white relative">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <a href="HomePDF.html" class="flex items-center gap-2 group shrink-0" title="กลับสู่หน้าหลัก PDF Studio Suite">
                             <div class="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:bg-crimson-500 transition-colors">
                                 <i class="fa-solid fa-file-pdf"></i>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-sm font-extrabold tracking-wider leading-none">CLEVER<span class="text-red-500">TENSAI</span></span>
-                                <span class="font-mono text-[9px] text-gray-400 tracking-widest mt-0.5">PDF STUDIO SUITE</span>
+                                <span class="text-xs sm:text-sm font-extrabold tracking-wider leading-none">CLEVER<span class="text-red-500">TENSAI</span></span>
+                                <span class="font-mono text-[8px] sm:text-[9px] text-gray-400 tracking-widest mt-0.5">PDF STUDIO SUITE</span>
                             </div>
                         </a>
                     </div>
@@ -351,9 +367,9 @@
                         </button>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                         <button type="button" onclick="toggleNavPopup()"
-                            class="sm:hidden px-3 py-1.5 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
+                            class="sm:hidden px-2.5 py-1.5 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
                             <i class="fa-solid fa-th text-red-500"></i>
                             <span>Hub</span>
                         </button>
@@ -364,7 +380,7 @@
                         </div>
 
                         <a href="../index.html"
-                            class="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-[11px] flex items-center gap-1.5 transition-all">
+                            class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-[11px] flex items-center gap-1.5 transition-all">
                             <i class="fa-solid fa-house text-red-500"></i>
                             <span class="hidden sm:inline">หน้าหลัก Portal</span>
                         </a>
@@ -373,24 +389,24 @@
 
                 <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
                     class="hidden fixed inset-0 z-[80] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-                        <div class="flex items-center justify-between pb-5 border-b border-gray-800 shrink-0">
-                            <div class="flex items-center gap-3.5">
-                                <div class="w-11 h-11 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-xl border border-red-500/30">
+                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-5 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90dvh] flex flex-col">
+                        <div class="flex items-center justify-between pb-4 sm:pb-5 border-b border-gray-800 shrink-0">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-lg sm:text-xl border border-red-500/30">
                                     <i class="fa-solid fa-th"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg sm:text-xl font-extrabold text-white tracking-wide">Select PDF Tool &amp; Workspace</h3>
-                                    <p class="text-xs text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังระบบอื่น</p>
+                                    <h3 class="text-base sm:text-xl font-extrabold text-white tracking-wide">Select PDF Tool &amp; Workspace</h3>
+                                    <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังระบบอื่น</p>
                                 </div>
                             </div>
                             <button type="button" onclick="toggleNavPopup()"
-                                class="w-10 h-10 rounded-xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-lg cursor-pointer">
+                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-lg cursor-pointer">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
 
-                        <div class="overflow-y-auto py-5 space-y-6">
+                        <div class="overflow-y-auto py-4 sm:py-5 space-y-6">
                             <div>
                                 <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
                                     <i class="fa-solid fa-file-pdf"></i>
@@ -456,60 +472,60 @@
     <input type="file" id="pdfFileInput" accept="application/pdf" class="hidden">
 
     <!-- ===================================================================== -->
-    <!-- STATE 1: CLEAN UPLOAD DROPZONE (NO SAMPLE PDF BUTTON)                 -->
+    <!-- STATE 1: CLEAN UPLOAD DROPZONE                                        -->
     <!-- ===================================================================== -->
     <main id="uploadScreen" class="flex-grow overflow-y-auto light-scroll flex flex-col justify-between">
-        <div class="max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-16">
-            <div class="text-center mb-8">
+        <div class="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-16">
+            <div class="text-center mb-6 sm:mb-8">
                 <span
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-3">
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-[10px] sm:text-xs font-semibold mb-3">
                     <i class="fa-solid fa-crop-simple text-[11px]"></i>
-                    <span>CLEVERTENSAI &bull; CROP PDF STUDIO</span>
+                    <span>CLEVERTENSAI &bull; CROP &amp; ROTATE PDF STUDIO</span>
                 </span>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-tech-dark">
-                    ครอบตัดเอกสาร <span class="text-crimson-500">PDF</span> แบบต่อเนื่อง
+                <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-tech-dark">
+                    ครอบตัดและหมุนเอกสาร <span class="text-crimson-500">PDF</span> แบบต่อเนื่อง
                 </h1>
-                <p class="text-tech-muted text-sm mt-2 max-w-xl mx-auto">
-                    เปิดดูเอกสารทุกหน้าแบบกว้างๆ เลือกโหมดครอบตัด ลากกรอบปรับแต่งได้ตามใจ เห็นผลลัพธ์เปลี่ยนทันที และส่งออกเป็น PDF, PNG หรือ JPG ได้ครบในที่เดียว
+                <p class="text-tech-muted text-xs sm:text-sm mt-2 max-w-xl mx-auto">
+                    เปิดดูเอกสารทุกหน้าแบบกว้างๆ หมุนหน้าเอียงให้ตั้งตรง ลากกรอบครอบตัดได้ตามใจ เห็นผลลัพธ์เปลี่ยนทันที และส่งออกเป็น PDF, PNG หรือ JPG (เดี่ยว / ZIP) ได้ครบในที่เดียว
                 </p>
             </div>
 
             <!-- Drag & Drop Zone -->
             <div id="dropZone"
-                class="tech-card rounded-3xl p-10 sm:p-16 text-center border-2 border-dashed border-gray-300 hover:border-crimson-500 transition-all cursor-pointer relative overflow-hidden group">
+                class="tech-card rounded-3xl p-7 sm:p-16 text-center border-2 border-dashed border-gray-300 hover:border-crimson-500 transition-all cursor-pointer relative overflow-hidden group">
 
                 <!-- Corner Brackets -->
-                <div class="absolute top-4 left-4 w-5 h-5 border-t-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
-                <div class="absolute top-4 right-4 w-5 h-5 border-t-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
-                <div class="absolute bottom-4 left-4 w-5 h-5 border-b-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
-                <div class="absolute bottom-4 right-4 w-5 h-5 border-b-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-l-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
+                <div class="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-r-2 border-crimson-500/40 group-hover:border-crimson-500 transition-colors"></div>
 
                 <div class="max-w-md mx-auto">
                     <div
-                        class="w-20 h-20 rounded-3xl bg-crimson-50 border border-crimson-100 text-crimson-500 group-hover:bg-crimson-500 group-hover:text-white flex items-center justify-center text-3xl mx-auto mb-6 transition-all duration-300 shadow-sm group-hover:scale-105">
+                        class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-crimson-50 border border-crimson-100 text-crimson-500 group-hover:bg-crimson-500 group-hover:text-white flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-5 sm:mb-6 transition-all duration-300 shadow-sm group-hover:scale-105">
                         <i class="fa-solid fa-crop-simple"></i>
                     </div>
 
-                    <div class="font-mono text-xs text-crimson-600 font-bold tracking-widest uppercase mb-2">
+                    <div class="font-mono text-[11px] sm:text-xs text-crimson-600 font-bold tracking-widest uppercase mb-1.5 sm:mb-2">
                         DROP PDF DOCUMENT HERE
                     </div>
-                    <h2 class="text-xl sm:text-2xl font-extrabold text-tech-dark mb-2.5">
-                        ลากไฟล์ PDF มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+                    <h2 class="text-lg sm:text-2xl font-extrabold text-tech-dark mb-2">
+                        ลากไฟล์ PDF มาวางที่นี่ หรือแตะเพื่อเลือกไฟล์
                     </h2>
-                    <p class="text-xs sm:text-sm text-tech-muted leading-relaxed mb-8">
+                    <p class="text-xs sm:text-sm text-tech-muted leading-relaxed mb-6 sm:mb-8">
                         รองรับเอกสารทุกขนาดและหลายร้อยหน้า ประมวลผลรวดเร็วบนเครื่องของคุณ 100%
                     </p>
 
                     <button type="button" onclick="event.stopPropagation(); triggerFilePicker();"
-                        class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-sm inline-flex items-center justify-center gap-2.5 transition red-glow cursor-pointer">
+                        class="w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-sm inline-flex items-center justify-center gap-2.5 transition red-glow cursor-pointer">
                         <i class="fa-solid fa-cloud-arrow-up text-base"></i>
                         <span>เลือกไฟล์ PDF จากเครื่อง</span>
                     </button>
 
-                    <div class="mt-8 pt-6 border-t border-tech-border flex flex-wrap items-center justify-center gap-4 font-mono text-[11px] text-tech-muted">
-                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>รูปขนาดย่อทางซ้าย</span>
+                    <div class="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-tech-border flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-mono text-[10px] sm:text-[11px] text-tech-muted">
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>หมุนหน้า 90° ซ้าย/ขวา</span>
                         <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>ตัดเห็นผลทันที + Undo/Redo</span>
-                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>พิมพ์ &amp; ส่งออก PDF/PNG/JPG</span>
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>ส่งออก PDF / PNG / JPG</span>
                     </div>
                 </div>
             </div>
@@ -523,118 +539,213 @@
     </main>
 
     <!-- ===================================================================== -->
-    <!-- STATE 2: CONTINUOUS WIDE CROP STUDIO WORKSPACE                        -->
+    <!-- STATE 2: CONTINUOUS WIDE CROP & ROTATE STUDIO WORKSPACE               -->
     <!-- ===================================================================== -->
     <section id="studioWorkspace" class="hidden flex-grow flex flex-col min-h-0 overflow-hidden bg-gray-900">
 
-        <!-- 1. TOP STUDIO TOOLBAR (STICKY, Z-40) -->
+        <!-- 1. TOP STUDIO TOOLBAR (STICKY, Z-40, ZERO OVERFLOW ON 360px MOBILE) -->
         <header
-            class="sticky top-0 z-40 bg-white border-b border-tech-border px-3 sm:px-5 h-14 shrink-0 flex items-center justify-between gap-2 shadow-sm">
+            class="sticky top-0 z-40 bg-white border-b border-tech-border px-2.5 sm:px-5 h-13 sm:h-14 shrink-0 flex items-center justify-between gap-1.5 sm:gap-2 shadow-sm">
 
-            <!-- Left Group: Pages Overview Toggle + Pointer/Crop + Undo/Redo -->
-            <div class="flex items-center gap-1 sm:gap-1.5">
+            <!-- Left Group: Pages Overview Toggle + Pointer/Crop + Desktop Quick Rotate + Undo/Redo -->
+            <div class="flex items-center gap-1 sm:gap-1.5 min-w-0">
                 <button type="button" id="btnToggleOverview" onclick="toggleOverviewSidebar()"
-                    class="px-2.5 py-1.5 rounded-xl border border-tech-border bg-white hover:bg-tech-panel text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                    class="px-2 sm:px-2.5 py-1.5 rounded-xl border border-tech-border bg-white hover:bg-tech-panel text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0"
                     title="เปิด/ปิดแถบรูปขนาดย่อ (Pages Overview)">
                     <i class="fa-regular fa-rectangle-list text-sm"></i>
                     <span class="hidden md:inline">รูปขนาดย่อ</span>
                     <span id="toolbarPageCountBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-tech-panel text-tech-dark font-bold">0</span>
                 </button>
 
-                <span class="w-px h-6 bg-tech-border mx-1"></span>
+                <span class="w-px h-5 sm:h-6 bg-tech-border mx-0.5 shrink-0"></span>
 
                 <!-- Pointer Mode (Default) -->
                 <button type="button" id="btnModePointer" onclick="setToolMode('pointer')"
-                    class="px-3 py-1.5 rounded-xl bg-gray-950 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+                    class="px-2 sm:px-3 py-1.5 rounded-xl bg-gray-950 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer shrink-0"
                     title="โหมดตัวชี้สำหรับเลื่อนดูเอกสาร">
                     <i class="fa-solid fa-arrow-pointer text-xs"></i>
-                    <span>ตัวชี้</span>
+                    <span class="hidden sm:inline">ตัวชี้</span>
                 </button>
 
                 <!-- Crop Mode -->
                 <button type="button" id="btnModeCrop" onclick="setToolMode('crop')"
-                    class="px-3 py-1.5 rounded-xl bg-white hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 border border-tech-border font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                    class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 border border-tech-border font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0"
                     title="เปิดโหมดครอบตัดเพื่อลากพื้นที่ตัด">
                     <i class="fa-solid fa-crop-simple text-xs"></i>
-                    <span>ครอบตัด</span>
+                    <span class="hidden xs:inline sm:inline">ครอบตัด</span>
                 </button>
 
-                <span class="w-px h-6 bg-tech-border mx-1"></span>
+                <!-- Desktop Quick Rotate Left / Right (Hidden on < md, moved to Mobile More Menu) -->
+                <span class="hidden md:inline-block w-px h-6 bg-tech-border mx-1 shrink-0"></span>
+
+                <button type="button" onclick="rotatePage(state.activePageIndex, -90)"
+                    class="hidden md:flex px-2.5 py-1.5 rounded-xl bg-white hover:bg-tech-panel text-tech-dark border border-tech-border font-semibold text-xs items-center gap-1.5 transition cursor-pointer shrink-0"
+                    title="หมุนหน้าปัจจุบันทวนเข็มนาฬิกา 90° (-90°)">
+                    <i class="fa-solid fa-rotate-left text-xs text-crimson-600"></i>
+                    <span class="hidden lg:inline">หมุนซ้าย</span>
+                </button>
+                <button type="button" onclick="rotatePage(state.activePageIndex, 90)"
+                    class="hidden md:flex px-2.5 py-1.5 rounded-xl bg-white hover:bg-tech-panel text-tech-dark border border-tech-border font-semibold text-xs items-center gap-1.5 transition cursor-pointer shrink-0"
+                    title="หมุนหน้าปัจจุบันตามเข็มนาฬิกา 90° (+90°)">
+                    <i class="fa-solid fa-rotate-right text-xs text-crimson-600"></i>
+                    <span class="hidden lg:inline">หมุนขวา</span>
+                </button>
+
+                <span class="w-px h-5 sm:h-6 bg-tech-border mx-0.5 shrink-0"></span>
 
                 <!-- Undo / Redo -->
-                <button type="button" id="btnUndo" onclick="undoCrop()" disabled
-                    class="w-8 h-8 rounded-xl hover:bg-tech-panel disabled:opacity-35 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer"
+                <button type="button" id="btnUndo" onclick="undoAction()" disabled
+                    class="w-8 h-8 rounded-xl hover:bg-tech-panel disabled:opacity-35 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer shrink-0"
                     title="ย้อนกลับ (Ctrl+Z)">
-                    <i class="fa-solid fa-rotate-left text-xs"></i>
+                    <i class="fa-solid fa-clock-rotate-left text-xs"></i>
                 </button>
-                <button type="button" id="btnRedo" onclick="redoCrop()" disabled
-                    class="w-8 h-8 rounded-xl hover:bg-tech-panel disabled:opacity-35 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer"
+                <button type="button" id="btnRedo" onclick="redoAction()" disabled
+                    class="w-8 h-8 rounded-xl hover:bg-tech-panel disabled:opacity-35 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer shrink-0"
                     title="ทำซ้ำ (Ctrl+Y)">
-                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                    <i class="fa-solid fa-forward text-xs"></i>
                 </button>
             </div>
 
-            <!-- Right Group: File Badge + Import + PRINT + Export Dropdown (z-[60]) -->
-            <div class="flex items-center gap-1.5 sm:gap-2">
-                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-tech-panel border border-tech-border max-w-[210px]">
+            <!-- Right Group: File Badge + Desktop Import/Print + Mobile More Menu + Export Dropdown -->
+            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-tech-panel border border-tech-border max-w-[200px]">
                     <i class="fa-solid fa-file-pdf text-crimson-500 text-xs shrink-0"></i>
                     <span id="studioFileName" class="font-mono text-[11px] font-bold text-tech-dark truncate">document.pdf</span>
                 </div>
 
+                <!-- Desktop Import & Print -->
                 <button type="button" onclick="triggerFilePicker()"
-                    class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-tech-panel hover:bg-gray-200 border border-tech-border text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                    class="hidden md:flex px-3 py-1.5 rounded-xl bg-tech-panel hover:bg-gray-200 border border-tech-border text-tech-dark font-semibold text-xs items-center gap-1.5 transition cursor-pointer"
                     title="นำเข้าเอกสาร PDF ใหม่">
                     <i class="fa-solid fa-folder-open text-xs text-crimson-600"></i>
-                    <span class="hidden sm:inline">นำเข้าเอกสาร</span>
+                    <span>นำเข้าเอกสาร</span>
                 </button>
 
-                <!-- WYSIWYG Direct Print Button -->
                 <button type="button" id="btnPrintDoc" onclick="triggerDirectPrint()"
-                    class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 border border-tech-border text-tech-dark font-mono font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
-                    title="พิมพ์เอกสารตามพื้นที่ที่ตัดขอบแล้ว (WYSIWYG Print)">
+                    class="hidden md:flex px-3 py-1.5 rounded-xl bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 border border-tech-border text-tech-dark font-mono font-bold text-xs items-center gap-1.5 transition cursor-pointer"
+                    title="พิมพ์เอกสารตามพื้นที่ที่ตัดขอบและหมุนแล้ว (WYSIWYG Print)">
                     <i class="fa-solid fa-print text-xs text-crimson-600"></i>
-                    <span class="hidden sm:inline">PRINT</span>
+                    <span>PRINT</span>
                 </button>
+
+                <!-- Mobile More Tools Popover (< md) -->
+                <div class="relative md:hidden z-[55]">
+                    <button type="button" id="mobileMoreBtn" onclick="toggleMobileMoreMenu(event)"
+                        class="w-8 h-8 rounded-xl bg-tech-panel hover:bg-gray-200 border border-tech-border text-tech-dark flex items-center justify-center transition cursor-pointer"
+                        title="เครื่องมือเพิ่มเติม (หมุนหน้า / นำเข้าไฟล์ / พิมพ์)">
+                        <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
+                    </button>
+
+                    <div id="mobileMoreDropdown"
+                        class="hidden absolute right-0 mt-2 z-[60] w-56 bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-2 font-sans text-xs space-y-1">
+                        <div class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border truncate" id="mobileMoreFileName">
+                            document.pdf
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-1 pt-1">
+                            <button type="button" onclick="closeMobileMoreMenu(); rotatePage(state.activePageIndex, -90);"
+                                class="py-2 px-2 rounded-xl bg-tech-panel hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-rotate-left text-crimson-600"></i>
+                                <span>หมุนซ้าย</span>
+                            </button>
+                            <button type="button" onclick="closeMobileMoreMenu(); rotatePage(state.activePageIndex, 90);"
+                                class="py-2 px-2 rounded-xl bg-tech-panel hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-rotate-right text-crimson-600"></i>
+                                <span>หมุนขวา</span>
+                            </button>
+                        </div>
+
+                        <button type="button" onclick="closeMobileMoreMenu(); triggerFilePicker();"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 transition cursor-pointer">
+                            <i class="fa-solid fa-folder-open text-crimson-600 w-4 text-center"></i>
+                            <span>นำเข้าเอกสาร PDF ใหม่</span>
+                        </button>
+
+                        <button type="button" onclick="closeMobileMoreMenu(); triggerDirectPrint();"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 transition cursor-pointer">
+                            <i class="fa-solid fa-print text-crimson-600 w-4 text-center"></i>
+                            <span>พิมพ์เอกสาร (WYSIWYG)</span>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Export Dropdown (z-[60] so never obscured) -->
                 <div class="relative z-[60]">
                     <button type="button" id="exportDropdownBtn" onclick="toggleExportMenu(event)"
-                        class="px-3.5 sm:px-4 py-2 rounded-xl bg-tech-dark hover:bg-crimson-600 text-white font-mono text-xs font-bold tracking-wider transition-all flex items-center gap-2 red-glow cursor-pointer shrink-0">
+                        class="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-tech-dark hover:bg-crimson-600 text-white font-mono text-xs font-bold tracking-wider transition-all flex items-center gap-1.5 sm:gap-2 red-glow cursor-pointer shrink-0">
                         <i class="fa-solid fa-download text-xs"></i>
-                        <span>ส่งออก..</span>
+                        <span>ส่งออก</span>
                         <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
 
                     <div id="exportDropdown"
-                        class="hidden absolute right-0 mt-2 z-[60] w-64 bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-2 font-mono text-xs">
-                        <div class="px-3 py-2 font-bold text-tech-dark border-b border-tech-border flex justify-between items-center">
+                        class="hidden absolute right-0 mt-2 z-[60] w-80 max-w-[calc(100vw-1.25rem)] bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-2.5 font-mono text-xs">
+                        <div class="px-2.5 py-2 font-bold text-tech-dark border-b border-tech-border flex justify-between items-center">
                             <span>EXPORT FORMAT</span>
-                            <span class="text-[9px] text-crimson-600 bg-crimson-50 px-1.5 py-0.5 rounded">WYSIWYG</span>
+                            <span class="text-[9px] text-crimson-600 bg-crimson-50 px-1.5 py-0.5 rounded font-extrabold">WYSIWYG</span>
                         </div>
+
+                        <!-- 1. PDF Export -->
                         <button type="button" onclick="exportAsPDF()"
-                            class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-crimson-50 hover:text-crimson-600 font-bold transition-colors flex items-center gap-2.5 cursor-pointer mt-1">
-                            <i class="fa-solid fa-file-pdf text-crimson-600 text-base"></i>
-                            <div>
-                                <div>PDF Document</div>
-                                <div class="text-[9px] text-tech-muted font-normal">ไฟล์ PDF ตัดขอบทุกหน้า (pdf-lib)</div>
+                            class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-crimson-50 hover:text-crimson-600 font-bold transition-colors flex items-center gap-3 cursor-pointer mt-1">
+                            <div class="w-8 h-8 rounded-lg bg-crimson-50 text-crimson-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-file-pdf text-base"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div>PDF Document (.pdf)</div>
+                                <div class="text-[9px] text-tech-muted font-normal font-sans">ไฟล์ PDF ตัดขอบและหมุนทุกหน้า</div>
                             </div>
                         </button>
-                        <button type="button" onclick="exportAsImage('png')"
-                            class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-crimson-50 hover:text-crimson-600 font-bold transition-colors flex items-center gap-2.5 border-t border-tech-border cursor-pointer">
-                            <i class="fa-regular fa-image text-crimson-600 text-base"></i>
-                            <div>
-                                <div>High-Res PNG Image</div>
-                                <div class="text-[9px] text-tech-muted font-normal">หน้าปัจจุบัน (3x Scale PNG)</div>
+
+                        <!-- 2. High-Res PNG Export (Single Page OR All Pages ZIP) -->
+                        <div class="mt-1.5 pt-2 border-t border-tech-border px-2.5 pb-1.5">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-tech-dark flex items-center gap-1.5">
+                                    <i class="fa-regular fa-image text-crimson-600"></i>
+                                    <span>High-Res PNG (3x)</span>
+                                </span>
+                                <span class="text-[9px] text-tech-muted">คมชัดสูง</span>
                             </div>
-                        </button>
-                        <button type="button" onclick="exportAsImage('jpg')"
-                            class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-crimson-50 hover:text-crimson-600 font-bold transition-colors flex items-center gap-2.5 cursor-pointer">
-                            <i class="fa-solid fa-file-image text-crimson-600 text-base"></i>
-                            <div>
-                                <div>JPEG Image Format</div>
-                                <div class="text-[9px] text-tech-muted font-normal">หน้าปัจจุบัน (3x พื้นหลังขาว JPG)</div>
+                            <div class="grid grid-cols-2 gap-1.5 font-sans">
+                                <button type="button" onclick="exportAsImage('png', 'current')"
+                                    class="py-1.5 px-2 rounded-lg bg-tech-panel hover:bg-crimson-500 text-tech-dark hover:text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                    title="ดาวน์โหลดเฉพาะหน้าปัจจุบันเป็นไฟล์ .png ทันที">
+                                    <i class="fa-solid fa-file-image text-[10px]"></i>
+                                    <span>หน้านี้ (.png)</span>
+                                </button>
+                                <button type="button" onclick="exportAsImage('png', 'all')"
+                                    class="py-1.5 px-2 rounded-lg bg-gray-950 hover:bg-crimson-600 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                    title="แยกทุกหน้าเป็นไฟล์ .png ทีละหน้าแล้วมัดรวมเป็น .zip">
+                                    <i class="fa-solid fa-file-zipper text-[10px]"></i>
+                                    <span>ทุกหน้า (.zip)</span>
+                                </button>
                             </div>
-                        </button>
+                        </div>
+
+                        <!-- 3. JPEG Image Export (Single Page OR All Pages ZIP) -->
+                        <div class="mt-1 pt-2 border-t border-tech-border px-2.5 pb-1">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-tech-dark flex items-center gap-1.5">
+                                    <i class="fa-solid fa-file-image text-crimson-600"></i>
+                                    <span>JPEG Image (3x)</span>
+                                </span>
+                                <span class="text-[9px] text-tech-muted">พื้นหลังขาว</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-1.5 font-sans">
+                                <button type="button" onclick="exportAsImage('jpg', 'current')"
+                                    class="py-1.5 px-2 rounded-lg bg-tech-panel hover:bg-crimson-500 text-tech-dark hover:text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                    title="ดาวน์โหลดเฉพาะหน้าปัจจุบันเป็นไฟล์ .jpg ทันที">
+                                    <i class="fa-solid fa-image text-[10px]"></i>
+                                    <span>หน้านี้ (.jpg)</span>
+                                </button>
+                                <button type="button" onclick="exportAsImage('jpg', 'all')"
+                                    class="py-1.5 px-2 rounded-lg bg-gray-950 hover:bg-crimson-600 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                    title="แยกทุกหน้าเป็นไฟล์ .jpg ทีละหน้าแล้วมัดรวมเป็น .zip">
+                                    <i class="fa-solid fa-file-zipper text-[10px]"></i>
+                                    <span>ทุกหน้า (.zip)</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -643,14 +754,25 @@
         <!-- STUDIO BODY -->
         <div class="relative flex-grow flex min-h-0 overflow-hidden">
 
-            <!-- 2. LEFT SIDEBAR: PAGES OVERVIEW (COLLAPSIBLE) -->
+            <!-- Mobile Drawer Backdrop for Pages Overview (< md) -->
+            <div id="overviewBackdrop" onclick="setOverviewSidebarOpen(false)"
+                class="hidden fixed inset-0 bg-black/65 backdrop-blur-xs z-40 md:hidden"></div>
+
+            <!-- 2. LEFT SIDEBAR: PAGES OVERVIEW (SLIDE-OVER DRAWER ON MOBILE, SIDEBAR ON DESKTOP) -->
             <aside id="overviewSidebar"
-                class="hidden w-56 sm:w-60 shrink-0 bg-white border-r border-tech-border flex flex-col min-h-0 z-20">
+                class="hidden fixed inset-y-0 left-0 z-50 w-72 shadow-2xl md:static md:z-20 md:w-60 md:shadow-none shrink-0 bg-white border-r border-tech-border flex flex-col min-h-0">
                 <!-- Sidebar Header -->
-                <div class="p-3 border-b border-tech-border bg-tech-panel/60 space-y-2.5 shrink-0">
+                <div class="p-3 border-b border-tech-border bg-tech-panel/80 space-y-2.5 shrink-0">
                     <div class="flex items-center justify-between gap-2">
                         <span class="font-mono text-[11px] font-extrabold text-tech-dark uppercase tracking-wide">Pages Overview</span>
-                        <span id="overviewStatsBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-md bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold whitespace-nowrap">0 หน้า</span>
+                        <div class="flex items-center gap-1.5">
+                            <span id="overviewStatsBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-md bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold whitespace-nowrap">0 หน้า</span>
+                            <button type="button" onclick="setOverviewSidebarOpen(false)"
+                                class="md:hidden w-7 h-7 rounded-lg bg-white border border-tech-border text-tech-muted hover:text-crimson-600 flex items-center justify-center cursor-pointer"
+                                title="ปิดแถบรูปขนาดย่อ">
+                                <i class="fa-solid fa-xmark text-xs"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Filter Tabs + Jump Input -->
@@ -658,8 +780,8 @@
                         <div class="flex-1 grid grid-cols-2 gap-1 bg-white p-0.5 rounded-lg border border-tech-border font-mono text-[10px]">
                             <button type="button" id="filterAllBtn" onclick="setOverviewFilter('all')"
                                 class="py-1 rounded-md bg-gray-950 text-white font-bold transition cursor-pointer">ทั้งหมด</button>
-                            <button type="button" id="filterCroppedBtn" onclick="setOverviewFilter('cropped')"
-                                class="py-1 rounded-md text-tech-muted hover:text-tech-dark font-semibold transition cursor-pointer">ตัดแล้ว</button>
+                            <button type="button" id="filterModifiedBtn" onclick="setOverviewFilter('modified')"
+                                class="py-1 rounded-md text-tech-muted hover:text-tech-dark font-semibold transition cursor-pointer">แก้ไขแล้ว</button>
                         </div>
 
                         <div class="relative w-16 shrink-0" title="พิมพ์เลขหน้าแล้วกด Enter">
@@ -676,7 +798,7 @@
                 </div>
 
                 <div id="overviewEmptyFilterMsg" class="hidden p-6 text-center font-mono text-[11px] text-tech-muted">
-                    ยังไม่มีหน้าที่ถูกตัดขอบ
+                    ยังไม่มีหน้าที่ถูกตัดขอบหรือหมุน
                 </div>
             </aside>
 
@@ -686,7 +808,7 @@
 
                 <!-- Vertical Stack of All PDF Pages -->
                 <div id="pagesStack"
-                    class="w-full min-h-full py-8 px-4 sm:px-10 pb-36 flex flex-col items-center gap-9">
+                    class="w-full min-h-full py-6 sm:py-8 px-3 sm:px-10 pb-40 flex flex-col items-center gap-7 sm:gap-9">
                     <!-- Dynamic Page Containers Injected Here -->
                 </div>
             </div>
@@ -695,28 +817,35 @@
     </section>
 
     <!-- ===================================================================== -->
-    <!-- 4. FLOATING CROP SETTINGS CARD (DRAGGABLE, BOTTOM-RIGHT ABOVE FAB)    -->
+    <!-- 4. CROP & ROTATE SETTINGS: COLLAPSIBLE BOTTOM SHEET ON MOBILE /       -->
+    <!--    DRAGGABLE FLOATING CARD ON DESKTOP                                 -->
     <!-- ===================================================================== -->
     <div id="floatingCropCard"
-        class="hidden fixed bottom-20 right-5 z-30 w-80 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-10rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        class="hidden fixed bottom-16 left-2 right-2 z-35 md:bottom-20 md:right-5 md:left-auto md:w-80 max-h-[68dvh] md:max-h-[calc(100vh-10rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
 
-        <!-- Draggable Header Bar -->
+        <!-- Header Bar (Tap to Expand/Collapse on Mobile, Drag to Move on Desktop) -->
         <div id="floatingCropCardHeader"
-            class="px-4 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between gap-2 cursor-move select-none shrink-0"
-            title="ลากเพื่อย้ายตำแหน่งการ์ดตั้งค่า">
+            class="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between gap-2 cursor-pointer md:cursor-move select-none shrink-0"
+            title="แตะเพื่อย่อ/ขยายบนมือถือ หรือลากเพื่อย้ายตำแหน่งบนคอมพิวเตอร์">
             <div class="flex items-center gap-2 min-w-0">
-                <i class="fa-solid fa-grip-vertical text-gray-400 text-xs shrink-0"></i>
-                <span class="text-xs font-extrabold text-tech-dark truncate">หน้าที่จะครอบตัด</span>
+                <i class="fa-solid fa-grip-vertical hidden md:inline text-gray-400 text-xs shrink-0"></i>
+                <i id="mobileSheetChevron" class="fa-solid fa-chevron-up md:hidden text-crimson-500 text-xs shrink-0 transition-transform duration-200"></i>
+                <span class="text-xs font-extrabold text-tech-dark truncate">ขอบเขตการแก้ไขและเครื่องมือ</span>
             </div>
-            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-crimson-500 text-white font-mono text-[10px] font-bold tracking-wider whitespace-nowrap shrink-0">
-                CROP SCOPE
-            </span>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <span id="mobileSheetScopeBadge" class="md:hidden px-2 py-0.5 rounded bg-gray-200 text-tech-dark font-mono text-[10px] font-bold">
+                    หน้า 1
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-crimson-500 text-white font-mono text-[9px] sm:text-[10px] font-bold tracking-wider whitespace-nowrap">
+                    SCOPE &amp; TOOLS
+                </span>
+            </div>
         </div>
 
-        <!-- Scrollable Card Body -->
-        <div class="overflow-y-auto light-scroll flex-grow">
+        <!-- Collapsible Card Body (Starts collapsed on Mobile so 75%+ of PDF canvas remains unobstructed) -->
+        <div id="floatingCropCardBody" class="hidden md:block overflow-y-auto light-scroll flex-grow">
             <!-- Scope Selection -->
-            <div class="p-4 border-b border-gray-100">
+            <div class="p-3.5 sm:p-4 border-b border-gray-100">
                 <div class="space-y-2 text-xs">
                     <label class="flex items-center gap-2.5 cursor-pointer select-none py-0.5">
                         <input type="radio" name="cropScope" value="current" checked onchange="onScopeChange()"
@@ -746,15 +875,43 @@
                 </div>
             </div>
 
+            <!-- Batch Page Rotation Section (Applies immediately to chosen Scope) -->
+            <div class="px-3.5 sm:px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-extrabold text-tech-dark">หมุนหน้ากระดาษ (ตามขอบเขต)</span>
+                    <span class="font-mono text-[10px] text-tech-muted">ROTATE</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 font-mono text-[11px]">
+                    <button type="button" onclick="rotateByScope(-90)"
+                        class="py-1.5 px-2 rounded-lg bg-white hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/60 text-tech-dark hover:text-crimson-600 font-bold flex items-center justify-center gap-1 transition cursor-pointer"
+                        title="หมุนซ้าย 90 องศาตามขอบเขตที่เลือก">
+                        <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                        <span>-90°</span>
+                    </button>
+                    <button type="button" onclick="rotateByScope(90)"
+                        class="py-1.5 px-2 rounded-lg bg-white hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/60 text-tech-dark hover:text-crimson-600 font-bold flex items-center justify-center gap-1 transition cursor-pointer"
+                        title="หมุนขวา 90 องศาตามขอบเขตที่เลือก">
+                        <i class="fa-solid fa-rotate-right text-[10px]"></i>
+                        <span>+90°</span>
+                    </button>
+                    <button type="button" onclick="rotateByScope(180)"
+                        class="py-1.5 px-2 rounded-lg bg-white hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/60 text-tech-dark hover:text-crimson-600 font-bold flex items-center justify-center gap-1 transition cursor-pointer"
+                        title="กลับหัว 180 องศาตามขอบเขตที่เลือก">
+                        <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                        <span>180°</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Collapsible "ขนาดครอบตัด" Section -->
             <div class="border-b border-gray-100">
                 <button type="button" onclick="toggleDimensionsAccordion()"
-                    class="w-full px-4 py-3 flex items-center justify-between text-xs font-extrabold text-tech-dark hover:bg-gray-50 transition cursor-pointer">
-                    <span>ขนาดครอบตัด</span>
+                    class="w-full px-3.5 sm:px-4 py-3 flex items-center justify-between text-xs font-extrabold text-tech-dark hover:bg-gray-50 transition cursor-pointer">
+                    <span>ขนาดครอบตัดและ Auto-Trim</span>
                     <i id="accordionChevron" class="fa-solid fa-chevron-down text-[11px] text-tech-muted transition-transform duration-200"></i>
                 </button>
 
-                <div id="dimensionsAccordionBody" class="hidden px-4 pb-4 space-y-3">
+                <div id="dimensionsAccordionBody" class="hidden px-3.5 sm:px-4 pb-4 space-y-3">
                     <!-- Smart Auto-Trim Button -->
                     <button type="button" onclick="autoTrimMargins()"
                         class="w-full py-2 px-3 rounded-xl bg-gray-950 hover:bg-crimson-500 text-white font-bold text-[11px] flex items-center justify-center gap-2 transition shadow-xs cursor-pointer">
@@ -837,50 +994,59 @@
             </div>
         </div>
 
-        <!-- Card Footer -->
-        <div class="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-3 shrink-0">
+        <!-- Card Footer (Always visible on both Mobile & Desktop when Crop Mode is active) -->
+        <div class="px-3.5 sm:px-4 py-2.5 sm:py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-2 shrink-0">
             <button type="button" onclick="cancelCropMode()"
-                class="px-3.5 py-2 rounded-xl text-crimson-600 hover:bg-crimson-50 font-bold text-xs transition cursor-pointer">
+                class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-crimson-600 hover:bg-crimson-50 font-bold text-xs transition cursor-pointer">
                 ยกเลิก
             </button>
+
+            <!-- Quick Auto-Trim Shortcut on Mobile -->
+            <button type="button" onclick="autoTrimMargins()"
+                class="md:hidden px-2.5 py-1.5 rounded-xl bg-gray-900 text-white font-bold text-[11px] flex items-center gap-1.5 cursor-pointer"
+                title="ตัดขอบขาวอัตโนมัติ">
+                <i class="fa-solid fa-wand-magic-sparkles text-crimson-500 text-[10px]"></i>
+                <span>Auto-Trim</span>
+            </button>
+
             <button type="button" id="btnApplyCrop" onclick="applyDraftCrop()" disabled
-                class="px-5 py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 disabled:bg-crimson-500/40 disabled:pointer-events-none text-white font-bold text-xs transition shadow-sm cursor-pointer">
-                ปรับใช้
+                class="px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-crimson-500 hover:bg-crimson-600 disabled:bg-crimson-500/40 disabled:pointer-events-none text-white font-bold text-xs transition shadow-sm cursor-pointer">
+                ปรับใช้ครอบตัด
             </button>
         </div>
     </div>
 
     <!-- ===================================================================== -->
-    <!-- 5. BOTTOM-RIGHT FLOATING ACTION BUTTON (FAB)                          -->
+    <!-- 5. DESKTOP BOTTOM-RIGHT FLOATING ACTION BUTTON (HIDDEN ON MOBILE)     -->
     <!-- ===================================================================== -->
     <button type="button" id="floatingCropFab" onclick="toggleCropModeQuick()"
-        class="hidden fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs shadow-2xl red-glow flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+        class="hidden md:flex fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs shadow-2xl red-glow items-center gap-2 transition-all hover:scale-105 cursor-pointer"
         title="เปิด/ปิดโหมดครอบตัดอย่างรวดเร็ว">
         <i id="fabCropIcon" class="fa-solid fa-crop-simple text-sm"></i>
         <span id="fabCropLabel">ครอบตัด</span>
     </button>
 
     <!-- ===================================================================== -->
-    <!-- 6. BOTTOM-CENTER FLOATING NAVIGATION & ZOOM PILL                      -->
+    <!-- 6. UNIFIED BOTTOM DOCK (MOBILE) / CENTER NAVIGATION PILL (DESKTOP)    -->
     <!-- ===================================================================== -->
     <div id="floatingNavPill"
-        class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-30 bg-gray-900/90 backdrop-blur-md text-white rounded-2xl px-3 py-1.5 shadow-2xl border border-white/15 flex items-center gap-2 font-mono text-xs select-none">
+        class="hidden fixed bottom-2.5 left-2 right-2 md:bottom-5 md:left-1/2 md:right-auto md:-translate-x-1/2 z-30 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl px-2.5 sm:px-3 py-1.5 shadow-2xl border border-white/15 flex items-center justify-between md:justify-center gap-1.5 sm:gap-2 font-mono text-xs select-none">
 
         <!-- Page Navigation -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-0.5 sm:gap-1">
             <button type="button" id="btnPillPrev" onclick="stepPage(-1)"
                 class="w-7 h-7 rounded-lg hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center transition cursor-pointer"
                 title="หน้าก่อนหน้า">
                 <i class="fa-solid fa-chevron-up text-[10px]"></i>
             </button>
 
-            <div class="flex items-center gap-1 px-1">
+            <div class="flex items-center gap-1 px-0.5 sm:px-1">
                 <input type="number" id="pillPageInput" min="1" value="1"
                     onchange="jumpToPageFromPill()"
                     onkeydown="if (event.key === 'Enter') { this.blur(); jumpToPageFromPill(); }"
-                    class="w-10 text-center bg-white/10 hover:bg-white/15 focus:bg-white/20 rounded-md py-0.5 text-xs font-bold text-white focus:outline-none">
+                    class="w-9 sm:w-10 text-center bg-white/10 hover:bg-white/15 focus:bg-white/20 rounded-md py-0.5 text-xs font-bold text-white focus:outline-none">
                 <span class="text-gray-400">/</span>
-                <span id="pillTotalPages" class="font-bold text-gray-200 min-w-[18px] text-center">1</span>
+                <span id="pillTotalPages" class="font-bold text-gray-200 min-w-[16px] sm:min-w-[18px] text-center">1</span>
             </div>
 
             <button type="button" id="btnPillNext" onclick="stepPage(1)"
@@ -893,14 +1059,14 @@
         <span class="w-px h-5 bg-white/15"></span>
 
         <!-- Zoom Controls (-, %, +, FIT) -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-0.5 sm:gap-1">
             <button type="button" onclick="adjustZoom(-0.15)"
                 class="w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center transition cursor-pointer"
                 title="ย่อ (-)">
                 <i class="fa-solid fa-minus text-[11px] text-gray-300 hover:text-white"></i>
             </button>
             <button type="button" onclick="resetZoom()"
-                class="px-2 py-1 rounded-lg hover:bg-white/10 font-bold text-xs text-gray-100 min-w-[46px] text-center transition cursor-pointer"
+                class="px-1.5 sm:px-2 py-1 rounded-lg hover:bg-white/10 font-bold text-[11px] sm:text-xs text-gray-100 min-w-[40px] sm:min-w-[46px] text-center transition cursor-pointer"
                 title="คลิกเพื่อรีเซ็ตซูมเป็น 100%">
                 <span id="pillZoomLabel">100%</span>
             </button>
@@ -910,11 +1076,18 @@
                 <i class="fa-solid fa-plus text-[11px] text-gray-300 hover:text-white"></i>
             </button>
             <button type="button" onclick="fitToViewport()"
-                class="px-2 py-1 rounded-lg bg-white/10 hover:bg-crimson-500 text-gray-100 hover:text-white font-bold text-[10px] transition cursor-pointer ml-0.5"
+                class="px-1.5 sm:px-2 py-1 rounded-lg bg-white/10 hover:bg-crimson-500 text-gray-100 hover:text-white font-bold text-[10px] transition cursor-pointer ml-0.5"
                 title="ปรับขนาดให้พอดีหน้าจอ (FIT)">
                 FIT
             </button>
         </div>
+
+        <!-- Integrated Mobile Crop Toggle Button (Zero Collision on < md) -->
+        <button type="button" id="mobileDockCropBtn" onclick="toggleCropModeQuick()"
+            class="md:hidden px-2.5 py-1.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition shrink-0 cursor-pointer">
+            <i id="mobileDockCropIcon" class="fa-solid fa-crop-simple text-xs"></i>
+            <span id="mobileDockCropLabel">ครอบตัด</span>
+        </button>
     </div>
 
     <!-- ===================================================================== -->
@@ -966,10 +1139,10 @@
     <!-- Hidden Print Section for WYSIWYG Direct Print -->
     <div id="printSection" class="hidden"></div>
 
-    <!-- 7. TOAST NOTIFICATION (BOTTOM-6 RIGHT-44, Z-50 — NO COLLISION WITH FAB) -->
+    <!-- 7. TOAST NOTIFICATION (TOP-CENTER ON MOBILE, BOTTOM-RIGHT ON DESKTOP) -->
     <div id="toast"
-        class="fixed bottom-6 right-44 z-50 pointer-events-none transform translate-y-3 opacity-0 transition-all duration-200 max-w-[calc(100vw-12rem)]">
-        <div class="px-4 py-2.5 rounded-xl bg-gray-950 text-white font-mono text-xs font-bold shadow-2xl border-l-4 border-crimson-500 flex items-center gap-2.5">
+        class="fixed top-16 left-1/2 -translate-x-1/2 md:top-auto md:left-auto md:translate-x-0 md:bottom-6 md:right-44 z-50 pointer-events-none transform -translate-y-3 md:translate-y-3 opacity-0 transition-all duration-200 w-max max-w-[calc(100vw-2rem)]">
+        <div class="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gray-950 text-white font-mono text-[11px] sm:text-xs font-bold shadow-2xl border-l-4 border-crimson-500 flex items-center gap-2 sm:gap-2.5">
             <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 shrink-0"></i>
             <span id="toastMessage" class="truncate">NOTIFICATION</span>
         </div>
@@ -999,6 +1172,14 @@
             return val / UNIT_CONFIG[unit].factorFromPt;
         }
 
+        function normalizeAngle(deg) {
+            return ((deg % 360) + 360) % 360;
+        }
+
+        function isMobileViewport() {
+            return window.innerWidth < 768;
+        }
+
         // Global Application State
         const state = {
             pdfBytes: null,
@@ -1011,13 +1192,17 @@
             mode: 'pointer', // 'pointer' | 'crop'
             aspectRatio: 'free', // 'free' | 'a4-portrait' | 'a4-landscape' | '1:1'
             isOverviewOpen: false,
-            overviewFilter: 'all', // 'all' | 'cropped'
+            isMobileSheetExpanded: false,
+            overviewFilter: 'all', // 'all' | 'modified'
 
-            defaultPageDim: { width: 595.28, height: 841.89 },
-            pageDims: [],       // [{ width, height }]
-            committedCrops: [], // [{ x, y, w, h }] normalized 0..1 from top-left of original page
+            // Base unrotated visual dimensions (at baseRotation) and metadata rotations
+            defaultBaseDim: { width: 595.28, height: 841.89 },
+            baseDims: [],        // [{ width, height }] at baseRotation
+            baseRotations: [],   // [0 | 90 | 180 | 270] original PDF.js page.rotate
+            pageRotations: [],   // [0 | 90 | 180 | 270] user-applied clockwise rotation delta
+            committedCrops: [],  // [{ x, y, w, h }] normalized 0..1 relative to currently rotated visual page
 
-            draft: null,        // { pageNum, x, y, w, h } relative to page's current cropped canvas
+            draft: null,         // { pageNum, x, y, w, h } relative to page's current cropped canvas
             undoStack: [],
             redoStack: [],
 
@@ -1056,13 +1241,17 @@
             btnUndo: document.getElementById('btnUndo'),
             btnRedo: document.getElementById('btnRedo'),
             studioFileName: document.getElementById('studioFileName'),
+            mobileMoreBtn: document.getElementById('mobileMoreBtn'),
+            mobileMoreDropdown: document.getElementById('mobileMoreDropdown'),
+            mobileMoreFileName: document.getElementById('mobileMoreFileName'),
             exportDropdownBtn: document.getElementById('exportDropdownBtn'),
             exportDropdown: document.getElementById('exportDropdown'),
 
+            overviewBackdrop: document.getElementById('overviewBackdrop'),
             overviewSidebar: document.getElementById('overviewSidebar'),
             overviewStatsBadge: document.getElementById('overviewStatsBadge'),
             filterAllBtn: document.getElementById('filterAllBtn'),
-            filterCroppedBtn: document.getElementById('filterCroppedBtn'),
+            filterModifiedBtn: document.getElementById('filterModifiedBtn'),
             overviewJumpInput: document.getElementById('overviewJumpInput'),
             overviewList: document.getElementById('overviewList'),
             overviewEmptyFilterMsg: document.getElementById('overviewEmptyFilterMsg'),
@@ -1072,6 +1261,9 @@
 
             floatingCropCard: document.getElementById('floatingCropCard'),
             floatingCropCardHeader: document.getElementById('floatingCropCardHeader'),
+            floatingCropCardBody: document.getElementById('floatingCropCardBody'),
+            mobileSheetChevron: document.getElementById('mobileSheetChevron'),
+            mobileSheetScopeBadge: document.getElementById('mobileSheetScopeBadge'),
             scopeCurrentPageTag: document.getElementById('scopeCurrentPageTag'),
             customRangeBox: document.getElementById('customRangeBox'),
             customRangeInput: document.getElementById('customRangeInput'),
@@ -1087,6 +1279,10 @@
             floatingCropFab: document.getElementById('floatingCropFab'),
             fabCropIcon: document.getElementById('fabCropIcon'),
             fabCropLabel: document.getElementById('fabCropLabel'),
+
+            mobileDockCropBtn: document.getElementById('mobileDockCropBtn'),
+            mobileDockCropIcon: document.getElementById('mobileDockCropIcon'),
+            mobileDockCropLabel: document.getElementById('mobileDockCropLabel'),
 
             floatingNavPill: document.getElementById('floatingNavPill'),
             btnPillPrev: document.getElementById('btnPillPrev'),
@@ -1109,20 +1305,55 @@
         let toastTimer = null;
         let scrollSyncRaf = null;
 
-        // Close export dropdown on outside click
+        // Close dropdowns on outside click
         window.addEventListener('click', (e) => {
             if (!els.exportDropdown.classList.contains('hidden')) {
                 if (!els.exportDropdown.contains(e.target) && !els.exportDropdownBtn.contains(e.target)) {
                     els.exportDropdown.classList.add('hidden');
                 }
             }
+            if (!els.mobileMoreDropdown.classList.contains('hidden')) {
+                if (!els.mobileMoreDropdown.contains(e.target) && !els.mobileMoreBtn.contains(e.target)) {
+                    els.mobileMoreDropdown.classList.add('hidden');
+                }
+            }
         });
 
+        function toggleMobileMoreMenu(e) {
+            if (e) e.stopPropagation();
+            els.exportDropdown.classList.add('hidden');
+            els.mobileMoreDropdown.classList.toggle('hidden');
+        }
+
+        function closeMobileMoreMenu() {
+            els.mobileMoreDropdown.classList.add('hidden');
+        }
+
         // =====================================================================
-        // DRAGGABLE FLOATING CROP SETTINGS CARD
+        // FLOATING SETTINGS CARD (DRAGGABLE ON DESKTOP / EXPANDABLE SHEET ON MOBILE)
         // =====================================================================
 
+        els.floatingCropCardHeader.addEventListener('click', () => {
+            if (isMobileViewport()) {
+                setMobileSheetExpanded(!state.isMobileSheetExpanded);
+            }
+        });
+
+        function setMobileSheetExpanded(expanded) {
+            state.isMobileSheetExpanded = expanded;
+            if (expanded) {
+                els.floatingCropCardBody.classList.remove('hidden');
+                els.mobileSheetChevron.style.transform = 'rotate(180deg)';
+            } else {
+                els.floatingCropCardBody.classList.add('hidden');
+                els.mobileSheetChevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
         els.floatingCropCardHeader.addEventListener('pointerdown', (e) => {
+            // Only drag floating card on Desktop (>= 768px)
+            if (isMobileViewport()) return;
+
             e.preventDefault();
             const rect = els.floatingCropCard.getBoundingClientRect();
             els.floatingCropCard.style.left = `${rect.left}px`;
@@ -1141,6 +1372,18 @@
             els.floatingCropCard.style.right = '';
             els.floatingCropCard.style.bottom = '';
         }
+
+        window.addEventListener('resize', () => {
+            if (!isMobileViewport()) {
+                els.overviewBackdrop.classList.add('hidden');
+                els.floatingCropCardBody.classList.remove('hidden');
+            } else {
+                resetFloatingCardPosition();
+                if (!state.isMobileSheetExpanded) {
+                    els.floatingCropCardBody.classList.add('hidden');
+                }
+            }
+        });
 
         // =====================================================================
         // 1. FILE UPLOAD & STUDIO INITIALIZATION
@@ -1196,7 +1439,8 @@
                 if (state.thumbObserver) state.thumbObserver.disconnect();
 
                 const firstPage = await pdfDoc.getPage(1);
-                const vp1 = firstPage.getViewport({ scale: 1.0 });
+                const baseRot1 = normalizeAngle(firstPage.rotate || 0);
+                const vp1 = firstPage.getViewport({ scale: 1.0, rotation: baseRot1 });
 
                 state.pdfBytes = bytes;
                 state.pdfDoc = pdfDoc;
@@ -1204,9 +1448,12 @@
                 state.totalPages = pdfDoc.numPages;
                 state.activePageIndex = 1;
                 state.overviewFilter = 'all';
-                state.defaultPageDim = { width: vp1.width, height: vp1.height };
-                state.pageDims = Array.from({ length: state.totalPages }, () => null);
-                state.pageDims[0] = { width: vp1.width, height: vp1.height };
+                state.defaultBaseDim = { width: vp1.width, height: vp1.height };
+                state.baseDims = Array.from({ length: state.totalPages }, () => null);
+                state.baseDims[0] = { width: vp1.width, height: vp1.height };
+                state.baseRotations = Array.from({ length: state.totalPages }, () => 0);
+                state.baseRotations[0] = baseRot1;
+                state.pageRotations = Array.from({ length: state.totalPages }, () => 0);
                 state.committedCrops = Array.from({ length: state.totalPages }, () => ({ x: 0, y: 0, w: 1, h: 1 }));
                 state.draft = null;
                 state.undoStack = [];
@@ -1222,15 +1469,17 @@
                 els.floatingCropFab.classList.remove('hidden');
                 els.floatingNavPill.classList.remove('hidden');
 
-                // Auto-open Pages Overview sidebar when > 1 page (hidden when 1 page)
-                const shouldOpenOverview = state.totalPages > 1 && window.innerWidth >= 768;
+                // Auto-open Pages Overview sidebar when > 1 page on desktop/tablet
+                const shouldOpenOverview = state.totalPages > 1 && !isMobileViewport();
                 setOverviewSidebarOpen(shouldOpenOverview);
 
-                // Compute comfortable initial zoom
-                const availW = Math.max(360, els.docScrollViewport.clientWidth - 96);
-                state.zoom = clamp(+(Math.min(1.15, availW / vp1.width)).toFixed(2), 0.5, 1.25);
+                // Compute comfortable initial zoom adapted to screen width
+                const padX = isMobileViewport() ? 28 : 96;
+                const availW = Math.max(260, els.docScrollViewport.clientWidth - padX);
+                state.zoom = clamp(+(Math.min(1.15, availW / vp1.width)).toFixed(2), 0.35, 1.25);
 
                 els.studioFileName.textContent = file.name;
+                els.mobileMoreFileName.textContent = file.name;
                 els.toolbarPageCountBadge.textContent = state.totalPages;
                 els.pillTotalPages.textContent = state.totalPages;
                 els.pillPageInput.max = state.totalPages;
@@ -1250,7 +1499,7 @@
                 updateActivePageUI(1);
 
                 els.docScrollViewport.scrollTop = 0;
-                showToast(`โหลดสำเร็จ (${state.totalPages} หน้า) — กด "ครอบตัด" เพื่อเริ่มตัดขอบ`, 'success');
+                showToast(`โหลดสำเร็จ (${state.totalPages} หน้า) — กด "ครอบตัด" ได้ทันที`, 'success');
             } catch (err) {
                 console.error(err);
                 showToast('ไม่สามารถเปิดไฟล์ PDF นี้ได้ กรุณาตรวจสอบว่าไฟล์ไม่เสียหายหรือติดรหัสผ่าน', 'error');
@@ -1261,14 +1510,27 @@
             return crop && (crop.x > 0.001 || crop.y > 0.001 || crop.w < 0.999 || crop.h < 0.999);
         }
 
-        function getPageDim(pageNum) {
-            return state.pageDims[pageNum - 1] || state.defaultPageDim;
+        function isPageModified(pageNum) {
+            const idx = pageNum - 1;
+            return isCropped(state.committedCrops[idx]) || normalizeAngle(state.pageRotations[idx]) !== 0;
         }
 
+        // Dimensions of the full uncropped page at its current user rotation
+        function getRotatedFullPageDim(pageNum) {
+            const idx = pageNum - 1;
+            const base = state.baseDims[idx] || state.defaultBaseDim;
+            const userRot = normalizeAngle(state.pageRotations[idx]);
+            if (userRot === 90 || userRot === 270) {
+                return { width: base.height, height: base.width };
+            }
+            return { width: base.width, height: base.height };
+        }
+
+        // Current cropped & rotated visible dimensions in PDF points
         function getCurrentViewDimsPt(pageNum) {
-            const orig = getPageDim(pageNum);
+            const full = getRotatedFullPageDim(pageNum);
             const crop = state.committedCrops[pageNum - 1];
-            return { w: orig.width * crop.w, h: orig.height * crop.h };
+            return { w: full.width * crop.w, h: full.height * crop.h };
         }
 
         // =====================================================================
@@ -1286,20 +1548,36 @@
                 wrapper.dataset.page = p;
                 wrapper.className = 'page-wrapper flex flex-col items-center';
 
-                // Top Bar above each page
+                // Top Bar above each page (Page # + Dimensions + Badges + Quick Rotate + Restore)
                 const header = document.createElement('div');
-                header.className = 'w-full flex flex-wrap items-center justify-between gap-2 mb-2 px-1 font-mono text-[11px] text-gray-300';
+                header.className = 'w-full flex flex-wrap items-center justify-between gap-2 mb-2 px-1 font-mono text-[10px] sm:text-[11px] text-gray-300';
                 header.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                         <span class="font-bold text-white">หน้า ${p} / ${state.totalPages}</span>
-                        <span id="pageDimLabel_${p}" class="text-[10px] text-gray-400"></span>
+                        <span id="pageDimLabel_${p}" class="text-[9px] sm:text-[10px] text-gray-400"></span>
                         <span id="pageCroppedTag_${p}" class="hidden px-1.5 py-0.5 rounded bg-crimson-500 text-white text-[9px] font-bold tracking-wide">CROPPED</span>
+                        <span id="pageRotatedTag_${p}" class="hidden px-1.5 py-0.5 rounded bg-sky-500 text-white text-[9px] font-bold tracking-wide">0°</span>
                     </div>
-                    <button type="button" id="restorePageBtn_${p}" onclick="restoreSinglePage(${p})"
-                        class="hidden px-2.5 py-0.5 rounded-md bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white border border-gray-700 hover:border-crimson-500 text-[10px] font-bold items-center gap-1 transition cursor-pointer">
-                        <i class="fa-solid fa-rotate-left text-[9px]"></i>
-                        <span>คืนค่าหน้านี้</span>
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                        <div class="inline-flex items-center rounded-md bg-gray-800 border border-gray-700 overflow-hidden">
+                            <button type="button" onclick="rotatePage(${p}, -90)"
+                                class="px-2 py-1 sm:py-0.5 hover:bg-crimson-500 text-gray-200 hover:text-white text-[10px] font-bold transition cursor-pointer"
+                                title="หมุนหน้า ${p} ทวนเข็มนาฬิกา 90°">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                            <span class="w-px h-3 bg-gray-700"></span>
+                            <button type="button" onclick="rotatePage(${p}, 90)"
+                                class="px-2 py-1 sm:py-0.5 hover:bg-crimson-500 text-gray-200 hover:text-white text-[10px] font-bold transition cursor-pointer"
+                                title="หมุนหน้า ${p} ตามเข็มนาฬิกา 90°">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                        <button type="button" id="restorePageBtn_${p}" onclick="restoreSinglePage(${p})"
+                            class="hidden px-2 py-1 sm:px-2.5 sm:py-0.5 rounded-md bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white border border-gray-700 hover:border-crimson-500 text-[10px] font-bold items-center gap-1 transition cursor-pointer">
+                            <i class="fa-solid fa-arrow-rotate-left text-[9px]"></i>
+                            <span>คืนค่า</span>
+                        </button>
+                    </div>
                 `;
 
                 const stage = document.createElement('div');
@@ -1325,10 +1603,10 @@
         }
 
         function sizePageStageBox(stage, canvas, pageNum) {
-            const dim = getPageDim(pageNum);
+            const fullDim = getRotatedFullPageDim(pageNum);
             const crop = state.committedCrops[pageNum - 1];
-            const cssW = Math.max(24, Math.round(dim.width * crop.w * state.zoom));
-            const cssH = Math.max(24, Math.round(dim.height * crop.h * state.zoom));
+            const cssW = Math.max(24, Math.round(fullDim.width * crop.w * state.zoom));
+            const cssH = Math.max(24, Math.round(fullDim.height * crop.h * state.zoom));
             stage.style.width = `${cssW}px`;
             stage.style.height = `${cssH}px`;
             canvas.style.width = `${cssW}px`;
@@ -1336,21 +1614,32 @@
         }
 
         function updatePageHeaderMeta(pageNum) {
-            const crop = state.committedCrops[pageNum - 1];
+            const idx = pageNum - 1;
+            const crop = state.committedCrops[idx];
+            const userRot = normalizeAngle(state.pageRotations[idx]);
             const cropped = isCropped(crop);
+            const rotated = userRot !== 0;
+            const modified = cropped || rotated;
+
             const viewPt = getCurrentViewDimsPt(pageNum);
             const u = UNIT_CONFIG[state.unit].label;
 
             const dimLabel = document.getElementById(`pageDimLabel_${pageNum}`);
             if (dimLabel) dimLabel.textContent = `(${formatUnit(viewPt.w)} × ${formatUnit(viewPt.h)} ${u})`;
 
-            const tag = document.getElementById(`pageCroppedTag_${pageNum}`);
-            if (tag) tag.classList.toggle('hidden', !cropped);
+            const cropTag = document.getElementById(`pageCroppedTag_${pageNum}`);
+            if (cropTag) cropTag.classList.toggle('hidden', !cropped);
+
+            const rotTag = document.getElementById(`pageRotatedTag_${pageNum}`);
+            if (rotTag) {
+                rotTag.classList.toggle('hidden', !rotated);
+                if (rotated) rotTag.textContent = `${userRot}°`;
+            }
 
             const restoreBtn = document.getElementById(`restorePageBtn_${pageNum}`);
             if (restoreBtn) {
-                restoreBtn.classList.toggle('hidden', !cropped);
-                restoreBtn.classList.toggle('inline-flex', cropped);
+                restoreBtn.classList.toggle('hidden', !modified);
+                restoreBtn.classList.toggle('inline-flex', modified);
             }
         }
 
@@ -1363,12 +1652,18 @@
                 item.id = `thumbItem_${p}`;
                 item.dataset.page = p;
                 item.className = `thumb-item rounded-xl border border-tech-border bg-white p-2 flex flex-col items-center cursor-pointer hover:border-crimson-500/50 ${p === state.activePageIndex ? 'is-active' : ''}`;
-                item.onclick = () => scrollToPage(p);
+                item.onclick = () => {
+                    scrollToPage(p);
+                    if (isMobileViewport()) setOverviewSidebarOpen(false);
+                };
 
                 item.innerHTML = `
-                    <div class="w-full flex items-center justify-between font-mono text-[10px] mb-1.5 px-0.5">
+                    <div class="w-full flex items-center justify-between font-mono text-[10px] mb-1.5 px-0.5 gap-1">
                         <span class="font-bold text-tech-dark bg-tech-panel px-1.5 py-0.5 rounded border border-tech-border">P.${p}</span>
-                        <span id="thumbCropBadge_${p}" class="hidden px-1.5 py-0.5 rounded bg-crimson-500 text-white text-[9px] font-bold">CROPPED</span>
+                        <div class="flex items-center gap-1">
+                            <span id="thumbRotBadge_${p}" class="hidden px-1 py-0.5 rounded bg-sky-500 text-white text-[8px] font-bold">90°</span>
+                            <span id="thumbCropBadge_${p}" class="hidden px-1.5 py-0.5 rounded bg-crimson-500 text-white text-[8px] font-bold">CROP</span>
+                        </div>
                     </div>
                     <div class="w-full h-32 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden flex items-center justify-center p-1">
                         <canvas id="thumbCanvas_${p}" class="max-w-full max-h-full shadow-xs bg-white"></canvas>
@@ -1462,6 +1757,7 @@
             els.btnPillPrev.disabled = pageNum <= 1;
             els.btnPillNext.disabled = pageNum >= state.totalPages;
             els.scopeCurrentPageTag.textContent = `(หน้า ${pageNum})`;
+            updateMobileSheetScopeBadge();
 
             document.querySelectorAll('.thumb-item.is-active').forEach(el => el.classList.remove('is-active'));
             const activeThumb = document.getElementById(`thumbItem_${pageNum}`);
@@ -1477,11 +1773,17 @@
             state.isOverviewOpen = isOpen;
             els.overviewSidebar.classList.toggle('hidden', !isOpen);
 
+            if (isMobileViewport()) {
+                els.overviewBackdrop.classList.toggle('hidden', !isOpen);
+            } else {
+                els.overviewBackdrop.classList.add('hidden');
+            }
+
             if (isOpen) {
-                els.btnToggleOverview.className = 'px-2.5 py-1.5 rounded-xl border border-crimson-200 bg-crimson-50 text-crimson-600 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer';
+                els.btnToggleOverview.className = 'px-2 sm:px-2.5 py-1.5 rounded-xl border border-crimson-200 bg-crimson-50 text-crimson-600 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0';
                 state.visibleThumbPages.forEach(p => renderThumbnailPage(p));
             } else {
-                els.btnToggleOverview.className = 'px-2.5 py-1.5 rounded-xl border border-tech-border bg-white hover:bg-tech-panel text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer';
+                els.btnToggleOverview.className = 'px-2 sm:px-2.5 py-1.5 rounded-xl border border-tech-border bg-white hover:bg-tech-panel text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0';
             }
         }
 
@@ -1493,9 +1795,9 @@
             state.overviewFilter = filter;
             if (filter === 'all') {
                 els.filterAllBtn.className = 'py-1 rounded-md bg-gray-950 text-white font-bold transition cursor-pointer';
-                els.filterCroppedBtn.className = 'py-1 rounded-md text-tech-muted hover:text-tech-dark font-semibold transition cursor-pointer';
+                els.filterModifiedBtn.className = 'py-1 rounded-md text-tech-muted hover:text-tech-dark font-semibold transition cursor-pointer';
             } else {
-                els.filterCroppedBtn.className = 'py-1 rounded-md bg-crimson-500 text-white font-bold transition cursor-pointer';
+                els.filterModifiedBtn.className = 'py-1 rounded-md bg-crimson-500 text-white font-bold transition cursor-pointer';
                 els.filterAllBtn.className = 'py-1 rounded-md text-tech-muted hover:text-tech-dark font-semibold transition cursor-pointer';
             }
             applyOverviewFilterDOM();
@@ -1506,7 +1808,7 @@
             for (let p = 1; p <= state.totalPages; p++) {
                 const item = document.getElementById(`thumbItem_${p}`);
                 if (!item) continue;
-                const show = state.overviewFilter === 'all' || isCropped(state.committedCrops[p - 1]);
+                const show = state.overviewFilter === 'all' || isPageModified(p);
                 item.classList.toggle('hidden', !show);
                 if (show) shownCount++;
             }
@@ -1514,9 +1816,12 @@
         }
 
         function updateOverviewStats() {
-            const croppedCount = state.committedCrops.filter(isCropped).length;
-            els.overviewStatsBadge.textContent = croppedCount > 0
-                ? `${state.totalPages} หน้า • ตัด ${croppedCount}`
+            let modCount = 0;
+            for (let p = 1; p <= state.totalPages; p++) {
+                if (isPageModified(p)) modCount++;
+            }
+            els.overviewStatsBadge.textContent = modCount > 0
+                ? `${state.totalPages} หน้า • แก้ ${modCount}`
                 : `${state.totalPages} หน้า`;
         }
 
@@ -1528,14 +1833,15 @@
             }
             scrollToPage(val);
             els.overviewJumpInput.blur();
+            if (isMobileViewport()) setOverviewSidebarOpen(false);
         }
 
         // =====================================================================
-        // 3. REALTIME CROPPED PDF.JS RENDERER (WITH TASK CANCELLATION)
+        // 3. REALTIME CROPPED & ROTATED PDF.JS RENDERER
         // =====================================================================
 
-        function makeCacheKey(crop, scale) {
-            return `${scale.toFixed(3)}|${crop.x.toFixed(4)},${crop.y.toFixed(4)},${crop.w.toFixed(4)},${crop.h.toFixed(4)}`;
+        function makeCacheKey(crop, scale, totalRotation) {
+            return `${scale.toFixed(3)}|r${totalRotation}|${crop.x.toFixed(4)},${crop.y.toFixed(4)},${crop.w.toFixed(4)},${crop.h.toFixed(4)}`;
         }
 
         function cancelTaskInMap(map, pageNum) {
@@ -1555,23 +1861,30 @@
 
         async function renderMainPage(pageNum, force = false) {
             if (!state.pdfDoc) return;
-            const crop = state.committedCrops[pageNum - 1];
-            const cacheKey = makeCacheKey(crop, state.zoom);
-            if (!force && state.renderedMainMeta.get(pageNum) === cacheKey) return;
+            const idx = pageNum - 1;
+            const crop = state.committedCrops[idx];
+            const userRot = normalizeAngle(state.pageRotations[idx]);
 
             cancelTaskInMap(state.mainRenderTasks, pageNum);
 
             try {
                 const page = await state.pdfDoc.getPage(pageNum);
-                const unscaled = page.getViewport({ scale: 1.0 });
-                state.pageDims[pageNum - 1] = { width: unscaled.width, height: unscaled.height };
+                const baseRot = normalizeAngle(page.rotate || 0);
+                state.baseRotations[idx] = baseRot;
+
+                const baseVp = page.getViewport({ scale: 1.0, rotation: baseRot });
+                state.baseDims[idx] = { width: baseVp.width, height: baseVp.height };
+
+                const totalRot = normalizeAngle(baseRot + userRot);
+                const cacheKey = makeCacheKey(crop, state.zoom, totalRot);
+                if (!force && state.renderedMainMeta.get(pageNum) === cacheKey) return;
 
                 const stage = document.getElementById(`pageStage_${pageNum}`);
                 const canvas = document.getElementById(`pageCanvas_${pageNum}`);
                 if (!stage || !canvas) return;
 
                 const dpr = Math.min(window.devicePixelRatio || 1, 2);
-                const viewport = page.getViewport({ scale: state.zoom });
+                const viewport = page.getViewport({ scale: state.zoom, rotation: totalRot });
 
                 const cssW = Math.max(24, Math.round(viewport.width * crop.w));
                 const cssH = Math.max(24, Math.round(viewport.height * crop.h));
@@ -1616,23 +1929,28 @@
 
         async function renderThumbnailPage(pageNum, force = false) {
             if (!state.pdfDoc || !state.isOverviewOpen) return;
-            const crop = state.committedCrops[pageNum - 1];
-            const thumbScale = 0.24;
-            const cacheKey = makeCacheKey(crop, thumbScale);
+            const idx = pageNum - 1;
+            const crop = state.committedCrops[idx];
+            const userRot = normalizeAngle(state.pageRotations[idx]);
 
-            const badge = document.getElementById(`thumbCropBadge_${pageNum}`);
-            if (badge) badge.classList.toggle('hidden', !isCropped(crop));
-
-            if (!force && state.renderedThumbMeta.get(pageNum) === cacheKey) return;
+            updateThumbBadges(pageNum);
 
             cancelTaskInMap(state.thumbRenderTasks, pageNum);
 
             try {
                 const page = await state.pdfDoc.getPage(pageNum);
+                const baseRot = normalizeAngle(page.rotate || 0);
+                state.baseRotations[idx] = baseRot;
+
+                const totalRot = normalizeAngle(baseRot + userRot);
+                const thumbScale = 0.24;
+                const cacheKey = makeCacheKey(crop, thumbScale, totalRot);
+                if (!force && state.renderedThumbMeta.get(pageNum) === cacheKey) return;
+
                 const canvas = document.getElementById(`thumbCanvas_${pageNum}`);
                 if (!canvas) return;
 
-                const viewport = page.getViewport({ scale: thumbScale });
+                const viewport = page.getViewport({ scale: thumbScale, rotation: totalRot });
                 const w = Math.max(1, Math.round(viewport.width * crop.w));
                 const h = Math.max(1, Math.round(viewport.height * crop.h));
 
@@ -1657,15 +1975,26 @@
             }
         }
 
+        function updateThumbBadges(pageNum) {
+            const idx = pageNum - 1;
+            const cropBadge = document.getElementById(`thumbCropBadge_${pageNum}`);
+            if (cropBadge) cropBadge.classList.toggle('hidden', !isCropped(state.committedCrops[idx]));
+
+            const rotBadge = document.getElementById(`thumbRotBadge_${pageNum}`);
+            const userRot = normalizeAngle(state.pageRotations[idx]);
+            if (rotBadge) {
+                rotBadge.classList.toggle('hidden', userRot === 0);
+                if (userRot !== 0) rotBadge.textContent = `${userRot}°`;
+            }
+        }
+
         function refreshAllPagesUI() {
             for (let p = 1; p <= state.totalPages; p++) {
                 const stage = document.getElementById(`pageStage_${p}`);
                 const canvas = document.getElementById(`pageCanvas_${p}`);
                 if (stage && canvas) sizePageStageBox(stage, canvas, p);
                 updatePageHeaderMeta(p);
-
-                const badge = document.getElementById(`thumbCropBadge_${p}`);
-                if (badge) badge.classList.toggle('hidden', !isCropped(state.committedCrops[p - 1]));
+                updateThumbBadges(p);
             }
 
             updateOverviewStats();
@@ -1678,30 +2007,122 @@
         }
 
         // =====================================================================
-        // 4. TOOL MODES, FLOATING FAB, NAVIGATION & ZOOM
+        // 4. PAGE ROTATION ENGINE (MATHEMATICALLY LOCKED TO CROP BOXES)
+        // =====================================================================
+
+        function transformNormalizedRect(rect, deltaDeg) {
+            const deg = normalizeAngle(deltaDeg);
+            const { x, y, w, h } = rect;
+            if (deg === 90) {
+                return { x: clamp(1 - (y + h), 0, 1), y: clamp(x, 0, 1), w: h, h: w };
+            }
+            if (deg === 180) {
+                return { x: clamp(1 - (x + w), 0, 1), y: clamp(1 - (y + h), 0, 1), w, h };
+            }
+            if (deg === 270) {
+                return { x: clamp(y, 0, 1), y: clamp(1 - (x + w), 0, 1), w: h, h: w };
+            }
+            return { x, y, w, h };
+        }
+
+        function applyRotationToIndices(indices, deltaDeg) {
+            if (!state.pdfDoc || indices.length === 0) return;
+            const normDelta = normalizeAngle(deltaDeg);
+            if (normDelta === 0) return;
+
+            pushUndoSnapshot();
+
+            indices.forEach(idx => {
+                state.pageRotations[idx] = normalizeAngle(state.pageRotations[idx] + normDelta);
+                if (isCropped(state.committedCrops[idx])) {
+                    state.committedCrops[idx] = transformNormalizedRect(state.committedCrops[idx], normDelta);
+                }
+            });
+
+            if (state.draft && indices.includes(state.draft.pageNum - 1)) {
+                const rotDraft = transformNormalizedRect(state.draft, normDelta);
+                state.draft = { pageNum: state.draft.pageNum, ...rotDraft };
+            }
+
+            refreshAllPagesUI();
+            if (state.draft) syncDraftOverlayUI(true);
+        }
+
+        function rotatePage(pageNum, deltaDeg) {
+            if (!state.pdfDoc) return;
+            const p = clamp(pageNum, 1, state.totalPages);
+            updateActivePageUI(p);
+            applyRotationToIndices([p - 1], deltaDeg);
+            const label = deltaDeg > 0 ? `+${deltaDeg}°` : `${deltaDeg}°`;
+            showToast(`หมุนหน้า ${p} (${label}) เรียบร้อยแล้ว`, 'success');
+        }
+
+        function rotateByScope(deltaDeg) {
+            if (!state.pdfDoc) return;
+            const scope = document.querySelector('input[name="cropScope"]:checked').value;
+            let targetIndices = [];
+
+            if (scope === 'all') {
+                targetIndices = Array.from({ length: state.totalPages }, (_, i) => i);
+            } else if (scope === 'current') {
+                targetIndices = [state.activePageIndex - 1];
+            } else {
+                targetIndices = parsePageRange(els.customRangeInput.value, state.totalPages);
+                if (targetIndices.length === 0) {
+                    showToast(`กรุณาระบุช่วงหน้าให้ถูกต้อง (เช่น 1-${state.totalPages})`, 'error');
+                    return;
+                }
+            }
+
+            applyRotationToIndices(targetIndices, deltaDeg);
+            const label = deltaDeg > 0 ? `+${deltaDeg}°` : `${deltaDeg}°`;
+            showToast(`หมุนเอกสารสำเร็จ (${targetIndices.length} หน้า • ${label})`, 'success');
+        }
+
+        // =====================================================================
+        // 5. TOOL MODES, FLOATING FAB, MOBILE DOCK, NAVIGATION & ZOOM
         // =====================================================================
 
         function setToolMode(mode) {
             state.mode = mode;
 
             if (mode === 'crop') {
-                els.btnModeCrop.className = 'px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm cursor-pointer';
-                els.btnModePointer.className = 'px-3 py-1.5 rounded-xl bg-white hover:bg-tech-panel text-tech-dark border border-tech-border font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer';
+                els.btnModeCrop.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm cursor-pointer shrink-0';
+                els.btnModePointer.className = 'px-2 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-tech-panel text-tech-dark border border-tech-border font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0';
                 els.docScrollViewport.classList.add('crop-mode-active');
                 els.floatingCropCard.classList.remove('hidden');
 
-                els.floatingCropFab.className = 'fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-gray-950 hover:bg-gray-800 text-white font-bold text-xs shadow-2xl border border-white/15 flex items-center gap-2 transition-all hover:scale-105 cursor-pointer';
+                // On mobile, start sheet collapsed so 75%+ of the PDF canvas stays clear for dragging
+                if (isMobileViewport()) {
+                    setMobileSheetExpanded(false);
+                } else {
+                    els.floatingCropCardBody.classList.remove('hidden');
+                }
+
+                // Desktop FAB
+                els.floatingCropFab.className = 'hidden md:flex fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-gray-950 hover:bg-gray-800 text-white font-bold text-xs shadow-2xl border border-white/15 items-center gap-2 transition-all hover:scale-105 cursor-pointer';
                 els.fabCropIcon.className = 'fa-solid fa-xmark text-sm text-crimson-500';
                 els.fabCropLabel.textContent = 'ปิดโหมดครอบตัด';
+
+                // Mobile Bottom Dock Button
+                els.mobileDockCropBtn.className = 'md:hidden px-2.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition shrink-0 cursor-pointer';
+                els.mobileDockCropIcon.className = 'fa-solid fa-xmark text-xs text-crimson-500';
+                els.mobileDockCropLabel.textContent = 'ปิด';
             } else {
-                els.btnModePointer.className = 'px-3 py-1.5 rounded-xl bg-gray-950 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer';
-                els.btnModeCrop.className = 'px-3 py-1.5 rounded-xl bg-white hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 border border-tech-border font-bold text-xs flex items-center gap-1.5 transition cursor-pointer';
+                els.btnModePointer.className = 'px-2 sm:px-3 py-1.5 rounded-xl bg-gray-950 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer shrink-0';
+                els.btnModeCrop.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-crimson-50 text-tech-dark hover:text-crimson-600 border border-tech-border font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0';
                 els.docScrollViewport.classList.remove('crop-mode-active');
                 els.floatingCropCard.classList.add('hidden');
 
-                els.floatingCropFab.className = 'fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs shadow-2xl red-glow flex items-center gap-2 transition-all hover:scale-105 cursor-pointer';
+                // Desktop FAB
+                els.floatingCropFab.className = 'hidden md:flex fixed bottom-5 right-5 z-30 px-4 py-3 rounded-2xl bg-crimson-500 hover:bg-crimson-600 text-white font-bold text-xs shadow-2xl red-glow items-center gap-2 transition-all hover:scale-105 cursor-pointer';
                 els.fabCropIcon.className = 'fa-solid fa-crop-simple text-sm';
                 els.fabCropLabel.textContent = 'ครอบตัด';
+
+                // Mobile Bottom Dock Button
+                els.mobileDockCropBtn.className = 'md:hidden px-2.5 py-1.5 rounded-xl bg-crimson-500 hover:bg-crimson-600 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition shrink-0 cursor-pointer';
+                els.mobileDockCropIcon.className = 'fa-solid fa-crop-simple text-xs';
+                els.mobileDockCropLabel.textContent = 'ครอบตัด';
 
                 clearDraftCrop();
             }
@@ -1758,8 +2179,10 @@
         function fitToViewport() {
             if (!state.pdfDoc) return;
             const viewPt = getCurrentViewDimsPt(state.activePageIndex);
-            const availW = Math.max(320, els.docScrollViewport.clientWidth - 96);
-            const availH = Math.max(320, els.docScrollViewport.clientHeight - 150);
+            const padX = isMobileViewport() ? 28 : 96;
+            const padY = isMobileViewport() ? 180 : 150;
+            const availW = Math.max(240, els.docScrollViewport.clientWidth - padX);
+            const availH = Math.max(240, els.docScrollViewport.clientHeight - padY);
             state.zoom = clamp(+(Math.min(availW / viewPt.w, availH / viewPt.h)).toFixed(2), 0.35, 2.5);
             els.pillZoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
             refreshAllPagesUI();
@@ -1767,7 +2190,7 @@
         }
 
         // =====================================================================
-        // 5. INTERACTIVE DRAFT CROP BOX + QUICK ACTION BAR
+        // 6. INTERACTIVE DRAFT CROP BOX + QUICK ACTION BAR
         // =====================================================================
 
         function hideDraftOverlay() {
@@ -1830,7 +2253,7 @@
         });
 
         window.addEventListener('pointermove', (e) => {
-            // Dragging Floating Settings Card
+            // Dragging Floating Settings Card on Desktop
             if (state.isDraggingCard) {
                 const cardW = els.floatingCropCard.offsetWidth;
                 const cardH = els.floatingCropCard.offsetHeight;
@@ -1946,7 +2369,7 @@
 
                 if (!state.draft || state.draft.w * dispW < 12 || state.draft.h * dispH < 12) {
                     clearDraftCrop();
-                    showToast('กรอบเล็กเกินไป กรุณาคลิกค้างแล้วลากให้กว้างขึ้น', 'info');
+                    showToast('กรอบเล็กเกินไป กรุณาแตะค้างแล้วลากให้กว้างขึ้น', 'info');
                 } else {
                     syncDraftOverlayUI(true);
                 }
@@ -2044,12 +2467,25 @@
         }
 
         // =====================================================================
-        // 6. FLOATING CROP CARD CONTROLS (SCOPE, UNITS, RATIO, MARGINS, AUTO-TRIM)
+        // 7. FLOATING CARD CONTROLS (SCOPE, UNITS, RATIO, MARGINS, AUTO-TRIM)
         // =====================================================================
+
+        function updateMobileSheetScopeBadge() {
+            const checked = document.querySelector('input[name="cropScope"]:checked');
+            const val = checked ? checked.value : 'current';
+            if (val === 'all') {
+                els.mobileSheetScopeBadge.textContent = 'ทุกหน้า';
+            } else if (val === 'custom') {
+                els.mobileSheetScopeBadge.textContent = 'ระบุหน้า';
+            } else {
+                els.mobileSheetScopeBadge.textContent = `หน้า ${state.activePageIndex}`;
+            }
+        }
 
         function onScopeChange() {
             const val = document.querySelector('input[name="cropScope"]:checked').value;
             els.customRangeBox.classList.toggle('hidden', val !== 'custom');
+            updateMobileSheetScopeBadge();
             if (val === 'custom') els.customRangeInput.focus();
         }
 
@@ -2215,19 +2651,22 @@
             };
 
             syncDraftOverlayUI(true);
-            showToast(`ตรวจจับขอบขาวอัตโนมัติหน้า ${pageNum} เรียบร้อย — กด "ตัดส่วนนี้" เพื่อยืนยัน`, 'success');
+            showToast(`ตรวจจับขอบขาวหน้า ${pageNum} เรียบร้อย — กด "ตัดส่วนนี้" เพื่อยืนยัน`, 'success');
         }
 
         // =====================================================================
-        // 7. REALTIME CROP APPLY + UNDO / REDO HISTORY
+        // 8. REALTIME CROP APPLY + UNIFIED UNDO / REDO HISTORY
         // =====================================================================
 
-        function cloneCrops() {
-            return state.committedCrops.map(c => ({ ...c }));
+        function createHistorySnapshot() {
+            return {
+                crops: state.committedCrops.map(c => ({ ...c })),
+                rotations: [...state.pageRotations]
+            };
         }
 
         function pushUndoSnapshot() {
-            state.undoStack.push(cloneCrops());
+            state.undoStack.push(createHistorySnapshot());
             if (state.undoStack.length > 50) state.undoStack.shift();
             state.redoStack = [];
             updateHistoryUI();
@@ -2282,7 +2721,6 @@
 
             pushUndoSnapshot();
 
-            // Compose sequential crops mathematically accurately relative to the original full page
             const d = state.draft;
             targetIndices.forEach(idx => {
                 const prev = state.committedCrops[idx];
@@ -2295,34 +2733,39 @@
 
             clearDraftCrop();
             refreshAllPagesUI();
-            showToast(`ครอบตัดสำเร็จ (${targetIndices.length} หน้า) — กด Ctrl+Z ย้อนกลับได้`, 'success');
+            showToast(`ครอบตัดสำเร็จ (${targetIndices.length} หน้า)`, 'success');
         }
 
         function restoreSinglePage(pageNum) {
             const idx = pageNum - 1;
-            if (!isCropped(state.committedCrops[idx])) return;
+            if (!isPageModified(pageNum)) return;
 
             pushUndoSnapshot();
             state.committedCrops[idx] = { x: 0, y: 0, w: 1, h: 1 };
+            state.pageRotations[idx] = 0;
             if (state.draft && state.draft.pageNum === pageNum) clearDraftCrop();
             refreshAllPagesUI();
-            showToast(`คืนค่าหน้า ${pageNum} เป็นขนาดต้นฉบับแล้ว`, 'info');
+            showToast(`คืนค่าหน้า ${pageNum} เป็นต้นฉบับเรียบร้อยแล้ว`, 'info');
         }
 
-        function undoCrop() {
+        function undoAction() {
             if (state.undoStack.length === 0) return;
-            state.redoStack.push(cloneCrops());
-            state.committedCrops = state.undoStack.pop();
+            state.redoStack.push(createHistorySnapshot());
+            const prev = state.undoStack.pop();
+            state.committedCrops = prev.crops;
+            state.pageRotations = prev.rotations;
             clearDraftCrop();
             updateHistoryUI();
             refreshAllPagesUI();
             showToast('ย้อนกลับ (Undo) เรียบร้อยแล้ว', 'info');
         }
 
-        function redoCrop() {
+        function redoAction() {
             if (state.redoStack.length === 0) return;
-            state.undoStack.push(cloneCrops());
-            state.committedCrops = state.redoStack.pop();
+            state.undoStack.push(createHistorySnapshot());
+            const next = state.redoStack.pop();
+            state.committedCrops = next.crops;
+            state.pageRotations = next.rotations;
             clearDraftCrop();
             updateHistoryUI();
             refreshAllPagesUI();
@@ -2330,18 +2773,24 @@
         }
 
         // =====================================================================
-        // 8. WYSIWYG PRINT & EXPORT ENGINE (PDF / PNG / JPG)
+        // 9. WYSIWYG PRINT & EXPORT ENGINE (PDF / SINGLE IMAGE / ALL PAGES ZIP)
         // =====================================================================
 
         function toggleExportMenu(e) {
             if (e) e.stopPropagation();
+            els.mobileMoreDropdown.classList.add('hidden');
             els.exportDropdown.classList.toggle('hidden');
         }
 
         async function renderCroppedPageToCanvas(pageNum, scale, fillWhite = true) {
             const page = await state.pdfDoc.getPage(pageNum);
-            const crop = state.committedCrops[pageNum - 1];
-            const viewport = page.getViewport({ scale });
+            const idx = pageNum - 1;
+            const crop = state.committedCrops[idx];
+            const baseRot = normalizeAngle(page.rotate || 0);
+            const userRot = normalizeAngle(state.pageRotations[idx]);
+            const totalRot = normalizeAngle(baseRot + userRot);
+
+            const viewport = page.getViewport({ scale, rotation: totalRot });
 
             const w = Math.max(1, Math.round(viewport.width * crop.w));
             const h = Math.max(1, Math.round(viewport.height * crop.h));
@@ -2363,7 +2812,7 @@
 
         async function triggerDirectPrint() {
             if (!state.pdfDoc) return;
-            showToast('กำลังเตรียมหน้าพิมพ์ตามพื้นที่ที่ตัดขอบ (WYSIWYG Print)...', 'info');
+            showToast('กำลังเตรียมหน้าพิมพ์ตามพื้นที่ที่ตัดขอบและหมุน (WYSIWYG)...', 'info');
 
             try {
                 els.printSection.innerHTML = '';
@@ -2387,72 +2836,164 @@
             }
         }
 
+        function mapVisualCropToRawPdfBox(crop, effectiveRot, mbX, mbY, mbW, mbH) {
+            const rot = normalizeAngle(effectiveRot);
+            let ux, uy, uw, uh;
+
+            if (rot === 0) {
+                ux = crop.x;
+                uy = crop.y;
+                uw = crop.w;
+                uh = crop.h;
+            } else if (rot === 90) {
+                ux = crop.y;
+                uy = 1 - (crop.x + crop.w);
+                uw = crop.h;
+                uh = crop.w;
+            } else if (rot === 180) {
+                ux = 1 - (crop.x + crop.w);
+                uy = 1 - (crop.y + crop.h);
+                uw = crop.w;
+                uh = crop.h;
+            } else {
+                ux = 1 - (crop.y + crop.h);
+                uy = crop.x;
+                uw = crop.h;
+                uh = crop.w;
+            }
+
+            const pdfX = mbX + ux * mbW;
+            const pdfW = uw * mbW;
+            const pdfH = uh * mbH;
+            const pdfY = mbY + mbH - (uy + uh) * mbH;
+
+            return { x: pdfX, y: pdfY, w: pdfW, h: pdfH };
+        }
+
         async function exportAsPDF() {
             if (!state.pdfBytes) return;
             els.exportDropdown.classList.add('hidden');
-            showToast('กำลังสร้างไฟล์ PDF ที่ตัดขอบแล้ว...', 'info');
+            showToast('กำลังสร้างไฟล์ PDF ที่ตัดขอบและหมุนแล้ว...', 'info');
 
             try {
-                const { PDFDocument } = PDFLib;
+                const { PDFDocument, degrees } = PDFLib;
                 const pdfDoc = await PDFDocument.load(state.pdfBytes);
                 const pages = pdfDoc.getPages();
 
-                let croppedCount = 0;
+                let modifiedCount = 0;
                 pages.forEach((page, idx) => {
                     const crop = state.committedCrops[idx];
-                    if (!isCropped(crop)) return;
+                    const userRot = normalizeAngle(state.pageRotations[idx]);
+                    const cropped = isCropped(crop);
+                    const rotated = userRot !== 0;
 
-                    const mediaBox = page.getMediaBox();
-                    const mbX = mediaBox.x || 0;
-                    const mbY = mediaBox.y || 0;
-                    const width = mediaBox.width;
-                    const height = mediaBox.height;
+                    if (!cropped && !rotated) return;
 
-                    const cropX = mbX + crop.x * width;
-                    const cropW = crop.w * width;
-                    const cropH = crop.h * height;
-                    // Convert Canvas top-left Y to PDF bottom-left Y
-                    const cropY = mbY + height - (crop.y + crop.h) * height;
+                    const origRotObj = page.getRotation();
+                    const origRot = normalizeAngle(origRotObj ? origRotObj.angle : 0);
+                    const effectiveRot = normalizeAngle(origRot + userRot);
 
-                    page.setCropBox(cropX, cropY, cropW, cropH);
-                    page.setMediaBox(cropX, cropY, cropW, cropH);
-                    croppedCount++;
+                    if (rotated) {
+                        page.setRotation(degrees(effectiveRot));
+                    }
+
+                    if (cropped) {
+                        const mediaBox = page.getMediaBox();
+                        const mbX = mediaBox.x || 0;
+                        const mbY = mediaBox.y || 0;
+                        const mapped = mapVisualCropToRawPdfBox(
+                            crop,
+                            effectiveRot,
+                            mbX,
+                            mbY,
+                            mediaBox.width,
+                            mediaBox.height
+                        );
+
+                        page.setCropBox(mapped.x, mapped.y, mapped.w, mapped.h);
+                        page.setMediaBox(mapped.x, mapped.y, mapped.w, mapped.h);
+                        page.setTrimBox(mapped.x, mapped.y, mapped.w, mapped.h);
+                        page.setBleedBox(mapped.x, mapped.y, mapped.w, mapped.h);
+                    }
+
+                    modifiedCount++;
                 });
 
                 const outBytes = await pdfDoc.save();
                 const outName = `cropped_${state.fileName}`;
                 downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), outName);
-                showToast(`ส่งออก ${outName} สำเร็จ (ตัดขอบ ${croppedCount} หน้า)`, 'success');
+                showToast(`ส่งออก ${outName} สำเร็จ (ปรับปรุง ${modifiedCount} หน้า)`, 'success');
             } catch (err) {
                 console.error(err);
                 showToast('เกิดข้อผิดพลาดในการส่งออกไฟล์ PDF', 'error');
             }
         }
 
-        async function exportAsImage(format) {
+        function canvasToBlobAsync(canvas, mime, quality) {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => resolve(blob), mime, quality);
+            });
+        }
+
+        async function exportAsImage(format, scope = 'current') {
             if (!state.pdfDoc) return;
             els.exportDropdown.classList.add('hidden');
 
-            const targetPage = state.activePageIndex || 1;
-            showToast(`กำลังส่งออกหน้า ${targetPage} เป็น ${format.toUpperCase()}...`, 'info');
+            const mime = format === 'png' ? 'image/png' : 'image/jpeg';
+            const cleanBase = state.fileName.replace(/\.pdf$/i, '');
 
-            try {
-                const scale = 3.0;
-                const canvas = await renderCroppedPageToCanvas(targetPage, scale, true);
-                const mime = format === 'png' ? 'image/png' : 'image/jpeg';
-                const cleanBase = state.fileName.replace(/\.pdf$/i, '');
+            // Option A: Single Current Page (Fast immediate download)
+            if (scope === 'current' || state.totalPages === 1) {
+                const targetPage = state.activePageIndex || 1;
+                showToast(`กำลังส่งออกหน้า ${targetPage} เป็น ${format.toUpperCase()}...`, 'info');
 
-                canvas.toBlob((blob) => {
+                try {
+                    const scale = 3.0;
+                    const canvas = await renderCroppedPageToCanvas(targetPage, scale, true);
+                    const blob = await canvasToBlobAsync(canvas, mime, 0.95);
                     if (!blob) {
                         showToast('ไม่สามารถสร้างไฟล์รูปภาพได้', 'error');
                         return;
                     }
                     downloadBlob(blob, `${cleanBase}_page_${targetPage}.${format}`);
                     showToast(`ส่งออกหน้า ${targetPage} เป็น ${format.toUpperCase()} สำเร็จ`, 'success');
-                }, mime, 0.95);
+                } catch (err) {
+                    console.error('Image export error:', err);
+                    showToast(`ไม่สามารถส่งออกเป็น ${format.toUpperCase()} ได้`, 'error');
+                }
+                return;
+            }
+
+            // Option B: All Pages Packaged Individually into a Single .ZIP Archive
+            if (typeof JSZip === 'undefined') {
+                showToast('ไม่พบไลบรารี JSZip กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', 'error');
+                return;
+            }
+
+            try {
+                const zip = new JSZip();
+                const padLen = String(state.totalPages).length;
+                const scale = state.totalPages > 40 ? 2.0 : 2.6;
+
+                for (let p = 1; p <= state.totalPages; p++) {
+                    showToast(`กำลังสร้าง ${format.toUpperCase()} หน้า ${p} / ${state.totalPages}...`, 'info');
+                    const canvas = await renderCroppedPageToCanvas(p, scale, true);
+                    const blob = await canvasToBlobAsync(canvas, mime, 0.93);
+                    if (blob) {
+                        const pageLabel = String(p).padStart(padLen, '0');
+                        zip.file(`${cleanBase}_page_${pageLabel}.${format}`, blob);
+                    }
+                    await new Promise(r => setTimeout(r, 10));
+                }
+
+                showToast('กำลังบีบอัดไฟล์ .ZIP...', 'info');
+                const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 5 } });
+                const zipName = `${cleanBase}_${format.toUpperCase()}_${state.totalPages}pages.zip`;
+                downloadBlob(zipBlob, zipName);
+                showToast(`ส่งออก ${zipName} (${state.totalPages} รูป) สำเร็จ!`, 'success');
             } catch (err) {
-                console.error('Image export error:', err);
-                showToast(`ไม่สามารถส่งออกเป็น ${format.toUpperCase()} ได้`, 'error');
+                console.error('ZIP image export error:', err);
+                showToast(`เกิดข้อผิดพลาดในการสร้างไฟล์ ZIP (${format.toUpperCase()})`, 'error');
             }
         }
 
@@ -2468,7 +3009,7 @@
         }
 
         // =====================================================================
-        // 9. KEYBOARD SHORTCUTS & UTILITIES
+        // 10. KEYBOARD SHORTCUTS & UTILITIES
         // =====================================================================
 
         window.addEventListener('keydown', (e) => {
@@ -2484,7 +3025,9 @@
             const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select';
 
             if (e.key === 'Escape') {
-                if (state.draft) {
+                if (state.isOverviewOpen && isMobileViewport()) {
+                    setOverviewSidebarOpen(false);
+                } else if (state.draft) {
                     clearDraftCrop();
                 } else if (state.mode === 'crop') {
                     setToolMode('pointer');
@@ -2502,14 +3045,14 @@
 
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
                 e.preventDefault();
-                if (e.shiftKey) redoCrop();
-                else undoCrop();
+                if (e.shiftKey) redoAction();
+                else undoAction();
                 return;
             }
 
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
                 e.preventDefault();
-                redoCrop();
+                redoAction();
                 return;
             }
         });
@@ -2532,10 +3075,10 @@
                 icon.className = 'fa-solid fa-circle-check text-emerald-400 shrink-0';
             }
 
-            toast.classList.remove('translate-y-3', 'opacity-0');
+            toast.classList.remove('-translate-y-3', 'md:translate-y-3', 'opacity-0');
             if (toastTimer) clearTimeout(toastTimer);
             toastTimer = setTimeout(() => {
-                toast.classList.add('translate-y-3', 'opacity-0');
+                toast.classList.add('-translate-y-3', 'md:translate-y-3', 'opacity-0');
             }, 3000);
         }
     </script>
