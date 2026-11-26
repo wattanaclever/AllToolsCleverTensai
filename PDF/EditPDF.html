@@ -169,7 +169,7 @@
         }
 
         /* Restrict scrollbar hover styling to mouse/fine-pointer devices */
-        @media (hover: hover) and (pointer: fine) {
+        @media (hover: hover) {
             ::-webkit-scrollbar-thumb:hover {
                 background: #E11D48;
             }
@@ -1141,7 +1141,7 @@
                 // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan + Select-Mode 1-Finger Pan
                 twoFinger: null,
                 oneFingerPan: null,
-                scrollLockUntil: 0,
+                programmaticScrollUntil: 0,
 
                 // Undo / Redo History
                 history: [],
@@ -1439,6 +1439,7 @@
                 });
 
                 vp.addEventListener('wheel', (e) => {
+                    state.programmaticScrollUntil = 0;
                     if (e.shiftKey && Math.abs(e.deltaY) > 0 && Math.abs(e.deltaX) === 0) {
                         e.preventDefault();
                         vp.scrollLeft += e.deltaY;
@@ -1449,6 +1450,7 @@
             function setupMobileTwoFingerGestures(vp) {
                 vp.addEventListener('touchstart', (e) => {
                     if (!isMobile()) return;
+                    state.programmaticScrollUntil = 0;
 
                     if (e.touches.length >= 2) {
                         e.preventDefault();
@@ -1485,7 +1487,7 @@
                     state.oneFingerPan = null;
                     if (e.touches.length === 1 && state.tool === 'select' && state.pages.length > 1 && !state.inlineEditor) {
                         const target = e.target;
-                        if (target && target.closest('button, input, select, textarea, #floatingTextEditPill')) {
+                        if (target && target.closest('.inline-editor-wrap, #floatingTextEditPill, button, input, select, textarea')) {
                             return;
                         }
 
@@ -1556,21 +1558,19 @@
                                 }
                             });
                         }
-                    } else if (e.touches.length === 1 && state.oneFingerPan && !state.dragState && !state.twoFinger && !state.inlineEditor) {
-                        e.preventDefault();
-                        const t = e.touches[0];
-                        vp.scrollLeft = state.oneFingerPan.scrollLeft - (t.clientX - state.oneFingerPan.startX);
-                        vp.scrollTop = state.oneFingerPan.scrollTop - (t.clientY - state.oneFingerPan.startY);
                     } else if (e.touches.length === 1 && !state.inlineEditor) {
-                        // Strict 1-finger lock: block native scrolling so dragging/drawing stays steady
+                        // Strict 1-finger lock: block native scrolling; pan only if Select-mode empty-space pan is active
                         e.preventDefault();
+                        if (state.oneFingerPan && !state.dragState) {
+                            const t = e.touches[0];
+                            vp.scrollLeft = state.oneFingerPan.scrollLeft - (t.clientX - state.oneFingerPan.startX);
+                            vp.scrollTop = state.oneFingerPan.scrollTop - (t.clientY - state.oneFingerPan.startY);
+                        }
                     }
                 }, { passive: false });
 
                 const finishTwoFinger = (e) => {
-                    if (!e.touches || e.touches.length === 0) {
-                        state.oneFingerPan = null;
-                    }
+                    state.oneFingerPan = null;
                     if (!state.twoFinger || (e.touches && e.touches.length >= 2)) return;
 
                     if (gestureRaf) {
@@ -3176,8 +3176,8 @@
                     item.id = `thumbItem_${pg.id}`;
                     item.className = `thumb-item flex flex-col items-center cursor-pointer group ${pg.id === state.activePageId ? 'is-active' : ''}`;
                     item.onclick = () => {
-                        scrollToPageId(pg.id);
                         if (isMobile()) setOverviewOpen(false);
+                        scrollToPageId(pg.id);
                     };
 
                     item.innerHTML = `
@@ -3616,7 +3616,7 @@
             }
 
             function detectActivePageFromScroll() {
-                if (Date.now() < (state.scrollLockUntil || 0)) return;
+                if (Date.now() < state.programmaticScrollUntil) return;
                 const vp = $('pdfWorkspace');
                 if (!vp || state.pages.length === 0) return;
 
@@ -3652,32 +3652,45 @@
                 const vp = $('pdfWorkspace');
                 const el = $(`pageBlock_${pageId}`);
                 if (!vp || !el) return;
+
                 const vpRect = vp.getBoundingClientRect();
                 const elRect = el.getBoundingClientRect();
-                const targetTop = Math.max(0, vp.scrollTop + (elRect.top - vpRect.top) - 16);
-                state.scrollLockUntil = Date.now() + 450;
-                vp.scrollTo({ top: targetTop, behavior: 'smooth' });
+                const rawTop = vp.scrollTop + (elRect.top - vpRect.top) - 16;
+                const maxScrollTop = Math.max(0, vp.scrollHeight - vp.clientHeight);
+                const targetTop = clamp(Math.round(rawTop), 0, maxScrollTop);
+
+                const maxScrollLeft = Math.max(0, vp.scrollWidth - vp.clientWidth);
+                const targetLeft = isMobile() ? Math.round(maxScrollLeft / 2) : vp.scrollLeft;
+
+                state.programmaticScrollUntil = Date.now() + 650;
                 setActivePage(pageId);
-                if (isMobile()) {
-                    centerWorkspaceHorizontal();
-                }
+
+                vp.scrollTo({
+                    top: targetTop,
+                    left: targetLeft,
+                    behavior: 'smooth'
+                });
             }
 
             function stepActivePage(delta) {
-                const idx = getPageIndexById(state.activePageId);
+                if (state.pages.length === 0) return;
+                let idx = getPageIndexById(state.activePageId);
+                if (idx < 0) idx = 0;
                 const nextIdx = clamp(idx + delta, 0, state.pages.length - 1);
                 if (state.pages[nextIdx]) scrollToPageId(state.pages[nextIdx].id);
             }
 
             function jumpToInputPage() {
                 const inp = $('navPageInput');
-                if (!inp) return;
+                if (!inp || state.pages.length === 0) return;
                 const num = parseInt(inp.value, 10);
-                if (isNaN(num) || num < 1 || num > state.pages.length) {
+                if (isNaN(num)) {
                     updateActivePageHighlight();
                     return;
                 }
-                scrollToPageId(state.pages[num - 1].id);
+                const clampedNum = clamp(num, 1, state.pages.length);
+                inp.value = clampedNum;
+                scrollToPageId(state.pages[clampedNum - 1].id);
             }
 
             function adjustZoom(delta) {
