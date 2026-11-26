@@ -50,6 +50,9 @@
         if (typeof tailwind !== 'undefined') {
             tailwind.config = {
                 darkMode: 'class',
+                future: {
+                    hoverOnlyWhenSupported: true
+                },
                 theme: {
                     extend: {
                         fontFamily: {
@@ -148,10 +151,6 @@
             border-radius: 999px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #E11D48;
-        }
-
         /* Dedicated 10px Workspace Scrollbars for Wide/Long Documents */
         #pdfWorkspace::-webkit-scrollbar {
             width: 10px;
@@ -169,9 +168,25 @@
             background-clip: content-box;
         }
 
-        #pdfWorkspace::-webkit-scrollbar-thumb:hover {
-            background: #E11D48;
-            background-clip: content-box;
+        /* Restrict scrollbar hover styling to mouse/fine-pointer devices */
+        @media (hover: hover) and (pointer: fine) {
+            ::-webkit-scrollbar-thumb:hover {
+                background: #E11D48;
+            }
+
+            #pdfWorkspace::-webkit-scrollbar-thumb:hover {
+                background: #E11D48;
+                background-clip: content-box;
+            }
+        }
+
+        /* Touch Active Feedback (Prevent Sticky Hover on Mobile) */
+        @media (hover: none), (pointer: coarse) {
+            button:active,
+            .rail-btn:active {
+                transform: scale(0.96);
+                opacity: 0.85;
+            }
         }
 
         /* Desktop Hand Panning Cursors */
@@ -1123,8 +1138,10 @@
                 isSpaceHeld: false,
                 handPan: null,
 
-                // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan
+                // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan + Select-Mode 1-Finger Pan
                 twoFinger: null,
+                oneFingerPan: null,
+                scrollLockUntil: 0,
 
                 // Undo / Redo History
                 history: [],
@@ -1432,8 +1449,10 @@
             function setupMobileTwoFingerGestures(vp) {
                 vp.addEventListener('touchstart', (e) => {
                     if (!isMobile()) return;
+
                     if (e.touches.length >= 2) {
                         e.preventDefault();
+                        state.oneFingerPan = null;
                         const t1 = e.touches[0];
                         const t2 = e.touches[1];
                         const vpRect = vp.getBoundingClientRect();
@@ -1459,6 +1478,43 @@
                             focalContentX: vp.scrollLeft + (startMidX - vpRect.left),
                             focalContentY: vp.scrollTop + (startMidY - vpRect.top)
                         };
+                        return;
+                    }
+
+                    // Select mode 1-finger scroll on empty space when document has > 1 page
+                    state.oneFingerPan = null;
+                    if (e.touches.length === 1 && state.tool === 'select' && state.pages.length > 1 && !state.inlineEditor) {
+                        const target = e.target;
+                        if (target && target.closest('button, input, select, textarea, #floatingTextEditPill')) {
+                            return;
+                        }
+
+                        const t = e.touches[0];
+                        const canvas = target && target.classList && target.classList.contains('overlay-canvas') ? target : null;
+                        let hitInteractive = false;
+
+                        if (canvas) {
+                            const pageId = canvas.id.replace('overlay_', '');
+                            const pg = getPageById(pageId);
+                            if (pg) {
+                                const pos = getUnscaledPos(canvas, t.clientX, t.clientY);
+                                const curSel = getSelectedItem();
+                                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId && hitTestImageCornerHandle(curSel, pos.x, pos.y)) {
+                                    hitInteractive = true;
+                                } else if (hitTestItem(pg, pos.x, pos.y)) {
+                                    hitInteractive = true;
+                                }
+                            }
+                        }
+
+                        if (!hitInteractive) {
+                            state.oneFingerPan = {
+                                startX: t.clientX,
+                                startY: t.clientY,
+                                scrollLeft: vp.scrollLeft,
+                                scrollTop: vp.scrollTop
+                            };
+                        }
                     }
                 }, { passive: false });
 
@@ -1500,6 +1556,11 @@
                                 }
                             });
                         }
+                    } else if (e.touches.length === 1 && state.oneFingerPan && !state.dragState && !state.twoFinger && !state.inlineEditor) {
+                        e.preventDefault();
+                        const t = e.touches[0];
+                        vp.scrollLeft = state.oneFingerPan.scrollLeft - (t.clientX - state.oneFingerPan.startX);
+                        vp.scrollTop = state.oneFingerPan.scrollTop - (t.clientY - state.oneFingerPan.startY);
                     } else if (e.touches.length === 1 && !state.inlineEditor) {
                         // Strict 1-finger lock: block native scrolling so dragging/drawing stays steady
                         e.preventDefault();
@@ -1507,6 +1568,9 @@
                 }, { passive: false });
 
                 const finishTwoFinger = (e) => {
+                    if (!e.touches || e.touches.length === 0) {
+                        state.oneFingerPan = null;
+                    }
                     if (!state.twoFinger || (e.touches && e.touches.length >= 2)) return;
 
                     if (gestureRaf) {
@@ -3552,36 +3616,50 @@
             }
 
             function detectActivePageFromScroll() {
+                if (Date.now() < (state.scrollLockUntil || 0)) return;
                 const vp = $('pdfWorkspace');
-                if (!vp) return;
-                const vpRect = vp.getBoundingClientRect();
-                const targetY = vpRect.top + vpRect.height * 0.35;
-                let bestId = state.activePageId;
-                let bestDist = Infinity;
+                if (!vp || state.pages.length === 0) return;
 
-                for (const pg of state.pages) {
-                    const el = $(`pageBlock_${pg.id}`);
-                    if (!el) continue;
-                    const r = el.getBoundingClientRect();
-                    const d = Math.abs((r.top + r.bottom) / 2 - targetY);
-                    if (d < bestDist) {
-                        bestDist = d;
-                        bestId = pg.id;
+                let bestId = state.activePageId;
+
+                if (vp.scrollTop <= 12 && state.pages[0]) {
+                    bestId = state.pages[0].id;
+                } else if (vp.scrollTop + vp.clientHeight >= vp.scrollHeight - 12 && state.pages.length > 0) {
+                    bestId = state.pages[state.pages.length - 1].id;
+                } else {
+                    const vpRect = vp.getBoundingClientRect();
+                    const targetY = vpRect.top + vpRect.height * 0.35;
+                    let bestDist = Infinity;
+
+                    for (const pg of state.pages) {
+                        const el = $(`pageBlock_${pg.id}`);
+                        if (!el) continue;
+                        const r = el.getBoundingClientRect();
+                        const d = Math.abs((r.top + r.bottom) / 2 - targetY);
+                        if (d < bestDist) {
+                            bestDist = d;
+                            bestId = pg.id;
+                        }
                     }
                 }
+
                 if (bestId && bestId !== state.activePageId) {
                     setActivePage(bestId);
                 }
             }
 
             function scrollToPageId(pageId) {
+                const vp = $('pdfWorkspace');
                 const el = $(`pageBlock_${pageId}`);
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    setActivePage(pageId);
-                    if (isMobile()) {
-                        centerWorkspaceHorizontal();
-                    }
+                if (!vp || !el) return;
+                const vpRect = vp.getBoundingClientRect();
+                const elRect = el.getBoundingClientRect();
+                const targetTop = Math.max(0, vp.scrollTop + (elRect.top - vpRect.top) - 16);
+                state.scrollLockUntil = Date.now() + 450;
+                vp.scrollTo({ top: targetTop, behavior: 'smooth' });
+                setActivePage(pageId);
+                if (isMobile()) {
+                    centerWorkspaceHorizontal();
                 }
             }
 
