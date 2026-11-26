@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- FontAwesome Icons 6.4.0 -->
@@ -66,34 +66,35 @@
 
     <style>
         /* ===================================================================== */
-        /* STUDIO DESIGN TOKENS (ALABASTER LIGHT / VELVET MIDNIGHT DARK)        */
+        /* MINIMAL LUXURY DESIGN TOKENS (ALABASTER LIGHT / SOFT CHARCOAL DARK)   */
         /* ===================================================================== */
         :root {
             --bg-workspace: #FAF9F6;
             --bg-stage: #F4F3EF;
             --bg-panel: #FFFFFF;
-            --bg-panel-subtle: #F8FAFC;
+            --bg-panel-subtle: #F7F8FA;
             --bg-input: #FFFFFF;
-            --border-color: #E2E8F0;
-            --text-primary: #0F172A;
-            --text-secondary: #64748B;
+            --border-color: #E5E7EB;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
             --accent: #E11D48;
-            --dot-pattern: rgba(15, 23, 42, 0.08);
-            --card-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+            --dot-pattern: rgba(17, 24, 39, 0.055);
+            --card-shadow: 0 10px 30px -10px rgba(17, 24, 39, 0.05), 0 0 0 1px rgba(17, 24, 39, 0.03);
         }
 
+        /* Softer, eye-friendly charcoal slate dark mode (#11151C / #171C26 / #1D2430) */
         html.dark {
-            --bg-workspace: #0A0F1D;
-            --bg-stage: #0A0F1D;
-            --bg-panel: #111827;
-            --bg-panel-subtle: #0F172A;
-            --bg-input: #0B1120;
-            --border-color: #1F2937;
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
+            --bg-workspace: #11151C;
+            --bg-stage: #141923;
+            --bg-panel: #171C26;
+            --bg-panel-subtle: #1D2430;
+            --bg-input: #12161F;
+            --border-color: #273040;
+            --text-primary: #ECEFF4;
+            --text-secondary: #9CA3AF;
             --accent: #E11D48;
-            --dot-pattern: rgba(255, 255, 255, 0.07);
-            --card-shadow: 0 18px 42px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            --dot-pattern: rgba(236, 239, 244, 0.045);
+            --card-shadow: 0 14px 36px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
         }
 
         * {
@@ -104,10 +105,10 @@
             background-color: var(--bg-workspace);
             color: var(--text-primary);
             background-image:
-                radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.06), transparent 55%),
+                radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.045), transparent 58%),
                 radial-gradient(var(--dot-pattern) 1px, transparent 0);
             background-size: 100% 100%, 24px 24px;
-            transition: background-color 0.25s ease, color 0.25s ease;
+            transition: background-color 0.28s ease, color 0.28s ease;
         }
 
         .studio-surface {
@@ -143,7 +144,11 @@
             color: var(--text-secondary);
         }
 
-        /* Custom Scrollbar */
+        .num-tabular {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Subtle Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -154,7 +159,7 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(100, 116, 139, 0.4);
+            background: rgba(156, 163, 175, 0.35);
             border-radius: 999px;
         }
 
@@ -164,7 +169,7 @@
             }
         }
 
-        /* Subtle Studio Corner Accents */
+        /* Refined Corner Hairline Accents */
         .studio-frame {
             position: relative;
         }
@@ -173,75 +178,73 @@
         .studio-frame::after {
             content: '';
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             pointer-events: none;
-            opacity: 0.7;
+            opacity: 0.55;
         }
 
         .studio-frame::before {
-            top: 12px;
-            left: 12px;
-            border-top: 2px solid #E11D48;
-            border-left: 2px solid #E11D48;
+            top: 14px;
+            left: 14px;
+            border-top: 1.5px solid #E11D48;
+            border-left: 1.5px solid #E11D48;
         }
 
         .studio-frame::after {
-            bottom: 12px;
-            right: 12px;
-            border-bottom: 2px solid #E11D48;
-            border-right: 2px solid #E11D48;
+            bottom: 14px;
+            right: 14px;
+            border-bottom: 1.5px solid #E11D48;
+            border-right: 1.5px solid #E11D48;
         }
 
-        /* Smooth Swap Transition Animations */
+        /* Smooth, restrained transition animations (non-bouncy) */
         .unit-panel-smooth {
-            transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
-                        border-color 0.25s ease,
-                        box-shadow 0.25s ease,
-                        background-color 0.25s ease;
+            transition: transform 0.34s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        border-color 0.24s ease,
+                        background-color 0.24s ease;
         }
 
         .unit-panel-swapping-from {
-            transform: translateX(10px) scale(0.99);
+            transform: translateX(8px);
         }
 
         .unit-panel-swapping-to {
-            transform: translateX(-10px) scale(0.99);
+            transform: translateX(-8px);
         }
 
         @media (max-width: 1023px) {
             .unit-panel-swapping-from {
-                transform: translateY(8px) scale(0.992);
+                transform: translateY(6px);
             }
 
             .unit-panel-swapping-to {
-                transform: translateY(-8px) scale(0.992);
+                transform: translateY(-6px);
             }
         }
 
         .swap-btn-smooth {
-            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-                        background-color 0.2s ease,
-                        box-shadow 0.2s ease;
-        }
-
-        .swap-btn-spinning i {
-            transform: rotate(180deg) scale(1.12);
-            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.34s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        background-color 0.22s ease,
+                        border-color 0.22s ease;
         }
 
         .swap-btn-smooth i {
-            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.36s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .result-pulse-smooth {
-            animation: resultSoftFade 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        .swap-btn-spinning i {
+            transform: rotate(180deg);
         }
 
-        @keyframes resultSoftFade {
+        .result-smooth-in {
+            animation: gentleReveal 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        @keyframes gentleReveal {
             0% {
-                opacity: 0.45;
-                transform: translateY(4px);
+                opacity: 0.5;
+                transform: translateY(3px);
             }
 
             100% {
@@ -250,15 +253,35 @@
             }
         }
 
-        .input-focus-ring {
+        /* Refined Luxury Numeric Input Container */
+        .luxury-num-field {
             background-color: var(--bg-input);
-            border: 2px solid var(--border-color);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.22s ease, box-shadow 0.22s ease;
         }
 
-        .input-focus-ring:focus-within {
+        .luxury-num-field:focus-within {
             border-color: #E11D48;
-            box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.12);
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.08);
+        }
+
+        .luxury-num-input::placeholder {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            opacity: 0.55;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .unit-panel-smooth,
+            .swap-btn-smooth,
+            .swap-btn-smooth i,
+            .result-smooth-in,
+            .luxury-num-field {
+                transition: none !important;
+                animation: none !important;
+            }
         }
     </style>
 </head>
@@ -272,20 +295,20 @@
     <script src="JS/Navbar.js" defer onerror="this.remove()"></script>
 
     <!-- ===================================================================== -->
-    <!-- MINIMAL STICKY TOP STUDIO BAR                                         -->
+    <!-- MINIMAL STICKY TOP BAR                                                -->
     <!-- ===================================================================== -->
-    <header class="sticky top-0 z-30 h-14 studio-panel border-b px-3.5 sm:px-6 lg:px-8 flex items-center justify-between gap-2 backdrop-blur-md bg-opacity-95">
+    <header class="sticky top-0 z-30 h-14 studio-panel border-b px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2.5 backdrop-blur-md bg-opacity-95">
         <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-8 h-8 rounded-xl bg-[#E11D48] text-white flex items-center justify-center text-sm shadow-sm shrink-0">
+            <span class="w-8 h-8 rounded-xl bg-[#E11D48] text-white flex items-center justify-center text-sm shrink-0">
                 <i class="fa-solid fa-scale-balanced"></i>
             </span>
             <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                    <span class="font-mono text-xs font-extrabold tracking-wider uppercase truncate">
+                    <span class="font-mono text-xs font-bold tracking-wider uppercase truncate">
                         CLEVERTENSAI STUDIO
                     </span>
                     <span id="totalUnitsBadge"
-                        class="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-[#E11D48]/12 text-[#E11D48] font-mono text-[10px] font-extrabold shrink-0">
+                        class="hidden sm:inline-flex px-2 py-0.5 rounded-md bg-[#E11D48]/10 text-[#E11D48] font-mono text-[10px] font-semibold num-tabular shrink-0">
                         130+ UNITS
                     </span>
                 </div>
@@ -297,13 +320,13 @@
 
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button type="button" onclick="openUnitLibraryModal('from')"
-                class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle border hover:border-[#E11D48] text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                 <i class="fa-solid fa-book-open text-[#E11D48]"></i>
                 <span>คลังหน่วย</span>
             </button>
 
             <button type="button" onclick="openCompareAllModal()"
-                class="min-h-[36px] px-3 py-1.5 rounded-xl bg-slate-950 dark:bg-slate-800 hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                class="min-h-[36px] px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-[#232B3A] hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                 <i class="fa-solid fa-border-all text-[#FB7185]"></i>
                 <span class="hidden sm:inline">เทียบหมวดหมู่ทั้งหมด</span>
                 <span class="sm:hidden">ทุกหมวด</span>
@@ -311,184 +334,182 @@
 
             <button type="button" onclick="toggleTheme()"
                 class="w-9 h-9 rounded-xl studio-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer"
-                title="สลับโหมด Alabaster Light / Velvet Midnight">
-                <i class="fa-solid fa-moon dark:hidden text-xs text-slate-700"></i>
+                title="สลับโหมด Alabaster Light / Soft Charcoal Dark">
+                <i class="fa-solid fa-moon dark:hidden text-xs text-slate-600"></i>
                 <i class="fa-solid fa-sun hidden dark:inline text-xs text-amber-300"></i>
             </button>
         </div>
     </header>
 
     <!-- ===================================================================== -->
-    <!-- MAIN UNIFIED MINIMAL WORKSPACE                                        -->
+    <!-- MAIN UNIFIED MINIMAL LUXURY WORKSPACE                                 -->
     <!-- ===================================================================== -->
-    <main class="flex-grow max-w-6xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9 space-y-6">
 
-        <!-- Minimal Header Banner -->
+        <!-- Minimal Luxury Header -->
         <section class="studio-surface studio-frame rounded-3xl border p-5 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="space-y-1">
+            <div class="space-y-1.5">
                 <div class="flex items-center gap-2">
-                    <span class="inline-block w-2 h-2 rounded-full bg-[#E11D48]"></span>
-                    <span class="font-mono text-[11px] font-extrabold text-[#E11D48] uppercase tracking-wider">
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#E11D48]"></span>
+                    <span class="font-mono text-[11px] font-medium text-[#E11D48] uppercase tracking-widest">
                         UNIT CONVERTER • 12 CATEGORIES
                     </span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">
                     ระบบแปลงมาตราวัด
                 </h1>
-                <p class="studio-muted text-xs sm:text-sm">
-                    พิมพ์ค้นหาคำใกล้เคียงเพื่อเลือกต้นทางและปลายทาง ใส่ตัวเลข แล้วดูผลลัพธ์และการเทียบหน่วยด้านล่าง
+                <p class="studio-muted text-xs sm:text-sm leading-relaxed">
+                    พิมพ์คำใกล้เคียงเพื่อเลือกหน่วยต้นทางและปลายทาง กรอกตัวเลข แล้วดูผลลัพธ์และการเทียบหน่วยด้านล่าง
                 </p>
             </div>
 
             <div class="flex flex-wrap items-center gap-2 shrink-0">
                 <button type="button" onclick="openUnitLibraryModal('from')"
-                    class="min-h-[40px] px-3.5 py-2 rounded-xl studio-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                    class="min-h-[40px] px-3.5 py-2 rounded-xl studio-subtle border hover:border-[#E11D48] text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                     <i class="fa-solid fa-layer-group text-[#E11D48]"></i>
                     <span>คลังหน่วย</span>
                 </button>
                 <button type="button" onclick="openCompareAllModal()"
-                    class="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-bold flex items-center gap-1.5 transition shadow-xs cursor-pointer">
+                    class="min-h-[40px] px-3.5 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                     <i class="fa-solid fa-table-cells"></i>
                     <span>เทียบหมวดหมู่ทั้งหมด</span>
                 </button>
             </div>
         </section>
 
-        <!-- Unified Conversion & Result Workspace Frame -->
-        <section class="studio-surface rounded-3xl border p-4 sm:p-7 space-y-6">
+        <!-- Unified Conversion & Result Frame -->
+        <section class="studio-surface rounded-3xl border p-5 sm:p-7 space-y-7">
 
             <!-- ============================================================= -->
             <!-- TOP ROW: SOURCE (FROM) + SMOOTH SWAP + SINGLE TARGET (TO)     -->
             <!-- ============================================================= -->
-            <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 items-stretch">
+            <div class="grid grid-cols-1 lg:grid-cols-11 gap-4 sm:gap-5 items-stretch">
 
-                <!-- 1. SOURCE CARD (FROM): Real-time Unit Search + Library + Live Comma Number Input -->
+                <!-- 1. SOURCE CARD (FROM): Search-on-type Unit + Live Comma Input -->
                 <div id="sourceCardSmooth"
-                    class="lg:col-span-5 unit-panel-smooth studio-subtle border-2 border-[#E11D48] rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
-                    <div class="space-y-3.5">
+                    class="lg:col-span-5 unit-panel-smooth studio-subtle border rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-4">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="px-2.5 py-1 rounded-lg bg-[#E11D48] text-white font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                            <span class="px-2.5 py-1 rounded-lg bg-[#E11D48] text-white font-mono text-[10px] font-semibold uppercase tracking-wider">
                                 ต้นทาง (FROM)
                             </span>
                             <button type="button" onclick="openUnitLibraryModal('from')"
-                                class="min-h-[34px] px-3 py-1 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                class="min-h-[34px] px-3 py-1 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-book-open text-[#E11D48]"></i>
                                 <span>คลังหน่วย</span>
                             </button>
                         </div>
 
-                        <!-- Real-time Unit Search Input -->
+                        <!-- Search-on-type Unit Input (Suggestions appear ONLY when typing) -->
                         <div class="relative">
-                            <label for="fromUnitSearchInput" class="block text-xs font-extrabold mb-1.5">
-                                เลือกหน่วยต้นทาง (พิมพ์คำใกล้เคียง)
+                            <label for="fromUnitSearchInput" class="block text-xs font-medium studio-muted mb-1.5">
+                                หน่วยต้นทาง
                             </label>
                             <div class="relative">
                                 <input id="fromUnitSearchInput" type="text" autocomplete="off" value=""
-                                    placeholder="พิมพ์ค้นหา เช่น cm, เมตร, วา, ไร่, °C, kg, GB..."
-                                    onfocus="openUnitDropdown('from')"
+                                    placeholder="พิมพ์คำใกล้เคียง เช่น cm, เมตร, วา, ไร่..."
                                     oninput="handleUnitSearch('from', this.value)"
-                                    class="w-full min-h-[44px] pl-3.5 pr-14 py-2.5 rounded-xl studio-input border-2 focus:border-[#E11D48] outline-none text-sm font-extrabold transition" />
+                                    class="w-full min-h-[44px] pl-3.5 pr-14 py-2.5 rounded-xl studio-input border focus:border-[#E11D48] outline-none text-sm font-medium transition" />
                                 <button type="button" onclick="clearUnit('from')"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg studio-subtle hover:text-[#E11D48] font-mono text-[10px] font-bold cursor-pointer">
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg studio-subtle hover:text-[#E11D48] font-mono text-[10px] font-medium cursor-pointer">
                                     ล้าง
                                 </button>
                             </div>
 
-                            <!-- Real-Time Near-Match Suggestions Dropdown -->
+                            <!-- Near-Match Suggestions Dropdown (Shown only when user types) -->
                             <div id="fromUnitDropdown"
-                                class="hidden mt-1.5 rounded-2xl studio-panel border-2 border-[#E11D48]/60 shadow-xl max-h-60 overflow-y-auto divide-y divide-[var(--border-color)]">
+                                class="hidden mt-1.5 rounded-2xl studio-panel border border-[#E11D48]/50 shadow-xl max-h-60 overflow-y-auto divide-y divide-[var(--border-color)]">
                             </div>
                         </div>
 
-                        <!-- Live Comma Numeric Input -->
-                        <div>
-                            <div class="flex items-center justify-between mb-1.5">
-                                <label for="sourceValueInput" class="text-xs font-extrabold text-[#E11D48]">
-                                    ใส่ตัวเลขที่ต้องการแปลง (มีคอมม่าอัตโนมัติ)
+                        <!-- Refined Minimal Luxury Numeric Input -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label for="sourceValueInput" class="text-xs font-medium studio-muted">
+                                    ตัวเลขที่ต้องการแปลง
                                 </label>
                                 <button type="button" onclick="clearNumericValue()"
-                                    class="font-mono text-[10px] font-bold studio-muted hover:text-[#E11D48] underline cursor-pointer">
-                                    ล้างตัวเลข
+                                    class="px-2 py-0.5 rounded-md font-mono text-[10px] font-medium studio-muted hover:text-[var(--text-primary)] hover:bg-[var(--bg-panel)] transition cursor-pointer">
+                                    ล้างค่า
                                 </button>
                             </div>
-                            <div class="input-focus-ring rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
+                            <div class="luxury-num-field rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                                 <input id="sourceValueInput" type="text" inputmode="decimal" autocomplete="off" value=""
-                                    placeholder="พิมพ์ตัวเลข เช่น 10,000 หรือ 25,000.75"
+                                    placeholder="0.00"
                                     oninput="handleLiveCommaInput(this)"
-                                    class="w-full bg-transparent font-mono text-2xl sm:text-3xl font-extrabold outline-none" />
+                                    class="luxury-num-input w-full min-w-0 bg-transparent font-mono text-2xl sm:text-[28px] font-semibold num-tabular outline-none" />
                                 <span id="fromSymbolBadge"
-                                    class="px-2.5 py-1 rounded-lg bg-slate-950 text-white font-mono text-xs font-extrabold shrink-0">
-                                    —
+                                    class="px-2 py-0.5 rounded-md studio-subtle border font-mono text-[11px] font-medium studio-muted shrink-0">
+                                    UNIT
                                 </span>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-[11px] studio-muted">
-                        <span id="fromSelectedHint">ยังไม่ได้เลือกหน่วยต้นทาง</span>
-                        <span class="font-mono text-[10px]">1,000,000.00</span>
+                        <span id="fromSelectedHint" class="truncate">รอพิมพ์หรือเลือกหน่วยต้นทาง</span>
+                        <span class="font-mono text-[10px] num-tabular shrink-0 ml-2 opacity-75">1,000.00</span>
                     </div>
                 </div>
 
-                <!-- 2. SMOOTH ANIMATED SWAP BUTTON -->
+                <!-- 2. SMOOTH ANIMATED SWAP CONTROL -->
                 <div class="lg:col-span-1 flex flex-row lg:flex-col items-center justify-center py-1">
                     <button id="smoothSwapBtn" type="button" onclick="triggerSmoothSwap()"
-                        class="swap-btn-smooth min-h-[48px] min-w-[48px] px-4 py-3 rounded-2xl bg-slate-950 dark:bg-slate-800 hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white flex flex-row lg:flex-col items-center justify-center gap-1.5 lg:gap-1 shadow-md cursor-pointer"
+                        class="swap-btn-smooth min-h-[46px] min-w-[46px] px-4 py-3 rounded-2xl studio-subtle border hover:border-[#E11D48] hover:bg-[#E11D48] hover:text-white flex flex-row lg:flex-col items-center justify-center gap-1.5 lg:gap-1 cursor-pointer"
                         title="สลับหน่วยต้นทาง ↔ ปลายทางแบบลื่นไหล">
                         <i class="fa-solid fa-right-left text-sm lg:rotate-0 rotate-90"></i>
-                        <span class="font-mono text-[10px] font-extrabold tracking-wider">SWAP</span>
+                        <span class="font-mono text-[10px] font-semibold tracking-wider">SWAP</span>
                     </button>
                 </div>
 
-                <!-- 3. SINGLE TARGET INPUT CARD (TO): Single clean input box + Library button -->
+                <!-- 3. SINGLE TARGET INPUT BOX (TO): Single input showing chosen target unit -->
                 <div id="targetCardSmooth"
-                    class="lg:col-span-5 unit-panel-smooth studio-subtle border-2 border-[var(--border-color)] rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
-                    <div class="space-y-3.5">
+                    class="lg:col-span-5 unit-panel-smooth studio-subtle border rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-4">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="px-2.5 py-1 rounded-lg bg-slate-950 dark:bg-slate-800 text-white font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                            <span class="px-2.5 py-1 rounded-lg bg-slate-900 dark:bg-[#252E3E] text-white font-mono text-[10px] font-semibold uppercase tracking-wider">
                                 ปลายทาง (TO)
                             </span>
                             <button type="button" onclick="openUnitLibraryModal('to')"
-                                class="min-h-[34px] px-3 py-1 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                class="min-h-[34px] px-3 py-1 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-book-open text-[#E11D48]"></i>
                                 <span>คลังหน่วย</span>
                             </button>
                         </div>
 
-                        <!-- Single Clean Target Input Box -->
+                        <!-- Single Target Input Box -->
                         <div class="relative">
-                            <label for="toUnitSearchInput" class="block text-xs font-extrabold mb-1.5">
-                                หน่วยปลายทาง (พิมพ์ค้นหาหรือเลือก)
+                            <label for="toUnitSearchInput" class="block text-xs font-medium studio-muted mb-1.5">
+                                หน่วยปลายทาง
                             </label>
                             <div class="relative">
                                 <input id="toUnitSearchInput" type="text" autocomplete="off" value=""
                                     placeholder="พิมพ์หน่วยปลายทาง เช่น m, นิ้ว, ตร.ม., °F..."
-                                    onfocus="openUnitDropdown('to')"
                                     oninput="handleUnitSearch('to', this.value)"
-                                    class="w-full min-h-[52px] pl-3.5 pr-20 py-3 rounded-xl studio-input border-2 focus:border-[#E11D48] outline-none text-sm sm:text-base font-extrabold transition" />
+                                    class="w-full min-h-[50px] pl-3.5 pr-20 py-2.5 rounded-xl studio-input border focus:border-[#E11D48] outline-none text-sm sm:text-base font-medium transition" />
                                 <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                                     <span id="toSymbolBadge"
-                                        class="px-2 py-0.5 rounded-md bg-[#E11D48]/12 text-[#E11D48] font-mono text-[11px] font-extrabold">
-                                        —
+                                        class="px-2 py-0.5 rounded-md bg-[#E11D48]/10 text-[#E11D48] font-mono text-[11px] font-semibold">
+                                        TO
                                     </span>
                                     <button type="button" onclick="clearUnit('to')"
-                                        class="px-2 py-1 rounded-lg studio-subtle hover:text-[#E11D48] font-mono text-[10px] font-bold cursor-pointer">
+                                        class="px-2 py-1 rounded-lg studio-subtle hover:text-[#E11D48] font-mono text-[10px] font-medium cursor-pointer">
                                         ล้าง
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Real-Time Near-Match Suggestions Dropdown -->
+                            <!-- Near-Match Suggestions Dropdown (Shown only when user types) -->
                             <div id="toUnitDropdown"
-                                class="hidden mt-1.5 rounded-2xl studio-panel border-2 border-[#E11D48]/60 shadow-xl max-h-60 overflow-y-auto divide-y divide-[var(--border-color)]">
+                                class="hidden mt-1.5 rounded-2xl studio-panel border border-[#E11D48]/50 shadow-xl max-h-60 overflow-y-auto divide-y divide-[var(--border-color)]">
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-[11px] studio-muted">
-                        <span id="toSelectedHint">ยังไม่ได้เลือกหน่วยปลายทาง</span>
+                        <span id="toSelectedHint" class="truncate">รอพิมพ์หรือเลือกหน่วยปลายทาง</span>
                         <button type="button" onclick="scrollToResultZone()"
-                            class="font-bold text-[#E11D48] hover:underline cursor-pointer">
+                            class="font-medium text-[#E11D48] hover:underline cursor-pointer shrink-0 ml-2">
                             ดูผลลัพธ์ด้านล่าง ↓
                         </button>
                     </div>
@@ -497,13 +518,13 @@
 
             <!-- Cross-Category Notice -->
             <div id="crossCategoryWarning"
-                class="hidden rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/70 px-4 py-3 text-xs text-amber-950 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2">
+                class="hidden rounded-2xl bg-amber-50 dark:bg-amber-950/35 border border-amber-200 dark:border-amber-800/60 px-4 py-3 text-xs text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-info text-amber-600 dark:text-amber-400 shrink-0"></i>
                     <span id="crossCategoryWarningText">หน่วยต้นทางและปลายทางอยู่คนละหมวดหมู่</span>
                 </div>
                 <button type="button" onclick="matchTargetToSourceCategory()"
-                    class="px-3 py-1 rounded-lg bg-slate-950 dark:bg-slate-800 text-white font-bold text-[11px] cursor-pointer">
+                    class="px-3 py-1 rounded-lg bg-slate-900 dark:bg-[#252E3E] text-white font-medium text-[11px] cursor-pointer">
                     ปรับปลายทางให้อยู่หมวดเดียวกับต้นทาง
                 </button>
             </div>
@@ -511,32 +532,32 @@
             <!-- ============================================================= -->
             <!-- RESULT SECTION BELOW (DETAILED RESULT + FORMULA + COMPARISON) -->
             <!-- ============================================================= -->
-            <div id="resultComparisonSection" class="pt-5 border-t border-[var(--border-color)] space-y-5 scroll-mt-20">
+            <div id="resultComparisonSection" class="pt-6 border-t border-[var(--border-color)] space-y-5 scroll-mt-20">
 
                 <!-- Result Header + Precision & Comma Controls -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#E11D48]"></span>
-                        <h2 class="text-base sm:text-xl font-extrabold">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#E11D48]"></span>
+                        <h2 class="text-base sm:text-xl font-bold tracking-tight">
                             ผลลัพธ์การแปลงค่า
                         </h2>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
                         <div class="flex items-center studio-subtle border rounded-xl p-1">
-                            <span class="px-2 text-[10px] studio-muted font-bold">ทศนิยม:</span>
+                            <span class="px-2 text-[10px] studio-muted font-medium">ทศนิยม:</span>
                             <button type="button" onclick="setPrecision('auto')" data-prec="auto"
-                                class="prec-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer bg-[#E11D48] text-white">AUTO</button>
+                                class="prec-btn px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer bg-[#E11D48] text-white">AUTO</button>
                             <button type="button" onclick="setPrecision(2)" data-prec="2"
-                                class="prec-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer studio-muted">2</button>
+                                class="prec-btn px-2.5 py-1 rounded-lg font-medium transition cursor-pointer studio-muted">2</button>
                             <button type="button" onclick="setPrecision(4)" data-prec="4"
-                                class="prec-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer studio-muted">4</button>
+                                class="prec-btn px-2.5 py-1 rounded-lg font-medium transition cursor-pointer studio-muted">4</button>
                             <button type="button" onclick="setPrecision(6)" data-prec="6"
-                                class="prec-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer studio-muted">6</button>
+                                class="prec-btn px-2.5 py-1 rounded-lg font-medium transition cursor-pointer studio-muted">6</button>
                         </div>
 
                         <button id="commaToggleBtn" type="button" onclick="toggleCommaFormat()"
-                            class="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#E11D48]/12 border border-[#E11D48]/30 text-[#E11D48] font-extrabold transition cursor-pointer flex items-center gap-1.5"
+                            class="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] font-semibold transition cursor-pointer flex items-center gap-1.5"
                             title="เปิด/ปิดเครื่องหมายจุลภาคคั่นหลักพันทั้งตัวเลขและสูตร">
                             <i class="fa-solid fa-check-circle"></i>
                             <span>1,000 Comma</span>
@@ -546,62 +567,62 @@
 
                 <!-- Main Result Box -->
                 <div id="resultHighlightCard"
-                    class="result-pulse-smooth rounded-2xl studio-subtle border p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    class="result-smooth-in rounded-2xl studio-subtle border p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="space-y-1.5 min-w-0">
-                        <div id="resultSummaryCaption" class="text-xs sm:text-sm font-bold studio-muted">
+                        <div id="resultSummaryCaption" class="text-xs sm:text-sm studio-muted leading-relaxed">
                             เลือกหน่วยต้นทาง หน่วยปลายทาง และใส่ตัวเลขเพื่อดูผลลัพธ์
                         </div>
                         <div class="flex flex-wrap items-baseline gap-2.5">
                             <span id="mainConvertedValue"
-                                class="font-mono text-3xl sm:text-5xl font-extrabold text-[#E11D48] break-all">
+                                class="font-mono text-3xl sm:text-5xl font-bold text-[#E11D48] num-tabular break-all">
                                 —
                             </span>
-                            <span id="mainConvertedUnit" class="text-base sm:text-xl font-extrabold"></span>
+                            <span id="mainConvertedUnit" class="text-base sm:text-xl font-semibold"></span>
                         </div>
                     </div>
 
                     <button type="button" onclick="copyMainResult()"
-                        class="min-h-[42px] px-4 py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer shrink-0 self-start sm:self-center">
+                        class="min-h-[42px] px-4 py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-medium text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0 self-start sm:self-center">
                         <i class="fa-regular fa-copy"></i>
                         <span>คัดลอกผลลัพธ์</span>
                     </button>
                 </div>
 
                 <!-- Formula Bar with Comma Formatting -->
-                <div class="rounded-2xl bg-slate-950 text-white px-4 sm:px-5 py-3.5 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <div class="rounded-2xl bg-[#141923] text-[#ECEFF4] px-4 sm:px-5 py-3.5 border border-[#273040] flex flex-col md:flex-row md:items-center justify-between gap-2">
                     <div class="flex flex-wrap items-center gap-2">
-                        <span class="px-2 py-0.5 rounded bg-[#E11D48] font-mono text-[10px] font-extrabold tracking-wider">
+                        <span class="px-2 py-0.5 rounded bg-[#E11D48] text-white font-mono text-[10px] font-semibold tracking-wider">
                             FORMULA
                         </span>
-                        <span id="mainFormulaText" class="font-mono text-xs sm:text-sm font-semibold">
+                        <span id="mainFormulaText" class="font-mono text-xs sm:text-sm num-tabular">
                             รอเลือกหน่วยและกรอกตัวเลข
                         </span>
                     </div>
-                    <span id="unitRatioText" class="font-mono text-[11px] text-slate-400"></span>
+                    <span id="unitRatioText" class="font-mono text-[11px] text-[#9CA3AF] num-tabular"></span>
                 </div>
 
                 <!-- Optional Same-Category Comparison Controls (Hide/Unhide + Modal) -->
-                <div class="pt-3 border-t border-[var(--border-color)] space-y-4">
+                <div class="pt-4 border-t border-[var(--border-color)] space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
                             <span id="sameCatBadge"
-                                class="px-2.5 py-0.5 rounded-md bg-slate-900 dark:bg-slate-800 text-white font-mono text-[10px] font-extrabold">
+                                class="px-2.5 py-0.5 rounded-md studio-panel border font-mono text-[10px] font-semibold shrink-0">
                                 เทียบหน่วยในหมวดเดียวกัน
                             </span>
-                            <span id="sameCatSummaryLabel" class="text-xs studio-muted">
+                            <span id="sameCatSummaryLabel" class="text-xs studio-muted truncate">
                                 เลือกเปิดดูแบบ Hide/Unhide หรือเปิดใน Modal
                             </span>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2">
                             <button id="toggleSameCatBtn" type="button" onclick="toggleSameCategoryInline()"
-                                class="min-h-[36px] px-3.5 py-1.5 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                class="min-h-[36px] px-3.5 py-1.5 rounded-xl studio-panel hover:border-[#E11D48] border text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                                 <i id="toggleSameCatIcon" class="fa-solid fa-eye text-[#E11D48]"></i>
                                 <span id="toggleSameCatText">แสดงเทียบในหมวด (Unhide)</span>
                             </button>
 
                             <button type="button" onclick="openSameCategoryModal()"
-                                class="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-slate-950 dark:bg-slate-800 hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                                class="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-slate-900 dark:bg-[#232B3A] hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-expand text-[11px]"></i>
                                 <span>เปิด Modal เทียบหมวด</span>
                             </button>
@@ -615,7 +636,7 @@
                                 <i class="fa-solid fa-magnifying-glass studio-muted text-xs absolute left-3 top-1/2 -translate-y-1/2"></i>
                                 <input id="sameCatFilterInput" type="text" oninput="renderSameCategoryGrid('sameCategoryInlineGrid', 'sameCatFilterInput')"
                                     placeholder="กรองหน่วยในหมวดนี้..."
-                                    class="w-full h-9 pl-8 pr-3 rounded-xl studio-input border outline-none text-xs font-bold" />
+                                    class="w-full h-9 pl-8 pr-3 rounded-xl studio-input border outline-none text-xs" />
                             </div>
                         </div>
 
@@ -633,25 +654,25 @@
     <!-- MODAL 1: 12-CATEGORY UNIT LIBRARY MODAL ("คลังหน่วยวัด")              -->
     <!-- ===================================================================== -->
     <div id="unitLibraryModal" onclick="if (event.target === this) closeUnitLibraryModal()"
-        class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+        class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
         <div class="studio-panel border rounded-3xl max-w-6xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="bg-slate-950 text-white px-5 sm:px-6 py-4 flex items-center justify-between gap-3 shrink-0">
+            <div class="bg-[#141923] text-[#ECEFF4] px-5 sm:px-6 py-4 flex items-center justify-between gap-3 border-b border-[#273040] shrink-0">
                 <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-10 h-10 rounded-xl bg-[#E11D48]/20 border border-[#E11D48]/40 text-[#FB7185] flex items-center justify-center text-base shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#E11D48]/15 border border-[#E11D48]/35 text-[#FB7185] flex items-center justify-center text-base shrink-0">
                         <i class="fa-solid fa-book-open"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="text-base sm:text-lg font-extrabold tracking-wide truncate">
+                        <h3 class="text-base sm:text-lg font-bold tracking-wide truncate">
                             คลังหน่วยวัด (12 หมวดหมู่)
                         </h3>
-                        <p id="libraryModalSub" class="text-[11px] text-slate-400 font-mono truncate">
+                        <p id="libraryModalSub" class="text-[11px] text-[#9CA3AF] font-mono truncate">
                             เลือกหมวดหรือค้นหาหน่วยแล้วกดนำเข้า
                         </p>
                     </div>
                 </div>
 
                 <button type="button" onclick="closeUnitLibraryModal()"
-                    class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-[#E11D48] border border-slate-700 hover:border-[#E11D48] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0"
+                    class="w-10 h-10 rounded-xl bg-[#1D2430] hover:bg-[#E11D48] border border-[#273040] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0"
                     title="ปิดหน้าต่าง (Esc)">
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
@@ -660,14 +681,14 @@
             <!-- Destination Target Switcher -->
             <div class="px-5 sm:px-6 py-2.5 studio-panel border-b flex flex-wrap items-center justify-between gap-2 shrink-0">
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="font-mono text-[10px] font-extrabold studio-muted uppercase mr-1">นำเข้าลงช่อง:</span>
+                    <span class="font-mono text-[10px] font-medium studio-muted uppercase mr-1">นำเข้าลงช่อง:</span>
                     <button type="button" id="libTargetFromBtn" onclick="setLibraryTarget('from')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer bg-[#E11D48] text-white">
+                        class="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer bg-[#E11D48] text-white">
                         <i class="fa-solid fa-arrow-right-to-bracket"></i>
                         <span>ต้นทาง (FROM)</span>
                     </button>
                     <button type="button" id="libTargetToBtn" onclick="setLibraryTarget('to')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer studio-subtle border hover:border-[#E11D48]">
+                        class="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer studio-subtle border hover:border-[#E11D48]">
                         <i class="fa-solid fa-bullseye"></i>
                         <span>ปลายทาง (TO)</span>
                     </button>
@@ -684,7 +705,7 @@
                     <i class="fa-solid fa-magnifying-glass studio-muted text-xs absolute left-3.5 top-1/2 -translate-y-1/2"></i>
                     <input id="librarySearchInput" type="text" oninput="renderUnitLibraryModal()"
                         placeholder="ค้นหาชื่อหน่วย หรือ สัญลักษณ์..."
-                        class="w-full h-9 pl-9 pr-3 rounded-xl studio-input border outline-none text-xs font-bold" />
+                        class="w-full h-9 pl-9 pr-3 rounded-xl studio-input border outline-none text-xs" />
                 </div>
             </div>
 
@@ -695,7 +716,7 @@
             <div class="px-5 sm:px-6 py-3.5 studio-subtle border-t flex items-center justify-between text-xs studio-muted shrink-0">
                 <span>กด <strong class="text-[#E11D48]">นำเข้า</strong> เพื่อใส่หน่วยลงในช่องที่เลือก</span>
                 <button type="button" onclick="closeUnitLibraryModal()"
-                    class="px-4 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs transition cursor-pointer">
+                    class="px-4 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-medium text-xs transition cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
             </div>
@@ -706,25 +727,25 @@
     <!-- MODAL 2: SAME-CATEGORY & ALL-CATEGORIES COMPARISON MODAL              -->
     <!-- ===================================================================== -->
     <div id="compareAllModal" onclick="if (event.target === this) closeCompareAllModal()"
-        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+        class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
         <div class="studio-panel border rounded-3xl max-w-6xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="bg-slate-950 text-white px-5 sm:px-7 py-4 flex items-center justify-between gap-3 shrink-0">
+            <div class="bg-[#141923] text-[#ECEFF4] px-5 sm:px-7 py-4 flex items-center justify-between gap-3 border-b border-[#273040] shrink-0">
                 <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-10 h-10 rounded-xl bg-[#E11D48]/20 border border-[#E11D48]/40 text-[#FB7185] flex items-center justify-center text-base shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#E11D48]/15 border border-[#E11D48]/35 text-[#FB7185] flex items-center justify-center text-base shrink-0">
                         <i class="fa-solid fa-border-all"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 id="compareModalTitle" class="text-base sm:text-xl font-extrabold tracking-wide truncate">
+                        <h3 id="compareModalTitle" class="text-base sm:text-xl font-bold tracking-wide truncate">
                             เทียบหน่วย &amp; หมวดหมู่ทั้งหมด
                         </h3>
-                        <p id="compareModalSub" class="text-[11px] text-slate-400 font-mono truncate">
+                        <p id="compareModalSub" class="text-[11px] text-[#9CA3AF] font-mono truncate">
                             เปรียบเทียบค่าหน่วยแบบอ่านง่ายและกดเลือกใช้งานได้ทันที
                         </p>
                     </div>
                 </div>
 
                 <button type="button" onclick="closeCompareAllModal()"
-                    class="w-10 h-10 rounded-xl bg-slate-900 hover:bg-[#E11D48] border border-slate-700 hover:border-[#E11D48] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0"
+                    class="w-10 h-10 rounded-xl bg-[#1D2430] hover:bg-[#E11D48] border border-[#273040] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0"
                     title="ปิดหน้าต่าง (Esc)">
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
@@ -734,14 +755,14 @@
             <div class="px-5 sm:px-7 py-3 studio-subtle border-b flex flex-col lg:flex-row lg:items-center justify-between gap-3 shrink-0">
                 <div class="flex flex-wrap items-center gap-2">
                     <button type="button" id="compareTabSameBtn" onclick="setCompareModalTab('same')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer bg-[#E11D48] text-white">
+                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-[#E11D48] text-white">
                         หมวดปัจจุบัน
                     </button>
                     <button type="button" id="compareTabAllBtn" onclick="setCompareModalTab('all')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer studio-panel border hover:border-[#E11D48]">
+                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer studio-panel border hover:border-[#E11D48]">
                         ทุกหมวดหมู่ (12 หมวด)
                     </button>
-                    <span id="compareBaseBadge" class="font-mono text-xs font-extrabold px-2.5 py-1 rounded-lg studio-panel border">
+                    <span id="compareBaseBadge" class="font-mono text-xs font-medium num-tabular px-2.5 py-1 rounded-lg studio-panel border">
                         ฐาน: 0
                     </span>
                 </div>
@@ -750,16 +771,16 @@
                     <i class="fa-solid fa-magnifying-glass studio-muted text-xs absolute left-3.5 top-1/2 -translate-y-1/2"></i>
                     <input id="compareSearchInput" type="text" oninput="renderCompareModalBody()"
                         placeholder="ค้นหาชื่อหน่วย หรือ หมวดหมู่..."
-                        class="w-full h-9 pl-9 pr-3.5 rounded-xl studio-input border outline-none text-xs font-bold" />
+                        class="w-full h-9 pl-9 pr-3.5 rounded-xl studio-input border outline-none text-xs" />
                 </div>
             </div>
 
             <div id="compareAllBody" class="p-4 sm:p-6 overflow-y-auto flex-grow space-y-5 studio-subtle"></div>
 
             <div class="studio-panel border-t px-5 sm:px-7 py-3.5 flex items-center justify-between text-xs studio-muted shrink-0">
-                <span>คลิกการ์ดเพื่อคัดลอกค่า หรือกดตั้งเป็น FROM / TO / ใช้คู่นี้</span>
+                <span>คลิกการ์ดเพื่อคัดลอกค่า หรือกดใช้คู่นี้เพื่อโหลดหน่วย</span>
                 <button type="button" onclick="closeCompareAllModal()"
-                    class="px-4 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs transition cursor-pointer">
+                    class="px-4 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-medium text-xs transition cursor-pointer">
                     ปิดหน้าต่าง
                 </button>
             </div>
@@ -770,13 +791,13 @@
     <!-- TOAST NOTIFICATION                                                    -->
     <!-- ===================================================================== -->
     <div id="toastBanner" role="status" aria-live="polite"
-        class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-950 border border-slate-800 border-l-4 border-l-[#E11D48] text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-sans text-xs max-w-[calc(100vw-2rem)]">
-        <div class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+        class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-[#141923] border border-[#273040] border-l-4 border-l-[#E11D48] text-[#ECEFF4] px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-sans text-xs max-w-[calc(100vw-2rem)]">
+        <div class="w-7 h-7 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
             <i class="fa-solid fa-check"></i>
         </div>
         <div class="min-w-0">
-            <div class="font-bold text-slate-100 truncate" id="toastTitle">คัดลอกเรียบร้อยแล้ว</div>
-            <div class="font-mono text-[11px] text-slate-400 truncate" id="toastSubtitle"></div>
+            <div class="font-semibold truncate" id="toastTitle">คัดลอกเรียบร้อยแล้ว</div>
+            <div class="font-mono text-[11px] text-[#9CA3AF] num-tabular truncate" id="toastSubtitle"></div>
         </div>
     </div>
 
@@ -1119,7 +1140,7 @@
             } catch (_) {
                 // Ignore storage access errors in sandboxed iframes
             }
-            showToast('สลับโหมดหน้าจอแล้ว', isDark ? 'Velvet Midnight (Dark Mode)' : 'Alabaster Light Mode');
+            showToast('สลับโหมดหน้าจอแล้ว', isDark ? 'Soft Charcoal Dark Mode' : 'Alabaster Light Mode');
         }
 
         function escapeHtml(text) {
@@ -1303,7 +1324,7 @@
         }
 
         // =====================================================================
-        // REAL-TIME NEAR-MATCH SEARCH FOR SOURCE & TARGET UNITS
+        // SEARCH-ON-TYPE ONLY NEAR-MATCH SUGGESTIONS
         // =====================================================================
         function scoreUnitMatch(item, rawQuery) {
             const q = String(rawQuery || '').trim().toLowerCase();
@@ -1330,19 +1351,14 @@
             return score;
         }
 
-        function getRealTimeMatches(query, side) {
-            const all = getAllFlatUnits();
+        function getTypedNearMatches(query, side) {
             const q = String(query || '').trim();
+            if (!q) return [];
+
+            const all = getAllFlatUnits();
             const counterpart = side === 'from'
                 ? findUnitEntry(state.toUnit, state.categoryId)
                 : findUnitEntry(state.fromUnit, state.categoryId);
-
-            if (!q) {
-                const pool = counterpart
-                    ? all.filter(u => u.categoryId === counterpart.category.id && u.unitId !== counterpart.unit.id)
-                    : all;
-                return pool.slice(0, 8);
-            }
 
             return all
                 .map(item => {
@@ -1358,10 +1374,17 @@
 
         function renderUnitDropdown(side) {
             const dropdown = document.getElementById(side === 'from' ? 'fromUnitDropdown' : 'toUnitDropdown');
-            const q = side === 'from' ? state.fromSearchText : state.toSearchText;
+            const q = String(side === 'from' ? state.fromSearchText : state.toSearchText || '').trim();
             if (!dropdown) return;
 
-            const matches = getRealTimeMatches(q, side);
+            // Only show search helpers after the user types something
+            if (!q) {
+                dropdown.innerHTML = '';
+                dropdown.classList.add('hidden');
+                return;
+            }
+
+            const matches = getTypedNearMatches(q, side);
             if (matches.length === 0) {
                 dropdown.innerHTML = `
                     <div class="p-3 text-xs studio-muted">
@@ -1377,19 +1400,15 @@
                     onmousedown="event.preventDefault(); chooseUnit('${side}', '${m.categoryId}', '${m.unitId}')"
                     class="w-full px-3.5 py-2.5 text-left hover:bg-[#E11D48]/10 transition flex items-center justify-between gap-2 cursor-pointer">
                     <div class="min-w-0">
-                        <div class="text-xs font-extrabold truncate">${escapeHtml(m.unitName)}</div>
+                        <div class="text-xs font-semibold truncate">${escapeHtml(m.unitName)}</div>
                         <div class="font-mono text-[10px] studio-muted truncate">${escapeHtml(m.categoryName)} • ${escapeHtml(m.group)}</div>
                     </div>
-                    <span class="px-2 py-0.5 rounded bg-slate-900 dark:bg-slate-800 text-white font-mono text-[10px] font-bold shrink-0">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 dark:bg-[#252E3E] text-white font-mono text-[10px] font-medium shrink-0">
                         ${escapeHtml(m.symbol)}
                     </span>
                 </button>
             `).join('');
             dropdown.classList.remove('hidden');
-        }
-
-        function openUnitDropdown(side) {
-            renderUnitDropdown(side);
         }
 
         function closeAllUnitDropdowns() {
@@ -1494,7 +1513,7 @@
                     leftCard.classList.remove('unit-panel-swapping-from');
                     rightCard.classList.remove('unit-panel-swapping-to');
                     swapBtn.classList.remove('swap-btn-spinning');
-                }, 380);
+                }, 360);
             }
 
             const prevFrom = state.fromUnit;
@@ -1537,9 +1556,9 @@
             state.precision = prec;
             document.querySelectorAll('.prec-btn').forEach(btn => {
                 const active = String(btn.dataset.prec) === String(prec);
-                btn.className = `prec-btn px-2.5 py-1 rounded-lg font-extrabold transition cursor-pointer ${active
-                    ? 'bg-[#E11D48] text-white'
-                    : 'studio-muted'
+                btn.className = `prec-btn px-2.5 py-1 rounded-lg transition cursor-pointer ${active
+                    ? 'bg-[#E11D48] text-white font-semibold'
+                    : 'studio-muted font-medium'
                     }`;
             });
             renderConversionOutput(true);
@@ -1554,10 +1573,10 @@
             const btn = document.getElementById('commaToggleBtn');
             if (btn) {
                 if (state.useComma) {
-                    btn.className = 'min-h-[36px] px-3 py-1.5 rounded-xl bg-[#E11D48]/12 border border-[#E11D48]/30 text-[#E11D48] font-extrabold transition cursor-pointer flex items-center gap-1.5';
+                    btn.className = 'min-h-[36px] px-3 py-1.5 rounded-xl bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] font-semibold transition cursor-pointer flex items-center gap-1.5';
                     btn.innerHTML = '<i class="fa-solid fa-check-circle"></i><span>1,000 Comma</span>';
                 } else {
-                    btn.className = 'min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle border studio-muted font-bold transition cursor-pointer flex items-center gap-1.5';
+                    btn.className = 'min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle border studio-muted font-medium transition cursor-pointer flex items-center gap-1.5';
                     btn.innerHTML = '<i class="fa-regular fa-circle"></i><span>No Comma</span>';
                 }
             }
@@ -1602,18 +1621,18 @@
             const toSymEl = document.getElementById('toSymbolBadge');
             const toHintEl = document.getElementById('toSelectedHint');
 
-            if (fromSymEl) fromSymEl.textContent = fromEntry ? fromEntry.unit.symbol : '—';
+            if (fromSymEl) fromSymEl.textContent = fromEntry ? fromEntry.unit.symbol : 'UNIT';
             if (fromHintEl) {
                 fromHintEl.textContent = fromEntry
                     ? `${fromEntry.unit.name} (${fromEntry.category.name})`
-                    : 'ยังไม่ได้เลือกหน่วยต้นทาง';
+                    : 'รอพิมพ์หรือเลือกหน่วยต้นทาง';
             }
 
-            if (toSymEl) toSymEl.textContent = toEntry ? toEntry.unit.symbol : '—';
+            if (toSymEl) toSymEl.textContent = toEntry ? toEntry.unit.symbol : 'TO';
             if (toHintEl) {
                 toHintEl.textContent = toEntry
                     ? `${toEntry.unit.name} (${toEntry.category.name})`
-                    : 'ยังไม่ได้เลือกหน่วยปลายทาง';
+                    : 'รอพิมพ์หรือเลือกหน่วยปลายทาง';
             }
 
             const mismatchBox = document.getElementById('crossCategoryWarning');
@@ -1632,9 +1651,9 @@
             const highlightCard = document.getElementById('resultHighlightCard');
 
             if (animateResult && highlightCard) {
-                highlightCard.classList.remove('result-pulse-smooth');
+                highlightCard.classList.remove('result-smooth-in');
                 void highlightCard.offsetWidth;
-                highlightCard.classList.add('result-pulse-smooth');
+                highlightCard.classList.add('result-smooth-in');
             }
 
             const hasNum = state.sourceValue !== null && Number.isFinite(state.sourceValue);
@@ -1745,16 +1764,16 @@
                     <div data-copy-val="${safeDisp}" data-copy-label="${safeLabel}"
                         onclick="copyRawValue(this.dataset.copyVal, this.dataset.copyLabel)"
                         class="rounded-2xl border p-3.5 studio-panel transition cursor-pointer flex flex-col justify-between gap-2 ${isTo
-                        ? 'border-[#E11D48] ring-2 ring-[#E11D48]/15'
+                        ? 'border-[#E11D48] ring-1 ring-[#E11D48]/30'
                         : isFrom
-                            ? 'border-slate-900 dark:border-slate-500'
+                            ? 'border-slate-700 dark:border-slate-500'
                             : 'border-[var(--border-color)] hover:border-[#E11D48]/60'
                     }">
                         <div class="flex items-center justify-between gap-1.5">
-                            <span class="px-2 py-0.5 rounded font-mono text-[10px] font-extrabold ${isTo
+                            <span class="px-2 py-0.5 rounded font-mono text-[10px] font-semibold ${isTo
                         ? 'bg-[#E11D48] text-white'
                         : isFrom
-                            ? 'bg-slate-950 text-white'
+                            ? 'bg-slate-900 dark:bg-[#252E3E] text-white'
                             : 'studio-subtle border studio-muted'
                     }">
                                 ${escapeHtml(u.symbol)}
@@ -1762,23 +1781,23 @@
                             <div class="flex items-center gap-1">
                                 <button type="button"
                                     onclick="event.stopPropagation(); chooseUnit('from', '${activeCat.id}', '${u.id}')"
-                                    class="px-2 py-0.5 rounded studio-subtle hover:bg-slate-950 hover:text-white border font-mono text-[9px] font-bold transition cursor-pointer">
+                                    class="px-2 py-0.5 rounded studio-subtle hover:bg-slate-900 hover:text-white border font-mono text-[9px] font-medium transition cursor-pointer">
                                     FROM
                                 </button>
                                 <button type="button"
                                     onclick="event.stopPropagation(); chooseUnit('to', '${activeCat.id}', '${u.id}')"
-                                    class="px-2 py-0.5 rounded studio-subtle hover:bg-[#E11D48] hover:text-white border font-mono text-[9px] font-bold transition cursor-pointer">
+                                    class="px-2 py-0.5 rounded studio-subtle hover:bg-[#E11D48] hover:text-white border font-mono text-[9px] font-medium transition cursor-pointer">
                                     TO
                                 </button>
                             </div>
                         </div>
 
-                        <div class="font-mono text-base sm:text-lg font-extrabold text-[#E11D48] break-all">
+                        <div class="font-mono text-base sm:text-lg font-semibold text-[#E11D48] num-tabular break-all">
                             ${safeDisp}
                         </div>
 
                         <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-[var(--border-color)] text-[11px] studio-muted">
-                            <span class="truncate font-semibold">${escapeHtml(u.name)}</span>
+                            <span class="truncate">${escapeHtml(u.name)}</span>
                             <i class="fa-regular fa-copy text-[10px] shrink-0"></i>
                         </div>
                     </div>
@@ -1823,13 +1842,13 @@
             if (subEl) subEl.textContent = `ปลายทางนำเข้า: ${isTo ? 'ปลายทาง (TO)' : 'ต้นทาง (FROM)'} • เลือกหมวดหรือค้นหาหน่วย`;
 
             if (fromBtn) {
-                fromBtn.className = `px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${!isTo
+                fromBtn.className = `px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${!isTo
                     ? 'bg-[#E11D48] text-white'
                     : 'studio-subtle border hover:border-[#E11D48]'
                     }`;
             }
             if (toBtn) {
-                toBtn.className = `px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${isTo
+                toBtn.className = `px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${isTo
                     ? 'bg-[#E11D48] text-white'
                     : 'studio-subtle border hover:border-[#E11D48]'
                     }`;
@@ -1839,8 +1858,8 @@
                 const allActive = state.libraryCategory === 'ทั้งหมด';
                 const btns = [
                     `<button type="button" onclick="setLibraryCategory('ทั้งหมด')"
-                        class="px-2.5 py-1.5 rounded-xl font-bold text-[11px] whitespace-nowrap shrink-0 transition cursor-pointer ${allActive
-                        ? 'bg-[#E11D48] text-white'
+                        class="px-2.5 py-1.5 rounded-xl font-medium text-[11px] whitespace-nowrap shrink-0 transition cursor-pointer ${allActive
+                        ? 'bg-[#E11D48] text-white font-semibold'
                         : 'studio-panel studio-muted border border-[var(--border-color)]'
                     }">ทั้งหมด</button>`
                 ];
@@ -1848,8 +1867,8 @@
                     const active = state.libraryCategory === cat.id;
                     btns.push(`
                         <button type="button" onclick="setLibraryCategory('${cat.id}')"
-                            class="px-2.5 py-1.5 rounded-xl font-bold text-[11px] whitespace-nowrap shrink-0 transition cursor-pointer ${active
-                            ? 'bg-[#E11D48] text-white'
+                            class="px-2.5 py-1.5 rounded-xl font-medium text-[11px] whitespace-nowrap shrink-0 transition cursor-pointer ${active
+                            ? 'bg-[#E11D48] text-white font-semibold'
                             : 'studio-panel studio-muted border border-[var(--border-color)]'
                         }">${escapeHtml(cat.name)}</button>
                     `);
@@ -1883,26 +1902,26 @@
                     <div class="rounded-2xl border border-[var(--border-color)] hover:border-[#E11D48] studio-panel p-4 flex flex-col justify-between gap-3 transition">
                         <div class="space-y-1 min-w-0">
                             <div class="flex items-center justify-between gap-1.5">
-                                <span class="px-2 py-0.5 rounded bg-slate-900 dark:bg-slate-800 text-white font-mono text-[10px] font-bold truncate">
+                                <span class="px-2 py-0.5 rounded bg-slate-900 dark:bg-[#252E3E] text-white font-mono text-[10px] font-medium truncate">
                                     ${escapeHtml(u.categoryName)}
                                 </span>
-                                <span class="font-mono text-xs font-extrabold text-[#E11D48] shrink-0">
+                                <span class="font-mono text-xs font-semibold text-[#E11D48] shrink-0">
                                     ${escapeHtml(u.symbol)}
                                 </span>
                             </div>
-                            <div class="text-xs sm:text-sm font-extrabold truncate">${escapeHtml(u.unitName)}</div>
+                            <div class="text-xs sm:text-sm font-semibold truncate">${escapeHtml(u.unitName)}</div>
                             <div class="text-[10px] studio-muted truncate">${escapeHtml(u.group)}</div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-1.5">
                             <button type="button" data-copy-val="${escapeHtml(u.symbol)}" data-copy-label="${safeLabel}"
                                 onclick="copyRawValue(this.dataset.copyVal, this.dataset.copyLabel)"
-                                class="min-h-[34px] py-1.5 px-2 rounded-xl studio-subtle border hover:border-[#E11D48] font-bold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
+                                class="min-h-[34px] py-1.5 px-2 rounded-xl studio-subtle border hover:border-[#E11D48] font-medium text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
                                 <i class="fa-regular fa-copy text-[#E11D48]"></i>
                                 <span>คัดลอก</span>
                             </button>
                             <button type="button" onclick="importUnitFromLibrary('${u.categoryId}', '${u.unitId}')"
-                                class="min-h-[34px] py-1.5 px-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
+                                class="min-h-[34px] py-1.5 px-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-medium text-[11px] flex items-center justify-center gap-1 transition cursor-pointer">
                                 <i class="fa-solid fa-check"></i>
                                 <span>นำเข้า${isTo ? 'ปลายทาง' : 'ต้นทาง'}</span>
                             </button>
@@ -1959,13 +1978,13 @@
             const titleEl = document.getElementById('compareModalTitle');
 
             if (sameBtn) {
-                sameBtn.className = `px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${isSame
+                sameBtn.className = `px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${isSame
                     ? 'bg-[#E11D48] text-white'
                     : 'studio-panel border hover:border-[#E11D48]'
                     }`;
             }
             if (allBtn) {
-                allBtn.className = `px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${!isSame
+                allBtn.className = `px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${!isSame
                     ? 'bg-[#E11D48] text-white'
                     : 'studio-panel border hover:border-[#E11D48]'
                     }`;
@@ -2023,10 +2042,10 @@
                             onclick="copyRawValue(this.dataset.copyVal, this.dataset.copyLabel)"
                             class="p-3 rounded-xl studio-subtle border hover:border-[#E11D48] flex items-center justify-between gap-2 cursor-pointer transition">
                             <div class="min-w-0">
-                                <div class="text-xs font-bold truncate">${escapeHtml(u.name)}</div>
+                                <div class="text-xs font-medium truncate">${escapeHtml(u.name)}</div>
                                 <div class="font-mono text-[10px] studio-muted truncate">${escapeHtml(u.symbol)}</div>
                             </div>
-                            <div class="font-mono text-xs sm:text-sm font-extrabold text-[#E11D48] shrink-0 text-right">
+                            <div class="font-mono text-xs sm:text-sm font-semibold text-[#E11D48] num-tabular shrink-0 text-right">
                                 ${safeDisp}
                             </div>
                         </div>
@@ -2037,19 +2056,19 @@
                     <div class="studio-panel border rounded-2xl p-4 sm:p-5 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[var(--border-color)]">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-slate-950 text-[#E11D48] flex items-center justify-center text-sm shrink-0">
+                                <span class="w-8 h-8 rounded-xl bg-[#141923] text-[#E11D48] flex items-center justify-center text-sm shrink-0">
                                     <i class="${cat.icon}"></i>
                                 </span>
                                 <div>
-                                    <h4 class="text-sm sm:text-base font-extrabold">${escapeHtml(cat.name)}</h4>
-                                    <div class="font-mono text-[10px] studio-muted">
+                                    <h4 class="text-sm sm:text-base font-bold">${escapeHtml(cat.name)}</h4>
+                                    <div class="font-mono text-[10px] studio-muted num-tabular">
                                         ฐาน ${formattedBase} ${escapeHtml(anchorUnit.symbol)} • ${units.length} หน่วย
                                     </div>
                                 </div>
                             </div>
 
                             <button type="button" onclick="loadCategoryDefaultPair('${cat.id}')"
-                                class="px-3 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+                                class="px-3 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-medium text-xs flex items-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 <span>ใช้คู่นี้</span>
                             </button>
