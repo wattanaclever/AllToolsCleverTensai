@@ -1,5 +1,5 @@
 // =========================================================================
-// CLEVERTENSAI — PDF/JS/NavbarPDF.js (Minimal Luxury Fixed Top Navbar)
+// CLEVERTENSAI — PDF/JS/NavbarPDF.js (Dynamic Minimal Luxury Fixed Navbar)
 // =========================================================================
 (function () {
     const currentFile = window.location.pathname.split("/").pop() || "HomePDF.html";
@@ -8,48 +8,58 @@
     const PDF_TOOLS_MENU = [
         {
             title: "Merge PDF",
+            subtitle: "MERGE STUDIO",
             desc: "รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว",
             url: "MergePDF.html",
             icon: "fa-solid fa-object-ungroup"
         },
         {
             title: "Split PDF",
+            subtitle: "SPLIT STUDIO",
             desc: "แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF",
             url: "SplitPDF.html",
             icon: "fa-solid fa-scissors"
         },
         {
             title: "Crop & Rotate PDF",
+            subtitle: "CROP & ROTATE STUDIO",
             desc: "ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์",
             url: "CropPDF.html",
             icon: "fa-solid fa-crop-simple"
         },
         {
             title: "Edit PDF",
+            subtitle: "EDIT STUDIO",
             desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF",
             url: "EditPDF.html",
             icon: "fa-solid fa-pen-to-square"
         },
         {
             title: "Compress PDF",
+            subtitle: "COMPRESS STUDIO",
             desc: "ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร",
             url: "CompressPDF.html",
             icon: "fa-solid fa-file-zipper"
         },
         {
             title: "Convert to PDF",
+            subtitle: "CONVERT STUDIO",
             desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF",
             url: "ConvertToPDF.html",
             icon: "fa-solid fa-file-import"
         }
     ];
 
-    const isPdfHome = (currentFile === "HomePDF.html");
+    // ตรวจจับหน้าปัจจุบันเพื่อปรับ Brand, ไอคอน และปุ่มกลางอัตโนมัติ
+    const isPdfHome = (currentFile === "HomePDF.html" || currentFile === "");
     const activeTool = PDF_TOOLS_MENU.find(t => t.url === currentFile);
-    const centerLabel = activeTool ? activeTool.title : "PDF Tools";
+
+    const navIcon = activeTool ? activeTool.icon : "fa-solid fa-file-pdf";
+    const navSubtitle = activeTool ? activeTool.subtitle : "PDF STUDIO SUITE";
+    const centerLabel = activeTool ? activeTool.title : "All PDF Tools";
     const centerIcon = activeTool ? activeTool.icon : "fa-solid fa-table-cells-large";
 
-    // แทรก Micro-CSS สำหรับแอนิเมชันนุ่มนวลและผิวสัมผัส Luxury
+    // แทรก Micro-CSS สำหรับแอนิเมชันนุ่มนวลและผิวสัมผัส Minimal Luxury
     if (!document.getElementById("ct-navbar-pdf-style")) {
         const styleEl = document.createElement("style");
         styleEl.id = "ct-navbar-pdf-style";
@@ -81,24 +91,24 @@
         <!-- MINIMAL LUXURY FIXED TOP NAVBAR -->
         <nav class="fixed top-0 inset-x-0 z-50 h-16 bg-[#0B0D12]/85 backdrop-blur-xl border-b border-white/[0.08] px-4 sm:px-7 flex items-center justify-between font-sans text-white">
 
-            <!-- ฝั่งซ้าย: โลโก้เรียบหรู -->
+            <!-- ฝั่งซ้าย: Dynamic Brand เปลี่ยนไอคอนและข้อความตามหน้า -->
             <div class="flex items-center min-w-0">
                 <a href="HomePDF.html" class="flex items-center gap-3 group shrink-0" title="กลับสู่หน้าหลัก PDF Studio Suite">
                     <div class="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 group-hover:border-red-500/50 flex items-center justify-center text-red-500 text-base transition-all duration-300 shadow-inner">
-                        <i class="fa-solid fa-file-pdf"></i>
+                        <i class="${navIcon}"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-sm sm:text-[15px] font-bold tracking-[0.12em] leading-none text-white">
                             CLEVER<span class="text-red-500">TENSAI</span>
                         </span>
                         <span class="font-mono text-[9px] text-gray-400 tracking-[0.22em] mt-1">
-                            PDF STUDIO
+                            ${navSubtitle}
                         </span>
                     </div>
                 </a>
             </div>
 
-            <!-- ตรงกลาง: ปุ่มสลับเครื่องมือขนาดใหญ่ กดสบาย -->
+            <!-- ตรงกลาง: ปุ่มสลับเครื่องมือ PDF ขนาดใหญ่ กดสบาย -->
             <div class="hidden sm:block absolute left-1/2 -translate-x-1/2">
                 <button type="button" onclick="toggleNavPopup()"
                     class="px-5 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/25 rounded-full font-semibold flex items-center gap-3 text-gray-100 transition-all duration-200 text-sm cursor-pointer shadow-sm group"
@@ -158,7 +168,7 @@
                     </button>
                 </div>
 
-                <!-- รายการเครื่องมือ PDF ทั้ง 6 โมดูล -->
+                <!-- รายการเครื่องมือ PDF -->
                 <div class="overflow-y-auto ct-lux-scroll p-6 sm:p-8">
                     <div id="pdfToolsModalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
@@ -172,10 +182,26 @@
         container.innerHTML = navbarHtml;
     }
 
-    // เรนเดอร์การ์ดเครื่องมือ PDF ทั้ง 6 ตัว + ไฮไลต์หน้าที่กำลังใช้งานอยู่
+    // เรนเดอร์การ์ดใน Modal (เพิ่มการ์ด PDF Studio Home อัตโนมัติเมื่ออยู่หน้าเครื่องมือย่อย)
     const pdfGrid = document.getElementById("pdfToolsModalGrid");
     if (pdfGrid) {
-        pdfGrid.innerHTML = PDF_TOOLS_MENU.map(tool => {
+        const homeCard = isPdfHome ? "" : `
+            <a href="HomePDF.html"
+                class="p-5 rounded-2xl bg-white/[0.025] hover:bg-white/[0.06] border border-white/[0.07] hover:border-white/20 transition-all duration-200 flex items-start gap-4 group">
+                <div class="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-300 group-hover:text-red-400 group-hover:border-red-500/40 flex items-center justify-center text-base shrink-0 transition-all duration-200">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div class="min-w-0 flex-grow">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-semibold text-sm text-gray-100 group-hover:text-white tracking-wide truncate transition-colors">PDF Studio Home</span>
+                        <i class="fa-solid fa-arrow-right text-[11px] text-gray-500 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-red-400 transition-all shrink-0"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 group-hover:text-gray-300 mt-1.5 leading-relaxed transition-colors">กลับสู่หน้ารวมเครื่องมือ PDF ทั้งหมด</p>
+                </div>
+            </a>
+        `;
+
+        const toolCards = PDF_TOOLS_MENU.map(tool => {
             const isCurrent = (currentFile === tool.url);
 
             if (isCurrent) {
@@ -212,6 +238,8 @@
                 </a>
             `;
         }).join("");
+
+        pdfGrid.innerHTML = homeCard + toolCards;
     }
 
     // ฟังก์ชันเปิด-ปิด Modal และรองรับคีย์ลัด ESC / Ctrl+K (⌘+K)
