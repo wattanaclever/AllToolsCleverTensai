@@ -108,6 +108,7 @@
         }
 
         @media (hover: hover) {
+
             ::-webkit-scrollbar-thumb:hover,
             .light-scroll::-webkit-scrollbar-thumb:hover {
                 background: #E11D48;
@@ -115,7 +116,9 @@
         }
 
         /* Prevent Sticky Hover on Touch Devices */
-        @media (hover: none), (pointer: coarse) {
+        @media (hover: none),
+        (pointer: coarse) {
+
             button:active,
             a:active {
                 transform: scale(0.96);
@@ -165,7 +168,7 @@
             transform: translateY(-2px);
         }
 
-        /* Pages Overview Thumbnail Frame (Matches Reference Screenshot) */
+        /* Pages Overview Thumbnail Frame */
         .overview-thumb-frame {
             transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
         }
@@ -192,14 +195,41 @@
         }
 
         @media (hover: hover) {
+
             .insert-divider:hover .insert-line,
             .insert-divider.is-open .insert-line {
                 opacity: 1;
             }
+
             .insert-divider:hover .insert-btn,
             .insert-divider.is-open .insert-btn {
                 transform: scale(1.1);
             }
+        }
+
+        /* Continuous Scroll Preview Page Sheet */
+        .merged-scroll-sheet {
+            transition: box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .merged-scroll-sheet.is-current-scroll-page {
+            border-color: rgba(225, 29, 72, 0.75);
+            box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.28), 0 22px 45px rgba(0, 0, 0, 0.65);
+        }
+
+        /* Interactive Mouse Zoom & Drag-to-Pan Preview Zones */
+        .zoom-pan-zone {
+            touch-action: pan-x pan-y;
+        }
+
+        .zoom-pan-zone.can-pan {
+            cursor: grab;
+        }
+
+        .zoom-pan-zone.is-panning,
+        .zoom-pan-zone.is-panning * {
+            cursor: grabbing !important;
+            user-select: none !important;
         }
 
         /* Live Page Number Overlay Badge (Shown when Auto Page Numbering is ON) */
@@ -228,11 +258,12 @@
         }
 
         @media print {
-            body > *:not(#printSection) {
+            body>*:not(#printSection) {
                 display: none !important;
             }
 
-            html, body {
+            html,
+            body {
                 background: #FFFFFF !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -270,7 +301,8 @@
     </style>
 </head>
 
-<body class="h-[100dvh] overflow-hidden flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
+<body
+    class="h-[100dvh] overflow-hidden flex flex-col font-sans antialiased selection:bg-crimson-500 selection:text-white">
 
     <!-- ===================================================================== -->
     <!-- 1. SHARED PDF NAVBAR & INLINE FALLBACK ALL TOOLS HUB MODAL            -->
@@ -285,19 +317,19 @@
             if (!container || container.innerHTML.trim() !== '') return;
 
             const PDF_TOOLS_MENU = [
-                { title: 'Merge PDF', desc: 'รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว', url: 'MergePDF.html', icon: 'fa-solid fa-object-ungroup', isActive: true },
-                { title: 'Split PDF', desc: 'แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF', url: 'SplitPDF.html', icon: 'fa-solid fa-scissors', isActive: false },
-                { title: 'Crop & Rotate PDF', desc: 'ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์', url: 'CropPDF.html', icon: 'fa-solid fa-crop-simple', isActive: false },
-                { title: 'Edit PDF', desc: 'เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF', url: 'EditPDF.html', icon: 'fa-solid fa-pen-to-square', isActive: false },
-                { title: 'Compress PDF', desc: 'ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร', url: 'CompressPDF.html', icon: 'fa-solid fa-file-zipper', isActive: false },
-                { title: 'Convert to PDF', desc: 'แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF', url: 'ConvertToPDF.html', icon: 'fa-solid fa-file-import', isActive: false }
+                {title: 'Merge PDF', desc: 'รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว', url: 'MergePDF.html', icon: 'fa-solid fa-object-ungroup', isActive: true},
+                {title: 'Split PDF', desc: 'แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF', url: 'SplitPDF.html', icon: 'fa-solid fa-scissors', isActive: false},
+                {title: 'Crop & Rotate PDF', desc: 'ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์', url: 'CropPDF.html', icon: 'fa-solid fa-crop-simple', isActive: false},
+                {title: 'Edit PDF', desc: 'เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF', url: 'EditPDF.html', icon: 'fa-solid fa-pen-to-square', isActive: false},
+                {title: 'Compress PDF', desc: 'ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร', url: 'CompressPDF.html', icon: 'fa-solid fa-file-zipper', isActive: false},
+                {title: 'Convert to PDF', desc: 'แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF', url: 'ConvertToPDF.html', icon: 'fa-solid fa-file-import', isActive: false}
             ];
 
             const OTHER_WORKSPACES = [
-                { title: 'Excel Unlock Pro', desc: 'ปลดล็อกชีตและสมุดงาน Excel', url: '../HomeExcelUnlock.html', icon: 'fa-solid fa-file-excel', colorClass: 'bg-emerald-500/20 text-emerald-400' },
-                { title: 'QR Code Generator', desc: 'สร้าง QR Code ภาษาไทย/Wi-Fi', url: '../HomeQRcode.html', icon: 'fa-solid fa-qrcode', colorClass: 'bg-blue-500/20 text-blue-400' },
-                { title: 'Unit Converter Suite', desc: 'แปลงมาตราวัดสากลและมาตราไทย', url: '../UnitConverter.html', icon: 'fa-solid fa-ruler-combined', colorClass: 'bg-crimson-500/20 text-crimson-500' },
-                { title: 'Color Mixer Studio', desc: 'ผสมสีและคำนวณสูตรแม่สี 12 ระบบ', url: '../HomeMixColor.html', icon: 'fa-solid fa-droplet', colorClass: 'bg-purple-500/20 text-purple-400' }
+                {title: 'Excel Unlock Pro', desc: 'ปลดล็อกชีตและสมุดงาน Excel', url: '../HomeExcelUnlock.html', icon: 'fa-solid fa-file-excel', colorClass: 'bg-emerald-500/20 text-emerald-400'},
+                {title: 'QR Code Generator', desc: 'สร้าง QR Code ภาษาไทย/Wi-Fi', url: '../HomeQRcode.html', icon: 'fa-solid fa-qrcode', colorClass: 'bg-blue-500/20 text-blue-400'},
+                {title: 'Unit Converter Suite', desc: 'แปลงมาตราวัดสากลและมาตราไทย', url: '../UnitConverter.html', icon: 'fa-solid fa-ruler-combined', colorClass: 'bg-crimson-500/20 text-crimson-500'},
+                {title: 'Color Mixer Studio', desc: 'ผสมสีและคำนวณสูตรแม่สี 12 ระบบ', url: '../HomeMixColor.html', icon: 'fa-solid fa-droplet', colorClass: 'bg-purple-500/20 text-purple-400'}
             ];
 
             container.innerHTML = `
@@ -425,7 +457,8 @@
     </script>
 
     <!-- Hidden Multi-File Input (PDF + PNG/JPG/WebP) -->
-    <input type="file" id="multiFileInput" multiple accept="application/pdf,.pdf,image/png,image/jpeg,image/webp" class="hidden">
+    <input type="file" id="multiFileInput" multiple accept="application/pdf,.pdf,image/png,image/jpeg,image/webp"
+        class="hidden">
 
     <!-- ===================================================================== -->
     <!-- STATE 1: CLEAN UPLOAD SCREEN                                          -->
@@ -442,7 +475,8 @@
                     รวมและจัดลำดับเอกสาร <span class="text-crimson-600">PDF</span> แบบเห็นภาพจริง
                 </h1>
                 <p class="text-tech-muted text-xs sm:text-sm mt-2 max-w-xl mx-auto">
-                    รวมไฟล์ PDF และรูปภาพ (PNG/JPG/WebP) เป็นเล่มเดียว ลากสลับหน้าข้ามไฟล์ แทรกหน้าเปล่า ใส่เลขหน้าพร้อมพรีวิว และตรวจสอบไฟล์ฉบับรวมจริงก่อนดาวน์โหลด 100% Client-Side
+                    รวมไฟล์ PDF และรูปภาพ (PNG/JPG/WebP) เป็นเล่มเดียว ลากสลับหน้าข้ามไฟล์ แทรกหน้าเปล่า
+                    ใส่เลขหน้าพร้อมพรีวิว และตรวจสอบไฟล์ฉบับรวมจริงก่อนดาวน์โหลด 100% Client-Side
                 </p>
             </div>
 
@@ -451,10 +485,18 @@
                 class="tech-card rounded-3xl p-7 sm:p-14 text-center border-2 border-dashed border-gray-300 hover:border-crimson-600 transition-all cursor-pointer relative overflow-hidden group">
 
                 <!-- 4 Crimson Corner Brackets -->
-                <div class="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-l-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors"></div>
-                <div class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-r-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors"></div>
-                <div class="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-l-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors"></div>
-                <div class="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-r-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors"></div>
+                <div
+                    class="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-l-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors">
+                </div>
+                <div
+                    class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-r-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors">
+                </div>
+                <div
+                    class="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-l-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors">
+                </div>
+                <div
+                    class="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-r-2 border-crimson-600/40 group-hover:border-crimson-600 transition-colors">
+                </div>
 
                 <div class="max-w-lg mx-auto">
                     <div
@@ -462,14 +504,16 @@
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
 
-                    <div class="font-mono text-[11px] sm:text-xs text-crimson-600 font-bold tracking-widest uppercase mb-1.5 sm:mb-2">
+                    <div
+                        class="font-mono text-[11px] sm:text-xs text-crimson-600 font-bold tracking-widest uppercase mb-1.5 sm:mb-2">
                         DROP MULTIPLE PDF OR IMAGES HERE
                     </div>
                     <h2 class="text-lg sm:text-2xl font-extrabold text-tech-dark mb-2">
                         ลากไฟล์ PDF / รูปภาพมาวาง หรือแตะเพื่อเลือกไฟล์
                     </h2>
                     <p class="text-xs sm:text-sm text-tech-muted leading-relaxed mb-6 sm:mb-7">
-                        รองรับการเลือกหลายไฟล์พร้อมกัน ประมวลผลภายในอุปกรณ์ของคุณ 100% ปลอดภัย ไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์
+                        รองรับการเลือกหลายไฟล์พร้อมกัน ประมวลผลภายในอุปกรณ์ของคุณ 100% ปลอดภัย
+                        ไม่มีการอัปโหลดขึ้นเซิร์ฟเวอร์
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -486,10 +530,11 @@
                         </button>
                     </div>
 
-                    <div class="mt-6 sm:mt-8 pt-5 border-t border-tech-border flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-mono text-[10px] sm:text-[11px] text-tech-muted">
+                    <div
+                        class="mt-6 sm:mt-8 pt-5 border-t border-tech-border flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-mono text-[10px] sm:text-[11px] text-tech-muted">
                         <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>Pages Overview ลากสลับหน้า</span>
                         <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>พรีวิวเลขหน้าทันที</span>
-                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>เช็กไฟล์รวมก่อนดาวน์โหลด</span>
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>เช็กไฟล์รวมทีละหน้า/เลื่อนดู</span>
                     </div>
                 </div>
             </div>
@@ -518,7 +563,8 @@
                     title="เปิด/ปิด Pages Overview">
                     <i class="fa-regular fa-rectangle-list text-sm text-crimson-600"></i>
                     <span class="hidden md:inline">Pages</span>
-                    <span id="toolbarPageCountBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-crimson-50 text-crimson-600 font-bold">0</span>
+                    <span id="toolbarPageCountBadge"
+                        class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-crimson-50 text-crimson-600 font-bold">0</span>
                 </button>
 
                 <span class="w-px h-5 sm:h-6 bg-tech-border mx-0.5 shrink-0"></span>
@@ -540,13 +586,17 @@
                 </div>
 
                 <!-- Grid Size Switcher S / M / L (Desktop) -->
-                <div id="toolbarGridSizeGroup" class="hidden lg:inline-flex items-center p-0.5 rounded-xl bg-tech-panel border border-tech-border font-mono text-[10px] shrink-0">
+                <div id="toolbarGridSizeGroup"
+                    class="hidden lg:inline-flex items-center p-0.5 rounded-xl bg-tech-panel border border-tech-border font-mono text-[10px] shrink-0">
                     <button type="button" id="gridBtn_S" onclick="setGridZoom(0)"
-                        class="px-2 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer" title="ขนาดเล็ก">S</button>
+                        class="px-2 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer"
+                        title="ขนาดเล็ก">S</button>
                     <button type="button" id="gridBtn_M" onclick="setGridZoom(1)"
-                        class="px-2 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer" title="ขนาดกลาง">M</button>
+                        class="px-2 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer"
+                        title="ขนาดกลาง">M</button>
                     <button type="button" id="gridBtn_L" onclick="setGridZoom(2)"
-                        class="px-2 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer" title="ขนาดใหญ่">L</button>
+                        class="px-2 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer"
+                        title="ขนาดใหญ่">L</button>
                 </div>
 
                 <span class="w-px h-5 sm:h-6 bg-tech-border mx-0.5 shrink-0"></span>
@@ -585,18 +635,19 @@
 
                     <div id="sortDropdown"
                         class="hidden absolute right-0 mt-2 w-56 bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-1.5 text-xs space-y-0.5">
-                        <div class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border mb-1">
+                        <div
+                            class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border mb-1">
                             QUEUE ORDER ACTIONS
                         </div>
                         <button type="button" onclick="closeAllMenus(); sortPagesByFilename('asc');"
                             class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-solid fa-arrow-down-a-z text-crimson-600 w-4 text-center"></i>
-                            <span>เรียงตามชื่อไฟล์ (A → Z)</span>
+                            <span>เรียงตามชื่อไฟล์ (A &rarr; Z)</span>
                         </button>
                         <button type="button" onclick="closeAllMenus(); sortPagesByFilename('desc');"
                             class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-solid fa-arrow-up-z-a text-crimson-600 w-4 text-center"></i>
-                            <span>เรียงตามชื่อไฟล์ (Z → A)</span>
+                            <span>เรียงตามชื่อไฟล์ (Z &rarr; A)</span>
                         </button>
                         <button type="button" onclick="closeAllMenus(); reverseAllPages();"
                             class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
@@ -644,12 +695,12 @@
                             <button type="button" onclick="closeAllMenus(); sortPagesByFilename('asc');"
                                 class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
                                 <i class="fa-solid fa-arrow-down-a-z text-crimson-600 w-4 text-center"></i>
-                                <span>เรียงชื่อไฟล์ (A → Z)</span>
+                                <span>เรียงชื่อไฟล์ (A &rarr; Z)</span>
                             </button>
                             <button type="button" onclick="closeAllMenus(); sortPagesByFilename('desc');"
                                 class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
                                 <i class="fa-solid fa-arrow-up-z-a text-crimson-600 w-4 text-center"></i>
-                                <span>เรียงชื่อไฟล์ (Z → A)</span>
+                                <span>เรียงชื่อไฟล์ (Z &rarr; A)</span>
                             </button>
                             <button type="button" onclick="closeAllMenus(); reverseAllPages();"
                                 class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
@@ -678,7 +729,8 @@
                     <i class="fa-solid fa-eye text-xs"></i>
                     <span class="hidden sm:inline">รวมไฟล์ &amp; พรีวิว</span>
                     <span class="sm:hidden">รวมไฟล์</span>
-                    <span id="topMergePageBadge" class="px-1.5 py-0.5 rounded-md bg-black/25 text-white text-[10px] font-extrabold">0</span>
+                    <span id="topMergePageBadge"
+                        class="px-1.5 py-0.5 rounded-md bg-black/25 text-white text-[10px] font-extrabold">0</span>
                 </button>
             </div>
         </header>
@@ -690,16 +742,19 @@
             <div id="overviewBackdrop" onclick="setOverviewSidebarOpen(false)"
                 class="hidden fixed inset-0 bg-black/65 backdrop-blur-xs z-40 md:hidden"></div>
 
-            <!-- 2. LEFT SIDEBAR — PAGES OVERVIEW (Styled Strictly Like Reference Screenshot) -->
+            <!-- 2. LEFT SIDEBAR — PAGES OVERVIEW -->
             <aside id="overviewSidebar"
                 class="hidden fixed inset-y-0 left-0 z-50 w-72 shadow-2xl md:static md:z-20 md:w-64 md:shadow-none shrink-0 bg-white border-r border-tech-border flex flex-col min-h-0">
 
                 <!-- Pages Overview Header -->
                 <div class="p-3.5 bg-tech-panel/70 border-b border-tech-border space-y-2.5 shrink-0">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="font-mono text-xs font-extrabold text-tech-dark uppercase tracking-wider">PAGES OVERVIEW</span>
+                        <span class="font-mono text-xs font-extrabold text-tech-dark uppercase tracking-wider">PAGES
+                            OVERVIEW</span>
                         <div class="flex items-center gap-1.5">
-                            <span id="overviewCountBadge" class="font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold whitespace-nowrap">0 หน้า</span>
+                            <span id="overviewCountBadge"
+                                class="font-mono text-[11px] px-2.5 py-0.5 rounded-lg bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold whitespace-nowrap">0
+                                หน้า</span>
                             <button type="button" onclick="setOverviewSidebarOpen(false)"
                                 class="md:hidden w-7 h-7 rounded-lg bg-white border border-tech-border text-tech-muted hover:text-crimson-600 flex items-center justify-center cursor-pointer"
                                 title="ปิด Pages Overview">
@@ -709,7 +764,8 @@
                     </div>
 
                     <!-- Segmented Filter Tabs: ทั้งหมด / แก้ไขแล้ว -->
-                    <div class="grid grid-cols-2 gap-1 bg-white border border-tech-border p-1 rounded-full font-sans text-xs shadow-xs">
+                    <div
+                        class="grid grid-cols-2 gap-1 bg-white border border-tech-border p-1 rounded-full font-sans text-xs shadow-xs">
                         <button type="button" id="tabFilterAll" onclick="setOverviewFilter('all')"
                             class="py-1.5 rounded-full bg-crimson-600 text-white font-bold transition cursor-pointer">ทั้งหมด</button>
                         <button type="button" id="tabFilterEdited" onclick="setOverviewFilter('edited')"
@@ -741,7 +797,8 @@
                 <!-- External File Drag-Drop Overlay -->
                 <div id="stageDropOverlay"
                     class="hidden fixed inset-0 z-[70] bg-gray-950/80 backdrop-blur-sm flex items-center justify-center p-6 pointer-events-none">
-                    <div class="border-2 border-dashed border-crimson-500 bg-gray-900/95 rounded-3xl px-10 py-12 text-center shadow-2xl">
+                    <div
+                        class="border-2 border-dashed border-crimson-500 bg-gray-900/95 rounded-3xl px-10 py-12 text-center shadow-2xl">
                         <i class="fa-solid fa-cloud-arrow-up text-4xl text-crimson-500 mb-3 block"></i>
                         <div class="text-white font-extrabold text-lg">ปล่อยไฟล์เพื่อเพิ่มเข้าสู่คิวรวมเอกสาร</div>
                         <div class="text-gray-400 font-mono text-xs mt-1">รองรับ PDF และรูปภาพ PNG / JPG / WebP</div>
@@ -752,7 +809,8 @@
                 <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-7 pb-56 md:pb-44">
 
                     <!-- VIEW A: PAGE GRID MODE -->
-                    <div id="pageGridContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
+                    <div id="pageGridContainer"
+                        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5">
                         <!-- Page Cards + Dedicated Dashed Add-Page Card Injected Here -->
                     </div>
 
@@ -772,7 +830,8 @@
     <!-- ===================================================================== -->
     <div id="insertPagePopover" onclick="event.stopPropagation()"
         class="hidden fixed z-[85] w-52 bg-white text-tech-dark border-2 border-tech-dark rounded-2xl shadow-2xl p-1.5 text-xs">
-        <div class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border flex items-center justify-between mb-1">
+        <div
+            class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border flex items-center justify-between mb-1">
             <span>แทรกหน้าใหม่</span>
             <span id="insertTargetLabel" class="text-crimson-600 font-extrabold">ต่อท้าย</span>
         </div>
@@ -800,15 +859,16 @@
             title="ลากเพื่อย้ายตำแหน่งบนคอมพิวเตอร์ หรือแตะเพื่อย่อ/ขยายบนมือถือ">
             <div class="flex items-center gap-2 min-w-0">
                 <i class="fa-solid fa-grip-vertical hidden md:inline text-gray-400 text-xs shrink-0"></i>
-                <i id="exportSheetChevron" class="fa-solid fa-chevron-up md:hidden text-crimson-600 text-xs shrink-0 transition-transform duration-200"></i>
+                <i id="exportSheetChevron"
+                    class="fa-solid fa-chevron-up md:hidden text-crimson-600 text-xs shrink-0 transition-transform duration-200"></i>
                 <span class="text-xs font-extrabold text-tech-dark truncate">ตั้งค่าการรวมไฟล์และส่งออก</span>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
-                <span id="exportCardMiniSummary" class="font-mono text-[10px] px-2 py-0.5 rounded-lg bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold">
+                <span id="exportCardMiniSummary"
+                    class="font-mono text-[10px] px-2 py-0.5 rounded-lg bg-crimson-50 text-crimson-600 border border-crimson-100 font-bold">
                     0 หน้า
                 </span>
-                <button type="button"
-                    onpointerdown="event.stopPropagation()"
+                <button type="button" onpointerdown="event.stopPropagation()"
                     onclick="event.stopPropagation(); hideExportCard();"
                     class="px-2 py-1 rounded-lg bg-white hover:bg-crimson-50 border border-tech-border hover:border-crimson-500 text-tech-muted hover:text-crimson-600 font-bold text-[10px] flex items-center gap-1 transition cursor-pointer"
                     title="ซ่อนกล่องตั้งค่า">
@@ -822,7 +882,8 @@
         <div id="exportCardBody" class="hidden md:block overflow-y-auto light-scroll p-3.5 sm:p-4 space-y-3 text-xs">
             <!-- Output Filename -->
             <div>
-                <label for="outputFilenameInput" class="block font-mono text-[10px] font-bold text-tech-muted uppercase mb-1">
+                <label for="outputFilenameInput"
+                    class="block font-mono text-[10px] font-bold text-tech-muted uppercase mb-1">
                     ชื่อไฟล์ผลลัพธ์ (OUTPUT FILENAME)
                 </label>
                 <div class="relative flex items-center">
@@ -836,7 +897,8 @@
             <!-- Auto Page Numbering + Live Preview Sync -->
             <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border space-y-2">
                 <label class="flex items-center gap-2.5 cursor-pointer select-none font-semibold text-tech-dark">
-                    <input type="checkbox" id="optPageNumbers" onchange="onPageNumberOptionChange()" class="w-4 h-4 rounded cursor-pointer">
+                    <input type="checkbox" id="optPageNumbers" onchange="onPageNumberOptionChange()"
+                        class="w-4 h-4 rounded cursor-pointer">
                     <span>ใส่เลขหน้าอัตโนมัติ (<span class="font-mono text-crimson-600">Page X / Y</span>)</span>
                 </label>
 
@@ -851,18 +913,21 @@
             </div>
 
             <!-- Normalize A4 Option -->
-            <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border cursor-pointer select-none font-semibold text-tech-dark">
+            <label
+                class="flex items-center gap-2.5 p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border cursor-pointer select-none font-semibold text-tech-dark">
                 <input type="checkbox" id="optNormalizeA4" class="w-4 h-4 rounded cursor-pointer">
                 <span>ปรับขนาดทุกหน้าให้เท่ากระดาษ <span class="font-mono text-crimson-600">A4</span></span>
             </label>
 
             <!-- Summary Counters -->
             <div class="grid grid-cols-2 gap-2 font-mono text-[11px]">
-                <div class="px-2.5 py-2 rounded-xl bg-gray-50 border border-tech-border flex items-center justify-between">
+                <div
+                    class="px-2.5 py-2 rounded-xl bg-gray-50 border border-tech-border flex items-center justify-between">
                     <span class="text-tech-muted">ไฟล์:</span>
                     <span id="summaryFilesCount" class="font-extrabold text-tech-dark">0</span>
                 </div>
-                <div class="px-2.5 py-2 rounded-xl bg-gray-50 border border-tech-border flex items-center justify-between">
+                <div
+                    class="px-2.5 py-2 rounded-xl bg-gray-50 border border-tech-border flex items-center justify-between">
                     <span class="text-tech-muted">หน้ารวม:</span>
                     <span id="summaryPagesCount" class="font-extrabold text-crimson-600">0</span>
                 </div>
@@ -885,7 +950,8 @@
         title="แสดงกล่องตั้งค่าการรวมไฟล์และส่งออก">
         <i class="fa-solid fa-sliders text-crimson-600"></i>
         <span>ตั้งค่า &amp; รวมไฟล์</span>
-        <span id="unhidePillPageCount" class="font-mono text-[10px] px-1.5 py-0.5 rounded-full bg-crimson-600 text-white font-extrabold">0</span>
+        <span id="unhidePillPageCount"
+            class="font-mono text-[10px] px-1.5 py-0.5 rounded-full bg-crimson-600 text-white font-extrabold">0</span>
     </button>
 
     <!-- ===================================================================== -->
@@ -940,13 +1006,16 @@
     <!-- ===================================================================== -->
     <div id="previewModal" onclick="if (event.target === this) closePreviewModal()"
         class="hidden fixed inset-0 z-[75] flex items-center justify-center bg-gray-950/85 backdrop-blur-sm p-3 sm:p-5">
-        <div class="bg-white max-w-4xl w-full h-[90dvh] rounded-2xl border-2 border-crimson-600 shadow-2xl flex flex-col overflow-hidden">
+        <div
+            class="bg-white max-w-4xl w-full h-[90dvh] rounded-2xl border-2 border-crimson-600 shadow-2xl flex flex-col overflow-hidden">
 
-            <div class="px-4 sm:px-5 py-3 bg-gray-950 text-white flex items-center justify-between gap-2 font-mono shrink-0">
+            <div
+                class="px-4 sm:px-5 py-3 bg-gray-950 text-white flex items-center justify-between gap-2 font-mono shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <span id="modalColorDot" class="w-2.5 h-2.5 rounded-full bg-crimson-500 shrink-0"></span>
                     <h4 id="modalTitle" class="font-bold text-white truncate text-xs sm:text-sm">Page Preview</h4>
-                    <span id="modalSubInfo" class="hidden sm:inline text-[10px] text-gray-400 border-l border-gray-700 pl-2.5 shrink-0"></span>
+                    <span id="modalSubInfo"
+                        class="hidden sm:inline text-[10px] text-gray-400 border-l border-gray-700 pl-2.5 shrink-0"></span>
                 </div>
                 <button type="button" onclick="closePreviewModal()"
                     class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-crimson-600 text-gray-200 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0">
@@ -954,7 +1023,8 @@
                 </button>
             </div>
 
-            <div class="px-3 sm:px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 font-mono text-xs shrink-0">
+            <div
+                class="px-3 sm:px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 font-mono text-xs shrink-0">
                 <div class="flex items-center gap-1.5">
                     <button type="button" id="modalPrevBtn" onclick="stepPreviewPage(-1)"
                         class="w-8 h-8 rounded-lg bg-tech-panel hover:bg-crimson-600 hover:text-white disabled:opacity-30 disabled:pointer-events-none text-tech-dark font-bold flex items-center justify-center transition cursor-pointer"
@@ -972,6 +1042,13 @@
                 </div>
 
                 <div class="flex items-center gap-1.5">
+                    <span
+                        class="hidden lg:inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-tech-panel text-tech-muted text-[10px] font-sans font-semibold mr-1"
+                        title="หมุนลูกกลิ้งเมาส์เพื่อซูม • คลิกลากเพื่อเลื่อน • ดับเบิลคลิกเพื่อขยายเร็ว">
+                        <i class="fa-solid fa-computer-mouse text-crimson-600"></i>
+                        <span>Scroll ซูม &bull; ลากเพื่อเลื่อน</span>
+                    </span>
+
                     <button type="button" onclick="rotatePreviewPage(-90)"
                         class="px-2 py-1.5 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 text-tech-dark font-bold transition cursor-pointer"
                         title="หมุนซ้าย 90°">
@@ -1003,24 +1080,30 @@
                 </div>
             </div>
 
-            <div class="flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg flex items-center justify-center relative">
-                <div id="modalSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/75 z-10 font-mono text-xs">
+            <div id="previewViewport"
+                class="zoom-pan-zone flex-grow min-h-0 min-w-0 overflow-auto p-4 sm:p-6 studio-stage-bg relative">
+                <div id="modalSpinner"
+                    class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/75 z-10 font-mono text-xs pointer-events-none">
                     <div class="flex items-center gap-2 text-crimson-500 font-bold">
                         <i class="fa-solid fa-circle-notch animate-spin text-base"></i>
                         <span>RENDERING...</span>
                     </div>
                 </div>
-                <canvas id="previewCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white max-w-full"></canvas>
+                <div class="min-h-full min-w-full flex">
+                    <canvas id="previewCanvas"
+                        class="m-auto shadow-2xl rounded-lg border border-gray-800 bg-white block"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ===================================================================== -->
-    <!-- 8. MERGED PDF PRE-DOWNLOAD REVIEW MODAL                               -->
+    <!-- 8. MERGED PDF PRE-DOWNLOAD REVIEW MODAL (SINGLE-PAGE & SCROLL VIEW)   -->
     <!-- ===================================================================== -->
     <div id="mergedPreviewModal" onclick="if (event.target === this) closeMergedPreviewModal()"
         class="hidden fixed inset-0 z-[80] flex items-center justify-center bg-gray-950/88 backdrop-blur-sm p-2.5 sm:p-5">
-        <div class="bg-white max-w-5xl w-full h-[92dvh] rounded-2xl border-2 border-crimson-600 shadow-2xl flex flex-col overflow-hidden">
+        <div
+            class="bg-white max-w-5xl w-full h-[92dvh] rounded-2xl border-2 border-crimson-600 shadow-2xl flex flex-col overflow-hidden">
 
             <!-- Header -->
             <div class="px-4 sm:px-5 py-3 bg-gray-950 text-white flex items-center justify-between gap-2 shrink-0">
@@ -1030,11 +1113,14 @@
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
-                            <h4 class="font-extrabold text-xs sm:text-sm text-white truncate">ตรวจสอบเอกสารฉบับรวมจริงก่อนดาวน์โหลด</h4>
-                            <span class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">READY</span>
+                            <h4 class="font-extrabold text-xs sm:text-sm text-white truncate">
+                                ตรวจสอบเอกสารฉบับรวมจริงก่อนดาวน์โหลด</h4>
+                            <span
+                                class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">READY</span>
                         </div>
                         <div class="font-mono text-[10px] text-gray-400 flex items-center gap-2 truncate mt-0.5">
-                            <span id="mergedModalFilename" class="text-gray-200 font-bold truncate">CLEVERTENSAI_MERGED.pdf</span>
+                            <span id="mergedModalFilename"
+                                class="text-gray-200 font-bold truncate">CLEVERTENSAI_MERGED.pdf</span>
                             <span>&bull;</span>
                             <span id="mergedModalFileSize" class="text-crimson-400 font-bold shrink-0">0 KB</span>
                         </div>
@@ -1047,20 +1133,39 @@
                 </button>
             </div>
 
-            <!-- Controls Bar -->
-            <div class="px-3 sm:px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 font-mono text-xs shrink-0">
-                <!-- Page Stepper -->
-                <div class="flex items-center gap-1.5">
+            <!-- Controls Bar (Interactive Mode Toggle + Page Stepper + Zoom Controls) -->
+            <div
+                class="px-3 sm:px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+
+                <!-- Left: Toggle between 'ทีละหน้า' (Single Page) & 'เลื่อนดูทั้งหมด' (Continuous Scroll) -->
+                <div
+                    class="inline-flex items-center p-0.5 rounded-xl bg-tech-panel border border-tech-border font-sans shrink-0">
+                    <button type="button" id="btnMergedModeSingle" onclick="setMergedPreviewMode('single')"
+                        class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-crimson-600 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-xs transition cursor-pointer"
+                        title="เช็กละเอียดทีละหน้า (กดลูกศรซ้าย/ขวาเพื่อเปลี่ยนหน้า)">
+                        <i class="fa-regular fa-file text-[11px]"></i>
+                        <span>ทีละหน้า</span>
+                    </button>
+                    <button type="button" id="btnMergedModeScroll" onclick="setMergedPreviewMode('scroll')"
+                        class="px-2.5 sm:px-3 py-1.5 rounded-lg text-tech-muted hover:text-tech-dark font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer"
+                        title="เลื่อนดูต่อเนื่องทุกหน้าในครั้งเดียว">
+                        <i class="fa-solid fa-arrows-up-down text-[11px]"></i>
+                        <span>เลื่อนดูทั้งหมด</span>
+                    </button>
+                </div>
+
+                <!-- Center: Page Stepper & Direct Page Jumper (Synced in both Single & Scroll modes) -->
+                <div class="flex items-center gap-1.5 font-mono">
                     <button type="button" id="mergedPrevBtn" onclick="stepMergedPreviewPage(-1)"
                         class="w-8 h-8 rounded-lg bg-tech-panel hover:bg-crimson-600 hover:text-white disabled:opacity-30 disabled:pointer-events-none text-tech-dark font-bold flex items-center justify-center transition cursor-pointer"
                         title="หน้าก่อนหน้า">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                     </button>
                     <div class="flex items-center gap-1">
-                        <input type="number" id="mergedPageInput" min="1" value="1"
-                            onchange="jumpMergedPreviewPage()"
+                        <input type="number" id="mergedPageInput" min="1" value="1" onchange="jumpMergedPreviewPage()"
                             onkeydown="if (event.key === 'Enter') { this.blur(); jumpMergedPreviewPage(); }"
-                            class="w-11 text-center py-1 rounded-lg bg-tech-panel border border-tech-border font-bold text-tech-dark focus:outline-none focus:border-crimson-600">
+                            class="w-11 text-center py-1 rounded-lg bg-tech-panel border border-tech-border font-bold text-tech-dark focus:outline-none focus:border-crimson-600"
+                            title="พิมพ์เลขหน้าเพื่อกระโดดไปหน้านั้นทันที">
                         <span class="text-tech-muted font-bold">/</span>
                         <span id="mergedTotalPages" class="font-bold text-tech-dark min-w-[18px]">1</span>
                     </div>
@@ -1071,8 +1176,8 @@
                     </button>
                 </div>
 
-                <!-- Zoom Controls -->
-                <div class="flex items-center gap-1.5">
+                <!-- Right: Zoom Controls -->
+                <div class="flex items-center gap-1.5 font-mono">
                     <button type="button" onclick="adjustMergedPreviewZoom(-0.2)"
                         class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-600 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer"
                         title="ย่อ">
@@ -1091,24 +1196,44 @@
                 </div>
             </div>
 
-            <!-- Real Synthesized PDF Canvas Viewport -->
-            <div id="mergedCanvasViewport" class="flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg flex items-center justify-center relative">
-                <div id="mergedModalSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/80 z-10 font-mono text-xs">
+            <!-- Real Synthesized PDF Canvas Viewport (Supports Single-Page Canvas & Continuous Vertical Scroll Stack) -->
+            <div id="mergedCanvasViewport"
+                class="zoom-pan-zone flex-grow min-h-0 min-w-0 overflow-auto p-3 sm:p-6 studio-stage-bg relative">
+                <div id="mergedModalSpinner"
+                    class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/80 z-20 font-mono text-xs pointer-events-none">
                     <div class="flex flex-col items-center gap-2.5 text-white">
                         <i class="fa-solid fa-circle-notch animate-spin text-2xl text-crimson-500"></i>
                         <span id="mergedSpinnerText" class="font-bold">กำลังรวมและสร้างตัวอย่าง PDF จริง...</span>
                     </div>
                 </div>
-                <canvas id="mergedPreviewCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white max-w-full"></canvas>
+
+                <!-- Mode 1 Container: Single Page Canvas (m-auto centers cleanly without clipping left/top on zoom) -->
+                <div id="mergedSingleViewWrapper" class="min-h-full min-w-full flex">
+                    <canvas id="mergedPreviewCanvas"
+                        class="m-auto shadow-2xl rounded-lg border border-gray-800 bg-white block"></canvas>
+                </div>
+
+                <!-- Mode 2 Container: Continuous Vertical Scroll Stack (Lazy Rendered, clean sheets without overlay badges) -->
+                <div id="mergedScrollViewWrapper"
+                    class="hidden min-w-full flex flex-col items-center gap-4 sm:gap-6 pb-4">
+                    <!-- Individual Page Sheets Injected Here -->
+                </div>
             </div>
 
             <!-- Modal Footer Actions -->
-            <div class="px-4 sm:px-5 py-3 bg-gray-50 border-t border-tech-border flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div
+                class="px-4 sm:px-5 py-3 bg-gray-50 border-t border-tech-border flex flex-wrap items-center justify-between gap-2 shrink-0">
                 <button type="button" onclick="closeMergedPreviewModal()"
                     class="px-4 py-2 rounded-xl bg-white hover:bg-tech-panel border border-tech-border text-tech-dark font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
                     <i class="fa-solid fa-arrow-left text-[11px]"></i>
                     <span>กลับไปแก้ไข</span>
                 </button>
+
+                <div class="hidden md:flex items-center gap-2 font-mono text-[11px] text-tech-muted">
+                    <i id="mergedModeHintIcon" class="fa-regular fa-file text-crimson-600"></i>
+                    <span id="mergedModeHintText">Scroll ซูม &bull; ลากเพื่อเลื่อน &bull; กด &larr; / &rarr;
+                        สลับหน้า</span>
+                </div>
 
                 <button type="button" id="confirmDownloadMergedBtn" onclick="confirmDownloadMergedPDF()" disabled
                     class="px-5 sm:px-6 py-2.5 rounded-xl bg-crimson-600 hover:bg-crimson-700 disabled:bg-gray-400 text-white font-mono font-bold text-xs flex items-center gap-2 red-glow transition cursor-pointer">
@@ -1127,7 +1252,8 @@
     <!-- ===================================================================== -->
     <div id="toast"
         class="fixed top-16 left-1/2 -translate-x-1/2 md:top-auto md:left-auto md:translate-x-0 md:bottom-6 md:right-6 z-[95] pointer-events-none opacity-0 transition-opacity duration-200 w-max max-w-[calc(100vw-2rem)]">
-        <div class="px-4 py-2.5 rounded-xl bg-gray-950 text-white font-mono text-xs font-bold shadow-2xl border-l-4 border-crimson-600 flex items-center gap-2.5">
+        <div
+            class="px-4 py-2.5 rounded-xl bg-gray-950 text-white font-mono text-xs font-bold shadow-2xl border-l-4 border-crimson-600 flex items-center gap-2.5">
             <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 shrink-0"></i>
             <span id="toastMessage" class="truncate">READY</span>
         </div>
@@ -1142,20 +1268,20 @@
 
             // 8 Distinct Source Colors (for visual color-coding across merged pages)
             const SOURCE_PALETTE = [
-                { bg: '#E11D48', text: '#FB7185' },
-                { bg: '#2563EB', text: '#60A5FA' },
-                { bg: '#10B981', text: '#34D399' },
-                { bg: '#F59E0B', text: '#FBBF24' },
-                { bg: '#8B5CF6', text: '#A78BFA' },
-                { bg: '#EC4899', text: '#F472B6' },
-                { bg: '#06B6D4', text: '#22D3EE' },
-                { bg: '#EA580C', text: '#FB923C' }
+                {bg: '#E11D48', text: '#FB7185'},
+                {bg: '#2563EB', text: '#60A5FA'},
+                {bg: '#10B981', text: '#34D399'},
+                {bg: '#F59E0B', text: '#FBBF24'},
+                {bg: '#8B5CF6', text: '#A78BFA'},
+                {bg: '#EC4899', text: '#F472B6'},
+                {bg: '#06B6D4', text: '#22D3EE'},
+                {bg: '#EA580C', text: '#FB923C'}
             ];
 
             const GRID_ZOOM_LEVELS = [
-                { key: 'S', classes: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5', thumbH: 'h-32 sm:h-36' },
-                { key: 'M', classes: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5', thumbH: 'h-40 sm:h-48' },
-                { key: 'L', classes: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6', thumbH: 'h-56 sm:h-64' }
+                {key: 'S', classes: 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5', thumbH: 'h-32 sm:h-36'},
+                {key: 'M', classes: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5', thumbH: 'h-40 sm:h-48'},
+                {key: 'L', classes: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6', thumbH: 'h-56 sm:h-64'}
             ];
 
             const A4_WIDTH = 595.28;
@@ -1177,7 +1303,7 @@
                 isExportCardHidden: false,
                 isMobileExportExpanded: false,
                 isDraggingCard: false,
-                cardDragOffset: { x: 0, y: 0 },
+                cardDragOffset: {x: 0, y: 0},
 
                 // Insert Popover Target
                 pendingInsertIndex: null,   // null = append to end, number = insert at exact index
@@ -1194,9 +1320,11 @@
                 // Single-Page Expand Preview Modal
                 previewIndex: -1,
                 previewZoom: 1.0,
+                previewWheelTimer: null,
 
-                // Pre-Download Merged PDF Preview Modal
+                // Pre-Download Merged PDF Preview Modal (Supports 'single' & 'scroll' modes)
                 mergedPreview: {
+                    mode: 'single',         // 'single' | 'scroll'
                     bytes: null,
                     filename: 'CLEVERTENSAI_MERGED.pdf',
                     sizeText: '',
@@ -1204,7 +1332,12 @@
                     totalPages: 0,
                     currentPage: 1,
                     zoom: 1.0,
-                    renderTask: null
+                    wheelTimer: null,
+                    renderTask: null,
+                    scrollObserver: null,
+                    scrollRenderTasks: new Map(),
+                    renderedScrollZooms: new Map(),
+                    pageDimensions: []
                 },
 
                 // Lazy Thumbnail Observer & Task Cache
@@ -1258,7 +1391,7 @@
 
             function getSourceColor(sourceId) {
                 const src = state.sources[sourceId];
-                if (!src) return { bg: '#64748B', text: '#94A3B8' };
+                if (!src) return {bg: '#64748B', text: '#94A3B8'};
                 return SOURCE_PALETTE[src.colorIndex % SOURCE_PALETTE.length];
             }
 
@@ -1323,7 +1456,7 @@
             function parsePageRange(rangeStr, totalPages) {
                 const clean = (rangeStr || '').trim().toLowerCase();
                 if (!clean || clean === 'all' || clean === 'ทั้งหมด') {
-                    return Array.from({ length: totalPages }, (_, i) => i + 1);
+                    return Array.from({length: totalPages}, (_, i) => i + 1);
                 }
                 const result = [];
                 for (const part of clean.split(',')) {
@@ -1413,7 +1546,7 @@
             }
 
             // =================================================================
-            // FILE IMPORT (PDF + PNG/JPG/WEBP) & DEMO GENERATOR
+            // FILE IMPORT (PDF + PNG/JPG/WebP) & DEMO GENERATOR
             // =================================================================
             function triggerFilePicker(insertIdx = null) {
                 state.pendingInsertIndex = (insertIdx === null || insertIdx === undefined) ? null : insertIdx;
@@ -1462,9 +1595,8 @@
                         ? state.pages.length
                         : clamp(insertAtIndex, 0, state.pages.length);
 
-                    // Mark inserted pages as edited if inserted mid-document after initial load
                     if (!wasEmpty && insertAtIndex !== null && insertAtIndex !== undefined) {
-                        collectedPages.forEach(p => { p.isEdited = true; });
+                        collectedPages.forEach(p => {p.isEdited = true;});
                     }
 
                     state.pages.splice(targetIdx, 0, ...collectedPages);
@@ -1493,13 +1625,13 @@
                     const bytes = new Uint8Array(buf);
 
                     try {
-                        await PDFLib.PDFDocument.load(bytes.slice(0), { ignoreEncryption: false });
+                        await PDFLib.PDFDocument.load(bytes.slice(0), {ignoreEncryption: false});
                     } catch (encErr) {
                         showToast(`ไฟล์ "${file.name}" ติดรหัสผ่านป้องกัน ไม่สามารถนำเข้าได้`, 'error');
                         return [];
                     }
 
-                    const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise;
+                    const pdfjsDoc = await pdfjsLib.getDocument({data: bytes.slice(0)}).promise;
                     const sourceId = uid('src_pdf');
                     const colorIndex = state.sourceColorCounter++;
 
@@ -1518,7 +1650,7 @@
                     for (let p = 1; p <= pdfjsDoc.numPages; p++) {
                         const pg = await pdfjsDoc.getPage(p);
                         const baseRot = normalizeAngle(pg.rotate || 0);
-                        const vp = pg.getViewport({ scale: 1.0, rotation: baseRot });
+                        const vp = pg.getViewport({scale: 1.0, rotation: baseRot});
                         list.push({
                             id: uid('pg'),
                             kind: 'pdf',
@@ -1609,7 +1741,7 @@
 
                 try {
                     showToast('กำลังสร้างชุดเอกสารตัวอย่าง 2 ไฟล์ (5 หน้า)...', 'info');
-                    const { PDFDocument, StandardFonts, rgb } = PDFLib;
+                    const {PDFDocument, StandardFonts, rgb} = PDFLib;
 
                     // Sample Document 1: 3-page Executive Report
                     const doc1 = await PDFDocument.create();
@@ -1625,17 +1757,17 @@
 
                     for (let i = 0; i < 3; i++) {
                         const p = doc1.addPage([A4_WIDTH, A4_HEIGHT]);
-                        p.drawRectangle({ x: 0, y: A4_HEIGHT - 130, width: A4_WIDTH, height: 130, color: doc1Colors[i] });
-                        p.drawText('CLEVERTENSAI DEMO REPORT', { x: 48, y: A4_HEIGHT - 55, size: 12, font: fontBold1, color: rgb(1, 1, 1) });
-                        p.drawText(doc1Titles[i], { x: 48, y: A4_HEIGHT - 95, size: 24, font: fontBold1, color: rgb(1, 1, 1) });
-                        p.drawText(`Source File #1 — Page ${i + 1} of 3`, { x: 48, y: A4_HEIGHT - 180, size: 14, font: fontBold1, color: rgb(0.1, 0.15, 0.25) });
+                        p.drawRectangle({x: 0, y: A4_HEIGHT - 130, width: A4_WIDTH, height: 130, color: doc1Colors[i]});
+                        p.drawText('CLEVERTENSAI DEMO REPORT', {x: 48, y: A4_HEIGHT - 55, size: 12, font: fontBold1, color: rgb(1, 1, 1)});
+                        p.drawText(doc1Titles[i], {x: 48, y: A4_HEIGHT - 95, size: 24, font: fontBold1, color: rgb(1, 1, 1)});
+                        p.drawText(`Source File #1 — Page ${i + 1} of 3`, {x: 48, y: A4_HEIGHT - 180, size: 14, font: fontBold1, color: rgb(0.1, 0.15, 0.25)});
 
                         for (let row = 0; row < 5; row++) {
                             const yPos = A4_HEIGHT - 245 - row * 95;
-                            p.drawRectangle({ x: 48, y: yPos, width: A4_WIDTH - 96, height: 68, color: rgb(0.95, 0.96, 0.98) });
-                            p.drawRectangle({ x: 48, y: yPos, width: 6, height: 68, color: doc1Colors[i] });
-                            p.drawText(`Section ${i + 1}.${row + 1} — Sample Content Block`, { x: 68, y: yPos + 42, size: 12, font: fontBold1, color: rgb(0.12, 0.16, 0.24) });
-                            p.drawText('Drag & drop this page in Pages Overview or Grid to reorder instantly.', { x: 68, y: yPos + 20, size: 10, font: fontReg1, color: rgb(0.4, 0.45, 0.55) });
+                            p.drawRectangle({x: 48, y: yPos, width: A4_WIDTH - 96, height: 68, color: rgb(0.95, 0.96, 0.98)});
+                            p.drawRectangle({x: 48, y: yPos, width: 6, height: 68, color: doc1Colors[i]});
+                            p.drawText(`Section ${i + 1}.${row + 1} — Sample Content Block`, {x: 68, y: yPos + 42, size: 12, font: fontBold1, color: rgb(0.12, 0.16, 0.24)});
+                            p.drawText('Drag & drop this page in Pages Overview or Grid to reorder instantly.', {x: 68, y: yPos + 20, size: 10, font: fontReg1, color: rgb(0.4, 0.45, 0.55)});
                         }
                     }
 
@@ -1647,11 +1779,11 @@
                     const doc2Titles = ['APPENDIX A: ANALYTICS', 'APPENDIX B: METRICS'];
                     for (let i = 0; i < 2; i++) {
                         const p = doc2.addPage([A4_WIDTH, A4_HEIGHT]);
-                        p.drawRectangle({ x: 0, y: A4_HEIGHT - 120, width: A4_WIDTH, height: 120, color: rgb(0.06, 0.09, 0.16) });
-                        p.drawRectangle({ x: 0, y: A4_HEIGHT - 126, width: A4_WIDTH, height: 6, color: rgb(0.96, 0.62, 0.04) });
-                        p.drawText('APPENDIX ATTACHMENT', { x: 48, y: A4_HEIGHT - 48, size: 11, font: fontBold2, color: rgb(0.96, 0.62, 0.04) });
-                        p.drawText(doc2Titles[i], { x: 48, y: A4_HEIGHT - 86, size: 22, font: fontBold2, color: rgb(1, 1, 1) });
-                        p.drawText(`Source File #2 — Page ${i + 1} of 2`, { x: 48, y: A4_HEIGHT - 175, size: 14, font: fontBold2, color: rgb(0.1, 0.15, 0.25) });
+                        p.drawRectangle({x: 0, y: A4_HEIGHT - 120, width: A4_WIDTH, height: 120, color: rgb(0.06, 0.09, 0.16)});
+                        p.drawRectangle({x: 0, y: A4_HEIGHT - 126, width: A4_WIDTH, height: 6, color: rgb(0.96, 0.62, 0.04)});
+                        p.drawText('APPENDIX ATTACHMENT', {x: 48, y: A4_HEIGHT - 48, size: 11, font: fontBold2, color: rgb(0.96, 0.62, 0.04)});
+                        p.drawText(doc2Titles[i], {x: 48, y: A4_HEIGHT - 86, size: 22, font: fontBold2, color: rgb(1, 1, 1)});
+                        p.drawText(`Source File #2 — Page ${i + 1} of 2`, {x: 48, y: A4_HEIGHT - 175, size: 14, font: fontBold2, color: rgb(0.1, 0.15, 0.25)});
 
                         const bars = [140, 220, 185, 290, 250, 320];
                         bars.forEach((bh, bi) => {
@@ -1674,8 +1806,8 @@
 
                     const bytes1 = await doc1.save();
                     const bytes2 = await doc2.save();
-                    const file1 = new File([bytes1], 'Report_2026_Demo.pdf', { type: 'application/pdf' });
-                    const file2 = new File([bytes2], 'Appendix_Charts_Demo.pdf', { type: 'application/pdf' });
+                    const file1 = new File([bytes1], 'Report_2026_Demo.pdf', {type: 'application/pdf'});
+                    const file2 = new File([bytes2], 'Appendix_Charts_Demo.pdf', {type: 'application/pdf'});
 
                     await handleIncomingFiles([file1, file2], null);
                 } catch (err) {
@@ -1816,6 +1948,9 @@
 
             function setViewMode(mode) {
                 state.viewMode = mode === 'list' ? 'list' : 'grid';
+                cancelAllThumbTasks();
+                state.renderedMainThumbKeys.clear();
+
                 const btnGrid = $('btnViewGrid');
                 const btnList = $('btnViewList');
                 const gridEl = $('pageGridContainer');
@@ -1828,8 +1963,14 @@
 
                 if (btnGrid) btnGrid.className = state.viewMode === 'grid' ? activeCls : idleCls;
                 if (btnList) btnList.className = state.viewMode === 'list' ? activeCls : idleCls;
-                if (gridEl) gridEl.classList.toggle('hidden', state.viewMode !== 'grid');
-                if (listEl) listEl.classList.toggle('hidden', state.viewMode !== 'list');
+                if (gridEl) {
+                    gridEl.classList.toggle('hidden', state.viewMode !== 'grid');
+                    if (state.viewMode !== 'grid') gridEl.innerHTML = ''; // <-- เพิ่ม: ล้าง DOM รายหน้าเมื่อซ่อน ไม่ให้ ID ซ้ำ
+                }
+                if (listEl) {
+                    listEl.classList.toggle('hidden', state.viewMode !== 'list');
+                    if (state.viewMode !== 'list') listEl.innerHTML = ''; // <-- เพิ่ม: ล้าง DOM รายไฟล์เมื่อซ่อน ไม่ให้ ID ซ้ำ
+                }
                 if (pillLbl) pillLbl.textContent = state.viewMode === 'grid' ? 'รายไฟล์' : 'รายหน้า';
                 if (gridSizeGrp) gridSizeGrp.classList.toggle('lg:inline-flex', state.viewMode === 'grid');
 
@@ -2078,7 +2219,7 @@
                     const vpRect = vp.getBoundingClientRect();
                     const cRect = card.getBoundingClientRect();
                     const targetTop = clamp(Math.round(vp.scrollTop + (cRect.top - vpRect.top) - 24), 0, Math.max(0, vp.scrollHeight - vp.clientHeight));
-                    vp.scrollTo({ top: targetTop, behavior: 'smooth' });
+                    vp.scrollTo({top: targetTop, behavior: 'smooth'});
                 });
             }
 
@@ -2224,7 +2365,7 @@
             // STAGE RENDERING: VIEW A (PAGE GRID) & VIEW B (FILE LIST)
             // =================================================================
             function cancelAllThumbTasks() {
-                state.thumbRenderTasks.forEach(t => { try { t.cancel(); } catch (_) { } });
+                state.thumbRenderTasks.forEach(t => {try {t.cancel();} catch (_) { } });
                 state.thumbRenderTasks.clear();
             }
 
@@ -2266,7 +2407,7 @@
                 updateLivePageNumberOverlays();
             }
 
-            // VIEW A: PAGE GRID VIEW (Single-Row Action Bar + Dedicated Dashed Empty Add-Page Card)
+            // VIEW A: PAGE GRID VIEW
             function renderPageGridView() {
                 const grid = $('pageGridContainer');
                 if (!grid) return;
@@ -2300,7 +2441,6 @@
 
                     card.addEventListener('click', () => setActivePageId(pg.id));
 
-                    // Drag-and-Drop Reordering across Files
                     card.addEventListener('dragstart', (e) => {
                         state.draggedPageIndex = idx;
                         card.classList.add('is-dragging');
@@ -2371,7 +2511,7 @@
                             </span>
                         </div>
 
-                        <!-- Clean SINGLE-ROW Bottom Toolbar (NO add-page button inside card) -->
+                        <!-- Clean SINGLE-ROW Bottom Toolbar -->
                         <div class="flex items-center justify-between gap-1 pt-0.5 flex-nowrap">
                             <div class="flex items-center gap-0.5 shrink-0">
                                 <button type="button" onclick="event.stopPropagation(); movePageBy(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}
@@ -2501,7 +2641,7 @@
                 groups.forEach((grp, gIdx) => {
                     const isBlank = grp.kind === 'blank';
                     const src = !isBlank ? state.sources[grp.sourceId] : null;
-                    const col = !isBlank ? getSourceColor(grp.sourceId) : { bg: '#64748B' };
+                    const col = !isBlank ? getSourceColor(grp.sourceId) : {bg: '#64748B'};
                     const rot = normalizeAngle(grp.firstPage.rotation);
                     const rangeVal = (!isBlank && src && src.kind === 'pdf')
                         ? formatPageIndicesToRange(grp.sourcePageNums, src.totalPages)
@@ -2631,6 +2771,13 @@
                 });
 
                 container.appendChild(frag);
+
+                // สั่งเรนเดอร์รูปตัวอย่างของทุกไฟล์ในโหมดรายไฟล์ทันทีหลังแปะลงหน้าเว็บ
+                groups.forEach(grp => {
+                    if (grp.kind !== 'blank') {
+                        renderThumbnailToCanvas(grp.firstPage.id, `thumbCanvas_${grp.firstPage.id}`, state.renderedMainThumbKeys, 160);
+                    }
+                });
             }
 
             // =================================================================
@@ -2643,7 +2790,8 @@
 
                 const rot = normalizeAngle(pg.rotation);
                 const cacheKey = `${pg.sourceId}_${pg.sourcePageIndex}_r${rot}`;
-                if (keyMap.get(pageId) === cacheKey) return;
+                // 1. เช็กเพิ่มว่าตัว <canvas> ปัจจุบันถูกวาดด้วย cacheKey นี้แล้วจริงๆ หรือไม่
+                if (keyMap.get(pageId) === cacheKey && canvas.dataset.renderedKey === cacheKey) return;
 
                 const src = state.sources[pg.sourceId];
                 if (!src) return;
@@ -2667,6 +2815,7 @@
                         ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
                         ctx.restore();
                         keyMap.set(pageId, cacheKey);
+                        canvas.dataset.renderedKey = cacheKey; // 2. บันทึกลงบน <canvas> รูปภาพ
                     } catch (err) {
                         console.error('Image thumb error:', err);
                     }
@@ -2676,16 +2825,16 @@
                 const taskKey = `${canvasId}`;
                 const existingTask = state.thumbRenderTasks.get(taskKey);
                 if (existingTask) {
-                    try { existingTask.cancel(); } catch (_) { }
+                    try {existingTask.cancel();} catch (_) { }
                     state.thumbRenderTasks.delete(taskKey);
                 }
 
                 try {
                     const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                     const totalRot = normalizeAngle((pdfPage.rotate || 0) + rot);
-                    const vp1 = pdfPage.getViewport({ scale: 1.0, rotation: totalRot });
+                    const vp1 = pdfPage.getViewport({scale: 1.0, rotation: totalRot});
                     const scale = Math.min(maxSide / Math.max(1, vp1.width), (maxSide * 1.25) / Math.max(1, vp1.height));
-                    const vp = pdfPage.getViewport({ scale, rotation: totalRot });
+                    const vp = pdfPage.getViewport({scale, rotation: totalRot});
 
                     canvas.width = Math.max(24, Math.round(vp.width));
                     canvas.height = Math.max(24, Math.round(vp.height));
@@ -2694,11 +2843,12 @@
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    const task = pdfPage.render({ canvasContext: ctx, viewport: vp });
+                    const task = pdfPage.render({canvasContext: ctx, viewport: vp});
                     state.thumbRenderTasks.set(taskKey, task);
                     await task.promise;
                     state.thumbRenderTasks.delete(taskKey);
                     keyMap.set(pageId, cacheKey);
+                    canvas.dataset.renderedKey = cacheKey; // 3. บันทึกลงบน <canvas> PDF
                 } catch (err) {
                     if (err && err.name === 'RenderingCancelledException') return;
                     console.error('PDF thumb error:', err);
@@ -2738,7 +2888,7 @@
                 const pg = state.pages[idx];
                 if (!pg) return;
                 pushUndoSnapshot();
-                const copy = { ...pg, id: uid('pg'), isEdited: true };
+                const copy = {...pg, id: uid('pg'), isEdited: true};
                 state.pages.splice(idx + 1, 0, copy);
                 state.activePageId = copy.id;
                 syncWorkspaceUI();
@@ -2883,7 +3033,7 @@
                 groups.sort((a, b) => {
                     const nameA = a.kind === 'blank' ? 'ZZZZ_BLANK' : (state.sources[a.sourceId]?.name || '');
                     const nameB = b.kind === 'blank' ? 'ZZZZ_BLANK' : (state.sources[b.sourceId]?.name || '');
-                    const cmp = nameA.localeCompare(nameB, 'th', { numeric: true });
+                    const cmp = nameA.localeCompare(nameB, 'th', {numeric: true});
                     return dir === 'asc' ? cmp : -cmp;
                 });
                 rebuildPagesFromGroupOrder(groups);
@@ -2907,6 +3057,13 @@
             // =================================================================
             // SINGLE-PAGE EXPAND PREVIEW MODAL (WITH LIVE PAGE NUMBER OVERLAY)
             // =================================================================
+            function updateViewportPanCursor(viewportEl) {
+                if (!viewportEl) return;
+                const canPan = (viewportEl.scrollWidth > viewportEl.clientWidth + 2) ||
+                    (viewportEl.scrollHeight > viewportEl.clientHeight + 2);
+                viewportEl.classList.toggle('can-pan', canPan);
+            }
+
             function openPreviewModal(seqIndex) {
                 if (seqIndex < 0 || seqIndex >= state.pages.length) return;
                 state.previewIndex = seqIndex;
@@ -2916,6 +3073,12 @@
             }
 
             function closePreviewModal() {
+                if (state.previewWheelTimer) {
+                    clearTimeout(state.previewWheelTimer);
+                    state.previewWheelTimer = null;
+                }
+                const vp = $('previewViewport');
+                if (vp) vp.classList.remove('can-pan', 'is-panning');
                 $('previewModal').classList.add('hidden');
                 state.previewIndex = -1;
             }
@@ -2968,15 +3131,34 @@
 
                 try {
                     const canvas = $('previewCanvas');
+                    const viewportEl = $('previewViewport');
+                    const rot = normalizeAngle(pg.rotation);
+                    const swapped = rot === 90 || rot === 270;
+                    const pageW = swapped ? (pg.height || A4_HEIGHT) : (pg.width || A4_WIDTH);
+                    const pageH = swapped ? (pg.width || A4_WIDTH) : (pg.height || A4_HEIGHT);
+
+                    const padX = isMobile() ? 36 : 56;
+                    const padY = isMobile() ? 36 : 56;
+                    const availW = Math.max(200, (viewportEl ? viewportEl.clientWidth : window.innerWidth * 0.85) - padX);
+                    const availH = Math.max(240, (viewportEl ? viewportEl.clientHeight : window.innerHeight * 0.7) - padY);
+                    const fitBaseScale = clamp(Math.min(availW / pageW, availH / pageH), 0.25, 2.2);
+
+                    const cssW = Math.max(1, Math.round(pageW * fitBaseScale * state.previewZoom));
+                    const cssH = Math.max(1, Math.round(pageH * fitBaseScale * state.previewZoom));
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
                     const showNums = isAutoPageNumEnabled();
-                    const rendered = await renderPageToCanvas(pg, state.previewZoom * 1.35, showNums, {
+                    const rendered = await renderPageToCanvas(pg, fitBaseScale * state.previewZoom * dpr, showNums, {
                         num: state.previewIndex + 1,
                         total: state.pages.length,
                         pos: getAutoPageNumPos()
                     });
                     canvas.width = rendered.width;
                     canvas.height = rendered.height;
+                    canvas.style.width = `${cssW}px`;
+                    canvas.style.height = `${cssH}px`;
                     canvas.getContext('2d').drawImage(rendered, 0, 0);
+                    updateViewportPanCursor(viewportEl);
                 } catch (err) {
                     console.error('Modal preview error:', err);
                 } finally {
@@ -3027,12 +3209,12 @@
                     const src = state.sources[pg.sourceId];
                     const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                     const totalRot = normalizeAngle((pdfPage.rotate || 0) + rot);
-                    const vp = pdfPage.getViewport({ scale, rotation: totalRot });
+                    const vp = pdfPage.getViewport({scale, rotation: totalRot});
                     c.width = Math.max(1, Math.round(vp.width));
                     c.height = Math.max(1, Math.round(vp.height));
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, c.width, c.height);
-                    await pdfPage.render({ canvasContext: ctx, viewport: vp }).promise;
+                    await pdfPage.render({canvasContext: ctx, viewport: vp}).promise;
                 }
 
                 if (drawPageNum && pageNumMeta) {
@@ -3090,7 +3272,8 @@
             }
 
             // =================================================================
-            // PDF-LIB SYNTHESIS ENGINE + PRE-DOWNLOAD MERGED PREVIEW MODAL
+            // PDF-LIB SYNTHESIS ENGINE + DUAL-MODE MERGED PREVIEW MODAL
+            // (MODE 1: 'single' ทีละหน้า | MODE 2: 'scroll' เลื่อนดูทั้งหมด)
             // =================================================================
             function drawRotationAwarePageNumber(page, label, font, position) {
                 const fontSize = 9.5;
@@ -3214,6 +3397,83 @@
                 return await mergedDoc.save();
             }
 
+            function cleanupMergedScrollResources() {
+                const mp = state.mergedPreview;
+                if (mp.scrollObserver) {
+                    mp.scrollObserver.disconnect();
+                    mp.scrollObserver = null;
+                }
+                mp.scrollRenderTasks.forEach(task => {
+                    try {task.cancel();} catch (_) { }
+                });
+                mp.scrollRenderTasks.clear();
+                mp.renderedScrollZooms.clear();
+            }
+
+            function updateMergedModeButtonsUI() {
+                const mode = state.mergedPreview.mode;
+                const btnSingle = $('btnMergedModeSingle');
+                const btnScroll = $('btnMergedModeScroll');
+                const singleWrap = $('mergedSingleViewWrapper');
+                const scrollWrap = $('mergedScrollViewWrapper');
+                const hintIcon = $('mergedModeHintIcon');
+                const hintText = $('mergedModeHintText');
+
+                const activeCls = 'px-2.5 sm:px-3 py-1.5 rounded-lg bg-crimson-600 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-xs transition cursor-pointer';
+                const idleCls = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-tech-muted hover:text-tech-dark font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
+
+                if (btnSingle) btnSingle.className = mode === 'single' ? activeCls : idleCls;
+                if (btnScroll) btnScroll.className = mode === 'scroll' ? activeCls : idleCls;
+
+                if (singleWrap) singleWrap.classList.toggle('hidden', mode !== 'single');
+                if (scrollWrap) scrollWrap.classList.toggle('hidden', mode !== 'scroll');
+
+                if (hintIcon && hintText) {
+                    if (mode === 'single') {
+                        hintIcon.className = 'fa-regular fa-file text-crimson-600';
+                        hintText.textContent = 'Scroll ซูม • ลากเพื่อเลื่อน • กด ← / → สลับหน้า';
+                    } else {
+                        hintIcon.className = 'fa-solid fa-arrows-up-down text-crimson-600';
+                        hintText.textContent = 'Ctrl+Scroll ซูม • ลากเพื่อเลื่อน • ดับเบิลคลิกขยายเร็ว';
+                    }
+                }
+            }
+
+            function updateMergedStepperControls() {
+                const mp = state.mergedPreview;
+                $('mergedPageInput').value = mp.currentPage;
+                $('mergedZoomLabel').textContent = `${Math.round(mp.zoom * 100)}%`;
+                $('mergedPrevBtn').disabled = mp.currentPage <= 1;
+                $('mergedNextBtn').disabled = mp.currentPage >= mp.totalPages;
+            }
+
+            function highlightActiveScrollPageCard(pageNum) {
+                document.querySelectorAll('.merged-scroll-sheet.is-current-scroll-page').forEach(el => {
+                    el.classList.remove('is-current-scroll-page');
+                });
+                const activeSheet = $(`mergedScrollSheet_${pageNum}`);
+                if (activeSheet) {
+                    activeSheet.classList.add('is-current-scroll-page');
+                }
+            }
+
+            async function setMergedPreviewMode(mode) {
+                const nextMode = mode === 'scroll' ? 'scroll' : 'single';
+                const mp = state.mergedPreview;
+                if (mp.mode === nextMode && mp.pdfjsDoc) return;
+
+                mp.mode = nextMode;
+                updateMergedModeButtonsUI();
+
+                if (!mp.pdfjsDoc) return;
+
+                if (nextMode === 'single') {
+                    await renderMergedPreviewPage();
+                } else {
+                    await buildContinuousScrollPreview(true);
+                }
+            }
+
             async function openMergedPreviewModal() {
                 if (state.pages.length === 0) return;
                 if (typeof PDFLib === 'undefined' || typeof pdfjsLib === 'undefined') {
@@ -3225,6 +3485,9 @@
                 const safeBase = rawName.replace(/\.pdf$/i, '') || `CLEVERTENSAI_MERGED_${Date.now()}`;
                 const finalFilename = `${safeBase}.pdf`;
 
+                cleanupMergedScrollResources();
+                const preservedMode = state.mergedPreview.mode || 'single';
+
                 // Open Modal immediately with spinner
                 $('mergedPreviewModal').classList.remove('hidden');
                 $('mergedModalSpinner').classList.remove('hidden');
@@ -3232,12 +3495,24 @@
                 $('confirmDownloadMergedBtn').disabled = true;
                 $('mergedModalFilename').textContent = finalFilename;
                 $('mergedModalFileSize').textContent = 'กำลังคำนวณ...';
+                $('mergedScrollViewWrapper').innerHTML = '';
+
+                updateMergedModeButtonsUI();
 
                 try {
                     const outBytes = await synthesizeMergedPdfBytes();
-                    const pdfjsDoc = await pdfjsLib.getDocument({ data: outBytes.slice(0) }).promise;
+                    const pdfjsDoc = await pdfjsLib.getDocument({data: outBytes.slice(0)}).promise;
+
+                    // Pre-cache page aspect ratios for instant crisp placeholder sizing in Scroll Mode
+                    const pageDimensions = [];
+                    for (let p = 1; p <= pdfjsDoc.numPages; p++) {
+                        const pg = await pdfjsDoc.getPage(p);
+                        const vp1 = pg.getViewport({scale: 1.0});
+                        pageDimensions.push({width: vp1.width, height: vp1.height});
+                    }
 
                     state.mergedPreview = {
+                        mode: preservedMode,
                         bytes: outBytes,
                         filename: finalFilename,
                         sizeText: formatBytes(outBytes.byteLength),
@@ -3245,7 +3520,12 @@
                         totalPages: pdfjsDoc.numPages,
                         currentPage: 1,
                         zoom: 1.0,
-                        renderTask: null
+                        wheelTimer: null,
+                        renderTask: null,
+                        scrollObserver: null,
+                        scrollRenderTasks: new Map(),
+                        renderedScrollZooms: new Map(),
+                        pageDimensions
                     };
 
                     $('mergedModalFileSize').textContent = `${state.mergedPreview.sizeText} • ${pdfjsDoc.numPages} หน้า`;
@@ -3254,7 +3534,13 @@
                     $('mergedPageInput').value = 1;
                     $('confirmDownloadMergedBtn').disabled = false;
 
-                    await renderMergedPreviewPage();
+                    updateMergedModeButtonsUI();
+
+                    if (state.mergedPreview.mode === 'scroll') {
+                        await buildContinuousScrollPreview(true);
+                    } else {
+                        await renderMergedPreviewPage();
+                    }
                 } catch (err) {
                     console.error('Merged preview synthesis error:', err);
                     closeMergedPreviewModal();
@@ -3262,12 +3548,25 @@
                 }
             }
 
+            // Calculate dynamic fit-to-container base scale so 100% zoom never overflows #mergedCanvasViewport
+            function getMergedFitBaseScale(pageW, pageH) {
+                const viewportEl = $('mergedCanvasViewport');
+                const padX = isMobile() ? 28 : 56;
+                const padY = isMobile() ? 28 : 56;
+                const availW = Math.max(200, (viewportEl ? viewportEl.clientWidth : window.innerWidth * 0.88) - padX);
+                const availH = Math.max(240, (viewportEl ? viewportEl.clientHeight : window.innerHeight * 0.72) - padY);
+                const w = Math.max(1, pageW || A4_WIDTH);
+                const h = Math.max(1, pageH || A4_HEIGHT);
+                return clamp(Math.min(availW / w, availH / h), 0.2, 2.2);
+            }
+
+            // Mode 1 Renderer: Single Page Canvas
             async function renderMergedPreviewPage() {
                 const mp = state.mergedPreview;
                 if (!mp.pdfjsDoc) return;
 
                 if (mp.renderTask) {
-                    try { mp.renderTask.cancel(); } catch (_) { }
+                    try {mp.renderTask.cancel();} catch (_) { }
                     mp.renderTask = null;
                 }
 
@@ -3276,25 +3575,35 @@
 
                 try {
                     const page = await mp.pdfjsDoc.getPage(mp.currentPage);
-                    const vp = page.getViewport({ scale: mp.zoom * 1.35 });
+                    const vp1 = page.getViewport({scale: 1.0});
+                    const baseScale = getMergedFitBaseScale(vp1.width, vp1.height);
+                    const effectiveScale = baseScale * mp.zoom;
+
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    const cssVp = page.getViewport({scale: effectiveScale});
+                    const renderVp = page.getViewport({scale: effectiveScale * dpr});
+
                     const canvas = $('mergedPreviewCanvas');
-                    canvas.width = Math.max(1, Math.round(vp.width));
-                    canvas.height = Math.max(1, Math.round(vp.height));
+                    const cssW = Math.max(1, Math.round(cssVp.width));
+                    const cssH = Math.max(1, Math.round(cssVp.height));
+
+                    canvas.width = Math.max(1, Math.round(renderVp.width));
+                    canvas.height = Math.max(1, Math.round(renderVp.height));
+                    canvas.style.width = `${cssW}px`;
+                    canvas.style.height = `${cssH}px`;
 
                     const ctx = canvas.getContext('2d');
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    const task = page.render({ canvasContext: ctx, viewport: vp });
+                    const task = page.render({canvasContext: ctx, viewport: renderVp});
                     mp.renderTask = task;
                     await task.promise;
                     mp.renderTask = null;
 
-                    $('mergedPageInput').value = mp.currentPage;
-                    $('mergedZoomLabel').textContent = `${Math.round(mp.zoom * 100)}%`;
-                    $('mergedPrevBtn').disabled = mp.currentPage <= 1;
-                    $('mergedNextBtn').disabled = mp.currentPage >= mp.totalPages;
+                    updateMergedStepperControls();
+                    updateViewportPanCursor($('mergedCanvasViewport'));
                 } catch (err) {
                     if (err && err.name === 'RenderingCancelledException') return;
                     console.error('Merged page render error:', err);
@@ -3303,12 +3612,198 @@
                 }
             }
 
+            // Mode 2 Renderer: Continuous Vertical Scroll Stack with Lazy IntersectionObserver (No "Sheet X/Y" Overlay)
+            async function buildContinuousScrollPreview(scrollToCurrent = false) {
+                const mp = state.mergedPreview;
+                if (!mp.pdfjsDoc) return;
+
+                $('mergedModalSpinner').classList.add('hidden');
+                cleanupMergedScrollResources();
+
+                const wrapper = $('mergedScrollViewWrapper');
+                const viewportEl = $('mergedCanvasViewport');
+                if (!wrapper || !viewportEl) return;
+
+                wrapper.innerHTML = '';
+                const frag = document.createDocumentFragment();
+
+                for (let p = 1; p <= mp.totalPages; p++) {
+                    const dim = mp.pageDimensions[p - 1] || {width: A4_WIDTH, height: A4_HEIGHT};
+                    const baseScale = getMergedFitBaseScale(dim.width, dim.height);
+                    const effectiveScale = baseScale * mp.zoom;
+                    const estW = Math.max(120, Math.round(dim.width * effectiveScale));
+                    const estH = Math.max(160, Math.round(dim.height * effectiveScale));
+
+                    const sheet = document.createElement('div');
+                    sheet.id = `mergedScrollSheet_${p}`;
+                    sheet.dataset.pageNum = String(p);
+                    sheet.className = `merged-scroll-sheet relative rounded-xl border-2 border-gray-800 bg-white shadow-2xl overflow-hidden flex items-center justify-center shrink-0 ${p === mp.currentPage ? 'is-current-scroll-page' : ''}`;
+                    sheet.style.width = `${estW}px`;
+                    sheet.style.height = `${estH}px`;
+
+                    const canvas = document.createElement('canvas');
+                    canvas.id = `mergedScrollCanvas_${p}`;
+                    canvas.width = estW;
+                    canvas.height = estH;
+                    canvas.style.width = `${estW}px`;
+                    canvas.style.height = `${estH}px`;
+                    canvas.className = 'block bg-white';
+
+                    sheet.appendChild(canvas);
+                    frag.appendChild(sheet);
+                }
+
+                wrapper.appendChild(frag);
+                updateMergedStepperControls();
+                updateViewportPanCursor(viewportEl);
+
+                // Setup IntersectionObserver for Lazy High-DPI Page Rendering
+                mp.scrollObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        const pageNum = parseInt(entry.target.dataset.pageNum, 10);
+                        if (!isNaN(pageNum)) {
+                            renderMergedScrollPageCanvas(pageNum);
+                        }
+                    });
+                }, {
+                    root: viewportEl,
+                    rootMargin: '450px 0px 450px 0px',
+                    threshold: 0.01
+                });
+
+                for (let p = 1; p <= mp.totalPages; p++) {
+                    const sheetEl = $(`mergedScrollSheet_${p}`);
+                    if (sheetEl) mp.scrollObserver.observe(sheetEl);
+                }
+
+                if (scrollToCurrent) {
+                    requestAnimationFrame(() => {
+                        scrollToMergedPreviewPage(mp.currentPage, 'auto');
+                    });
+                }
+            }
+
+            async function renderMergedScrollPageCanvas(pageNum) {
+                const mp = state.mergedPreview;
+                if (!mp.pdfjsDoc || mp.mode !== 'scroll') return;
+
+                const zoomKey = mp.zoom.toFixed(2);
+                if (mp.renderedScrollZooms.get(pageNum) === zoomKey) return;
+
+                const canvas = $(`mergedScrollCanvas_${pageNum}`);
+                const sheet = $(`mergedScrollSheet_${pageNum}`);
+                if (!canvas || !sheet) return;
+
+                const existingTask = mp.scrollRenderTasks.get(pageNum);
+                if (existingTask) {
+                    try {existingTask.cancel();} catch (_) { }
+                    mp.scrollRenderTasks.delete(pageNum);
+                }
+
+                try {
+                    const page = await mp.pdfjsDoc.getPage(pageNum);
+                    const vp1 = page.getViewport({scale: 1.0});
+                    const baseScale = getMergedFitBaseScale(vp1.width, vp1.height);
+                    const effectiveScale = baseScale * mp.zoom;
+
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    const cssVp = page.getViewport({scale: effectiveScale});
+                    const renderVp = page.getViewport({scale: effectiveScale * dpr});
+
+                    const cssW = Math.max(1, Math.round(cssVp.width));
+                    const cssH = Math.max(1, Math.round(cssVp.height));
+
+                    canvas.width = Math.max(1, Math.round(renderVp.width));
+                    canvas.height = Math.max(1, Math.round(renderVp.height));
+                    canvas.style.width = `${cssW}px`;
+                    canvas.style.height = `${cssH}px`;
+                    sheet.style.width = `${cssW}px`;
+                    sheet.style.height = `${cssH}px`;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const task = page.render({canvasContext: ctx, viewport: renderVp});
+                    mp.scrollRenderTasks.set(pageNum, task);
+                    await task.promise;
+                    mp.scrollRenderTasks.delete(pageNum);
+                    mp.renderedScrollZooms.set(pageNum, zoomKey);
+                } catch (err) {
+                    if (err && err.name === 'RenderingCancelledException') return;
+                    console.error(`Scroll page ${pageNum} render error:`, err);
+                }
+            }
+
+            function scrollToMergedPreviewPage(pageNum, behavior = 'smooth') {
+                const mp = state.mergedPreview;
+                const target = clamp(pageNum, 1, mp.totalPages || 1);
+                mp.currentPage = target;
+                updateMergedStepperControls();
+                highlightActiveScrollPageCard(target);
+
+                const viewportEl = $('mergedCanvasViewport');
+                const sheet = $(`mergedScrollSheet_${target}`);
+                if (!viewportEl || !sheet) return;
+
+                const vpRect = viewportEl.getBoundingClientRect();
+                const sRect = sheet.getBoundingClientRect();
+                const nextTop = clamp(
+                    Math.round(viewportEl.scrollTop + (sRect.top - vpRect.top) - 16),
+                    0,
+                    Math.max(0, viewportEl.scrollHeight - viewportEl.clientHeight)
+                );
+                viewportEl.scrollTo({top: nextTop, behavior});
+            }
+
+            function handleMergedViewportScroll() {
+                const mp = state.mergedPreview;
+                if (mp.mode !== 'scroll' || !mp.pdfjsDoc || mp.totalPages <= 0) return;
+
+                const viewportEl = $('mergedCanvasViewport');
+                if (!viewportEl) return;
+
+                const vpRect = viewportEl.getBoundingClientRect();
+                const focusY = vpRect.top + vpRect.height * 0.35;
+
+                let bestPage = mp.currentPage;
+                let bestDist = Infinity;
+
+                for (let p = 1; p <= mp.totalPages; p++) {
+                    const sheet = $(`mergedScrollSheet_${p}`);
+                    if (!sheet) continue;
+                    const rect = sheet.getBoundingClientRect();
+                    if (focusY >= rect.top && focusY <= rect.bottom) {
+                        bestPage = p;
+                        break;
+                    }
+                    const midY = (rect.top + rect.bottom) / 2;
+                    const dist = Math.abs(midY - focusY);
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        bestPage = p;
+                    }
+                }
+
+                if (bestPage !== mp.currentPage) {
+                    mp.currentPage = bestPage;
+                    updateMergedStepperControls();
+                    highlightActiveScrollPageCard(bestPage);
+                }
+            }
+
             function stepMergedPreviewPage(delta) {
                 const mp = state.mergedPreview;
                 if (!mp.pdfjsDoc) return;
                 const next = clamp(mp.currentPage + delta, 1, mp.totalPages);
-                if (next !== mp.currentPage) {
-                    mp.currentPage = next;
+                if (next === mp.currentPage) return;
+
+                mp.currentPage = next;
+                if (mp.mode === 'scroll') {
+                    scrollToMergedPreviewPage(next, 'smooth');
+                } else {
                     renderMergedPreviewPage();
                 }
             }
@@ -3321,37 +3816,270 @@
                     $('mergedPageInput').value = mp.currentPage;
                     return;
                 }
-                mp.currentPage = clamp(val, 1, mp.totalPages);
-                renderMergedPreviewPage();
+                const target = clamp(val, 1, mp.totalPages);
+                mp.currentPage = target;
+                if (mp.mode === 'scroll') {
+                    scrollToMergedPreviewPage(target, 'smooth');
+                } else {
+                    renderMergedPreviewPage();
+                }
             }
 
             function adjustMergedPreviewZoom(delta) {
                 const mp = state.mergedPreview;
                 if (!mp.pdfjsDoc) return;
-                mp.zoom = clamp(+(mp.zoom + delta).toFixed(2), 0.4, 2.5);
-                renderMergedPreviewPage();
+                const nextZoom = clamp(+(mp.zoom + delta).toFixed(2), 0.4, 2.6);
+                if (nextZoom === mp.zoom) return;
+                mp.zoom = nextZoom;
+
+                if (mp.mode === 'scroll') {
+                    buildContinuousScrollPreview(true);
+                } else {
+                    renderMergedPreviewPage();
+                }
             }
 
             function resetMergedPreviewZoom() {
                 const mp = state.mergedPreview;
-                if (!mp.pdfjsDoc) return;
+                if (!mp.pdfjsDoc || mp.zoom === 1.0) return;
                 mp.zoom = 1.0;
-                renderMergedPreviewPage();
+
+                if (mp.mode === 'scroll') {
+                    buildContinuousScrollPreview(true);
+                } else {
+                    renderMergedPreviewPage();
+                }
             }
 
             function closeMergedPreviewModal() {
+                if (state.mergedPreview.wheelTimer) {
+                    clearTimeout(state.mergedPreview.wheelTimer);
+                    state.mergedPreview.wheelTimer = null;
+                }
                 if (state.mergedPreview.renderTask) {
-                    try { state.mergedPreview.renderTask.cancel(); } catch (_) { }
+                    try {state.mergedPreview.renderTask.cancel();} catch (_) { }
                     state.mergedPreview.renderTask = null;
                 }
+                const vp = $('mergedCanvasViewport');
+                if (vp) vp.classList.remove('can-pan', 'is-panning');
+                cleanupMergedScrollResources();
                 $('mergedPreviewModal').classList.add('hidden');
+            }
+
+            // =================================================================
+            // INTERACTIVE MOUSE/TRACKPAD ZOOM, ZOOM-TO-CURSOR & DRAG-TO-PAN
+            // =================================================================
+            function applyZoomToCursorAnchor(viewportEl, clientX, clientY, oldZoom, newZoom, resizeContentFn) {
+                const rect = viewportEl.getBoundingClientRect();
+                const offsetX = clientX - rect.left;
+                const offsetY = clientY - rect.top;
+
+                const contentX = viewportEl.scrollLeft + offsetX;
+                const contentY = viewportEl.scrollTop + offsetY;
+                const ratio = newZoom / Math.max(0.01, oldZoom);
+
+                resizeContentFn(newZoom);
+
+                viewportEl.scrollLeft = Math.max(0, Math.round(contentX * ratio - offsetX));
+                viewportEl.scrollTop = Math.max(0, Math.round(contentY * ratio - offsetY));
+                updateViewportPanCursor(viewportEl);
+            }
+
+            function bindInteractivePreviewZone(viewportEl, config) {
+                if (!viewportEl) return;
+
+                // 1. Mouse Wheel & Trackpad Pinch Zoom (Scoped strictly to this viewport zone)
+                viewportEl.addEventListener('wheel', (e) => {
+                    if (!config.isActive()) return;
+
+                    const isPinchOrCtrl = e.ctrlKey || e.metaKey;
+                    const allowPlainWheel = config.allowPlainWheel();
+                    if (!isPinchOrCtrl && !allowPlainWheel) return;
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const oldZoom = config.getZoom();
+                    const rawDelta = -e.deltaY;
+                    const step = isPinchOrCtrl
+                        ? clamp(rawDelta * 0.0045, -0.18, 0.18)
+                        : (rawDelta > 0 ? 0.12 : -0.12);
+                    const newZoom = clamp(+(oldZoom + step).toFixed(2), 0.4, 2.6);
+                    if (newZoom === oldZoom) return;
+
+                    applyZoomToCursorAnchor(viewportEl, e.clientX, e.clientY, oldZoom, newZoom, (z) => {
+                        config.onInstantResize(z);
+                    });
+                    config.onDebouncedRerender();
+                }, {passive: false});
+
+                // 2. Double-Click Quick Zoom Toggle (100% <-> 160% centered at click point)
+                viewportEl.addEventListener('dblclick', (e) => {
+                    if (!config.isActive()) return;
+                    if (e.target && e.target.closest('button, input, select')) return;
+
+                    e.preventDefault();
+                    const oldZoom = config.getZoom();
+                    const newZoom = Math.abs(oldZoom - 1.0) < 0.05 ? 1.6 : 1.0;
+
+                    applyZoomToCursorAnchor(viewportEl, e.clientX, e.clientY, oldZoom, newZoom, (z) => {
+                        config.onInstantResize(z);
+                    });
+                    config.onImmediateRerender();
+                });
+
+                // 3. Left-Click & Drag to Pan around zoomed document
+                let isPanning = false;
+                let panStartX = 0;
+                let panStartY = 0;
+                let panStartScrollLeft = 0;
+                let panStartScrollTop = 0;
+
+                viewportEl.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0 || !config.isActive()) return;
+                    if (e.target && e.target.closest('button, input, select')) return;
+
+                    const canPan = (viewportEl.scrollWidth > viewportEl.clientWidth + 2) ||
+                        (viewportEl.scrollHeight > viewportEl.clientHeight + 2);
+                    if (!canPan) return;
+
+                    isPanning = true;
+                    panStartX = e.clientX;
+                    panStartY = e.clientY;
+                    panStartScrollLeft = viewportEl.scrollLeft;
+                    panStartScrollTop = viewportEl.scrollTop;
+                    viewportEl.classList.add('is-panning');
+                    e.preventDefault();
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isPanning) return;
+                    const dx = e.clientX - panStartX;
+                    const dy = e.clientY - panStartY;
+                    viewportEl.scrollLeft = panStartScrollLeft - dx;
+                    viewportEl.scrollTop = panStartScrollTop - dy;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (!isPanning) return;
+                    isPanning = false;
+                    viewportEl.classList.remove('is-panning');
+                });
+            }
+
+            function initPreviewMouseInteractions() {
+                // Zone A: Single-Page Expand Preview Modal (#previewViewport)
+                const singleVp = $('previewViewport');
+                bindInteractivePreviewZone(singleVp, {
+                    isActive: () => !$('previewModal').classList.contains('hidden') && state.previewIndex >= 0,
+                    allowPlainWheel: () => true,
+                    getZoom: () => state.previewZoom,
+                    onInstantResize: (newZoom) => {
+                        state.previewZoom = newZoom;
+                        $('modalZoomLabel').textContent = `${Math.round(newZoom * 100)}%`;
+
+                        const pg = state.pages[state.previewIndex];
+                        const canvas = $('previewCanvas');
+                        if (!pg || !canvas || !singleVp) return;
+
+                        const rot = normalizeAngle(pg.rotation);
+                        const swapped = rot === 90 || rot === 270;
+                        const pageW = swapped ? (pg.height || A4_HEIGHT) : (pg.width || A4_WIDTH);
+                        const pageH = swapped ? (pg.width || A4_WIDTH) : (pg.height || A4_HEIGHT);
+                        const pad = isMobile() ? 36 : 56;
+                        const availW = Math.max(200, singleVp.clientWidth - pad);
+                        const availH = Math.max(240, singleVp.clientHeight - pad);
+                        const baseScale = clamp(Math.min(availW / pageW, availH / pageH), 0.25, 2.2);
+
+                        canvas.style.width = `${Math.max(1, Math.round(pageW * baseScale * newZoom))}px`;
+                        canvas.style.height = `${Math.max(1, Math.round(pageH * baseScale * newZoom))}px`;
+                    },
+                    onDebouncedRerender: () => {
+                        if (state.previewWheelTimer) clearTimeout(state.previewWheelTimer);
+                        state.previewWheelTimer = setTimeout(() => {
+                            state.previewWheelTimer = null;
+                            renderPreviewModalPage();
+                        }, 120);
+                    },
+                    onImmediateRerender: () => {
+                        if (state.previewWheelTimer) {
+                            clearTimeout(state.previewWheelTimer);
+                            state.previewWheelTimer = null;
+                        }
+                        renderPreviewModalPage();
+                    }
+                });
+
+                // Zone B: Merged PDF Pre-Download Review Modal (#mergedCanvasViewport)
+                const mergedVp = $('mergedCanvasViewport');
+                bindInteractivePreviewZone(mergedVp, {
+                    isActive: () => !$('mergedPreviewModal').classList.contains('hidden') && !!state.mergedPreview.pdfjsDoc,
+                    allowPlainWheel: () => state.mergedPreview.mode === 'single',
+                    getZoom: () => state.mergedPreview.zoom,
+                    onInstantResize: (newZoom) => {
+                        const mp = state.mergedPreview;
+                        mp.zoom = newZoom;
+                        $('mergedZoomLabel').textContent = `${Math.round(newZoom * 100)}%`;
+
+                        if (mp.mode === 'single') {
+                            const dim = mp.pageDimensions[mp.currentPage - 1] || {width: A4_WIDTH, height: A4_HEIGHT};
+                            const baseScale = getMergedFitBaseScale(dim.width, dim.height);
+                            const canvas = $('mergedPreviewCanvas');
+                            if (canvas) {
+                                canvas.style.width = `${Math.max(1, Math.round(dim.width * baseScale * newZoom))}px`;
+                                canvas.style.height = `${Math.max(1, Math.round(dim.height * baseScale * newZoom))}px`;
+                            }
+                        } else {
+                            for (let p = 1; p <= mp.totalPages; p++) {
+                                const dim = mp.pageDimensions[p - 1] || {width: A4_WIDTH, height: A4_HEIGHT};
+                                const baseScale = getMergedFitBaseScale(dim.width, dim.height);
+                                const w = Math.max(120, Math.round(dim.width * baseScale * newZoom));
+                                const h = Math.max(160, Math.round(dim.height * baseScale * newZoom));
+                                const sheet = $(`mergedScrollSheet_${p}`);
+                                const canvas = $(`mergedScrollCanvas_${p}`);
+                                if (sheet) {
+                                    sheet.style.width = `${w}px`;
+                                    sheet.style.height = `${h}px`;
+                                }
+                                if (canvas) {
+                                    canvas.style.width = `${w}px`;
+                                    canvas.style.height = `${h}px`;
+                                }
+                            }
+                        }
+                    },
+                    onDebouncedRerender: () => {
+                        const mp = state.mergedPreview;
+                        if (mp.wheelTimer) clearTimeout(mp.wheelTimer);
+                        mp.wheelTimer = setTimeout(() => {
+                            mp.wheelTimer = null;
+                            if (mp.mode === 'scroll') {
+                                buildContinuousScrollPreview(false);
+                            } else {
+                                renderMergedPreviewPage();
+                            }
+                        }, 130);
+                    },
+                    onImmediateRerender: () => {
+                        const mp = state.mergedPreview;
+                        if (mp.wheelTimer) {
+                            clearTimeout(mp.wheelTimer);
+                            mp.wheelTimer = null;
+                        }
+                        if (mp.mode === 'scroll') {
+                            buildContinuousScrollPreview(false);
+                        } else {
+                            renderMergedPreviewPage();
+                        }
+                    }
+                });
             }
 
             function confirmDownloadMergedPDF() {
                 const mp = state.mergedPreview;
                 if (!mp.bytes) return;
 
-                const blob = new Blob([mp.bytes], { type: 'application/pdf' });
+                const blob = new Blob([mp.bytes], {type: 'application/pdf'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -3373,6 +4101,22 @@
                 const dropZone = $('dropZone');
                 const exportHeader = $('exportCardHeader');
                 const exportCard = $('exportSettingsCard');
+                const mergedViewport = $('mergedCanvasViewport');
+
+                initPreviewMouseInteractions();
+
+                if (mergedViewport) {
+                    let scrollRafPending = false;
+                    mergedViewport.addEventListener('scroll', () => {
+                        if (state.mergedPreview.mode !== 'scroll') return;
+                        if (scrollRafPending) return;
+                        scrollRafPending = true;
+                        requestAnimationFrame(() => {
+                            scrollRafPending = false;
+                            handleMergedViewportScroll();
+                        });
+                    }, {passive: true});
+                }
 
                 if (fileInput) {
                     fileInput.addEventListener('change', (e) => {
@@ -3464,8 +4208,8 @@
                         exportCard.style.right = 'auto';
                         exportCard.style.bottom = 'auto';
                         state.isDraggingCard = true;
-                        state.cardDragOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-                        try { exportHeader.setPointerCapture(e.pointerId); } catch (_) { }
+                        state.cardDragOffset = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+                        try {exportHeader.setPointerCapture(e.pointerId);} catch (_) { }
                     });
 
                     window.addEventListener('pointermove', (e) => {
@@ -3519,6 +4263,18 @@
                             $('exportCardBody').classList.add('hidden');
                         }
                     }
+
+                    // Refit open preview modals on screen resize
+                    if (!$('mergedPreviewModal').classList.contains('hidden') && state.mergedPreview.pdfjsDoc) {
+                        if (state.mergedPreview.mode === 'scroll') {
+                            buildContinuousScrollPreview(false);
+                        } else {
+                            renderMergedPreviewPage();
+                        }
+                    }
+                    if (!$('previewModal').classList.contains('hidden') && state.previewIndex >= 0) {
+                        renderPreviewModalPage();
+                    }
                 });
 
                 // Keyboard Shortcuts
@@ -3549,14 +4305,14 @@
                     if (isTyping) return;
 
                     if (!$('mergedPreviewModal').classList.contains('hidden')) {
-                        if (e.key === 'ArrowLeft') { e.preventDefault(); stepMergedPreviewPage(-1); }
-                        else if (e.key === 'ArrowRight') { e.preventDefault(); stepMergedPreviewPage(1); }
+                        if (e.key === 'ArrowLeft') {e.preventDefault(); stepMergedPreviewPage(-1);}
+                        else if (e.key === 'ArrowRight') {e.preventDefault(); stepMergedPreviewPage(1);}
                         return;
                     }
 
                     if (!$('previewModal').classList.contains('hidden')) {
-                        if (e.key === 'ArrowLeft') { e.preventDefault(); stepPreviewPage(-1); }
-                        else if (e.key === 'ArrowRight') { e.preventDefault(); stepPreviewPage(1); }
+                        if (e.key === 'ArrowLeft') {e.preventDefault(); stepPreviewPage(-1);}
+                        else if (e.key === 'ArrowRight') {e.preventDefault(); stepPreviewPage(1);}
                         return;
                     }
 
@@ -3613,6 +4369,7 @@
                 adjustPreviewZoom,
                 resetPreviewZoom,
                 rotatePreviewPage,
+                setMergedPreviewMode,
                 openMergedPreviewModal,
                 closeMergedPreviewModal,
                 stepMergedPreviewPage,
