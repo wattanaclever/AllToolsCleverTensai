@@ -200,6 +200,11 @@
             cursor: grabbing !important;
         }
 
+        /* Select Mode Free-Pan Stage Cursor */
+        #pdfWorkspace.select-pan-stage {
+            cursor: grab;
+        }
+
         /* Left Rail Buttons */
         .rail-btn {
             transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -482,7 +487,7 @@
                 </button>
             </div>
 
-            <!-- Right: Theme Toggle, Import, Print, Export Dropdown -->
+            <!-- Right: Theme Toggle, Import, Preview, Print, Export Dropdown -->
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button type="button" onclick="toggleTheme()"
                     class="w-8 h-8 rounded-xl panel-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer"
@@ -496,6 +501,13 @@
                     title="นำเข้าไฟล์ PDF ใหม่">
                     <i class="fa-solid fa-folder-open text-[#E11D48]"></i>
                     <span class="hidden md:inline">นำเข้าเอกสาร</span>
+                </button>
+
+                <button type="button" onclick="openDocumentPreview()"
+                    class="px-2.5 py-1.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer"
+                    title="ตรวจสอบตัวอย่างเอกสารฉบับสมบูรณ์ก่อนดาวน์โหลด">
+                    <i class="fa-regular fa-eye text-[#E11D48]"></i>
+                    <span class="hidden sm:inline">Preview</span>
                 </button>
 
                 <button type="button" onclick="triggerPrint()"
@@ -515,7 +527,7 @@
                     </button>
 
                     <div id="exportDropdownMenu"
-                        class="hidden absolute right-0 mt-1.5 w-56 z-50 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
+                        class="hidden absolute right-0 mt-1.5 w-60 z-50 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
                         <button type="button" onclick="closeExportMenu(); exportPdfDocument();"
                             class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-solid fa-file-pdf text-[#E11D48] w-4 text-center"></i>
@@ -524,12 +536,12 @@
                                 <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไขคมชัด</span>
                             </div>
                         </button>
-                        <button type="button" onclick="closeExportMenu(); exportPagesAsZip();"
+                        <button type="button" onclick="closeExportMenu(); handleExportImagesClick();"
                             class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
-                            <i class="fa-solid fa-file-zipper text-amber-500 w-4 text-center"></i>
+                            <i class="fa-regular fa-image text-emerald-500 w-4 text-center"></i>
                             <div class="flex flex-col">
-                                <span>ส่งออกรูปทุกหน้า (ZIP)</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพ PNG ความละเอียดสูงรายหน้า</span>
+                                <span>ส่งออกเป็นรูปภาพ</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพความละเอียดสูง (PNG / JPG หรือ ZIP)</span>
                             </div>
                         </button>
                     </div>
@@ -620,9 +632,9 @@
                     <div id="panel_select" class="space-y-3">
                         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection Mode</div>
                         <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>แตะวัตถุ 1 นิ้วเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
-                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i>แตะซ้ำ 2 ครั้ง หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
-                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i>กด <strong>Spacebar + ลาก</strong> เพื่อเลื่อน, <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูมบนคอม หรือใช้ <strong>2 นิ้ว</strong> บนมือถือ</p>
+                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
+                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i>ดับเบิลคลิก หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
+                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i><strong>คลิกซ้ายลากบนพื้นที่ว่าง</strong> เพื่อเลื่อนดูอิสระทุกทิศทางทุกขนาดซูม หรือใช้ <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูม</p>
                         </div>
                     </div>
 
@@ -929,9 +941,9 @@
             <main id="pdfWorkspace" class="stage-bg flex-1 relative overflow-auto min-w-0 select-none">
                 <div id="eraserCursor"></div>
 
-                <!-- Scroll-Safe & Mobile-Centered Container -->
+                <!-- Scroll-Safe & Free-Pan Overscroll Container -->
                 <div id="canvasPagesContainer"
-                    class="min-w-full w-max mx-auto px-3 md:px-8 py-6 pb-36 md:pb-24 flex flex-col items-center gap-8">
+                    class="min-w-full w-max mx-auto px-16 md:px-[38vw] py-20 md:py-[32vh] pb-44 md:pb-[36vh] flex flex-col items-center gap-8">
                     <!-- Rendered PDF Pages -->
                 </div>
             </main>
@@ -1065,6 +1077,202 @@
         </div>
     </div>
 
+    <!-- Document Preview Modal (Check Before Download) -->
+    <div id="documentPreviewModal" onclick="if (event.target === this) closeDocumentPreview()"
+        class="hidden fixed inset-0 z-[85] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
+        <div class="w-full max-w-5xl h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+
+            <!-- Modal Header -->
+            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-[#E11D48]/15 text-[#E11D48] flex items-center justify-center shrink-0">
+                        <i class="fa-regular fa-eye text-sm"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm sm:text-base font-extrabold truncate">ตรวจสอบเอกสารก่อนดาวน์โหลด</h3>
+                            <span id="previewModalCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            แสดงผลลัพธ์จริงฉบับสมบูรณ์ (ซ่อนกรอบเลือกและเครื่องมือแก้ไขทั้งหมด)
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button" onclick="closeDocumentPreview()"
+                    class="w-9 h-9 rounded-xl panel-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer shrink-0"
+                    title="ปิดหน้าต่างตัวอย่าง (Esc)">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Clean Preview Pages Stage -->
+            <div id="previewModalBody" class="stage-bg flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-6">
+                <!-- Rendered Clean Preview Pages -->
+            </div>
+
+            <!-- Modal Footer with Direct Download & Print Actions -->
+            <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                <button type="button" onclick="closeDocumentPreview()"
+                    class="px-4 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                    <i class="fa-solid fa-arrow-left text-[#E11D48]"></i>
+                    <span>กลับไปแก้ไขต่อ</span>
+                </button>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="closeDocumentPreview(); triggerPrint();"
+                        class="px-3.5 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-print text-[#E11D48]"></i>
+                        <span>PRINT</span>
+                    </button>
+
+                    <button type="button" onclick="closeDocumentPreview(); handleExportImagesClick();"
+                        class="px-3.5 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-regular fa-image text-emerald-500"></i>
+                        <span>ส่งออกเป็นรูปภาพ</span>
+                    </button>
+
+                    <button type="button" onclick="closeDocumentPreview(); exportPdfDocument();"
+                        class="px-4 py-2 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <span>บันทึกเป็น PDF</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Image Export Modal (For Multi-Page Documents) -->
+    <div id="imageExportModal" onclick="if (event.target === this) closeImageExportModal()"
+        class="hidden fixed inset-0 z-[88] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
+        <div class="w-full max-w-4xl max-h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+
+            <!-- Modal Header -->
+            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0">
+                        <i class="fa-regular fa-image text-sm"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-sm sm:text-base font-extrabold truncate">ส่งออกเป็นรูปภาพ</h3>
+                            <span id="imgExportTotalBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                            เลือกหน้าที่ต้องการและรูปแบบไฟล์ก่อนดาวน์โหลด
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button" onclick="closeImageExportModal()"
+                    class="w-9 h-9 rounded-xl panel-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer shrink-0"
+                    title="ปิดหน้าต่าง (Esc)">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Controls & Interactive Selection Body -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+
+                <!-- 1. Quick Mode Buttons + Range Input + Format Selector -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                    <!-- Left: Page Mode & Range -->
+                    <div class="lg:col-span-7 space-y-2.5">
+                        <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                            1. เลือกหน้าที่ต้องการส่งออก
+                        </label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button type="button" id="imgModeBtn_all" onclick="setImageExportMode('all')"
+                                class="py-2 px-2 rounded-xl bg-[#E11D48] text-white font-bold text-xs text-center transition cursor-pointer">
+                                ทั้งหมด (ทุกหน้า)
+                            </button>
+                            <button type="button" id="imgModeBtn_current" onclick="setImageExportMode('current')"
+                                class="py-2 px-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-xs text-center transition cursor-pointer truncate">
+                                เฉพาะหน้าปัจจุบัน
+                            </button>
+                            <button type="button" id="imgModeBtn_custom" onclick="setImageExportMode('custom')"
+                                class="py-2 px-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-xs text-center transition cursor-pointer">
+                                เลือกกำหนดเอง
+                            </button>
+                        </div>
+
+                        <!-- Two-way Synced Range Input -->
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <i class="fa-solid fa-list-ol absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="imgExportRangeInput"
+                                    placeholder="ระบุเลขหน้า เช่น 1, 3, 5-7"
+                                    oninput="onImageExportRangeInput(this.value)"
+                                    class="w-full pl-8 pr-3 py-2 rounded-xl panel-subtle border focus:border-[#E11D48] outline-none font-mono text-xs font-semibold">
+                            </div>
+                            <button type="button" onclick="clearImageExportSelection()"
+                                class="px-3 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0 cursor-pointer"
+                                title="ล้างการเลือกทั้งหมด">
+                                ล้าง
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Format Selector -->
+                    <div class="lg:col-span-5 space-y-2.5">
+                        <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                            2. รูปแบบไฟล์รูปภาพ
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="imgFmtBtn_png" onclick="setImageExportFormat('png')"
+                                class="p-2.5 rounded-xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left transition cursor-pointer">
+                                <div class="font-mono text-xs font-extrabold text-[#E11D48]">PNG</div>
+                                <div class="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5">คมชัดสูงสุด (Lossless)</div>
+                            </button>
+                            <button type="button" id="imgFmtBtn_jpg" onclick="setImageExportFormat('jpg')"
+                                class="p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer">
+                                <div class="font-mono text-xs font-extrabold">JPG</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">ขนาดไฟล์เล็ก โหลดไว</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Dynamic Notice Banner -->
+                <div id="imgExportNotice"
+                    class="px-4 py-3 rounded-2xl border flex items-center gap-3 text-xs font-semibold transition-all">
+                    <!-- Populated dynamically by updateImageExportUI() -->
+                </div>
+
+                <!-- 3. Interactive Thumbnail Selection Grid -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            คลิกที่หน้ากระดาษเพื่อเลือก / ยกเลิกการเลือก
+                        </span>
+                        <span id="imgExportSelectedCountText" class="font-mono text-[11px] font-bold text-[#E11D48]">
+                            เลือกแล้ว 0 หน้า
+                        </span>
+                    </div>
+
+                    <div id="imgExportGrid"
+                        class="stage-bg p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[38dvh] overflow-y-auto">
+                        <!-- Interactive Page Cards Rendered Here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+                <button type="button" onclick="closeImageExportModal()"
+                    class="px-4 py-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold transition cursor-pointer">
+                    ยกเลิก
+                </button>
+
+                <button type="button" id="btnConfirmImageExport" onclick="confirmImageExport()"
+                    class="px-5 py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-bold flex items-center gap-2 shadow-md transition cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span id="btnConfirmImageExportText">ดาวน์โหลดรูปภาพ</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden Print Section -->
     <div id="printSection" class="hidden"></div>
 
@@ -1134,14 +1342,22 @@
                 pendingInsertIndex: 0,
                 activeDividerEl: null,
 
-                // Desktop Hand Panning
+                // Desktop Hand Panning (Spacebar / Middle Click / Select Empty-Space Free Pan)
                 isSpaceHeld: false,
                 handPan: null,
+                mouseFreePan: null,
 
                 // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan + Select-Mode 1-Finger Pan
                 twoFinger: null,
                 oneFingerPan: null,
                 programmaticScrollUntil: 0,
+
+                // Smart Image Export Modal State
+                imageExport: {
+                    mode: 'all',         // 'all' | 'current' | 'custom'
+                    format: 'png',       // 'png' | 'jpg'
+                    selectedIndices: []  // sorted 0-based page indices
+                },
 
                 // Undo / Redo History
                 history: [],
@@ -1249,6 +1465,23 @@
                 });
             }
 
+            function centerWorkspaceInitialPosition() {
+                const vp = $('pdfWorkspace');
+                if (!vp) return;
+                requestAnimationFrame(() => {
+                    const maxScrollX = Math.max(0, vp.scrollWidth - vp.clientWidth);
+                    vp.scrollLeft = Math.round(maxScrollX / 2);
+                    const firstBlock = state.pages[0] ? $(`pageBlock_${state.pages[0].id}`) : null;
+                    if (firstBlock) {
+                        const vpRect = vp.getBoundingClientRect();
+                        const elRect = firstBlock.getBoundingClientRect();
+                        const rawTop = vp.scrollTop + (elRect.top - vpRect.top) - 20;
+                        const maxScrollY = Math.max(0, vp.scrollHeight - vp.clientHeight);
+                        vp.scrollTop = clamp(Math.round(rawTop), 0, maxScrollY);
+                    }
+                });
+            }
+
             function showToast(msg, type = 'success') {
                 const toast = $('toast');
                 const icon = $('toastIcon');
@@ -1335,6 +1568,10 @@
 
                 if (workspace) {
                     workspace.addEventListener('click', (e) => {
+                        if (state.mouseFreePan && state.mouseFreePan.moved) {
+                            state.mouseFreePan = null;
+                            return;
+                        }
                         if (e.target === workspace || e.target.id === 'canvasPagesContainer') {
                             clearSelection();
                         }
@@ -1386,6 +1623,22 @@
             // =================================================================
             // 5. DESKTOP HAND PANNING & MOBILE 60FPS GPU PINCH-TO-ZOOM
             // =================================================================
+            function isTargetOverInteractiveCanvasObject(target, clientX, clientY) {
+                if (!target || !target.classList || !target.classList.contains('overlay-canvas')) {
+                    return false;
+                }
+                const pageId = target.id.replace('overlay_', '');
+                const pg = getPageById(pageId);
+                if (!pg) return false;
+
+                const pos = getUnscaledPos(target, clientX, clientY);
+                const curSel = getSelectedItem();
+                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId && hitTestImageCornerHandle(curSel, pos.x, pos.y)) {
+                    return true;
+                }
+                return !!hitTestItem(pg, pos.x, pos.y);
+            }
+
             function setupDesktopHandPan(vp) {
                 window.addEventListener('keydown', (e) => {
                     if (e.code !== 'Space' || e.repeat) return;
@@ -1409,9 +1662,11 @@
                 window.addEventListener('blur', () => {
                     state.isSpaceHeld = false;
                     state.handPan = null;
+                    state.mouseFreePan = null;
                     vp.classList.remove('hand-pan-ready', 'hand-pan-active');
                 });
 
+                // Spacebar + Left Click OR Middle Click Pan
                 vp.addEventListener('mousedown', (e) => {
                     if (!state.isSpaceHeld && e.button !== 1) return;
                     e.preventDefault();
@@ -1425,17 +1680,66 @@
                     vp.classList.add('hand-pan-active');
                 }, true);
 
-                window.addEventListener('mousemove', (e) => {
-                    if (!state.handPan) return;
+                // Select Mode Left-Click Free Pan on Any Empty Space (Any Zoom Level)
+                vp.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0 || state.isSpaceHeld || state.handPan) return;
+                    if (state.tool !== 'select' || state.pages.length === 0 || state.inlineEditor) return;
+                    if (e.target && e.target.closest('button, input, select, textarea, .inline-editor-wrap, #floatingTextEditPill')) return;
+
+                    if (isTargetOverInteractiveCanvasObject(e.target, e.clientX, e.clientY)) {
+                        return;
+                    }
+
                     e.preventDefault();
-                    vp.scrollLeft = state.handPan.scrollLeft - (e.clientX - state.handPan.startX);
-                    vp.scrollTop = state.handPan.scrollTop - (e.clientY - state.handPan.startY);
+                    state.programmaticScrollUntil = 0;
+                    state.mouseFreePan = {
+                        startX: e.clientX,
+                        startY: e.clientY,
+                        scrollLeft: vp.scrollLeft,
+                        scrollTop: vp.scrollTop,
+                        moved: false
+                    };
+                    vp.classList.add('hand-pan-active');
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (state.handPan) {
+                        e.preventDefault();
+                        vp.scrollLeft = state.handPan.scrollLeft - (e.clientX - state.handPan.startX);
+                        vp.scrollTop = state.handPan.scrollTop - (e.clientY - state.handPan.startY);
+                        return;
+                    }
+
+                    if (state.mouseFreePan) {
+                        e.preventDefault();
+                        const dx = e.clientX - state.mouseFreePan.startX;
+                        const dy = e.clientY - state.mouseFreePan.startY;
+                        if (Math.hypot(dx, dy) >= 4) {
+                            state.mouseFreePan.moved = true;
+                        }
+                        vp.scrollLeft = state.mouseFreePan.scrollLeft - dx;
+                        vp.scrollTop = state.mouseFreePan.scrollTop - dy;
+                    }
                 });
 
                 window.addEventListener('mouseup', () => {
-                    if (!state.handPan) return;
-                    state.handPan = null;
-                    vp.classList.remove('hand-pan-active');
+                    if (state.handPan) {
+                        state.handPan = null;
+                        vp.classList.remove('hand-pan-active');
+                    }
+                    if (state.mouseFreePan) {
+                        const wasMoved = state.mouseFreePan.moved;
+                        vp.classList.remove('hand-pan-active');
+                        if (!wasMoved) {
+                            clearSelection();
+                            state.mouseFreePan = null;
+                        } else {
+                            // Keep moved=true briefly so trailing click event does not clear selection
+                            setTimeout(() => {
+                                state.mouseFreePan = null;
+                            }, 30);
+                        }
+                    }
                 });
 
                 vp.addEventListener('wheel', (e) => {
@@ -1509,9 +1813,9 @@
                         return;
                     }
 
-                    // Select mode 1-finger scroll on empty space when document has > 1 page
+                    // Select mode 1-finger scroll on empty space at any zoom level
                     state.oneFingerPan = null;
-                    if (e.touches.length === 1 && state.tool === 'select' && state.pages.length > 1 && !state.inlineEditor) {
+                    if (e.touches.length === 1 && state.tool === 'select' && state.pages.length >= 1 && !state.inlineEditor) {
                         const target = e.target;
                         if (target && target.closest('.inline-editor-wrap, #floatingTextEditPill, button, input, select, textarea')) {
                             return;
@@ -1640,6 +1944,8 @@
                     const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || !!state.inlineEditor;
 
                     if (e.key === 'Escape') {
+                        closeImageExportModal();
+                        closeDocumentPreview();
                         closeInsertPopover();
                         closeExportMenu();
                         closeInlineEditor();
@@ -1796,10 +2102,7 @@
                     pushHistorySnapshot();
 
                     await rebuildAllDOMAndRender();
-                    if (vpEl) {
-                        vpEl.scrollTop = 0;
-                        centerWorkspaceHorizontal();
-                    }
+                    centerWorkspaceInitialPosition();
                     showToast(`โหลดสำเร็จ (${state.pages.length} หน้า)`, 'success');
                 } catch (err) {
                     console.error('Load PDF error:', err);
@@ -1917,8 +2220,14 @@
                     eraserRing.style.display = 'none';
                 }
 
+                const vp = $('pdfWorkspace');
+                if (vp) {
+                    vp.classList.toggle('select-pan-stage', state.tool === 'select');
+                }
+
                 let cur = 'default';
-                if (state.tool === 'text') cur = 'text';
+                if (state.tool === 'select') cur = 'grab';
+                else if (state.tool === 'text') cur = 'text';
                 else if (state.tool === 'image') cur = 'copy';
                 else if (state.tool === 'draw') cur = 'crosshair';
                 else if (state.tool === 'eraser') cur = 'none';
@@ -2262,6 +2571,7 @@
                 wrap.style.left = `${item.x * scale}px`;
                 wrap.style.top = `${item.y * scale}px`;
                 wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
+                wrap.addEventListener('mousedown', (e) => e.stopPropagation());
                 wrap.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
 
                 const bar = document.createElement('div');
@@ -2748,7 +3058,7 @@
                 });
 
                 canvas.addEventListener('pointerdown', (e) => {
-                    if (state.twoFinger || state.isSpaceHeld || state.handPan) return;
+                    if (state.twoFinger || state.isSpaceHeld || state.handPan || state.mouseFreePan) return;
                     if (e.pointerType === 'mouse' && e.button !== 0) return;
 
                     const pg = getPageById(pageId);
@@ -2806,7 +3116,7 @@
                             syncSelectionPanel();
                             redrawPageOverlay(pageId);
                             updateFloatingTextEditPill();
-                        } else {
+                        } else if (state.tool !== 'select' || e.pointerType !== 'mouse') {
                             clearSelection();
                         }
                         return;
@@ -2901,7 +3211,7 @@
                 });
 
                 canvas.addEventListener('pointermove', (e) => {
-                    if (state.twoFinger || state.isSpaceHeld || state.handPan) return;
+                    if (state.twoFinger || state.isSpaceHeld || state.handPan || state.mouseFreePan) return;
 
                     const ring = $('eraserCursor');
                     if (ring) {
@@ -2917,6 +3227,21 @@
                     const pg = getPageById(pageId);
                     if (!pg) return;
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
+
+                    // Dynamic cursor in Select mode: pointer/move on objects, grab on empty space
+                    if (state.tool === 'select' && !state.dragState && e.pointerType === 'mouse') {
+                        const curSel = getSelectedItem();
+                        const corner = (curSel && state.selectedRef && state.selectedRef.pageId === pageId)
+                            ? hitTestImageCornerHandle(curSel, pos.x, pos.y)
+                            : null;
+                        if (corner) {
+                            canvas.style.cursor = (corner === 'tl' || corner === 'br') ? 'nwse-resize' : 'nesw-resize';
+                        } else if (hitTestItem(pg, pos.x, pos.y)) {
+                            canvas.style.cursor = 'move';
+                        } else {
+                            canvas.style.cursor = 'grab';
+                        }
+                    }
 
                     if (state.dragState && state.dragState.pageId === pageId) {
                         const item = pg.items.find(it => it.id === state.dragState.itemId);
@@ -3848,8 +4173,78 @@
             }
 
             // =================================================================
-            // 19. WYSIWYG PRINT, PDF EXPORT & ZIP EXPORT
+            // 19. DOCUMENT PREVIEW MODAL, WYSIWYG PRINT, PDF & SMART IMAGE EXPORT
             // =================================================================
+            async function openDocumentPreview() {
+                if (state.pages.length === 0) return;
+                closeInlineEditor();
+                closeExportMenu();
+                closeInsertPopover();
+
+                const modal = $('documentPreviewModal');
+                const body = $('previewModalBody');
+                const badge = $('previewModalCountBadge');
+                if (!modal || !body) return;
+
+                if (badge) badge.textContent = `${state.pages.length} หน้า`;
+                body.innerHTML = `
+                    <div class="my-auto flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-xs">
+                        <i class="fa-solid fa-spinner fa-spin text-xl text-[#E11D48]"></i>
+                        <span>กำลังประมวลผลตัวอย่างเอกสารฉบับสมบูรณ์...</span>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+
+                try {
+                    const frag = document.createDocumentFragment();
+                    const total = state.pages.length;
+
+                    for (let i = 0; i < total; i++) {
+                        const pg = state.pages[i];
+                        const merged = await renderCompositePageCanvas(pg, 1.8);
+
+                        const card = document.createElement('div');
+                        card.className = 'w-full max-w-3xl flex flex-col items-center';
+
+                        const label = document.createElement('div');
+                        label.className = 'w-full flex items-center justify-between px-1 mb-1.5 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300';
+                        label.innerHTML = `
+                            <span>หน้า ${i + 1} / ${total}</span>
+                            ${isPageEdited(pg) ? '<span class="px-1.5 py-0.5 rounded bg-[#E11D48] text-white text-[9px]">EDITED</span>' : '<span class="text-[10px] text-slate-400">ORIGINAL</span>'}
+                        `;
+
+                        const frame = document.createElement('div');
+                        frame.className = 'w-full bg-white rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700';
+                        frame.style.boxShadow = 'var(--paper-shadow)';
+
+                        const img = document.createElement('img');
+                        img.src = merged.toDataURL('image/png');
+                        img.alt = `Preview Page ${i + 1}`;
+                        img.className = 'w-full h-auto block select-none';
+
+                        frame.appendChild(img);
+                        card.appendChild(label);
+                        card.appendChild(frame);
+                        frag.appendChild(card);
+                    }
+
+                    body.innerHTML = '';
+                    body.appendChild(frag);
+                    body.scrollTop = 0;
+                } catch (err) {
+                    console.error('Document preview error:', err);
+                    closeDocumentPreview();
+                    showToast('เกิดข้อผิดพลาดในการสร้างตัวอย่างเอกสาร', 'error');
+                }
+            }
+
+            function closeDocumentPreview() {
+                const modal = $('documentPreviewModal');
+                const body = $('previewModalBody');
+                if (modal) modal.classList.add('hidden');
+                if (body) body.innerHTML = '';
+            }
+
             async function renderCompositePageCanvas(pg, scale) {
                 const c = document.createElement('canvas');
                 const ctx = c.getContext('2d');
@@ -3969,35 +4364,403 @@
                 }
             }
 
-            async function exportPagesAsZip() {
+            // =================================================================
+            // SMART IMAGE EXPORT SYSTEM (1-PAGE DIRECT PNG vs MULTI-PAGE MODAL)
+            // =================================================================
+            function formatIndicesToRangeString(indices) {
+                if (!indices || indices.length === 0) return '';
+                const sorted = Array.from(new Set(indices)).sort((a, b) => a - b);
+                const parts = [];
+                let start = sorted[0];
+                let prev = sorted[0];
+
+                for (let i = 1; i < sorted.length; i++) {
+                    const cur = sorted[i];
+                    if (cur === prev + 1) {
+                        prev = cur;
+                    } else {
+                        parts.push(start === prev ? `${start + 1}` : `${start + 1}-${prev + 1}`);
+                        start = cur;
+                        prev = cur;
+                    }
+                }
+                parts.push(start === prev ? `${start + 1}` : `${start + 1}-${prev + 1}`);
+                return parts.join(', ');
+            }
+
+            function parseRangeStringToIndices(rawStr, totalPages) {
+                const set = new Set();
+                if (!rawStr || !rawStr.trim()) return [];
+                const tokens = rawStr.split(/[,;\s]+/);
+                for (const tok of tokens) {
+                    const clean = tok.trim();
+                    if (!clean) continue;
+                    const rangeMatch = clean.match(/^(\d+)\s*-\s*(\d+)$/);
+                    if (rangeMatch) {
+                        let a = parseInt(rangeMatch[1], 10);
+                        let b = parseInt(rangeMatch[2], 10);
+                        if (a > b) [a, b] = [b, a];
+                        for (let p = a; p <= b; p++) {
+                            if (p >= 1 && p <= totalPages) set.add(p - 1);
+                        }
+                    } else if (/^\d+$/.test(clean)) {
+                        const p = parseInt(clean, 10);
+                        if (p >= 1 && p <= totalPages) set.add(p - 1);
+                    }
+                }
+                return Array.from(set).sort((a, b) => a - b);
+            }
+
+            async function downloadSinglePageImage(pg, pageIndex, format = 'png', singleDocFlag = false) {
+                const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
+                const ext = format === 'jpg' ? 'jpg' : 'png';
+                const mime = format === 'jpg' ? 'image/jpeg' : 'image/png';
+                const quality = format === 'jpg' ? 0.92 : undefined;
+
+                const merged = await renderCompositePageCanvas(pg, 2.2);
+                const blob = await new Promise(resolve => merged.toBlob(resolve, mime, quality));
+                const pageLabel = String(pageIndex + 1).padStart(2, '0');
+                const outFilename = singleDocFlag
+                    ? `${baseName}.${ext}`
+                    : `${baseName}_page_${pageLabel}.${ext}`;
+
+                triggerBlobDownload(blob, outFilename);
+                showToast(`ส่งออก ${outFilename} สำเร็จ`, 'success');
+            }
+
+            async function handleExportImagesClick() {
                 if (state.pages.length === 0) return;
+                closeInlineEditor();
+                closeExportMenu();
+                closeInsertPopover();
+
+                // 1-Page Document: Bypass modal and immediately export as PNG
+                if (state.pages.length === 1) {
+                    try {
+                        showToast('กำลังส่งออกรูปภาพ...', 'info');
+                        await downloadSinglePageImage(state.pages[0], 0, 'png', true);
+                    } catch (err) {
+                        console.error('Single image export error:', err);
+                        showToast('เกิดข้อผิดพลาดในการส่งออกรูปภาพ', 'error');
+                    }
+                    return;
+                }
+
+                // Multi-Page Document: Open Interactive Image Export Modal
+                openImageExportModal();
+            }
+
+            function openImageExportModal() {
+                const modal = $('imageExportModal');
+                const badge = $('imgExportTotalBadge');
+                const curBtn = $('imgModeBtn_current');
+                if (!modal) return;
+
+                const total = state.pages.length;
+                const activeIdx = Math.max(0, getPageIndexById(state.activePageId));
+
+                if (badge) badge.textContent = `${total} หน้า`;
+                if (curBtn) curBtn.textContent = `หน้าปัจจุบัน (${activeIdx + 1})`;
+
+                state.imageExport.mode = 'all';
+                state.imageExport.format = 'png';
+                state.imageExport.selectedIndices = state.pages.map((_, idx) => idx);
+
+                const rangeInp = $('imgExportRangeInput');
+                if (rangeInp) {
+                    rangeInp.value = formatIndicesToRangeString(state.imageExport.selectedIndices);
+                }
+
+                buildImageExportGrid();
+                updateImageExportUI();
+                modal.classList.remove('hidden');
+            }
+
+            function closeImageExportModal() {
+                const modal = $('imageExportModal');
+                const grid = $('imgExportGrid');
+                if (modal) modal.classList.add('hidden');
+                if (grid) grid.innerHTML = '';
+            }
+
+            function buildImageExportGrid() {
+                const grid = $('imgExportGrid');
+                if (!grid) return;
+                grid.innerHTML = '';
+
+                state.pages.forEach((pg, idx) => {
+                    const pageNum = idx + 1;
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.id = `imgExportCard_${idx}`;
+                    card.onclick = () => toggleImageExportPage(idx);
+                    card.className = 'group relative p-2.5 rounded-2xl border-2 text-left flex flex-col items-center transition cursor-pointer';
+
+                    const thumbWrap = document.createElement('div');
+                    thumbWrap.className = 'w-full aspect-[3/4] bg-white rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center relative shadow-sm';
+
+                    // Composite lightweight snapshot from existing thumbnail canvases or direct render
+                    const snapCanvas = document.createElement('canvas');
+                    snapCanvas.className = 'max-w-full max-h-full object-contain block';
+                    const srcBase = $(`thumbBase_${pg.id}`);
+                    const srcOver = $(`thumbOverlay_${pg.id}`);
+                    if (srcBase && srcBase.width > 0 && srcBase.height > 0) {
+                        snapCanvas.width = srcBase.width;
+                        snapCanvas.height = srcBase.height;
+                        const sCtx = snapCanvas.getContext('2d');
+                        sCtx.drawImage(srcBase, 0, 0);
+                        if (srcOver && srcOver.width > 0) {
+                            sCtx.drawImage(srcOver, 0, 0);
+                        }
+                    } else {
+                        renderCompositePageCanvas(pg, 0.5).then(c => {
+                            snapCanvas.width = c.width;
+                            snapCanvas.height = c.height;
+                            snapCanvas.getContext('2d').drawImage(c, 0, 0);
+                        });
+                    }
+                    thumbWrap.appendChild(snapCanvas);
+
+                    // Checkmark Badge (Top-Right)
+                    const checkBadge = document.createElement('div');
+                    checkBadge.id = `imgExportCheck_${idx}`;
+                    checkBadge.className = 'absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-md transition';
+                    thumbWrap.appendChild(checkBadge);
+
+                    // Edited Badge (Top-Left)
+                    if (isPageEdited(pg)) {
+                        const edBadge = document.createElement('span');
+                        edBadge.className = 'absolute top-2 left-2 px-1.5 py-0.5 rounded bg-[#E11D48] text-white font-mono text-[8px] font-bold shadow';
+                        edBadge.textContent = 'EDITED';
+                        thumbWrap.appendChild(edBadge);
+                    }
+
+                    const footer = document.createElement('div');
+                    footer.className = 'w-full flex items-center justify-between mt-2 px-0.5 font-mono text-[11px] font-bold';
+                    footer.innerHTML = `<span>หน้า ${pageNum}</span><span id="imgExportCardTag_${idx}" class="text-[10px]"></span>`;
+
+                    card.appendChild(thumbWrap);
+                    card.appendChild(footer);
+                    grid.appendChild(card);
+                });
+            }
+
+            function setImageExportMode(mode) {
+                state.imageExport.mode = mode;
+                const total = state.pages.length;
+
+                if (mode === 'all') {
+                    state.imageExport.selectedIndices = state.pages.map((_, idx) => idx);
+                } else if (mode === 'current') {
+                    const activeIdx = clamp(getPageIndexById(state.activePageId), 0, total - 1);
+                    state.imageExport.selectedIndices = [activeIdx];
+                }
+
+                const rangeInp = $('imgExportRangeInput');
+                if (rangeInp && mode !== 'custom') {
+                    rangeInp.value = formatIndicesToRangeString(state.imageExport.selectedIndices);
+                } else if (rangeInp && mode === 'custom') {
+                    rangeInp.focus();
+                }
+
+                updateImageExportUI();
+            }
+
+            function setImageExportFormat(fmt) {
+                state.imageExport.format = fmt === 'jpg' ? 'jpg' : 'png';
+                updateImageExportUI();
+            }
+
+            function toggleImageExportPage(idx) {
+                const pos = state.imageExport.selectedIndices.indexOf(idx);
+                if (pos >= 0) {
+                    state.imageExport.selectedIndices.splice(pos, 1);
+                } else {
+                    state.imageExport.selectedIndices.push(idx);
+                    state.imageExport.selectedIndices.sort((a, b) => a - b);
+                }
+
+                if (state.imageExport.selectedIndices.length === state.pages.length) {
+                    state.imageExport.mode = 'all';
+                } else {
+                    state.imageExport.mode = 'custom';
+                }
+
+                const rangeInp = $('imgExportRangeInput');
+                if (rangeInp) {
+                    rangeInp.value = formatIndicesToRangeString(state.imageExport.selectedIndices);
+                }
+
+                updateImageExportUI();
+            }
+
+            function onImageExportRangeInput(val) {
+                state.imageExport.mode = 'custom';
+                state.imageExport.selectedIndices = parseRangeStringToIndices(val, state.pages.length);
+                updateImageExportUI();
+            }
+
+            function clearImageExportSelection() {
+                state.imageExport.mode = 'custom';
+                state.imageExport.selectedIndices = [];
+                const rangeInp = $('imgExportRangeInput');
+                if (rangeInp) rangeInp.value = '';
+                updateImageExportUI();
+            }
+
+            function updateImageExportUI() {
+                const { mode, format, selectedIndices } = state.imageExport;
+                const count = selectedIndices.length;
+                const extUpper = format.toUpperCase();
+
+                // 1. Update Quick Mode Buttons
+                ['all', 'current', 'custom'].forEach(m => {
+                    const btn = $(`imgModeBtn_${m}`);
+                    if (!btn) return;
+                    btn.className = m === mode
+                        ? 'py-2 px-2 rounded-xl bg-[#E11D48] text-white font-bold text-xs text-center transition cursor-pointer truncate'
+                        : 'py-2 px-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-xs text-center transition cursor-pointer truncate';
+                });
+
+                // 2. Update Format Buttons
+                ['png', 'jpg'].forEach(f => {
+                    const btn = $(`imgFmtBtn_${f}`);
+                    if (!btn) return;
+                    if (f === format) {
+                        btn.className = 'p-2.5 rounded-xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left transition cursor-pointer';
+                    } else {
+                        btn.className = 'p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer';
+                    }
+                });
+
+                // 3. Update Dynamic Notice Banner
+                const notice = $('imgExportNotice');
+                if (notice) {
+                    if (count === 0) {
+                        notice.className = 'px-4 py-3 rounded-2xl border border-rose-300 dark:border-rose-800 bg-rose-500/10 text-rose-600 dark:text-rose-300 flex items-center gap-3 text-xs font-semibold transition-all';
+                        notice.innerHTML = `
+                            <i class="fa-solid fa-triangle-exclamation text-base shrink-0"></i>
+                            <span>กรุณาเลือกอย่างน้อย 1 หน้าเพื่อส่งออกเป็นรูปภาพ</span>
+                        `;
+                    } else if (count === 1) {
+                        notice.className = 'px-4 py-3 rounded-2xl border border-emerald-300 dark:border-emerald-800 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 flex items-center gap-3 text-xs font-semibold transition-all';
+                        notice.innerHTML = `
+                            <i class="fa-regular fa-image text-base shrink-0"></i>
+                            <span>เลือกไว้ <strong>1 หน้า</strong> (หน้า ${selectedIndices[0] + 1}) — ระบบจะดาวน์โหลดเป็นไฟล์รูปภาพเดี่ยว <strong>(.${extUpper})</strong> ทันที</span>
+                        `;
+                    } else {
+                        notice.className = 'px-4 py-3 rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-500/10 text-amber-800 dark:text-amber-300 flex items-center gap-3 text-xs font-semibold transition-all';
+                        notice.innerHTML = `
+                            <i class="fa-solid fa-file-zipper text-base shrink-0"></i>
+                            <span>เลือกไว้ <strong>${count} หน้า</strong> — ระบบจะรวมไฟล์ทั้งหมด (.${extUpper}) เป็น <strong>.ZIP</strong> เพื่อดาวน์โหลดในครั้งเดียว</span>
+                        `;
+                    }
+                }
+
+                // 4. Update Thumbnail Cards & Selected Counter
+                const countText = $('imgExportSelectedCountText');
+                if (countText) countText.textContent = `เลือกแล้ว ${count} / ${state.pages.length} หน้า`;
+
+                const selectedSet = new Set(selectedIndices);
+                state.pages.forEach((_, idx) => {
+                    const isSel = selectedSet.has(idx);
+                    const card = $(`imgExportCard_${idx}`);
+                    const chk = $(`imgExportCheck_${idx}`);
+                    const tag = $(`imgExportCardTag_${idx}`);
+
+                    if (card) {
+                        card.className = isSel
+                            ? 'group relative p-2.5 rounded-2xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left flex flex-col items-center transition cursor-pointer shadow-sm'
+                            : 'group relative p-2.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/70 opacity-75 hover:opacity-100 text-left flex flex-col items-center transition cursor-pointer';
+                    }
+                    if (chk) {
+                        chk.className = isSel
+                            ? 'absolute top-2 right-2 w-6 h-6 rounded-full bg-[#E11D48] text-white flex items-center justify-center text-xs shadow-md transition'
+                            : 'absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-600 text-transparent flex items-center justify-center text-xs shadow-sm transition';
+                        chk.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    }
+                    if (tag) {
+                        tag.textContent = isSel ? 'เลือกแล้ว' : '';
+                        tag.className = isSel ? 'text-[10px] text-[#E11D48]' : 'text-[10px] text-slate-400';
+                    }
+                });
+
+                // 5. Update Confirm CTA Button
+                const confirmBtn = $('btnConfirmImageExport');
+                const confirmText = $('btnConfirmImageExportText');
+                if (confirmBtn) confirmBtn.disabled = count === 0;
+                if (confirmText) {
+                    if (count === 0) {
+                        confirmText.textContent = 'เลือกหน้าที่ต้องการส่งออก';
+                    } else if (count === 1) {
+                        confirmText.textContent = `ดาวน์โหลดรูปภาพ (.${extUpper})`;
+                    } else {
+                        confirmText.textContent = `ดาวน์โหลดทั้งหมด ${count} หน้า (.ZIP)`;
+                    }
+                }
+            }
+
+            async function confirmImageExport() {
+                const { selectedIndices, format } = state.imageExport;
+                if (!selectedIndices || selectedIndices.length === 0) {
+                    showToast('กรุณาเลือกอย่างน้อย 1 หน้า', 'error');
+                    return;
+                }
+
+                const indicesToExport = [...selectedIndices];
+                const chosenFormat = format;
+                closeImageExportModal();
+
+                // Single selected page -> direct image download
+                if (indicesToExport.length === 1) {
+                    const idx = indicesToExport[0];
+                    const pg = state.pages[idx];
+                    if (!pg) return;
+                    try {
+                        showToast(`กำลังส่งออกหน้า ${idx + 1} เป็นรูปภาพ...`, 'info');
+                        await downloadSinglePageImage(pg, idx, chosenFormat, false);
+                    } catch (err) {
+                        console.error('Single selected image export error:', err);
+                        showToast('เกิดข้อผิดพลาดในการส่งออกรูปภาพ', 'error');
+                    }
+                    return;
+                }
+
+                // Multiple selected pages -> bundle into ZIP
                 if (typeof JSZip === 'undefined') {
                     showToast('ไม่พบไลบรารี JSZip กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
                     return;
                 }
 
-                closeInlineEditor();
-                showToast('กำลังสร้างไฟล์ ZIP ภาพทุกหน้า...', 'info');
+                showToast(`กำลังรวมภาพ ${indicesToExport.length} หน้าเป็นไฟล์ ZIP...`, 'info');
 
                 try {
                     const zip = new JSZip();
                     const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
+                    const ext = chosenFormat === 'jpg' ? 'jpg' : 'png';
+                    const mime = chosenFormat === 'jpg' ? 'image/jpeg' : 'image/png';
+                    const quality = chosenFormat === 'jpg' ? 0.92 : undefined;
 
-                    for (let i = 0; i < state.pages.length; i++) {
-                        const pg = state.pages[i];
+                    for (const idx of indicesToExport) {
+                        const pg = state.pages[idx];
+                        if (!pg) continue;
                         const merged = await renderCompositePageCanvas(pg, 2.2);
-                        const blob = await new Promise(resolve => merged.toBlob(resolve, 'image/png'));
-                        const pageLabel = String(i + 1).padStart(2, '0');
-                        zip.file(`${baseName}_page_${pageLabel}.png`, blob);
+                        const blob = await new Promise(resolve => merged.toBlob(resolve, mime, quality));
+                        const pageLabel = String(idx + 1).padStart(2, '0');
+                        zip.file(`${baseName}_page_${pageLabel}.${ext}`, blob);
                     }
 
                     const zipBlob = await zip.generateAsync({ type: 'blob' });
                     triggerBlobDownload(zipBlob, `${baseName}_pages.zip`);
-                    showToast(`ส่งออก ${baseName}_pages.zip สำเร็จ`, 'success');
+                    showToast(`ส่งออก ${baseName}_pages.zip (${indicesToExport.length} หน้า) สำเร็จ`, 'success');
                 } catch (err) {
                     console.error('Export ZIP error:', err);
                     showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ ZIP', 'error');
                 }
+            }
+
+            async function exportPagesAsZip() {
+                await handleExportImagesClick();
             }
 
             function triggerBlobDownload(blob, filename) {
@@ -4029,9 +4792,20 @@
                 toggleOverviewSidebar,
                 setOverviewOpen,
                 setOverviewFilter,
+                openDocumentPreview,
+                closeDocumentPreview,
                 triggerPrint,
                 exportPdfDocument,
                 exportPagesAsZip,
+                handleExportImagesClick,
+                openImageExportModal,
+                closeImageExportModal,
+                setImageExportMode,
+                setImageExportFormat,
+                toggleImageExportPage,
+                onImageExportRangeInput,
+                clearImageExportSelection,
+                confirmImageExport,
                 onRailToolClick,
                 toggleSubToolPanel,
                 hideSubToolPanel,
