@@ -622,7 +622,7 @@
                         <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                             <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>แตะวัตถุ 1 นิ้วเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
                             <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i>แตะซ้ำ 2 ครั้ง หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
-                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i>กด <strong>Spacebar + ลาก</strong> บนคอม หรือใช้ <strong>2 นิ้ว</strong> บนมือถือเพื่อเลื่อน/ซูมเอกสาร</p>
+                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i>กด <strong>Spacebar + ลาก</strong> เพื่อเลื่อน, <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูมบนคอม หรือใช้ <strong>2 นิ้ว</strong> บนมือถือ</p>
                         </div>
                     </div>
 
@@ -1440,6 +1440,32 @@
 
                 vp.addEventListener('wheel', (e) => {
                     state.programmaticScrollUntil = 0;
+
+                    // Ctrl + Scroll / Trackpad Pinch -> Zoom anchored to cursor
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (state.pages.length === 0) return;
+
+                        const prevZoom = state.zoom;
+                        const rawZoom = Math.abs(e.deltaY) < 40
+                            ? prevZoom * (1 - e.deltaY * 0.01)
+                            : prevZoom + (e.deltaY < 0 ? 0.12 : -0.12);
+                        const nextZoom = clamp(+rawZoom.toFixed(2), 0.35, 2.5);
+                        if (Math.abs(nextZoom - prevZoom) < 0.01) return;
+
+                        const vpRect = vp.getBoundingClientRect();
+                        const cursorX = e.clientX - vpRect.left;
+                        const cursorY = e.clientY - vpRect.top;
+                        const focalX = vp.scrollLeft + cursorX;
+                        const focalY = vp.scrollTop + cursorY;
+                        const ratio = nextZoom / prevZoom;
+
+                        setZoomLevel(nextZoom, false);
+                        vp.scrollLeft = Math.max(0, focalX * ratio - cursorX);
+                        vp.scrollTop = Math.max(0, focalY * ratio - cursorY);
+                        return;
+                    }
+
                     if (e.shiftKey && Math.abs(e.deltaY) > 0 && Math.abs(e.deltaX) === 0) {
                         e.preventDefault();
                         vp.scrollLeft += e.deltaY;
@@ -3526,6 +3552,9 @@
                 const bd = $('overviewBackdrop');
                 if (sb) sb.classList.toggle('hidden', !open);
                 if (bd) bd.classList.toggle('hidden', !(open && isMobile()));
+                if (open) {
+                    requestAnimationFrame(() => scrollOverviewToActivePage(true));
+                }
             }
 
             function toggleOverviewSidebar() {
@@ -3598,6 +3627,29 @@
                 updateActivePageHighlight();
             }
 
+            function scrollOverviewToActivePage(instant = false) {
+                const sidebar = $('overviewSidebar');
+                const list = $('thumbnailList');
+                const activeThumb = state.activePageId ? $(`thumbItem_${state.activePageId}`) : null;
+                if (!sidebar || sidebar.classList.contains('hidden') || !list || !activeThumb || activeThumb.classList.contains('hidden')) {
+                    return;
+                }
+
+                const listRect = list.getBoundingClientRect();
+                const itemRect = activeThumb.getBoundingClientRect();
+                const itemOffsetTop = (itemRect.top - listRect.top) + list.scrollTop;
+                const rawTargetTop = itemOffsetTop - (list.clientHeight / 2) + (itemRect.height / 2);
+                const maxScrollTop = Math.max(0, list.scrollHeight - list.clientHeight);
+                const targetTop = clamp(Math.round(rawTargetTop), 0, maxScrollTop);
+
+                if (Math.abs(list.scrollTop - targetTop) < 4) return;
+
+                list.scrollTo({
+                    top: targetTop,
+                    behavior: instant ? 'auto' : 'smooth'
+                });
+            }
+
             function updateActivePageHighlight() {
                 const idx = Math.max(0, getPageIndexById(state.activePageId));
                 const pageNum = idx + 1;
@@ -3612,7 +3664,10 @@
 
                 document.querySelectorAll('.thumb-item.is-active').forEach(el => el.classList.remove('is-active'));
                 const activeThumb = $(`thumbItem_${state.activePageId}`);
-                if (activeThumb) activeThumb.classList.add('is-active');
+                if (activeThumb) {
+                    activeThumb.classList.add('is-active');
+                    scrollOverviewToActivePage(false);
+                }
             }
 
             function detectActivePageFromScroll() {
