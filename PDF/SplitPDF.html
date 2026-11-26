@@ -143,6 +143,23 @@
             background-size: 20px 20px;
         }
 
+        /* Interactive Pan/Zoom Viewport Cursors */
+        .interactive-viewport {
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            overscroll-behavior: contain;
+        }
+
+        .interactive-viewport.is-panning {
+            cursor: grabbing !important;
+            touch-action: none;
+        }
+
+        .interactive-viewport.is-panning * {
+            cursor: grabbing !important;
+        }
+
         /* Page Card Visual States */
         .page-card {
             transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background-color 0.16s ease;
@@ -158,6 +175,16 @@
 
         .page-card.has-cut-after {
             box-shadow: 0 0 0 2px rgba(255, 30, 66, 0.35), 0 14px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Continuous Preview Page Card */
+        .cont-page-card {
+            transition: border-color 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .cont-page-card.is-selected {
+            border-color: #FF1E42 !important;
+            box-shadow: 0 0 0 2px rgba(255, 30, 66, 0.35), 0 14px 30px rgba(0, 0, 0, 0.55);
         }
 
         /* Overview Sidebar Thumbnail Card */
@@ -460,7 +487,7 @@
                     <div class="mt-6 sm:mt-8 pt-5 border-t border-tech-border flex flex-wrap items-center justify-center gap-3 sm:gap-4 font-mono text-[10px] sm:text-[11px] text-tech-muted">
                         <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>ตัดด้วยกรรไกร (Cut Points)</span>
                         <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>แบ่งชุดละ N หน้า + แยกสี</span>
-                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>พรีวิวผลลัพธ์ก่อนดาวน์โหลด</span>
+                        <span><i class="fa-solid fa-check text-emerald-500 mr-1"></i>พรีวิวซูม &amp; เลื่อนทุกหน้า</span>
                     </div>
                 </div>
             </div>
@@ -478,11 +505,11 @@
     <!-- ===================================================================== -->
     <section id="studioWorkspace" class="hidden flex-grow flex flex-col min-h-0 overflow-hidden bg-gray-900">
 
-        <!-- 1. STICKY TOP STUDIO TOOLBAR (Zero Overflow on 360px Mobile) -->
+        <!-- 1. STICKY TOP STUDIO TOOLBAR -->
         <header
             class="sticky top-0 z-40 bg-white border-b border-tech-border px-2.5 sm:px-5 h-14 shrink-0 flex items-center justify-between gap-1.5 sm:gap-2 shadow-sm">
 
-            <!-- Left Group: Pages Overview Toggle + Undo/Redo + Card Size S/M/L -->
+            <!-- Left Group: Pages Overview Toggle + Undo/Redo + Card Size S/M/L + Full Preview -->
             <div class="flex items-center gap-1 sm:gap-1.5 min-w-0">
                 <button type="button" id="btnToggleOverview" onclick="toggleOverviewSidebar()"
                     class="px-2 sm:px-2.5 py-1.5 rounded-xl border border-tech-border bg-white hover:bg-tech-panel text-tech-dark font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0"
@@ -494,7 +521,7 @@
 
                 <span class="w-px h-5 sm:h-6 bg-tech-border mx-0.5 shrink-0"></span>
 
-                <!-- Undo / Redo (Selection & Cut-Point History) -->
+                <!-- Undo / Redo -->
                 <button type="button" id="btnUndo" onclick="undoAction()" disabled
                     class="w-8 h-8 rounded-xl hover:bg-tech-panel disabled:opacity-35 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer shrink-0"
                     title="ย้อนกลับ (Ctrl+Z)">
@@ -517,11 +544,19 @@
                     <button type="button" id="gridBtn_L" onclick="setGridZoom(2)"
                         class="px-2 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer" title="การ์ดขนาดใหญ่">L</button>
                 </div>
+
+                <!-- Quick Continuous Preview Button -->
+                <button type="button" onclick="openPagePreviewModal(1, 'continuous')"
+                    class="hidden lg:inline-flex px-2.5 py-1.5 rounded-xl bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 border border-tech-border text-tech-dark font-semibold text-xs items-center gap-1.5 transition cursor-pointer shrink-0"
+                    title="เปิดพรีวิวอ่านเลื่อนทุกหน้าก่อนแยกไฟล์">
+                    <i class="fa-solid fa-book-open text-xs text-crimson-600"></i>
+                    <span>อ่านเลื่อนทุกหน้า</span>
+                </button>
             </div>
 
             <!-- Right Group: Filename Badge + Change File + Print + Mobile More + Split & Preview CTA -->
             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-tech-panel border border-tech-border max-w-[200px]">
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-tech-panel border border-tech-border max-w-[190px]">
                     <i class="fa-solid fa-file-pdf text-crimson-500 text-xs shrink-0"></i>
                     <span id="studioFileName" class="font-mono text-[11px] font-bold text-tech-dark truncate">document.pdf</span>
                 </div>
@@ -550,10 +585,15 @@
                     </button>
 
                     <div id="mobileMoreDropdown"
-                        class="hidden absolute right-0 mt-2 w-56 bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-1.5 text-xs space-y-0.5">
+                        class="hidden absolute right-0 mt-2 w-60 bg-white border-2 border-tech-dark rounded-2xl shadow-2xl p-1.5 text-xs space-y-0.5">
                         <div id="mobileMoreFileName" class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-tech-muted border-b border-tech-border truncate mb-1">
                             document.pdf
                         </div>
+                        <button type="button" onclick="closeMobileMoreMenu(); openPagePreviewModal(1, 'continuous');"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
+                            <i class="fa-solid fa-book-open text-crimson-600 w-4 text-center"></i>
+                            <span>พรีวิวแบบเลื่อนดูทุกหน้า</span>
+                        </button>
                         <button type="button" onclick="closeMobileMoreMenu(); triggerFilePicker();"
                             class="w-full text-left px-3 py-2 rounded-xl hover:bg-tech-panel text-tech-dark font-semibold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-solid fa-arrows-rotate text-crimson-600 w-4 text-center"></i>
@@ -661,7 +701,7 @@
     <div id="floatingSplitCard"
         class="hidden fixed bottom-3 left-2 right-2 z-35 md:bottom-5 md:right-5 md:left-auto md:w-[360px] max-h-[72dvh] md:max-h-[calc(100vh-5.5rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
 
-        <!-- Card Header (Draggable on Desktop, Tap to Expand/Collapse on Mobile, + Explicit "ซ่อน" Button) -->
+        <!-- Card Header -->
         <div id="floatingSplitCardHeader"
             class="px-3.5 py-2.5 bg-gray-50 border-b border-gray-200 flex items-center justify-between gap-2 cursor-pointer md:cursor-move select-none shrink-0"
             title="ลากเพื่อย้ายตำแหน่งบนคอมพิวเตอร์ หรือแตะเพื่อย่อ/ขยายบนมือถือ">
@@ -717,7 +757,6 @@
 
             <!-- MODE 1 PANEL: SELECT (CUSTOM) -->
             <div id="modePanel_select" class="space-y-2.5 pt-2 border-t border-gray-100">
-                <!-- Quick Preset Pills -->
                 <div class="flex flex-wrap gap-1">
                     <button type="button" onclick="selectPreset('all')"
                         class="px-2 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 hover:text-crimson-600 border border-tech-border font-bold text-[10px] transition cursor-pointer">ทั้งหมด</button>
@@ -735,7 +774,6 @@
                         class="px-2 py-1 rounded-lg bg-tech-panel hover:bg-gray-200 border border-tech-border font-bold text-[10px] transition cursor-pointer">ครึ่งหลัง</button>
                 </div>
 
-                <!-- Two-way Synced Range Input -->
                 <div>
                     <label for="rangeInput" class="block font-mono text-[10px] font-bold text-tech-muted uppercase mb-1">
                         ระบุช่วงหน้า (เช่น 1, 3-5, 8)
@@ -744,7 +782,6 @@
                         class="w-full px-3 py-2 bg-tech-panel/70 border border-gray-300 rounded-xl font-mono text-xs font-bold text-tech-dark focus:outline-none focus:border-crimson-500 focus:bg-white transition">
                 </div>
 
-                <!-- Output Format Radio -->
                 <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border space-y-1.5">
                     <div class="font-mono text-[10px] font-bold text-tech-muted uppercase">รูปแบบไฟล์ผลลัพธ์</div>
                     <label class="flex items-center gap-2 cursor-pointer select-none font-semibold text-tech-dark text-[11px]">
@@ -839,7 +876,7 @@
         </div>
     </div>
 
-    <!-- Compact Floating Unhide Pill (Shown when Floating Split Card is Hidden) -->
+    <!-- Compact Floating Unhide Pill -->
     <button type="button" id="unhideSplitPill" onclick="showSplitCard()"
         class="hidden fixed bottom-4 right-3 md:bottom-5 md:right-5 z-35 px-4 py-2.5 rounded-full bg-white text-tech-dark border-2 border-crimson-500 shadow-2xl font-bold text-xs flex items-center gap-2 transition hover:bg-crimson-50 cursor-pointer"
         title="แสดงกล่องตั้งค่าการแยกไฟล์">
@@ -849,7 +886,7 @@
     </button>
 
     <!-- ===================================================================== -->
-    <!-- 5. RESULT PREVIEW MODAL (BEFORE FINAL DOWNLOAD)                       -->
+    <!-- 5. RESULT PREVIEW MODAL (INTERACTIVE ZOOM/PAN + CONTINUOUS SCROLL)    -->
     <!-- ===================================================================== -->
     <div id="resultPreviewModal" onclick="if (event.target === this) closeResultPreviewModal()"
         class="hidden fixed inset-0 z-[80] flex items-center justify-center bg-gray-950/88 backdrop-blur-sm p-2.5 sm:p-5">
@@ -864,7 +901,7 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
                             <h4 class="font-extrabold text-xs sm:text-sm text-white truncate">ตรวจสอบผลลัพธ์การแยกไฟล์ก่อนดาวน์โหลด</h4>
-                            <span class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">READY</span>
+                            <span class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">INTERACTIVE</span>
                         </div>
                         <div id="resultModalSubtitle" class="font-mono text-[10px] text-gray-400 truncate mt-0.5">
                             กำลังเตรียมไฟล์...
@@ -878,7 +915,7 @@
                 </button>
             </div>
 
-            <!-- Modal Body: Split Pane (File List Left/Top + Real PDF Canvas Viewer Right) -->
+            <!-- Modal Body: Split Pane (File List Left/Top + Interactive PDF Viewer Right) -->
             <div class="flex-grow flex flex-col md:flex-row min-h-0 overflow-hidden relative">
 
                 <!-- Generating Overlay Spinner -->
@@ -889,7 +926,7 @@
                 </div>
 
                 <!-- Left/Top Generated Files List -->
-                <div class="w-full md:w-80 max-h-[34dvh] md:max-h-none shrink-0 bg-tech-panel/60 border-b md:border-b-0 md:border-r border-tech-border flex flex-col min-h-0">
+                <div class="w-full md:w-80 max-h-[30dvh] md:max-h-none shrink-0 bg-tech-panel/60 border-b md:border-b-0 md:border-r border-tech-border flex flex-col min-h-0">
                     <div class="px-3.5 py-2.5 bg-white border-b border-tech-border flex items-center justify-between font-mono text-[10px] shrink-0">
                         <span class="font-extrabold text-tech-dark uppercase">รายการไฟล์ที่สร้าง</span>
                         <span id="resultListCountBadge" class="px-2 py-0.5 rounded bg-crimson-50 text-crimson-600 font-bold">0 ไฟล์</span>
@@ -899,11 +936,27 @@
                     </div>
                 </div>
 
-                <!-- Right PDF Canvas Viewer -->
+                <!-- Right Interactive PDF Viewer -->
                 <div class="flex-grow flex flex-col min-h-0 min-w-0">
                     <!-- Viewer Controls -->
                     <div class="px-3 sm:px-4 py-2 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 font-mono text-xs shrink-0">
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <!-- View Mode Toggle: Single vs Continuous Scroll -->
+                            <div class="inline-flex items-center p-0.5 rounded-xl bg-tech-panel border border-tech-border font-sans text-[11px] shrink-0">
+                                <button type="button" id="resModeBtn_single" onclick="setResultViewMode('single')"
+                                    class="px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1">
+                                    <i class="fa-regular fa-file text-[10px]"></i>
+                                    <span>ทีละหน้า</span>
+                                </button>
+                                <button type="button" id="resModeBtn_continuous" onclick="setResultViewMode('continuous')"
+                                    class="px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1">
+                                    <i class="fa-solid fa-arrows-up-down text-[10px]"></i>
+                                    <span>เลื่อนทุกหน้า</span>
+                                </button>
+                            </div>
+
+                            <span class="w-px h-5 bg-tech-border mx-0.5"></span>
+
                             <button type="button" id="resPrevPageBtn" onclick="stepResultViewerPage(-1)"
                                 class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none text-tech-dark flex items-center justify-center transition cursor-pointer">
                                 <i class="fa-solid fa-chevron-left text-[10px]"></i>
@@ -918,12 +971,16 @@
                         </div>
 
                         <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="adjustResultViewerZoom(-0.2)"
+                            <span class="hidden xl:inline-flex items-center gap-1 text-[10px] text-tech-muted font-sans mr-1">
+                                <i class="fa-solid fa-computer-mouse text-crimson-500"></i>
+                                <span>Wheel ซูม &bull; ลากเพื่อเลื่อน</span>
+                            </span>
+                            <button type="button" onclick="adjustResultViewerZoom(-0.15)"
                                 class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ย่อ">
                                 <i class="fa-solid fa-minus text-[10px]"></i>
                             </button>
-                            <span id="resZoomLabel" class="font-bold min-w-[42px] text-center">100%</span>
-                            <button type="button" onclick="adjustResultViewerZoom(0.2)"
+                            <span id="resZoomLabel" class="font-bold min-w-[44px] text-center">100%</span>
+                            <button type="button" onclick="adjustResultViewerZoom(0.15)"
                                 class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ขยาย">
                                 <i class="fa-solid fa-plus text-[10px]"></i>
                             </button>
@@ -934,13 +991,25 @@
                         </div>
                     </div>
 
-                    <!-- Viewer Canvas Stage -->
-                    <div class="flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg flex items-center justify-center relative">
-                        <div id="resCanvasSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/70 z-10 font-mono text-xs text-crimson-500 font-bold gap-2">
+                    <!-- Interactive Viewer Stage (Mouse Wheel Zoom + Click-and-Drag Pan) -->
+                    <div id="resultViewerViewport"
+                        class="interactive-viewport flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg relative">
+                        <div id="resCanvasSpinner" class="hidden fixed inset-0 flex items-center justify-center bg-gray-950/50 z-20 font-mono text-xs text-crimson-500 font-bold gap-2 pointer-events-none">
                             <i class="fa-solid fa-circle-notch animate-spin text-base"></i>
                             <span>RENDERING...</span>
                         </div>
-                        <canvas id="resultPreviewCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white max-w-full"></canvas>
+
+                        <!-- Single Page Container (min-w-fit + m-auto prevents left/top clipping when zoomed) -->
+                        <div id="resSingleStage" class="min-w-fit min-h-full flex">
+                            <div class="m-auto">
+                                <canvas id="resultPreviewCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white block transition-transform duration-75"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Continuous Scroll Container -->
+                        <div id="resContinuousStage" class="hidden min-w-fit flex flex-col items-center gap-5 pb-8">
+                            <!-- Dynamic Continuous Pages for Active Result File -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -968,16 +1037,20 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- 6. SINGLE-PAGE EXPAND PREVIEW MODAL                                   -->
+    <!-- 6. PRE-SPLIT EXPAND PREVIEW MODAL (SINGLE + CONTINUOUS SCROLL + ZOOM) -->
     <!-- ===================================================================== -->
     <div id="pagePreviewModal" onclick="if (event.target === this) closePagePreviewModal()"
-        class="hidden fixed inset-0 z-[75] flex items-center justify-center bg-gray-950/85 backdrop-blur-sm p-3 sm:p-5">
-        <div class="bg-white max-w-4xl w-full h-[90dvh] rounded-2xl border-2 border-crimson-500 shadow-2xl flex flex-col overflow-hidden">
+        class="hidden fixed inset-0 z-[75] flex items-center justify-center bg-gray-950/85 backdrop-blur-sm p-2.5 sm:p-5">
+        <div class="bg-white max-w-5xl w-full h-[92dvh] rounded-2xl border-2 border-crimson-500 shadow-2xl flex flex-col overflow-hidden">
 
+            <!-- Modal Header -->
             <div class="px-4 sm:px-5 py-3 bg-gray-950 text-white flex items-center justify-between gap-2 font-mono shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <span class="w-2.5 h-2.5 rounded-full bg-crimson-500 shrink-0"></span>
-                    <h4 id="pageModalTitle" class="font-bold text-white truncate text-xs sm:text-sm">PAGE PREVIEW</h4>
+                    <h4 id="pageModalTitle" class="font-bold text-white truncate text-xs sm:text-sm">DOCUMENT PREVIEW</h4>
+                    <span class="hidden md:inline-block px-2 py-0.5 rounded bg-gray-800 text-gray-300 font-sans text-[10px]">
+                        ลูกกลิ้งเมาส์ซูม &bull; ลากเพื่อเลื่อน &bull; ดับเบิลคลิกซูมด่วน
+                    </span>
                 </div>
                 <button type="button" onclick="closePagePreviewModal()"
                     class="w-8 h-8 rounded-lg bg-gray-800 hover:bg-crimson-500 text-gray-200 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0">
@@ -985,8 +1058,25 @@
                 </button>
             </div>
 
+            <!-- Interactive Toolbar -->
             <div class="px-3 sm:px-5 py-2.5 border-b border-tech-border bg-white flex flex-wrap items-center justify-between gap-2 font-mono text-xs shrink-0">
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <!-- View Mode Switcher: Single Page vs Continuous All Pages -->
+                    <div class="inline-flex items-center p-0.5 rounded-xl bg-tech-panel border border-tech-border font-sans text-[11px] shrink-0">
+                        <button type="button" id="pmModeBtn_single" onclick="setPageModalViewMode('single')"
+                            class="px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-regular fa-file text-[10px]"></i>
+                            <span>ทีละหน้า</span>
+                        </button>
+                        <button type="button" id="pmModeBtn_continuous" onclick="setPageModalViewMode('continuous')"
+                            class="px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrows-up-down text-[10px]"></i>
+                            <span>เลื่อนทุกหน้า</span>
+                        </button>
+                    </div>
+
+                    <span class="w-px h-5 bg-tech-border mx-0.5"></span>
+
                     <button type="button" id="pageModalPrevBtn" onclick="stepPageModal(-1)"
                         class="w-8 h-8 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white disabled:opacity-30 disabled:pointer-events-none text-tech-dark font-bold flex items-center justify-center transition cursor-pointer">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -999,9 +1089,9 @@
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
 
-                    <!-- Toggle Select Checkbox Button -->
+                    <!-- Toggle Select Checkbox Button (Syncs with Current Page) -->
                     <button type="button" id="pageModalToggleSelectBtn" onclick="toggleSelectFromModal()"
-                        class="ml-1.5 px-2.5 py-1.5 rounded-lg border font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer">
+                        class="ml-1 px-2.5 py-1.5 rounded-lg border font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer">
                         <i id="pageModalSelectIcon" class="fa-solid fa-square-check"></i>
                         <span id="pageModalSelectText">เลือกหน้านี้</span>
                     </button>
@@ -1009,20 +1099,21 @@
 
                 <div class="flex items-center gap-1.5">
                     <button type="button" onclick="downloadSinglePage(state.modalPageNum)"
-                        class="px-2.5 py-1.5 rounded-lg bg-crimson-50 hover:bg-crimson-500 text-crimson-600 hover:text-white border border-crimson-100 font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer">
+                        class="px-2.5 py-1.5 rounded-lg bg-crimson-50 hover:bg-crimson-500 text-crimson-600 hover:text-white border border-crimson-100 font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer"
+                        title="ดาวน์โหลดหน้าปัจจุบัน (.pdf)">
                         <i class="fa-solid fa-download text-[10px]"></i>
-                        <span class="hidden sm:inline">ดาวน์โหลดหน้านี้ (.pdf)</span>
+                        <span class="hidden sm:inline">โหลดหน้านี้</span>
                     </button>
 
                     <span class="w-px h-5 bg-tech-border mx-0.5"></span>
 
-                    <button type="button" onclick="adjustPageModalZoom(-0.2)"
-                        class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ย่อ">
+                    <button type="button" onclick="adjustPageModalZoom(-0.15)"
+                        class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ย่อ (-)">
                         <i class="fa-solid fa-minus text-[10px]"></i>
                     </button>
-                    <span id="pageModalZoomLabel" class="font-bold min-w-[42px] text-center">100%</span>
-                    <button type="button" onclick="adjustPageModalZoom(0.2)"
-                        class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ขยาย">
+                    <span id="pageModalZoomLabel" class="font-bold min-w-[44px] text-center">100%</span>
+                    <button type="button" onclick="adjustPageModalZoom(0.15)"
+                        class="w-7 h-7 rounded-lg bg-tech-panel hover:bg-crimson-500 hover:text-white text-tech-dark flex items-center justify-center transition cursor-pointer" title="ขยาย (+)">
                         <i class="fa-solid fa-plus text-[10px]"></i>
                     </button>
                     <button type="button" onclick="resetPageModalZoom()"
@@ -1032,12 +1123,26 @@
                 </div>
             </div>
 
-            <div class="flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg flex items-center justify-center relative">
-                <div id="pageModalSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-gray-950/75 z-10 font-mono text-xs text-crimson-500 font-bold gap-2">
+            <!-- Interactive Stage Viewport (Mouse Wheel Zoom + Click & Drag Pan) -->
+            <div id="pageModalViewport"
+                class="interactive-viewport flex-grow overflow-auto p-4 sm:p-6 studio-stage-bg relative">
+
+                <div id="pageModalSpinner" class="hidden fixed inset-0 flex items-center justify-center bg-gray-950/50 z-20 font-mono text-xs text-crimson-500 font-bold gap-2 pointer-events-none">
                     <i class="fa-solid fa-circle-notch animate-spin text-base"></i>
                     <span>RENDERING HIGH-RES PAGE...</span>
                 </div>
-                <canvas id="pageModalCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white max-w-full"></canvas>
+
+                <!-- Mode A: Single Page Stage (min-w-fit + m-auto prevents left/top clipping when zoomed) -->
+                <div id="pageModalSingleStage" class="min-w-fit min-h-full flex">
+                    <div class="m-auto">
+                        <canvas id="pageModalCanvas" class="shadow-2xl rounded-lg border border-gray-800 bg-white block transition-transform duration-75"></canvas>
+                    </div>
+                </div>
+
+                <!-- Mode B: Continuous All-Pages Scroll Stage -->
+                <div id="pageModalContinuousStage" class="hidden min-w-fit flex flex-col items-center gap-6 pb-10">
+                    <!-- Lazy-Rendered Continuous Pages Injected Here -->
+                </div>
             </div>
         </div>
     </div>
@@ -1093,7 +1198,7 @@
                 // Modes: 'select' | 'cutPoints' | 'everyN' | 'all'
                 splitMode: 'select',
                 selectedPages: new Set(),  // 1-based page numbers
-                cutPoints: new Set(),      // 1-based page numbers after which a cut is placed (1 .. totalPages - 1)
+                cutPoints: new Set(),      // 1-based page numbers after which a cut is placed
                 chunkSize: 2,
                 lastClickedPage: null,
 
@@ -1110,17 +1215,27 @@
                 undoStack: [],
                 redoStack: [],
 
-                // Single-Page Expand Preview Modal
+                // Pre-Split Expand Preview Modal State (Single + Continuous)
+                modalViewMode: 'single',   // 'single' | 'continuous'
                 modalPageNum: 1,
                 modalZoom: 1.0,
                 modalRenderTask: null,
+                modalContinuousObserver: null,
+                modalContinuousRenderedZoom: new Map(), // pageNum -> zoom rendered
+                modalContinuousTasks: new Map(),
+                modalZoomDebounce: null,
 
                 // Result Preview Modal (Pre-Download)
                 resultFiles: [],           // [{ name, bytes, pageCount, pagesLabel, sizeBytes, pdfjsDoc }]
                 activeResultIdx: 0,
+                resultViewMode: 'single',  // 'single' | 'continuous'
                 resultViewerPage: 1,
                 resultViewerZoom: 1.0,
                 resultRenderTask: null,
+                resultContinuousObserver: null,
+                resultContinuousRenderedZoom: new Map(),
+                resultContinuousTasks: new Map(),
+                resultZoomDebounce: null,
                 finalOutputExt: '.pdf',
                 finalBaseName: 'document_split',
 
@@ -1182,8 +1297,6 @@
                 return checked ? checked.value : 'singlePdf';
             }
 
-            // Compute Part Groups for 'cutPoints' or 'everyN' modes
-            // Returns array of { partNum, pages: [1, 2, ...], color }
             function computePartGroups() {
                 if (state.totalPages === 0) return [];
                 const groups = [];
@@ -1243,6 +1356,80 @@
                     g.pages.forEach(p => map.set(p, g));
                 });
                 return { map, groups };
+            }
+
+            // =================================================================
+            // INTERACTIVE VIEWPORT CONTROLLER (MOUSE WHEEL ZOOM + DRAG PAN)
+            // =================================================================
+            function attachInteractiveViewport({ viewportId, onZoomDelta, onDoubleClickToggle }) {
+                const vp = $(viewportId);
+                if (!vp) return;
+
+                // 1. Mouse Wheel Zoom (Shift + Wheel scrolls horizontally; standard Wheel zooms)
+                vp.addEventListener('wheel', (e) => {
+                    if (e.shiftKey) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                        vp.scrollLeft += delta;
+                        return;
+                    }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const direction = e.deltaY < 0 ? 1 : -1;
+                    const step = e.ctrlKey ? 0.18 : 0.12;
+                    onZoomDelta(direction * step, e.clientX, e.clientY);
+                }, { passive: false });
+
+                // 2. Click & Drag Panning (Grab / Grabbing in all 4 directions)
+                let isPanning = false;
+                let moved = false;
+                let startX = 0;
+                let startY = 0;
+                let startScrollLeft = 0;
+                let startScrollTop = 0;
+
+                vp.addEventListener('pointerdown', (e) => {
+                    // Ignore right click or clicks on interactive buttons/inputs
+                    if (e.button !== 0) return;
+                    if (e.target.closest('button, input, label, a')) return;
+
+                    isPanning = true;
+                    moved = false;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startScrollLeft = vp.scrollLeft;
+                    startScrollTop = vp.scrollTop;
+                    vp.classList.add('is-panning');
+                    try { vp.setPointerCapture(e.pointerId); } catch (_) { }
+                });
+
+                vp.addEventListener('pointermove', (e) => {
+                    if (!isPanning) return;
+                    e.preventDefault();
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+                    vp.scrollLeft = startScrollLeft - dx;
+                    vp.scrollTop = startScrollTop - dy;
+                });
+
+                const endPan = (e) => {
+                    if (!isPanning) return;
+                    isPanning = false;
+                    vp.classList.remove('is-panning');
+                    try { vp.releasePointerCapture(e.pointerId); } catch (_) { }
+                };
+
+                vp.addEventListener('pointerup', endPan);
+                vp.addEventListener('pointercancel', endPan);
+
+                // 3. Double-click Quick Zoom Toggle (100% <-> 165%)
+                vp.addEventListener('dblclick', (e) => {
+                    if (moved) return;
+                    if (e.target.closest('button, input, label, a')) return;
+                    if (onDoubleClickToggle) onDoubleClickToggle(e.clientX, e.clientY);
+                });
             }
 
             // =================================================================
@@ -1347,7 +1534,6 @@
                     state.fileSizeBytes = file.size || bytes.byteLength;
                     state.totalPages = pdfjsDoc.numPages;
 
-                    // Default: all pages selected, no cut points
                     state.selectedPages = new Set(Array.from({ length: state.totalPages }, (_, i) => i + 1));
                     state.cutPoints = new Set();
                     state.lastClickedPage = null;
@@ -1358,7 +1544,6 @@
                     state.renderedMainPages.clear();
                     state.renderedOverviewPages.clear();
 
-                    // Populate metadata UI
                     $('studioFileName').textContent = file.name;
                     $('mobileMoreFileName').textContent = file.name;
                     $('toolbarPageCountBadge').textContent = state.totalPages;
@@ -1371,7 +1556,6 @@
                     const cleanBase = file.name.replace(/\.pdf$/i, '') || 'document';
                     $('outputFilenameInput').value = `${cleanBase}_split`;
 
-                    // Switch to Studio Workspace
                     $('uploadScreen').classList.add('hidden');
                     $('studioWorkspace').classList.remove('hidden');
 
@@ -1429,13 +1613,11 @@
 
                     sections.forEach((sec, idx) => {
                         const page = doc.addPage([W, H]);
-                        // Top Colored Header Banner
                         page.drawRectangle({ x: 0, y: H - 155, width: W, height: 155, color: sec.color });
                         page.drawText(sec.tag, { x: 48, y: H - 52, size: 11, font: fontBold, color: rgb(1, 1, 1) });
                         page.drawText(sec.title, { x: 48, y: H - 92, size: 25, font: fontBold, color: rgb(1, 1, 1) });
                         page.drawText(sec.sub, { x: 48, y: H - 122, size: 12, font: fontReg, color: rgb(0.95, 0.95, 0.98) });
 
-                        // Giant Page Number Watermark Badge
                         page.drawRectangle({ x: W - 118, y: H - 118, width: 72, height: 72, color: rgb(1, 1, 1) });
                         page.drawText(`P.${idx + 1}`, {
                             x: W - 102,
@@ -1445,7 +1627,6 @@
                             color: sec.color
                         });
 
-                        // Body Content Cards
                         for (let b = 0; b < 4; b++) {
                             const by = H - 270 - b * 125;
                             page.drawRectangle({ x: 48, y: by, width: W - 96, height: 96, color: rgb(0.96, 0.97, 0.98) });
@@ -1457,7 +1638,7 @@
                                 font: fontBold,
                                 color: rgb(0.08, 0.12, 0.20)
                             });
-                            page.drawText('Test Custom Selection, Scissors Cut Points, Every-N Splitting, or WYSIWYG Print.', {
+                            page.drawText('Test Custom Selection, Scissors Cut Points, Every-N Splitting, or Interactive Zoom.', {
                                 x: 70,
                                 y: by + 40,
                                 size: 10,
@@ -1473,7 +1654,6 @@
                             });
                         }
 
-                        // Footer line
                         page.drawRectangle({ x: 48, y: 46, width: W - 96, height: 1, color: rgb(0.85, 0.87, 0.90) });
                         page.drawText(`CLEVERTENSAI_Demo_8Pages.pdf`, { x: 48, y: 28, size: 9, font: fontReg, color: rgb(0.5, 0.55, 0.62) });
                         page.drawText(`Page ${idx + 1} / 8`, { x: W - 104, y: 28, size: 9, font: fontBold, color: sec.color });
@@ -1523,7 +1703,7 @@
                     const canCut = p < state.totalPages;
 
                     card.innerHTML = `
-                        <!-- Card Header Row: Page Badge + Part Pill + Checkbox -->
+                        <!-- Card Header Row -->
                         <div class="flex items-center justify-between gap-1.5 font-mono text-[10px]">
                             <div class="flex items-center gap-1.5 min-w-0">
                                 <span class="px-2 py-0.5 rounded-lg bg-gray-950 text-white font-extrabold border border-gray-700 shrink-0">#${p}</span>
@@ -1540,20 +1720,24 @@
                         <div class="page-thumb-box relative w-full ${lvl.thumbH} bg-gray-900/70 rounded-xl border border-gray-700/80 overflow-hidden flex items-center justify-center p-2">
                             <canvas id="pageCanvas_${p}" class="max-w-full max-h-full rounded shadow-md bg-white block"></canvas>
 
-                            <!-- Cut-Point Visual Indicator Badge -->
                             <div id="cardCutBadge_${p}"
                                 class="hidden absolute bottom-1.5 inset-x-1.5 z-20 py-1 px-2 rounded-lg bg-crimson-500 text-white font-mono text-[9px] font-extrabold text-center shadow-lg">
                                 ✂ ตัดแบ่งหลังหน้านี้
                             </div>
                         </div>
 
-                        <!-- Always-Visible Compact 1-Row Action Bar (Mobile-Friendly, Zero Hover Trap) -->
+                        <!-- Always-Visible Compact 1-Row Action Bar -->
                         <div class="flex items-center justify-between gap-1 pt-0.5">
                             <div class="flex items-center gap-1">
-                                <button type="button" onclick="openPagePreviewModal(${p})"
+                                <button type="button" onclick="openPagePreviewModal(${p}, 'single')"
                                     class="card-action-btn w-7 h-7 rounded-lg bg-gray-900 hover:bg-crimson-500 text-gray-200 hover:text-white flex items-center justify-center text-[11px] transition cursor-pointer"
                                     title="ขยายดูหน้า ${p}">
                                     <i class="fa-solid fa-expand"></i>
+                                </button>
+                                <button type="button" onclick="openPagePreviewModal(${p}, 'continuous')"
+                                    class="card-action-btn w-7 h-7 rounded-lg bg-gray-900 hover:bg-crimson-500 text-gray-200 hover:text-white flex items-center justify-center text-[11px] transition cursor-pointer"
+                                    title="เลื่อนดูทุกหน้าเริ่มจากหน้า ${p}">
+                                    <i class="fa-solid fa-arrows-up-down"></i>
                                 </button>
                                 <button type="button" onclick="downloadSinglePage(${p})"
                                     class="card-action-btn w-7 h-7 rounded-lg bg-gray-900 hover:bg-emerald-600 text-gray-200 hover:text-white flex items-center justify-center text-[11px] transition cursor-pointer"
@@ -1782,6 +1966,20 @@
                     if (ovCheckBadge) {
                         ovCheckBadge.classList.toggle('hidden', !(isSelectMode && isSelected));
                     }
+
+                    // Sync Continuous Preview Modal Cards if open
+                    const contCard = $(`pmContCard_${p}`);
+                    const contBtn = $(`pmContSelBtn_${p}`);
+                    if (contCard && contBtn) {
+                        contCard.classList.toggle('is-selected', isSelected);
+                        if (isSelected) {
+                            contBtn.className = 'px-2.5 py-1 rounded-lg bg-crimson-500 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
+                            contBtn.innerHTML = '<i class="fa-solid fa-square-check"></i><span>เลือกไว้แล้ว</span>';
+                        } else {
+                            contBtn.className = 'px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
+                            contBtn.innerHTML = '<i class="fa-regular fa-square"></i><span>เลือกหน้านี้</span>';
+                        }
+                    }
                 }
 
                 // Update Cut-Points & Every-N live summaries
@@ -1797,6 +1995,11 @@
                 if (state.splitMode === 'everyN') {
                     const count = groups.length;
                     $('everyNSummaryBox').textContent = `แบ่งชุดละ ${state.chunkSize} หน้า → ได้ทั้งหมด ${count} ไฟล์ PDF (${count > 1 ? '.ZIP' : '.PDF'})`;
+                }
+
+                // Update expand modal top select button if open
+                if (!$('pagePreviewModal').classList.contains('hidden')) {
+                    updatePageModalSelectButton();
                 }
 
                 applyOverviewFilterDOM();
@@ -2155,7 +2358,8 @@
             }
 
             // =================================================================
-            // SINGLE-PAGE QUICK DOWNLOAD & EXPAND PREVIEW MODAL
+            // SINGLE-PAGE QUICK DOWNLOAD & PRE-SPLIT EXPAND PREVIEW MODAL
+            // (SUPPORTS BOTH SINGLE PAGE & CONTINUOUS ALL-PAGES SCROLL + ZOOM)
             // =================================================================
             async function downloadSinglePage(pageNum) {
                 if (!state.pdfLibDoc || pageNum < 1 || pageNum > state.totalPages) return;
@@ -2173,12 +2377,12 @@
                 }
             }
 
-            function openPagePreviewModal(pageNum) {
+            function openPagePreviewModal(pageNum, initialViewMode = 'single') {
                 if (!state.pdfjsDoc) return;
                 state.modalPageNum = clamp(pageNum, 1, state.totalPages);
                 state.modalZoom = 1.0;
                 $('pagePreviewModal').classList.remove('hidden');
-                renderPagePreviewModal();
+                setPageModalViewMode(initialViewMode, true);
             }
 
             function closePagePreviewModal() {
@@ -2186,30 +2390,138 @@
                     try { state.modalRenderTask.cancel(); } catch (_) { }
                     state.modalRenderTask = null;
                 }
+                if (state.modalContinuousObserver) {
+                    state.modalContinuousObserver.disconnect();
+                    state.modalContinuousObserver = null;
+                }
+                state.modalContinuousTasks.forEach(t => { try { t.cancel(); } catch (_) { } });
+                state.modalContinuousTasks.clear();
                 $('pagePreviewModal').classList.add('hidden');
+            }
+
+            function setPageModalViewMode(mode, isInitialOpen = false) {
+                state.modalViewMode = mode === 'continuous' ? 'continuous' : 'single';
+
+                const isSingle = state.modalViewMode === 'single';
+                $('pmModeBtn_single').className = isSingle
+                    ? 'px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1.5'
+                    : 'px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1.5';
+                $('pmModeBtn_continuous').className = !isSingle
+                    ? 'px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1.5'
+                    : 'px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1.5';
+
+                $('pageModalSingleStage').classList.toggle('hidden', !isSingle);
+                $('pageModalContinuousStage').classList.toggle('hidden', isSingle);
+
+                updatePageModalHeaderControls();
+
+                if (isSingle) {
+                    if (state.modalContinuousObserver) {
+                        state.modalContinuousObserver.disconnect();
+                        state.modalContinuousObserver = null;
+                    }
+                    renderPagePreviewModal();
+                } else {
+                    buildAndRenderModalContinuousPages(isInitialOpen ? state.modalPageNum : state.modalPageNum);
+                }
+            }
+
+            function updatePageModalHeaderControls() {
+                const isSingle = state.modalViewMode === 'single';
+                $('pageModalTitle').textContent = isSingle
+                    ? `SINGLE PAGE PREVIEW // P.${state.modalPageNum} OF ${state.totalPages}`
+                    : `CONTINUOUS SCROLL PREVIEW // ${state.totalPages} PAGES`;
+                $('pageModalCurNum').textContent = state.modalPageNum;
+                $('pageModalTotNum').textContent = state.totalPages;
+                $('pageModalPrevBtn').disabled = state.modalPageNum <= 1;
+                $('pageModalNextBtn').disabled = state.modalPageNum >= state.totalPages;
+                $('pageModalZoomLabel').textContent = `${Math.round(state.modalZoom * 100)}%`;
+                updatePageModalSelectButton();
             }
 
             function stepPageModal(delta) {
                 const next = clamp(state.modalPageNum + delta, 1, state.totalPages);
-                if (next !== state.modalPageNum) {
-                    state.modalPageNum = next;
+                if (next === state.modalPageNum) return;
+                state.modalPageNum = next;
+                updatePageModalHeaderControls();
+
+                if (state.modalViewMode === 'single') {
                     renderPagePreviewModal();
+                } else {
+                    scrollToModalContinuousPage(next);
                 }
             }
 
-            function adjustPageModalZoom(delta) {
-                state.modalZoom = clamp(+(state.modalZoom + delta).toFixed(2), 0.4, 2.6);
-                renderPagePreviewModal();
+            function adjustPageModalZoom(delta, clientX = null, clientY = null) {
+                const prevZoom = state.modalZoom;
+                const nextZoom = clamp(+(prevZoom + delta).toFixed(2), 0.35, 3.0);
+                if (nextZoom === prevZoom) return;
+
+                const vp = $('pageModalViewport');
+                const ratio = nextZoom / prevZoom;
+
+                // Preserve scroll focal point around cursor (or viewport center)
+                let focalX = vp ? vp.clientWidth / 2 : 0;
+                let focalY = vp ? vp.clientHeight / 2 : 0;
+                if (vp && clientX !== null && clientY !== null) {
+                    const rect = vp.getBoundingClientRect();
+                    focalX = clientX - rect.left;
+                    focalY = clientY - rect.top;
+                }
+
+                const oldScrollLeft = vp ? vp.scrollLeft : 0;
+                const oldScrollTop = vp ? vp.scrollTop : 0;
+
+                state.modalZoom = nextZoom;
+                $('pageModalZoomLabel').textContent = `${Math.round(state.modalZoom * 100)}%`;
+
+                if (state.modalViewMode === 'single') {
+                    const canvas = $('pageModalCanvas');
+                    // Instant visual scale feedback while crisp canvas renders
+                    if (canvas && canvas.dataset.renderedZoom) {
+                        const renderedZ = parseFloat(canvas.dataset.renderedZoom);
+                        canvas.style.transform = `scale(${nextZoom / renderedZ})`;
+                        canvas.style.transformOrigin = 'center center';
+                    }
+                    if (state.modalZoomDebounce) clearTimeout(state.modalZoomDebounce);
+                    state.modalZoomDebounce = setTimeout(() => {
+                        renderPagePreviewModal().then(() => {
+                            if (vp) {
+                                vp.scrollLeft = Math.max(0, (oldScrollLeft + focalX) * ratio - focalX);
+                                vp.scrollTop = Math.max(0, (oldScrollTop + focalY) * ratio - focalY);
+                            }
+                        });
+                    }, 90);
+                } else {
+                    // Scale continuous pages smoothly
+                    rescaleModalContinuousPlaceholders();
+                    if (vp) {
+                        vp.scrollLeft = Math.max(0, (oldScrollLeft + focalX) * ratio - focalX);
+                        vp.scrollTop = Math.max(0, (oldScrollTop + focalY) * ratio - focalY);
+                    }
+                    if (state.modalZoomDebounce) clearTimeout(state.modalZoomDebounce);
+                    state.modalZoomDebounce = setTimeout(() => {
+                        reRenderVisibleModalContinuousPages();
+                    }, 120);
+                }
             }
 
             function resetPageModalZoom() {
-                state.modalZoom = 1.0;
-                renderPagePreviewModal();
+                const delta = 1.0 - state.modalZoom;
+                if (Math.abs(delta) < 0.01) return;
+                adjustPageModalZoom(delta);
             }
 
             function toggleSelectFromModal() {
                 togglePageSelection(state.modalPageNum, false);
                 updatePageModalSelectButton();
+            }
+
+            function toggleSelectSpecificPageInModal(pageNum) {
+                togglePageSelection(pageNum, false);
+                if (pageNum === state.modalPageNum) {
+                    updatePageModalSelectButton();
+                }
             }
 
             function updatePageModalSelectButton() {
@@ -2219,11 +2531,11 @@
                 const selected = state.selectedPages.has(state.modalPageNum);
 
                 if (selected) {
-                    btn.className = 'ml-1.5 px-2.5 py-1.5 rounded-lg border border-crimson-500 bg-crimson-500 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
+                    btn.className = 'ml-1 px-2.5 py-1.5 rounded-lg border border-crimson-500 bg-crimson-500 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
                     icon.className = 'fa-solid fa-square-check';
                     text.textContent = 'เลือกไว้แล้ว';
                 } else {
-                    btn.className = 'ml-1.5 px-2.5 py-1.5 rounded-lg border border-tech-border bg-tech-panel hover:border-crimson-500 text-tech-dark font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
+                    btn.className = 'ml-1 px-2.5 py-1.5 rounded-lg border border-tech-border bg-tech-panel hover:border-crimson-500 text-tech-dark font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer';
                     icon.className = 'fa-regular fa-square';
                     text.textContent = 'เลือกหน้านี้';
                 }
@@ -2237,20 +2549,15 @@
                     state.modalRenderTask = null;
                 }
 
-                $('pageModalTitle').textContent = `PAGE PREVIEW // P.${state.modalPageNum} OF ${state.totalPages}`;
-                $('pageModalCurNum').textContent = state.modalPageNum;
-                $('pageModalTotNum').textContent = state.totalPages;
-                $('pageModalPrevBtn').disabled = state.modalPageNum <= 1;
-                $('pageModalNextBtn').disabled = state.modalPageNum >= state.totalPages;
-                $('pageModalZoomLabel').textContent = `${Math.round(state.modalZoom * 100)}%`;
-                updatePageModalSelectButton();
-
+                updatePageModalHeaderControls();
                 $('pageModalSpinner').classList.remove('hidden');
 
                 try {
                     const page = await state.pdfjsDoc.getPage(state.modalPageNum);
                     const vp = page.getViewport({ scale: state.modalZoom * 1.35 });
                     const canvas = $('pageModalCanvas');
+                    canvas.style.transform = '';
+                    canvas.dataset.renderedZoom = String(state.modalZoom);
                     canvas.width = Math.max(1, Math.round(vp.width));
                     canvas.height = Math.max(1, Math.round(vp.height));
 
@@ -2271,8 +2578,191 @@
                 }
             }
 
+            // Build Continuous All-Pages DOM in Expand Modal with Lazy Rendering
+            async function buildAndRenderModalContinuousPages(scrollToPage = 1) {
+                const container = $('pageModalContinuousStage');
+                const vpEl = $('pageModalViewport');
+                if (!container || !state.pdfjsDoc) return;
+
+                if (state.modalContinuousObserver) {
+                    state.modalContinuousObserver.disconnect();
+                    state.modalContinuousObserver = null;
+                }
+                state.modalContinuousTasks.forEach(t => { try { t.cancel(); } catch (_) { } });
+                state.modalContinuousTasks.clear();
+                state.modalContinuousRenderedZoom.clear();
+
+                container.innerHTML = '';
+                $('pageModalSpinner').classList.remove('hidden');
+
+                // Measure Page 1 aspect ratio for crisp initial sizing before lazy render
+                const p1 = await state.pdfjsDoc.getPage(1);
+                const baseVp = p1.getViewport({ scale: 1.0 });
+                const baseW = baseVp.width;
+                const baseH = baseVp.height;
+
+                const frag = document.createDocumentFragment();
+                for (let p = 1; p <= state.totalPages; p++) {
+                    const isSelected = state.selectedPages.has(p);
+                    const card = document.createElement('div');
+                    card.id = `pmContCard_${p}`;
+                    card.dataset.page = p;
+                    card.dataset.baseW = baseW;
+                    card.dataset.baseH = baseH;
+                    card.className = `cont-page-card shrink-0 rounded-2xl bg-gray-900/95 border-2 ${isSelected ? 'border-crimson-500 is-selected' : 'border-gray-700'} p-3 flex flex-col items-center gap-2.5 shadow-2xl`;
+
+                    const scaledW = Math.round(baseW * state.modalZoom * 1.15);
+                    const scaledH = Math.round(baseH * state.modalZoom * 1.15);
+
+                    card.innerHTML = `
+                        <div class="w-full flex items-center justify-between gap-2 px-1">
+                            <div class="flex items-center gap-2 font-mono text-xs">
+                                <span class="px-2.5 py-0.5 rounded-lg bg-gray-950 text-white font-extrabold border border-gray-700">P.${p}</span>
+                                <span class="text-gray-400 text-[11px]">/ ${state.totalPages}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" id="pmContSelBtn_${p}" onclick="toggleSelectSpecificPageInModal(${p})"
+                                    class="${isSelected
+                                        ? 'px-2.5 py-1 rounded-lg bg-crimson-500 text-white font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer'
+                                        : 'px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-sans font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer'}">
+                                    <i class="${isSelected ? 'fa-solid fa-square-check' : 'fa-regular fa-square'}"></i>
+                                    <span>${isSelected ? 'เลือกไว้แล้ว' : 'เลือกหน้านี้'}</span>
+                                </button>
+                                <button type="button" onclick="downloadSinglePage(${p})"
+                                    class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-emerald-600 text-gray-200 hover:text-white flex items-center justify-center text-[11px] transition cursor-pointer"
+                                    title="ดาวน์โหลดเฉพาะหน้า ${p}">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="pmContBox_${p}" style="width:${scaledW}px; height:${scaledH}px;"
+                            class="bg-white rounded-lg overflow-hidden shadow-xl flex items-center justify-center relative">
+                            <canvas id="pmContCanvas_${p}" class="w-full h-full block bg-white"></canvas>
+                        </div>
+                    `;
+                    frag.appendChild(card);
+                }
+
+                container.appendChild(frag);
+                $('pageModalSpinner').classList.add('hidden');
+
+                // IntersectionObserver to lazy-render visible pages & track current page number while scrolling
+                state.modalContinuousObserver = new IntersectionObserver((entries) => {
+                    let bestVisiblePage = null;
+                    let bestRatio = 0;
+
+                    entries.forEach(entry => {
+                        const p = parseInt(entry.target.dataset.page, 10);
+                        if (!p) return;
+                        if (entry.isIntersecting) {
+                            renderModalContinuousSinglePage(p);
+                            if (entry.intersectionRatio > bestRatio) {
+                                bestRatio = entry.intersectionRatio;
+                                bestVisiblePage = p;
+                            }
+                        }
+                    });
+
+                    if (bestVisiblePage && bestVisiblePage !== state.modalPageNum) {
+                        state.modalPageNum = bestVisiblePage;
+                        updatePageModalHeaderControls();
+                    }
+                }, {
+                    root: vpEl,
+                    rootMargin: '400px 0px 400px 0px',
+                    threshold: [0.05, 0.35, 0.65]
+                });
+
+                container.querySelectorAll('.cont-page-card').forEach(el => state.modalContinuousObserver.observe(el));
+
+                if (scrollToPage > 1) {
+                    setTimeout(() => scrollToModalContinuousPage(scrollToPage, false), 40);
+                }
+            }
+
+            function rescaleModalContinuousPlaceholders() {
+                document.querySelectorAll('#pageModalContinuousStage .cont-page-card').forEach(card => {
+                    const p = parseInt(card.dataset.page, 10);
+                    const baseW = parseFloat(card.dataset.baseW || '595');
+                    const baseH = parseFloat(card.dataset.baseH || '842');
+                    const box = $(`pmContBox_${p}`);
+                    if (box) {
+                        box.style.width = `${Math.round(baseW * state.modalZoom * 1.15)}px`;
+                        box.style.height = `${Math.round(baseH * state.modalZoom * 1.15)}px`;
+                    }
+                });
+            }
+
+            function reRenderVisibleModalContinuousPages() {
+                const vp = $('pageModalViewport');
+                if (!vp) return;
+                const vpRect = vp.getBoundingClientRect();
+                document.querySelectorAll('#pageModalContinuousStage .cont-page-card').forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.bottom >= vpRect.top - 450 && rect.top <= vpRect.bottom + 450) {
+                        const p = parseInt(card.dataset.page, 10);
+                        if (p) renderModalContinuousSinglePage(p, true);
+                    }
+                });
+            }
+
+            async function renderModalContinuousSinglePage(pageNum, force = false) {
+                if (!state.pdfjsDoc) return;
+                const renderedZ = state.modalContinuousRenderedZoom.get(pageNum);
+                if (!force && renderedZ === state.modalZoom) return;
+
+                const existing = state.modalContinuousTasks.get(pageNum);
+                if (existing) {
+                    try { existing.cancel(); } catch (_) { }
+                    state.modalContinuousTasks.delete(pageNum);
+                }
+
+                try {
+                    const page = await state.pdfjsDoc.getPage(pageNum);
+                    const vp = page.getViewport({ scale: state.modalZoom * 1.15 });
+                    const box = $(`pmContBox_${pageNum}`);
+                    const canvas = $(`pmContCanvas_${pageNum}`);
+                    if (!canvas || !box) return;
+
+                    box.style.width = `${Math.round(vp.width)}px`;
+                    box.style.height = `${Math.round(vp.height)}px`;
+
+                    canvas.width = Math.max(1, Math.round(vp.width));
+                    canvas.height = Math.max(1, Math.round(vp.height));
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const task = page.render({ canvasContext: ctx, viewport: vp });
+                    state.modalContinuousTasks.set(pageNum, task);
+                    await task.promise;
+                    state.modalContinuousTasks.delete(pageNum);
+                    state.modalContinuousRenderedZoom.set(pageNum, state.modalZoom);
+                } catch (err) {
+                    if (err && err.name === 'RenderingCancelledException') return;
+                    console.error(`Continuous modal render P.${pageNum}:`, err);
+                }
+            }
+
+            function scrollToModalContinuousPage(pageNum, smooth = true) {
+                const vp = $('pageModalViewport');
+                const card = $(`pmContCard_${pageNum}`);
+                if (!vp || !card) return;
+                const vpRect = vp.getBoundingClientRect();
+                const cRect = card.getBoundingClientRect();
+                const targetTop = clamp(
+                    Math.round(vp.scrollTop + (cRect.top - vpRect.top) - 16),
+                    0,
+                    Math.max(0, vp.scrollHeight - vp.clientHeight)
+                );
+                vp.scrollTo({ top: targetTop, behavior: smooth ? 'smooth' : 'auto' });
+            }
+
             // =================================================================
             // RESULT PREVIEW MODAL (GENERATE REAL SPLIT PDFS BEFORE DOWNLOAD)
+            // + INTERACTIVE MOUSE WHEEL ZOOM, DRAG PAN & CONTINUOUS SCROLL
             // =================================================================
             function buildSplitSpecs(baseName) {
                 const specs = [];
@@ -2342,14 +2832,12 @@
                 const specs = buildSplitSpecs(baseName);
                 if (specs.length === 0) return;
 
-                // Open modal & show spinner
                 $('resultPreviewModal').classList.remove('hidden');
                 $('resultGeneratingOverlay').classList.remove('hidden');
                 $('resultGeneratingText').textContent = `กำลังสร้างไฟล์ PDF จริง (${specs.length} ไฟล์)...`;
                 $('confirmDownloadAllBtn').disabled = true;
                 $('resultFilesList').innerHTML = '';
 
-                // Dispose previous preview pdfjs docs
                 state.resultFiles = [];
                 state.activeResultIdx = 0;
                 state.resultViewerPage = 1;
@@ -2432,6 +2920,31 @@
                 });
             }
 
+            function setResultViewMode(mode) {
+                state.resultViewMode = mode === 'continuous' ? 'continuous' : 'single';
+                const isSingle = state.resultViewMode === 'single';
+
+                $('resModeBtn_single').className = isSingle
+                    ? 'px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1'
+                    : 'px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1';
+                $('resModeBtn_continuous').className = !isSingle
+                    ? 'px-2.5 py-1 rounded-lg font-bold bg-gray-950 text-white transition cursor-pointer flex items-center gap-1'
+                    : 'px-2.5 py-1 rounded-lg font-bold text-tech-muted hover:text-tech-dark transition cursor-pointer flex items-center gap-1';
+
+                $('resSingleStage').classList.toggle('hidden', !isSingle);
+                $('resContinuousStage').classList.toggle('hidden', isSingle);
+
+                if (isSingle) {
+                    if (state.resultContinuousObserver) {
+                        state.resultContinuousObserver.disconnect();
+                        state.resultContinuousObserver = null;
+                    }
+                    renderResultViewerCanvas();
+                } else {
+                    buildAndRenderResultContinuousPages();
+                }
+            }
+
             async function selectResultFileToPreview(idx) {
                 const rf = state.resultFiles[idx];
                 if (!rf) return;
@@ -2448,7 +2961,21 @@
                     rf.pdfjsDoc = await pdfjsLib.getDocument({ data: rf.bytes.slice(0) }).promise;
                 }
 
-                await renderResultViewerCanvas();
+                if (state.resultViewMode === 'single') {
+                    await renderResultViewerCanvas();
+                } else {
+                    await buildAndRenderResultContinuousPages();
+                }
+            }
+
+            function updateResultViewerHeaderControls() {
+                const rf = state.resultFiles[state.activeResultIdx];
+                if (!rf || !rf.pdfjsDoc) return;
+                $('resCurPage').textContent = state.resultViewerPage;
+                $('resTotPages').textContent = rf.pdfjsDoc.numPages;
+                $('resPrevPageBtn').disabled = state.resultViewerPage <= 1;
+                $('resNextPageBtn').disabled = state.resultViewerPage >= rf.pdfjsDoc.numPages;
+                $('resZoomLabel').textContent = `${Math.round(state.resultViewerZoom * 100)}%`;
             }
 
             async function renderResultViewerCanvas() {
@@ -2460,17 +2987,15 @@
                     state.resultRenderTask = null;
                 }
 
-                $('resCurPage').textContent = state.resultViewerPage;
-                $('resTotPages').textContent = rf.pdfjsDoc.numPages;
-                $('resPrevPageBtn').disabled = state.resultViewerPage <= 1;
-                $('resNextPageBtn').disabled = state.resultViewerPage >= rf.pdfjsDoc.numPages;
-                $('resZoomLabel').textContent = `${Math.round(state.resultViewerZoom * 100)}%`;
+                updateResultViewerHeaderControls();
                 $('resCanvasSpinner').classList.remove('hidden');
 
                 try {
                     const page = await rf.pdfjsDoc.getPage(state.resultViewerPage);
                     const vp = page.getViewport({ scale: state.resultViewerZoom * 1.25 });
                     const canvas = $('resultPreviewCanvas');
+                    canvas.style.transform = '';
+                    canvas.dataset.renderedZoom = String(state.resultViewerZoom);
                     canvas.width = Math.max(1, Math.round(vp.width));
                     canvas.height = Math.max(1, Math.round(vp.height));
 
@@ -2491,24 +3016,224 @@
                 }
             }
 
+            async function buildAndRenderResultContinuousPages() {
+                const rf = state.resultFiles[state.activeResultIdx];
+                const container = $('resContinuousStage');
+                const vpEl = $('resultViewerViewport');
+                if (!rf || !rf.pdfjsDoc || !container) return;
+
+                if (state.resultContinuousObserver) {
+                    state.resultContinuousObserver.disconnect();
+                    state.resultContinuousObserver = null;
+                }
+                state.resultContinuousTasks.forEach(t => { try { t.cancel(); } catch (_) { } });
+                state.resultContinuousTasks.clear();
+                state.resultContinuousRenderedZoom.clear();
+
+                container.innerHTML = '';
+                updateResultViewerHeaderControls();
+                $('resCanvasSpinner').classList.remove('hidden');
+
+                const doc = rf.pdfjsDoc;
+                const p1 = await doc.getPage(1);
+                const baseVp = p1.getViewport({ scale: 1.0 });
+                const baseW = baseVp.width;
+                const baseH = baseVp.height;
+
+                const frag = document.createDocumentFragment();
+                for (let p = 1; p <= doc.numPages; p++) {
+                    const card = document.createElement('div');
+                    card.id = `resContCard_${p}`;
+                    card.dataset.page = p;
+                    card.dataset.baseW = baseW;
+                    card.dataset.baseH = baseH;
+                    card.className = 'shrink-0 rounded-2xl bg-gray-900/95 border border-gray-700 p-2.5 flex flex-col items-center gap-2 shadow-2xl';
+
+                    const scaledW = Math.round(baseW * state.resultViewerZoom * 1.1);
+                    const scaledH = Math.round(baseH * state.resultViewerZoom * 1.1);
+
+                    card.innerHTML = `
+                        <div class="w-full flex items-center justify-between px-1 font-mono text-[11px] text-gray-300">
+                            <span class="px-2 py-0.5 rounded bg-gray-950 text-white font-bold border border-gray-700">หน้า ${p} / ${doc.numPages}</span>
+                            <span class="text-[10px] text-gray-400 truncate max-w-[200px]">${rf.name}</span>
+                        </div>
+                        <div id="resContBox_${p}" style="width:${scaledW}px; height:${scaledH}px;"
+                            class="bg-white rounded-lg overflow-hidden shadow-xl flex items-center justify-center">
+                            <canvas id="resContCanvas_${p}" class="w-full h-full block bg-white"></canvas>
+                        </div>
+                    `;
+                    frag.appendChild(card);
+                }
+
+                container.appendChild(frag);
+                $('resCanvasSpinner').classList.add('hidden');
+
+                state.resultContinuousObserver = new IntersectionObserver((entries) => {
+                    let bestPage = null;
+                    let bestRatio = 0;
+
+                    entries.forEach(entry => {
+                        const p = parseInt(entry.target.dataset.page, 10);
+                        if (!p) return;
+                        if (entry.isIntersecting) {
+                            renderResultContinuousSinglePage(p);
+                            if (entry.intersectionRatio > bestRatio) {
+                                bestRatio = entry.intersectionRatio;
+                                bestPage = p;
+                            }
+                        }
+                    });
+
+                    if (bestPage && bestPage !== state.resultViewerPage) {
+                        state.resultViewerPage = bestPage;
+                        updateResultViewerHeaderControls();
+                    }
+                }, {
+                    root: vpEl,
+                    rootMargin: '350px 0px 350px 0px',
+                    threshold: [0.05, 0.35, 0.65]
+                });
+
+                container.querySelectorAll('[id^="resContCard_"]').forEach(el => state.resultContinuousObserver.observe(el));
+            }
+
+            async function renderResultContinuousSinglePage(pageNum, force = false) {
+                const rf = state.resultFiles[state.activeResultIdx];
+                if (!rf || !rf.pdfjsDoc) return;
+
+                const renderedZ = state.resultContinuousRenderedZoom.get(pageNum);
+                if (!force && renderedZ === state.resultViewerZoom) return;
+
+                const existing = state.resultContinuousTasks.get(pageNum);
+                if (existing) {
+                    try { existing.cancel(); } catch (_) { }
+                    state.resultContinuousTasks.delete(pageNum);
+                }
+
+                try {
+                    const page = await rf.pdfjsDoc.getPage(pageNum);
+                    const vp = page.getViewport({ scale: state.resultViewerZoom * 1.1 });
+                    const box = $(`resContBox_${pageNum}`);
+                    const canvas = $(`resContCanvas_${pageNum}`);
+                    if (!canvas || !box) return;
+
+                    box.style.width = `${Math.round(vp.width)}px`;
+                    box.style.height = `${Math.round(vp.height)}px`;
+
+                    canvas.width = Math.max(1, Math.round(vp.width));
+                    canvas.height = Math.max(1, Math.round(vp.height));
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const task = page.render({ canvasContext: ctx, viewport: vp });
+                    state.resultContinuousTasks.set(pageNum, task);
+                    await task.promise;
+                    state.resultContinuousTasks.delete(pageNum);
+                    state.resultContinuousRenderedZoom.set(pageNum, state.resultViewerZoom);
+                } catch (err) {
+                    if (err && err.name === 'RenderingCancelledException') return;
+                    console.error(`Result continuous render P.${pageNum}:`, err);
+                }
+            }
+
             function stepResultViewerPage(delta) {
                 const rf = state.resultFiles[state.activeResultIdx];
                 if (!rf || !rf.pdfjsDoc) return;
                 const next = clamp(state.resultViewerPage + delta, 1, rf.pdfjsDoc.numPages);
-                if (next !== state.resultViewerPage) {
-                    state.resultViewerPage = next;
+                if (next === state.resultViewerPage) return;
+                state.resultViewerPage = next;
+                updateResultViewerHeaderControls();
+
+                if (state.resultViewMode === 'single') {
                     renderResultViewerCanvas();
+                } else {
+                    const vp = $('resultViewerViewport');
+                    const card = $(`resContCard_${next}`);
+                    if (vp && card) {
+                        const vpRect = vp.getBoundingClientRect();
+                        const cRect = card.getBoundingClientRect();
+                        vp.scrollTo({
+                            top: clamp(Math.round(vp.scrollTop + (cRect.top - vpRect.top) - 16), 0, Math.max(0, vp.scrollHeight - vp.clientHeight)),
+                            behavior: 'smooth'
+                        });
+                    }
                 }
             }
 
-            function adjustResultViewerZoom(delta) {
-                state.resultViewerZoom = clamp(+(state.resultViewerZoom + delta).toFixed(2), 0.4, 2.5);
-                renderResultViewerCanvas();
+            function adjustResultViewerZoom(delta, clientX = null, clientY = null) {
+                const prevZoom = state.resultViewerZoom;
+                const nextZoom = clamp(+(prevZoom + delta).toFixed(2), 0.35, 3.0);
+                if (nextZoom === prevZoom) return;
+
+                const vp = $('resultViewerViewport');
+                const ratio = nextZoom / prevZoom;
+
+                let focalX = vp ? vp.clientWidth / 2 : 0;
+                let focalY = vp ? vp.clientHeight / 2 : 0;
+                if (vp && clientX !== null && clientY !== null) {
+                    const rect = vp.getBoundingClientRect();
+                    focalX = clientX - rect.left;
+                    focalY = clientY - rect.top;
+                }
+
+                const oldScrollLeft = vp ? vp.scrollLeft : 0;
+                const oldScrollTop = vp ? vp.scrollTop : 0;
+
+                state.resultViewerZoom = nextZoom;
+                $('resZoomLabel').textContent = `${Math.round(state.resultViewerZoom * 100)}%`;
+
+                if (state.resultViewMode === 'single') {
+                    const canvas = $('resultPreviewCanvas');
+                    if (canvas && canvas.dataset.renderedZoom) {
+                        const renderedZ = parseFloat(canvas.dataset.renderedZoom);
+                        canvas.style.transform = `scale(${nextZoom / renderedZ})`;
+                        canvas.style.transformOrigin = 'center center';
+                    }
+                    if (state.resultZoomDebounce) clearTimeout(state.resultZoomDebounce);
+                    state.resultZoomDebounce = setTimeout(() => {
+                        renderResultViewerCanvas().then(() => {
+                            if (vp) {
+                                vp.scrollLeft = Math.max(0, (oldScrollLeft + focalX) * ratio - focalX);
+                                vp.scrollTop = Math.max(0, (oldScrollTop + focalY) * ratio - focalY);
+                            }
+                        });
+                    }, 90);
+                } else {
+                    document.querySelectorAll('#resContinuousStage [id^="resContCard_"]').forEach(card => {
+                        const p = parseInt(card.dataset.page, 10);
+                        const baseW = parseFloat(card.dataset.baseW || '595');
+                        const baseH = parseFloat(card.dataset.baseH || '842');
+                        const box = $(`resContBox_${p}`);
+                        if (box) {
+                            box.style.width = `${Math.round(baseW * state.resultViewerZoom * 1.1)}px`;
+                            box.style.height = `${Math.round(baseH * state.resultViewerZoom * 1.1)}px`;
+                        }
+                    });
+                    if (vp) {
+                        vp.scrollLeft = Math.max(0, (oldScrollLeft + focalX) * ratio - focalX);
+                        vp.scrollTop = Math.max(0, (oldScrollTop + focalY) * ratio - focalY);
+                    }
+                    if (state.resultZoomDebounce) clearTimeout(state.resultZoomDebounce);
+                    state.resultZoomDebounce = setTimeout(() => {
+                        const vpRect = vp.getBoundingClientRect();
+                        document.querySelectorAll('#resContinuousStage [id^="resContCard_"]').forEach(card => {
+                            const rect = card.getBoundingClientRect();
+                            if (rect.bottom >= vpRect.top - 400 && rect.top <= vpRect.bottom + 400) {
+                                const p = parseInt(card.dataset.page, 10);
+                                if (p) renderResultContinuousSinglePage(p, true);
+                            }
+                        });
+                    }, 120);
+                }
             }
 
             function resetResultViewerZoom() {
-                state.resultViewerZoom = 1.0;
-                renderResultViewerCanvas();
+                const delta = 1.0 - state.resultViewerZoom;
+                if (Math.abs(delta) < 0.01) return;
+                adjustResultViewerZoom(delta);
             }
 
             function downloadSingleResultFile(idx) {
@@ -2563,6 +3288,12 @@
                     try { state.resultRenderTask.cancel(); } catch (_) { }
                     state.resultRenderTask = null;
                 }
+                if (state.resultContinuousObserver) {
+                    state.resultContinuousObserver.disconnect();
+                    state.resultContinuousObserver = null;
+                }
+                state.resultContinuousTasks.forEach(t => { try { t.cancel(); } catch (_) { } });
+                state.resultContinuousTasks.clear();
                 $('resultPreviewModal').classList.add('hidden');
             }
 
@@ -2631,6 +3362,25 @@
                 const dropZone = $('dropZone');
                 const cardHeader = $('floatingSplitCardHeader');
                 const card = $('floatingSplitCard');
+
+                // Attach Interactive Mouse Wheel Zoom & Drag-to-Pan to Both Preview Modals
+                attachInteractiveViewport({
+                    viewportId: 'pageModalViewport',
+                    onZoomDelta: (delta, cx, cy) => adjustPageModalZoom(delta, cx, cy),
+                    onDoubleClickToggle: (cx, cy) => {
+                        const target = state.modalZoom < 1.3 ? 1.65 : 1.0;
+                        adjustPageModalZoom(target - state.modalZoom, cx, cy);
+                    }
+                });
+
+                attachInteractiveViewport({
+                    viewportId: 'resultViewerViewport',
+                    onZoomDelta: (delta, cx, cy) => adjustResultViewerZoom(delta, cx, cy),
+                    onDoubleClickToggle: (cx, cy) => {
+                        const target = state.resultViewerZoom < 1.3 ? 1.65 : 1.0;
+                        adjustResultViewerZoom(target - state.resultViewerZoom, cx, cy);
+                    }
+                });
 
                 if (fileInput) {
                     fileInput.addEventListener('change', (e) => {
@@ -2756,12 +3506,16 @@
                     if (!$('resultPreviewModal').classList.contains('hidden')) {
                         if (e.key === 'ArrowLeft') { e.preventDefault(); stepResultViewerPage(-1); }
                         else if (e.key === 'ArrowRight') { e.preventDefault(); stepResultViewerPage(1); }
+                        else if (e.key === '+' || e.key === '=') { e.preventDefault(); adjustResultViewerZoom(0.15); }
+                        else if (e.key === '-') { e.preventDefault(); adjustResultViewerZoom(-0.15); }
                         return;
                     }
 
                     if (!$('pagePreviewModal').classList.contains('hidden')) {
                         if (e.key === 'ArrowLeft') { e.preventDefault(); stepPageModal(-1); }
                         else if (e.key === 'ArrowRight') { e.preventDefault(); stepPageModal(1); }
+                        else if (e.key === '+' || e.key === '=') { e.preventDefault(); adjustPageModalZoom(0.15); }
+                        else if (e.key === '-') { e.preventDefault(); adjustPageModalZoom(-0.15); }
                         return;
                     }
 
@@ -2804,12 +3558,15 @@
                 downloadSinglePage,
                 openPagePreviewModal,
                 closePagePreviewModal,
+                setPageModalViewMode,
                 stepPageModal,
                 adjustPageModalZoom,
                 resetPageModalZoom,
                 toggleSelectFromModal,
+                toggleSelectSpecificPageInModal,
                 openResultPreviewModal,
                 closeResultPreviewModal,
+                setResultViewMode,
                 stepResultViewerPage,
                 adjustResultViewerZoom,
                 resetResultViewerZoom,
