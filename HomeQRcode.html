@@ -4,130 +4,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLEVERTENSAI — QR Code Generator (ISO/IEC 18004)</title>
+    <title>CLEVERTENSAI — QR Code Generator (ISO/IEC 18004) — Interactive Preview</title>
 
-    <!-- Tailwind CSS -->
+    <!-- Early Theme Initialization (Default: Alabaster Light, persisted in localStorage) -->
+    <script>
+        (function () {
+            try {
+                if (localStorage.getItem('clevertensai_mixcolor_theme') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (_) {
+                // Ignore storage access errors in sandboxed iframes
+            }
+        })();
+    </script>
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Space Grotesk, JetBrains Mono & Prompt -->
+    <!-- Google Fonts: Space Grotesk, Prompt & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Icons 6.4.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace']
-                    },
-                    colors: {
-                        crimson: {
-                            50: '#FFF5F5',
-                            100: '#FFE3E3',
-                            500: '#FF1E42',
-                            600: '#E63946',
-                            700: '#DC2626',
-                            900: '#991B1B'
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                future: {
+                    hoverOnlyWhenSupported: true
+                },
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                            mono: ['"JetBrains Mono"', 'monospace']
                         },
-                        tech: {
-                            white: '#FFFFFF',
-                            bg: '#FAF9F6',
-                            panel: '#F3F4F6',
-                            border: '#E5E7EB',
-                            dark: '#0F172A',
-                            muted: '#64748B'
+                        colors: {
+                            crimson: {
+                                50: '#FFF1F2',
+                                100: '#FFE4E6',
+                                200: '#FECDD3',
+                                300: '#FDA4AF',
+                                400: '#FB7185',
+                                500: '#E11D48',
+                                600: '#BE123C',
+                                700: '#9F1239',
+                                900: '#881337'
+                            }
                         }
                     }
                 }
-            }
+            };
         }
     </script>
 
     <style>
-        body {
-            background-color: #FAF9F6;
-            color: #0F172A;
-            background-image:
-                radial-gradient(rgba(230, 57, 70, 0.05) 1px, transparent 0),
-                linear-gradient(to right, rgba(15, 23, 42, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
-            background-size: 24px 24px, 48px 48px, 48px 48px;
+        /* ===================================================================== */
+        /* STUDIO DESIGN TOKENS (ALABASTER LIGHT / VELVET MIDNIGHT DARK)        */
+        /* ===================================================================== */
+        :root {
+            --bg-workspace: #FAF9F6;
+            --bg-stage: #F4F3EF;
+            --bg-panel: #FFFFFF;
+            --bg-panel-subtle: #F8FAFC;
+            --bg-input: #FFFFFF;
+            --border-color: #E2E8F0;
+            --text-primary: #0F172A;
+            --text-secondary: #64748B;
+            --accent: #E11D48;
+            --dot-pattern: rgba(15, 23, 42, 0.08);
+            --card-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
         }
 
-        /* High-tech custom scrollbar */
+        html.dark {
+            --bg-workspace: #0A0F1D;
+            --bg-stage: #0A0F1D;
+            --bg-panel: #111827;
+            --bg-panel-subtle: #0F172A;
+            --bg-input: #0B1120;
+            --border-color: #1F2937;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --accent: #E11D48;
+            --dot-pattern: rgba(255, 255, 255, 0.07);
+            --card-shadow: 0 18px 42px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-workspace);
+            color: var(--text-primary);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(225, 29, 72, 0.06), transparent 55%),
+                radial-gradient(var(--dot-pattern) 1px, transparent 0);
+            background-size: 100% 100%, 24px 24px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .studio-surface {
+            background-color: var(--bg-panel);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+            box-shadow: var(--card-shadow);
+        }
+
+        .studio-panel {
+            background-color: var(--bg-panel);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .studio-subtle {
+            background-color: var(--bg-panel-subtle);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .studio-input {
+            background-color: var(--bg-input);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .studio-input:focus {
+            border-color: #E11D48;
+        }
+
+        .studio-muted {
+            color: var(--text-secondary);
+        }
+
+        /* Custom Scrollbar matching Studio Suite */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #F3F4F6;
+            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #FF1E42;
-            border-radius: 2px;
+            background: rgba(100, 116, 139, 0.4);
+            border-radius: 999px;
         }
 
-        .tech-card {
-            background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.03);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        @media (hover: hover) {
+            ::-webkit-scrollbar-thumb:hover {
+                background: #E11D48;
+            }
         }
 
-        .tech-card:hover {
-            border-color: rgba(255, 30, 66, 0.4);
-            box-shadow: 0 10px 25px -5px rgba(255, 30, 66, 0.08);
+        /* Subtle Studio Corner Accents */
+        .studio-frame {
+            position: relative;
+        }
+
+        .studio-frame::before,
+        .studio-frame::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .studio-frame::before {
+            top: 12px;
+            left: 12px;
+            border-top: 2px solid #E11D48;
+            border-left: 2px solid #E11D48;
+        }
+
+        .studio-frame::after {
+            bottom: 12px;
+            right: 12px;
+            border-bottom: 2px solid #E11D48;
+            border-right: 2px solid #E11D48;
         }
 
         .red-glow {
-            box-shadow: 0 4px 16px rgba(255, 30, 66, 0.28);
-        }
-
-        /* Mode Tabs */
-        .tab-btn {
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active {
-            background-color: #0F172A;
-            color: #FFFFFF;
-            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 8px 22px -4px rgba(225, 29, 72, 0.35);
         }
 
         /* Color Input Styling */
         input[type="color"] {
             -webkit-appearance: none;
             appearance: none;
-            width: 2.4rem;
-            height: 2.4rem;
-            border: 1px solid #CBD5E1;
-            border-radius: 0.65rem;
+            width: 2.6rem;
+            height: 2.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
             padding: 0;
-            background: none;
+            background: var(--bg-input);
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 2px;
+            padding: 3px;
         }
 
         input[type="color"]::-webkit-color-swatch {
             border: none;
-            border-radius: 0.45rem;
+            border-radius: 0.5rem;
         }
 
         /* Range Slider */
         input[type="range"] {
-            accent-color: #FF1E42;
+            accent-color: #E11D48;
         }
 
         /* Crisp QR Rendering */
@@ -135,14 +230,14 @@
             max-width: 100%;
             max-height: 100%;
             border-radius: 0.75rem;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
         }
 
         /* Laser Scanline Effect */
         .scanline {
             background: linear-gradient(to bottom,
                     rgba(255, 255, 255, 0),
-                    rgba(255, 30, 66, 0.12),
+                    rgba(225, 29, 72, 0.14),
                     rgba(255, 255, 255, 0));
             animation: scan 3.5s linear infinite;
         }
@@ -159,130 +254,153 @@
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col overflow-x-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
-    <!-- ดึง NAVBAR & ALL WEB APPS HUB MODAL จากโฟลเดอร์ JS/Navbar.js -->
+    <!-- ===================================================================== -->
+    <!-- SHARED NAVBAR PLACEHOLDER (Optional external JS/Navbar.js)            -->
+    <!-- ===================================================================== -->
     <div id="navbar-container"></div>
-    <script src="JS/Navbar.js"></script>
+    <script src="JS/Navbar.js" defer onerror="this.remove()"></script>
 
-    <!-- Popup Modal สลับหน้าเครื่องมือ (All Web Apps Hub) -->
-    <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
-        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-        <div
-            class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-6 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between pb-6 border-b border-gray-800 shrink-0">
-                <div class="flex items-center gap-3.5">
-                    <div
-                        class="w-12 h-12 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-2xl border border-red-500/30">
-                        <i class="fa-solid fa-grip"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">
-                            Select Web Application
-                        </h3>
-                        <p class="text-sm text-gray-400 mt-0.5">สลับไปยังเว็บแอปพลิเคชันภายใน CLEVERTENSAI ได้ทันที</p>
-                    </div>
+    <!-- ===================================================================== -->
+    <!-- TOP STUDIO BAR                                                        -->
+    <!-- ===================================================================== -->
+    <header class="sticky top-0 z-30 h-14 studio-panel border-b px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2.5 backdrop-blur-md bg-opacity-95">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-8 h-8 rounded-xl bg-[#E11D48] text-white flex items-center justify-center text-sm shadow-sm shrink-0">
+                <i class="fa-solid fa-qrcode"></i>
+            </span>
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                    <span class="font-mono text-xs font-extrabold tracking-wider uppercase truncate">
+                        CLEVERTENSAI STUDIO
+                    </span>
+                    <span id="topEccBadge"
+                        class="px-2 py-0.5 rounded-md bg-[#E11D48]/12 text-[#E11D48] font-mono text-[10px] font-extrabold shrink-0">
+                        ECC M
+                    </span>
+                    <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md studio-subtle border font-mono text-[10px] font-bold text-[#E11D48] shrink-0">
+                        QR PREVIEW
+                    </span>
                 </div>
-
-                <button type="button" onclick="toggleNavPopup()"
-                    class="w-12 h-12 rounded-2xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-xl cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="hubModalGrid"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 py-6 overflow-y-auto">
-                <!-- Rendered dynamically from WEB_APPS -->
+                <p class="hidden sm:block text-[11px] studio-muted truncate">
+                    QR Code Generator (ISO/IEC 18004) — เข้ารหัส UTF-8 &amp; โลโก้ 6 รูปทรง
+                </p>
             </div>
         </div>
-    </div>
-    <!-- END: Global Navbar & Navigation Hub -->
 
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button type="button" onclick="scrollToQrPreview()"
+                class="lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-bold transition cursor-pointer">
+                <i class="fa-solid fa-eye text-[11px]"></i>
+                <span>ดู QR</span>
+            </button>
+
+            <button type="button" onclick="resetAllQrSettings()"
+                class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl studio-subtle border hover:border-[#E11D48] hover:text-[#E11D48] text-xs font-bold transition cursor-pointer"
+                title="รีเซ็ตค่าเริ่มต้น">
+                <i class="fa-solid fa-rotate-left text-[#E11D48]"></i>
+                <span class="hidden sm:inline">รีเซ็ต</span>
+            </button>
+
+            <button type="button" onclick="toggleTheme()"
+                class="w-9 h-9 rounded-xl studio-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer"
+                title="สลับโหมด Alabaster Light / Velvet Midnight">
+                <i class="fa-solid fa-moon dark:hidden text-xs text-slate-700"></i>
+                <i class="fa-solid fa-sun hidden dark:inline text-xs text-amber-300"></i>
+            </button>
+        </div>
+    </header>
 
     <!-- ===================================================================== -->
-    <!-- กล่องแจ้งเตือน Toast (CLEVERTENSAI Style)                               -->
+    <!-- TOAST NOTIFICATION                                                    -->
     <!-- ===================================================================== -->
     <div id="toast-notification" role="status" aria-live="polite"
-        class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 bg-gray-950 text-white border border-red-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-mono">
+        class="fixed bottom-4 left-4 sm:bottom-5 sm:left-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 bg-slate-950 text-white border border-slate-800 border-l-4 border-l-[#E11D48] px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-mono max-w-[calc(100vw-2rem)]">
         <span id="toast-icon"
-            class="w-5 h-5 rounded-full bg-crimson-500/20 text-crimson-500 flex items-center justify-center font-bold">✓</span>
-        <span id="toast-message">ดำเนินการสำเร็จ</span>
+            class="w-5 h-5 rounded-full bg-[#E11D48]/20 text-[#FB7185] flex items-center justify-center font-bold shrink-0">✓</span>
+        <span id="toast-message" class="truncate">ดำเนินการสำเร็จ</span>
     </div>
-
 
     <!-- ===================================================================== -->
     <!-- MAIN WORKSPACE CONTENT                                                -->
     <!-- ===================================================================== -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6">
 
-        <!-- Hero Sub-header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-8 border-b border-tech-border">
-            <div>
-                <div
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-semibold mb-2.5">
-                    <i class="fa-solid fa-qrcode text-[11px]"></i>
-                    <span>QR MATRIX GENERATOR // UTF-8 & LOGO ENGINE</span>
+        <!-- Hero Banner -->
+        <section class="studio-surface studio-frame rounded-3xl border p-5 sm:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-2.5">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 dark:bg-slate-800 text-white font-mono text-[11px] font-bold tracking-wider">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#E11D48] animate-ping"></span>
+                            <span>CLEVERTENSAI DESIGN &amp; LAB</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] font-mono text-[11px] font-semibold">
+                            <i class="fa-solid fa-shield-check text-[10px]"></i>
+                            <span>ISO/IEC 18004 • UTF-8 &amp; LOGO ENGINE</span>
+                        </span>
+                    </div>
+
+                    <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+                        เครื่องมือสร้าง <span class="text-[#E11D48]">QR Code</span> มาตรฐานสากล
+                    </h1>
+                    <p class="studio-muted text-xs sm:text-base mt-1.5 max-w-3xl leading-relaxed">
+                        สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ รหัส Wi-Fi พร้อมฝังโลโก้บริษัทตรงกลาง เลือกรูปทรงและกรอบสีได้ครบ สแกนติดคมชัดบนทุกอุปกรณ์
+                    </p>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-tech-dark">
-                    เครื่องมือสร้าง <span class="text-crimson-500">QR Code</span> มาตรฐานสากล
-                </h1>
-                <p class="text-tech-muted text-sm mt-1">
-                    สร้าง QR Code ข้อความภาษาไทย ลิงก์เว็บไซต์ รหัส Wi-Fi พร้อมฝังโลโก้บริษัทตรงกลาง
-                    สแกนติดคมชัดบนทุกอุปกรณ์
-                </p>
-            </div>
 
-            <div class="flex items-center gap-2 font-mono text-xs">
-                <span
-                    class="px-3 py-1.5 rounded-xl bg-white border border-tech-border text-tech-dark font-semibold shadow-sm">
-                    <i class="fa-solid fa-shield-check text-crimson-500 mr-1.5"></i>100% Client-Side
-                </span>
-                <span class="px-3 py-1.5 rounded-xl bg-crimson-500 text-white font-bold shadow-sm">
-                    v3.2
-                </span>
+                <div class="flex flex-wrap items-center gap-2 font-mono text-xs shrink-0">
+                    <span class="px-3 py-1.5 rounded-xl studio-subtle border font-semibold">
+                        <i class="fa-solid fa-bolt text-[#E11D48] mr-1.5"></i>100% Client-Side
+                    </span>
+                    <span class="px-3 py-1.5 rounded-xl bg-[#E11D48] text-white font-bold shadow-sm">
+                        v3.2 PREVIEW
+                    </span>
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- 2-Column Workspace Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 items-start">
 
             <!-- ============================================================= -->
             <!-- ฝั่งซ้าย (7 Cols): ตั้งค่าข้อมูล โลโก้ และรูปแบบ QR Code          -->
             <!-- ============================================================= -->
-            <div class="lg:col-span-7 tech-card rounded-2xl p-5 sm:p-7 space-y-6">
+            <div class="lg:col-span-7 studio-surface rounded-3xl border p-4 sm:p-7 space-y-6">
 
-                <!-- 1. ประเภทข้อมูลและช่องกรอกข้อความ -->
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">01</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">เลือกประเภทข้อมูล
-                                (Data Type)</span>
+                <!-- 01. ประเภทข้อมูลและช่องกรอกข้อความ -->
+                <section>
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-6 h-6 rounded-lg bg-[#E11D48]/12 border border-[#E11D48]/25 text-[#E11D48] font-mono text-xs font-extrabold flex items-center justify-center shrink-0">01</span>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wide truncate">
+                                เลือกประเภทข้อมูล (Data Type)
+                            </h2>
                         </div>
                         <button type="button" id="clear-btn"
-                            class="px-2.5 py-1 rounded-lg text-xs font-mono text-tech-muted hover:text-crimson-600 hover:bg-crimson-50 transition cursor-pointer flex items-center gap-1.5">
-                            <i class="fa-solid fa-eraser text-[11px]"></i>
+                            class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle border hover:border-[#E11D48] hover:text-[#E11D48] text-xs font-mono font-bold transition cursor-pointer flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-eraser text-[11px] text-[#E11D48]"></i>
                             <span>ล้างข้อความ</span>
                         </button>
                     </div>
 
                     <!-- แท็บเลือกโหมด -->
-                    <div class="grid grid-cols-3 gap-1.5 bg-tech-panel p-1.5 rounded-xl border border-tech-border mb-4">
+                    <div class="grid grid-cols-3 gap-1.5 studio-subtle p-1.5 rounded-2xl border mb-4">
                         <button type="button" id="tab-text" onclick="setMode('text')"
-                            class="tab-btn active py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold text-tech-muted hover:text-tech-dark flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-align-left text-crimson-500"></i>
-                            <span>ข้อความทั่วไป</span>
+                            class="tab-btn min-h-[44px] py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer bg-[#E11D48] text-white shadow-sm">
+                            <i class="fa-solid fa-align-left"></i>
+                            <span class="truncate">ข้อความ</span>
                         </button>
                         <button type="button" id="tab-url" onclick="setMode('url')"
-                            class="tab-btn py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold text-tech-muted hover:text-tech-dark flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-globe text-crimson-500"></i>
-                            <span>ลิงก์เว็บไซต์</span>
+                            class="tab-btn min-h-[44px] py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-extrabold studio-muted hover:text-[var(--text-primary)] flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer">
+                            <i class="fa-solid fa-globe text-[#E11D48]"></i>
+                            <span class="truncate">ลิงก์ URL</span>
                         </button>
                         <button type="button" id="tab-wifi" onclick="setMode('wifi')"
-                            class="tab-btn py-2.5 px-3 rounded-lg text-xs sm:text-sm font-bold text-tech-muted hover:text-tech-dark flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-wifi text-crimson-500"></i>
-                            <span>รหัส Wi-Fi</span>
+                            class="tab-btn min-h-[44px] py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-extrabold studio-muted hover:text-[var(--text-primary)] flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer">
+                            <i class="fa-solid fa-wifi text-[#E11D48]"></i>
+                            <span class="truncate">Wi-Fi</span>
                         </button>
                     </div>
 
@@ -290,24 +408,24 @@
                     <div id="standard-input-box">
                         <textarea id="qr-text" rows="3"
                             placeholder="พิมพ์ข้อความภาษาไทย, อังกฤษ, ตัวเลข หรือวางลิงก์ที่นี่..."
-                            class="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm text-tech-dark placeholder-tech-muted focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15 transition resize-y"></textarea>
+                            class="w-full px-4 py-3 studio-input border rounded-2xl text-sm placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[#E11D48]/20 transition resize-y"></textarea>
 
                         <!-- Sample Chips -->
                         <div class="flex flex-wrap items-center gap-2 mt-3">
-                            <span class="text-xs font-mono text-tech-muted">
-                                <i class="fa-solid fa-wand-magic-sparkles text-crimson-500 mr-1"></i>ตัวอย่างทดสอบ:
+                            <span class="text-xs font-mono studio-muted w-full sm:w-auto">
+                                <i class="fa-solid fa-wand-magic-sparkles text-[#E11D48] mr-1"></i>ตัวอย่างทดสอบ:
                             </span>
                             <button type="button" onclick="fillSample('สวัสดีครับ ทดสอบ QR Code ภาษาไทย', 'text')"
-                                class="px-3 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-xs font-medium text-tech-dark hover:text-crimson-600 transition cursor-pointer">
+                                class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle hover:border-[#E11D48] border text-xs font-bold hover:text-[#E11D48] transition cursor-pointer">
                                 ข้อความภาษาไทย
                             </button>
                             <button type="button"
                                 onclick="fillSample('รหัสผ่าน Wi-Fi: 12345678\nชื่อเครือข่าย: Home_5G', 'text')"
-                                class="px-3 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-xs font-medium text-tech-dark hover:text-crimson-600 transition cursor-pointer">
+                                class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle hover:border-[#E11D48] border text-xs font-bold hover:text-[#E11D48] transition cursor-pointer">
                                 ข้อความหลายบรรทัด
                             </button>
                             <button type="button" onclick="fillSample('https://www.google.com', 'url')"
-                                class="px-3 py-1 rounded-lg bg-tech-panel hover:bg-crimson-50 border border-tech-border hover:border-crimson-500/40 text-xs font-medium text-tech-dark hover:text-crimson-600 transition cursor-pointer">
+                                class="min-h-[36px] px-3 py-1.5 rounded-xl studio-subtle hover:border-[#E11D48] border text-xs font-bold hover:text-[#E11D48] transition cursor-pointer">
                                 ลิงก์ Google
                             </button>
                         </div>
@@ -315,31 +433,31 @@
 
                     <!-- กล่องกรอกข้อมูล Wi-Fi -->
                     <div id="wifi-input-box"
-                        class="hidden bg-tech-panel/70 border border-tech-border rounded-xl p-4 space-y-3.5">
+                        class="hidden studio-subtle border rounded-2xl p-4 space-y-3.5">
                         <div>
-                            <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                            <label class="block text-xs font-extrabold font-mono uppercase mb-1.5"
                                 for="wifi-ssid">
                                 ชื่อเครือข่าย Wi-Fi (SSID)
                             </label>
                             <input type="text" id="wifi-ssid" placeholder="เช่น MyHome_WiFi_5G"
-                                class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm text-tech-dark focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
+                                class="w-full min-h-[42px] px-3.5 py-2.5 studio-input border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/20">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                             <div>
-                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                <label class="block text-xs font-extrabold font-mono uppercase mb-1.5"
                                     for="wifi-pass">
                                     รหัสผ่าน (Password)
                                 </label>
                                 <input type="text" id="wifi-pass" placeholder="รหัสผ่าน Wi-Fi"
-                                    class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm text-tech-dark focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
+                                    class="w-full min-h-[42px] px-3.5 py-2.5 studio-input border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/20">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-tech-dark font-mono uppercase mb-1.5"
+                                <label class="block text-xs font-extrabold font-mono uppercase mb-1.5"
                                     for="wifi-type">
                                     ความปลอดภัย (Encryption)
                                 </label>
                                 <select id="wifi-type"
-                                    class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm text-tech-dark focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
+                                    class="w-full min-h-[42px] px-3.5 py-2.5 studio-input border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E11D48]/20 cursor-pointer">
                                     <option value="WPA" selected>WPA / WPA2 (มาตรฐาน)</option>
                                     <option value="nopass">ไม่มีรหัสผ่าน (Open)</option>
                                 </select>
@@ -349,56 +467,56 @@
 
                     <!-- Info Banner -->
                     <div
-                        class="mt-4 p-3.5 rounded-xl bg-crimson-50/70 border border-crimson-100 flex items-start gap-3 text-xs text-tech-dark leading-relaxed">
-                        <i class="fa-solid fa-circle-check text-crimson-500 text-sm mt-0.5"></i>
+                        class="mt-4 p-3.5 rounded-2xl bg-[#E11D48]/8 border border-[#E11D48]/20 flex items-start gap-3 text-xs leading-relaxed">
+                        <i class="fa-solid fa-circle-check text-[#E11D48] text-sm mt-0.5 shrink-0"></i>
                         <div>
-                            <strong class="text-crimson-600 font-mono">UTF-8 BYTE MODE:</strong>
+                            <strong class="text-[#E11D48] font-mono">UTF-8 BYTE MODE:</strong>
                             เข้ารหัสภาษาไทยและอักขระพิเศษตามมาตรฐานสากล กล้อง iPhone, Android และแอป LINE
                             สแกนแล้วแสดงข้อความถูกต้องทันที
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <hr class="border-tech-border">
+                <hr class="border-[var(--border-color)]">
 
-                <!-- 2. โลโก้บริษัทตรงกลาง (Center Company Logo) -->
-                <div>
+                <!-- 02. โลโก้บริษัทตรงกลาง (Center Company Logo) -->
+                <section>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">02</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">โลโก้บริษัทตรงกลาง
-                                (Center Logo)</span>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-6 h-6 rounded-lg bg-[#E11D48]/12 border border-[#E11D48]/25 text-[#E11D48] font-mono text-xs font-extrabold flex items-center justify-center shrink-0">02</span>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wide truncate">
+                                โลโก้บริษัทตรงกลาง (Center Logo)
+                            </h2>
                         </div>
                         <button type="button" id="remove-logo-btn" onclick="clearLogo()"
-                            class="hidden px-2.5 py-1 rounded-lg text-xs font-mono text-crimson-600 hover:bg-crimson-50 border border-crimson-200 transition cursor-pointer flex items-center gap-1.5">
+                            class="hidden min-h-[34px] px-3 py-1 rounded-xl text-xs font-mono font-bold text-[#E11D48] hover:bg-[#E11D48]/10 border border-[#E11D48]/30 transition cursor-pointer flex items-center gap-1.5">
                             <i class="fa-solid fa-trash-can text-[11px]"></i>
                             <span>ลบโลโก้</span>
                         </button>
                     </div>
 
                     <!-- กล่องอัปโหลดไฟล์โลโก้ -->
-                    <div class="p-4 rounded-xl bg-tech-panel/60 border border-tech-border space-y-4">
+                    <div class="p-4 rounded-2xl studio-subtle border space-y-4">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <!-- Canvas พรีวิวโลโก้ที่วาดรูปทรงและเส้นกรอบตัดขอบตามที่เลือกจริง -->
                                 <div
-                                    class="w-14 h-14 rounded-xl bg-white/80 border border-tech-border flex items-center justify-center shrink-0 shadow-sm p-1">
+                                    class="w-14 h-14 rounded-2xl studio-panel border flex items-center justify-center shrink-0 shadow-2xs p-1">
                                     <canvas id="logo-thumb-canvas" width="96" height="96" class="w-12 h-12"></canvas>
                                 </div>
                                 <div class="min-w-0">
-                                    <div id="logo-file-name" class="text-xs font-bold text-tech-dark truncate">
+                                    <div id="logo-file-name" class="text-xs font-extrabold truncate">
                                         ยังไม่ได้อัปโหลดโลโก้บริษัท
                                     </div>
-                                    <div class="font-mono text-[11px] text-tech-muted mt-0.5">
+                                    <div class="font-mono text-[11px] studio-muted mt-0.5 break-words">
                                         รองรับ PNG, JPG, JPEG, SVG, WebP, ICO, GIF, BMP, AVIF
                                     </div>
                                 </div>
                             </div>
 
                             <label for="logo-file-input"
-                                class="px-4 py-2.5 rounded-xl bg-gray-950 hover:bg-gray-800 text-white font-semibold text-xs flex items-center justify-center gap-2 transition cursor-pointer shrink-0 shadow-sm">
-                                <i class="fa-solid fa-upload text-crimson-500"></i>
+                                class="min-h-[42px] px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-[#E11D48] dark:hover:bg-[#E11D48] text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shrink-0 shadow-sm">
+                                <i class="fa-solid fa-upload text-[#FB7185]"></i>
                                 <span>เลือกไฟล์โลโก้</span>
                             </label>
                             <input type="file" id="logo-file-input"
@@ -407,47 +525,47 @@
                         </div>
 
                         <!-- ตัวควบคุมรูปทรง ขนาดโลโก้ กรอบเว้นระยะ และสีเส้นกรอบโลโก้ -->
-                        <div id="logo-controls" class="pt-3 border-t border-tech-border/80 space-y-4">
-                            <!-- เลือกรูปทรงพื้นหลังและกรอบโลโก้ (6 รูปทรง ใช้ Inline SVG คมชัดทุกปุ่ม) -->
-                            <div class="p-3 rounded-xl bg-white border border-tech-border space-y-2.5">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold text-tech-dark flex items-center gap-1.5">
-                                        <i class="fa-solid fa-shapes text-crimson-500"></i>
-                                        <span>รูปทรงพื้นหลัง & กรอบโลโก้ (Logo Shape)</span>
+                        <div id="logo-controls" class="pt-3 border-t border-[var(--border-color)] space-y-4">
+                            <!-- เลือกรูปทรงพื้นหลังและกรอบโลโก้ (6 รูปทรง) -->
+                            <div class="p-3.5 rounded-2xl studio-panel border space-y-2.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-extrabold flex items-center gap-1.5">
+                                        <i class="fa-solid fa-shapes text-[#E11D48]"></i>
+                                        <span>รูปทรงพื้นหลัง &amp; กรอบโลโก้</span>
                                     </span>
                                     <span id="logo-shape-label"
-                                        class="font-mono text-[11px] text-crimson-600 font-bold">
+                                        class="font-mono text-[11px] text-[#E11D48] font-extrabold truncate">
                                         วงกลม (Circle)
                                     </span>
                                 </div>
                                 <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5" id="logo-shape-grid">
                                     <button type="button" data-shape="circle" onclick="setLogoShape('circle')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-gray-950 bg-gray-950 text-white text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[#E11D48] bg-[#E11D48] text-white text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <circle cx="12" cy="12" r="9" />
                                         </svg>
                                         <span>วงกลม</span>
                                     </button>
                                     <button type="button" data-shape="rounded" onclick="setLogoShape('rounded')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4 text-[#E11D48]" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
                                         </svg>
                                         <span>มุมมน</span>
                                     </button>
                                     <button type="button" data-shape="square" onclick="setLogoShape('square')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4 text-[#E11D48]" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                                             <rect x="4" y="4" width="16" height="16" />
                                         </svg>
                                         <span>สี่เหลี่ยม</span>
                                     </button>
                                     <button type="button" data-shape="hexagon" onclick="setLogoShape('hexagon')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4 text-[#E11D48]" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
                                             aria-hidden="true">
                                             <polygon points="12,2.5 20.5,7.25 20.5,16.75 12,21.5 3.5,16.75 3.5,7.25" />
@@ -455,8 +573,8 @@
                                         <span>หกเหลี่ยม</span>
                                     </button>
                                     <button type="button" data-shape="diamond" onclick="setLogoShape('diamond')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4 text-[#E11D48]" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
                                             aria-hidden="true">
                                             <polygon points="12,2.5 21.5,12 12,21.5 2.5,12" />
@@ -464,8 +582,8 @@
                                         <span>ข้าวหลามตัด</span>
                                     </button>
                                     <button type="button" data-shape="shield" onclick="setLogoShape('shield')"
-                                        class="logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
-                                        <svg class="w-4 h-4 text-crimson-500" viewBox="0 0 24 24" fill="none"
+                                        class="logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer">
+                                        <svg class="w-4 h-4 text-[#E11D48]" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"
                                             aria-hidden="true">
                                             <path
@@ -478,19 +596,19 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                                 <!-- Logo Size Slider (10% - 25%, ค่าเริ่มต้น 15%) -->
-                                <div>
+                                <div class="p-3 rounded-2xl studio-panel border">
                                     <div class="flex items-center justify-between mb-1.5">
-                                        <label for="logo-size-slider" class="text-xs font-bold text-tech-dark">
+                                        <label for="logo-size-slider" class="text-xs font-extrabold">
                                             ขนาดโลโก้เทียบกับ QR
                                         </label>
                                         <span id="logo-size-label"
-                                            class="px-2 py-0.5 rounded-md bg-white border border-tech-border text-crimson-600 font-mono text-xs font-bold">
+                                            class="px-2 py-0.5 rounded-md bg-[#E11D48]/12 text-[#E11D48] font-mono text-xs font-extrabold">
                                             15%
                                         </span>
                                     </div>
                                     <input type="range" id="logo-size-slider" min="10" max="25" step="1" value="15"
-                                        class="w-full cursor-pointer">
-                                    <div class="flex justify-between font-mono text-[10px] text-tech-muted mt-1">
+                                        class="w-full cursor-pointer my-1.5">
+                                    <div class="flex justify-between font-mono text-[10px] studio-muted">
                                         <span>10%</span>
                                         <span>15% (เริ่มต้น)</span>
                                         <span>25%</span>
@@ -498,60 +616,59 @@
                                 </div>
 
                                 <!-- Quiet-zone padding / background toggle -->
-                                <div class="space-y-2">
+                                <div>
                                     <label
-                                        class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-tech-border cursor-pointer select-none">
-                                        <span class="text-xs font-semibold text-tech-dark flex items-center gap-2">
-                                            <i class="fa-regular fa-square text-crimson-500"></i>
+                                        class="min-h-[48px] flex items-center justify-between p-3.5 rounded-2xl studio-panel border cursor-pointer select-none hover:border-[#E11D48] transition">
+                                        <span class="text-xs font-bold flex items-center gap-2">
+                                            <i class="fa-regular fa-square text-[#E11D48]"></i>
                                             <span>พื้นหลังเว้นระยะขอบ (Quiet Zone)</span>
                                         </span>
                                         <input type="checkbox" id="logo-padding-toggle" checked
-                                            class="w-4 h-4 accent-[#FF1E42] rounded cursor-pointer">
+                                            class="w-4 h-4 accent-[#E11D48] rounded cursor-pointer shrink-0">
                                     </label>
                                 </div>
                             </div>
 
                             <!-- ตั้งค่าเส้นกรอบโลโก้ (เปิด/ปิด + เลือกสีกรอบ ค่าเริ่มต้นสีแดง #FF1E42) -->
-                            <div class="p-3 rounded-xl bg-white border border-tech-border space-y-3">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                            <div class="p-3.5 rounded-2xl studio-panel border space-y-3">
+                                <div class="flex flex-wrap items-center justify-between gap-2.5">
+                                    <label class="min-h-[36px] flex items-center gap-2.5 cursor-pointer select-none">
                                         <input type="checkbox" id="logo-border-toggle" checked
-                                            class="w-4 h-4 accent-[#FF1E42] rounded cursor-pointer">
-                                        <span class="text-xs font-bold text-tech-dark flex items-center gap-1.5">
-                                            <i class="fa-solid fa-border-all text-crimson-500"></i>
+                                            class="w-4 h-4 accent-[#E11D48] rounded cursor-pointer">
+                                        <span class="text-xs font-extrabold flex items-center gap-1.5">
+                                            <i class="fa-solid fa-border-all text-[#E11D48]"></i>
                                             <span>เส้นกรอบสีตัดขอบโลโก้ (Logo Frame)</span>
                                         </span>
                                     </label>
 
                                     <!-- ชุดสีกรอบแนะนำ -->
                                     <div id="logo-border-presets" class="flex items-center gap-1.5">
-                                        <span class="text-[11px] font-mono text-tech-muted mr-1">สีด่วน:</span>
+                                        <span class="text-[11px] font-mono studio-muted mr-1">สีด่วน:</span>
                                         <button type="button" onclick="applyLogoBorderPreset('#FF1E42')"
-                                            class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                            class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs hover:scale-110 transition cursor-pointer"
                                             style="background:#FF1E42;"
                                             title="สีแดงมาตรฐาน (#FF1E42 - Default)"></button>
                                         <button type="button" onclick="applyLogoBorderPreset('#0F172A')"
-                                            class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                            class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs hover:scale-110 transition cursor-pointer"
                                             style="background:#0F172A;" title="สีดำเข้ม (#0F172A)"></button>
                                         <button type="button" onclick="applyLogoBorderPreset('#1D4ED8')"
-                                            class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                            class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs hover:scale-110 transition cursor-pointer"
                                             style="background:#1D4ED8;" title="สีน้ำเงิน (#1D4ED8)"></button>
                                         <button type="button" onclick="applyLogoBorderPreset('#059669')"
-                                            class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                            class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs hover:scale-110 transition cursor-pointer"
                                             style="background:#059669;" title="สีเขียว (#059669)"></button>
                                         <button type="button" onclick="applyLogoBorderPreset('#D97706')"
-                                            class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                            class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs hover:scale-110 transition cursor-pointer"
                                             style="background:#D97706;" title="สีทอง/ส้ม (#D97706)"></button>
                                     </div>
                                 </div>
 
                                 <div id="logo-border-color-row"
-                                    class="flex items-center justify-between pt-2 border-t border-tech-border/70">
+                                    class="flex items-center justify-between gap-3 pt-2.5 border-t border-[var(--border-color)]">
                                     <div>
-                                        <div class="text-xs font-semibold text-tech-dark">สีเส้นกรอบโลโก้ (Frame Border
-                                            Color)</div>
+                                        <div class="text-xs font-bold">สีเส้นกรอบโลโก้ (Frame Border Color)</div>
                                         <div id="logo-border-hex-label"
-                                            class="font-mono text-xs text-crimson-600 font-bold mt-0.5">#FF1E42</div>
+                                            class="font-mono text-xs text-[#E11D48] font-extrabold mt-0.5">#FF1E42</div>
                                     </div>
                                     <input type="color" id="logo-border-color" value="#FF1E42"
                                         title="เลือกสีเส้นกรอบโลโก้">
@@ -560,8 +677,8 @@
 
                             <!-- แจ้งเตือน / แนะนำระดับ ECC เมื่อเปิดใช้งานโลโก้ -->
                             <div id="logo-ecc-notice"
-                                class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
-                                <i class="fa-solid fa-shield-halved text-amber-600 text-sm mt-0.5 shrink-0"></i>
+                                class="hidden p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/70 text-amber-950 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                                <i class="fa-solid fa-shield-halved text-amber-600 dark:text-amber-400 text-sm mt-0.5 shrink-0"></i>
                                 <div id="logo-ecc-notice-text" class="leading-relaxed">
                                     ระบบปรับระดับกู้คืนข้อมูล (ECC) เป็น <strong>Q / H</strong>
                                     อัตโนมัติเพื่อให้กล้องสแกนติดแม้มีโลโก้บังตรงกลาง
@@ -569,40 +686,40 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <hr class="border-tech-border">
+                <hr class="border-[var(--border-color)]">
 
-                <!-- 3. ปรับแต่งสี -->
-                <div>
+                <!-- 03. ปรับแต่งสี -->
+                <section>
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div class="flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">03</span>
-                            <span class="text-sm font-bold text-tech-dark uppercase tracking-wide">ปรับแต่งสี
-                                (Colors)</span>
+                            <span class="w-6 h-6 rounded-lg bg-[#E11D48]/12 border border-[#E11D48]/25 text-[#E11D48] font-mono text-xs font-extrabold flex items-center justify-center shrink-0">03</span>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wide">
+                                ปรับแต่งสี (Colors)
+                            </h2>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-mono text-tech-muted">ชุดสีแนะนำ:</span>
+                            <span class="text-xs font-mono studio-muted">ชุดสีแนะนำ:</span>
                             <button type="button"
-                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:scale-110 transition cursor-pointer"
                                 style="background:#000000;" title="ขาว-ดำ มาตรฐาน (แนะนำที่สุด)"
                                 onclick="applyColorPreset('#000000', '#ffffff')"></button>
                             <button type="button"
-                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:scale-110 transition cursor-pointer"
                                 style="background:#991B1B;" title="Crimson Red (ธีม CLEVERTENSAI)"
                                 onclick="applyColorPreset('#991B1B', '#ffffff')"></button>
                             <button type="button"
-                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:scale-110 transition cursor-pointer"
                                 style="background:#0F172A;" title="Dark Slate"
                                 onclick="applyColorPreset('#0F172A', '#ffffff')"></button>
                             <button type="button"
-                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:scale-110 transition cursor-pointer"
                                 style="background:#065f46;" title="เขียวเข้มบนพื้นขาว"
                                 onclick="applyColorPreset('#065f46', '#ffffff')"></button>
                             <button type="button"
-                                class="w-5 h-5 rounded-full border-2 border-gray-300 hover:scale-110 transition cursor-pointer"
+                                class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:scale-110 transition cursor-pointer"
                                 style="background:#1e3a8a;" title="น้ำเงินเข้มบนพื้นขาว"
                                 onclick="applyColorPreset('#1e3a8a', '#ffffff')"></button>
                         </div>
@@ -610,108 +727,117 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <div
-                            class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
+                            class="flex items-center justify-between gap-3 p-3.5 rounded-2xl studio-subtle border">
                             <div>
-                                <div class="text-xs font-bold text-tech-dark">สีจุด QR Code (Foreground)</div>
-                                <div id="fg-hex-label" class="font-mono text-xs text-tech-muted mt-0.5">#000000</div>
+                                <div class="text-xs font-extrabold">สีจุด QR Code (Foreground)</div>
+                                <div id="fg-hex-label" class="font-mono text-xs studio-muted font-bold mt-0.5">#000000</div>
                             </div>
-                            <input type="color" id="qr-fg-color" value="#000000">
+                            <input type="color" id="qr-fg-color" value="#000000" title="เลือกสีจุด QR Code">
                         </div>
 
                         <div
-                            class="flex items-center justify-between p-3.5 rounded-xl bg-tech-panel/60 border border-tech-border">
+                            class="flex items-center justify-between gap-3 p-3.5 rounded-2xl studio-subtle border">
                             <div>
-                                <div class="text-xs font-bold text-tech-dark">สีพื้นหลัง (Background)</div>
-                                <div id="bg-hex-label" class="font-mono text-xs text-tech-muted mt-0.5">#FFFFFF</div>
+                                <div class="text-xs font-extrabold">สีพื้นหลัง (Background)</div>
+                                <div id="bg-hex-label" class="font-mono text-xs studio-muted font-bold mt-0.5">#FFFFFF</div>
                             </div>
-                            <input type="color" id="qr-bg-color" value="#ffffff">
+                            <input type="color" id="qr-bg-color" value="#ffffff" title="เลือกสีพื้นหลัง QR Code">
                         </div>
                     </div>
 
                     <!-- คำเตือนเมื่อเลือกสีที่ความต่างแสงต่ำ -->
                     <div id="contrast-warning"
-                        class="hidden mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2.5">
-                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
+                        class="hidden mt-3 p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/70 text-amber-950 dark:text-amber-200 text-xs flex items-center gap-2.5">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600 dark:text-amber-400 text-sm shrink-0"></i>
                         <span>สีจุด QR และสีพื้นหลังใกล้เคียงกันเกินไป อาจทำให้กล้องมือถือสแกนติดยาก
                             แนะนำให้ใช้สีเข้มบนพื้นหลังสีสว่าง</span>
                     </div>
-                </div>
+                </section>
 
-                <hr class="border-tech-border">
+                <hr class="border-[var(--border-color)]">
 
-                <!-- 4. ขนาดและระดับการกู้คืนข้อมูล -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
+                <!-- 04. ขนาดและระดับการกู้คืนข้อมูล -->
+                <section class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    <div class="p-3.5 rounded-2xl studio-subtle border">
+                        <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded-lg bg-crimson-50 border border-crimson-100 text-crimson-500 font-mono text-xs font-bold flex items-center justify-center">04</span>
-                                <label class="text-sm font-bold text-tech-dark uppercase tracking-wide"
+                                <span class="w-6 h-6 rounded-lg bg-[#E11D48]/12 border border-[#E11D48]/25 text-[#E11D48] font-mono text-xs font-extrabold flex items-center justify-center shrink-0">04</span>
+                                <label class="text-xs sm:text-sm font-extrabold uppercase tracking-wide"
                                     for="qr-size">ขนาดรูปภาพ</label>
                             </div>
                             <span id="size-label"
-                                class="px-2.5 py-0.5 rounded-md bg-crimson-50 border border-crimson-100 text-crimson-600 font-mono text-xs font-bold">
+                                class="px-2 py-0.5 rounded-md bg-[#E11D48]/12 text-[#E11D48] font-mono text-xs font-extrabold">
                                 300 x 300 px
                             </span>
                         </div>
                         <input type="range" id="qr-size" min="200" max="600" step="50" value="300"
                             class="w-full cursor-pointer my-2">
-                        <div class="flex justify-between font-mono text-[11px] text-tech-muted">
+                        <div class="flex justify-between font-mono text-[11px] studio-muted">
                             <span>200px</span>
                             <span>400px</span>
                             <span>600px</span>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-tech-dark uppercase tracking-wide mb-2"
+                    <div class="p-3.5 rounded-2xl studio-subtle border flex flex-col justify-between">
+                        <label class="block text-xs sm:text-sm font-extrabold uppercase tracking-wide mb-2"
                             for="qr-level">
                             ระดับกู้คืนข้อมูล (ECC Level)
                         </label>
                         <select id="qr-level"
-                            class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm text-tech-dark focus:outline-none focus:border-crimson-500 focus:ring-2 focus:ring-crimson-500/15">
+                            class="w-full min-h-[42px] px-3.5 py-2.5 studio-input border rounded-xl text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#E11D48]/20 cursor-pointer">
                             <option value="L">ต่ำ (L - 7%) - จุดห่าง สแกนง่าย</option>
                             <option value="M" selected>ปานกลาง (M - 15%) - แนะนำ</option>
                             <option value="Q">ค่อนข้างสูง (Q - 25%)</option>
                             <option value="H">สูงสุด (H - 30%) - ทนรอยขีดข่วน / มีโลโก้</option>
                         </select>
                     </div>
-                </div>
+                </section>
 
             </div>
 
             <!-- ============================================================= -->
             <!-- ฝั่งขวา (5 Cols): แสดงผล QR Code และดาวน์โหลด                    -->
             <!-- ============================================================= -->
-            <div class="lg:col-span-5 tech-card rounded-2xl overflow-hidden lg:sticky lg:top-24">
+            <div id="qr-preview-section" class="lg:col-span-5 studio-surface rounded-3xl border overflow-hidden lg:sticky lg:top-20 scroll-mt-20">
 
                 <!-- Dark Tech Header Bar -->
                 <div
-                    class="bg-gray-950 px-6 py-4 border-b border-gray-800 flex items-center justify-between text-white">
-                    <div class="flex items-center gap-2.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-crimson-500"></span>
-                        <h2 class="font-bold text-sm tracking-wider uppercase font-mono">LIVE QR MATRIX PREVIEW</h2>
+                    class="bg-slate-950 px-5 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-2 text-white">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#E11D48] shrink-0"></span>
+                        <h2 class="font-extrabold text-xs sm:text-sm tracking-wider uppercase font-mono truncate">
+                            LIVE QR MATRIX PREVIEW
+                        </h2>
                     </div>
-                    <span id="preview-mode-badge" class="font-mono text-[11px] text-gray-400">SCAN READY</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span id="preview-mode-badge" class="hidden sm:inline font-mono text-[11px] text-slate-400">SCAN READY</span>
+                        <button type="button" onclick="openExpandQrModal()"
+                            class="px-2.5 py-1 rounded-lg bg-[#E11D48] hover:bg-[#BE123C] text-white font-mono text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
+                            title="ขยายดู QR Code ขนาดใหญ่">
+                            <i class="fa-solid fa-expand text-[10px]"></i>
+                            <span>Expand</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="p-6 flex flex-col items-center text-center">
-                    <p class="text-xs text-tech-muted mb-4">หยิบกล้องสมาร์ทโฟนขึ้นมาสแกนทดสอบจากหน้าจอได้ทันที</p>
+                <div class="p-4 sm:p-6 flex flex-col items-center text-center">
+                    <p class="text-xs studio-muted mb-4">หยิบกล้องสมาร์ทโฟนขึ้นมาสแกนทดสอบจากหน้าจอได้ทันที</p>
 
                     <!-- Canvas Frame with Tech Grid & Scanline -->
-                    <div
-                        class="relative w-full max-w-[290px] aspect-square bg-gray-950 border-2 border-gray-900 rounded-2xl p-4 flex items-center justify-center overflow-hidden shadow-inner">
+                    <div onclick="openExpandQrModal()"
+                        class="relative w-full max-w-[280px] sm:max-w-[300px] aspect-square bg-slate-950 border-2 border-slate-800 hover:border-[#E11D48] rounded-2xl p-3.5 sm:p-4 flex items-center justify-center overflow-hidden shadow-inner cursor-pointer transition">
                         <div class="absolute inset-0 opacity-20 pointer-events-none"
-                            style="background-image: radial-gradient(#FF1E42 1px, transparent 1px); background-size: 16px 16px;">
+                            style="background-image: radial-gradient(#E11D48 1px, transparent 1px); background-size: 16px 16px;">
                         </div>
                         <div class="scanline absolute inset-0 pointer-events-none"></div>
 
                         <canvas id="qr-canvas" class="relative z-10"></canvas>
 
                         <div id="empty-state"
-                            class="hidden relative z-10 flex flex-col items-center justify-center text-gray-400 text-xs gap-2 p-4">
+                            class="hidden relative z-10 flex flex-col items-center justify-center text-slate-400 text-xs gap-2 p-4">
                             <div
-                                class="w-12 h-12 rounded-2xl bg-gray-900 border border-gray-800 text-crimson-500 flex items-center justify-center text-2xl">
+                                class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 text-[#E11D48] flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-qrcode"></i>
                             </div>
                             <span class="font-mono">กรุณาพิมพ์ข้อความหรือลิงก์เพื่อสร้าง QR</span>
@@ -720,47 +846,45 @@
 
                     <!-- ป้ายยืนยันความถูกต้องของเมทริกซ์ QR -->
                     <div id="verify-pill"
-                        class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
-                        <span id="verify-text">ตรวจสอบโครงสร้าง QR ผ่านมาตรฐาน (พร้อมสแกน)</span>
+                        class="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/70 max-w-full">
+                        <i class="fa-solid fa-circle-check text-emerald-500 shrink-0"></i>
+                        <span id="verify-text" class="truncate">ตรวจสอบโครงสร้าง QR ผ่านมาตรฐาน (พร้อมสแกน)</span>
                     </div>
 
                     <!-- Metadata Info -->
                     <div class="w-full grid grid-cols-2 gap-2.5 mt-4 text-left">
-                        <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border">
-                            <div class="text-[10px] font-mono text-tech-muted uppercase">Resolution</div>
-                            <div id="preview-resolution" class="text-xs font-bold text-tech-dark font-mono mt-0.5">300 ×
-                                300 พิกเซล</div>
+                        <div class="p-3 rounded-2xl studio-subtle border">
+                            <div class="text-[10px] font-mono studio-muted uppercase">Resolution</div>
+                            <div id="preview-resolution" class="text-xs font-extrabold font-mono mt-0.5">300 × 300 พิกเซล</div>
                         </div>
-                        <div class="p-2.5 rounded-xl bg-tech-panel/70 border border-tech-border">
-                            <div class="text-[10px] font-mono text-tech-muted uppercase">Data / Logo Mode</div>
+                        <div class="p-3 rounded-2xl studio-subtle border">
+                            <div class="text-[10px] font-mono studio-muted uppercase">Data / Logo Mode</div>
                             <div id="encoded-badge"
-                                class="text-xs font-bold text-crimson-600 font-mono mt-0.5 truncate">ข้อความ (UTF-8)
-                            </div>
+                                class="text-xs font-extrabold text-[#E11D48] font-mono mt-0.5 truncate">ข้อความ (UTF-8)</div>
                         </div>
                     </div>
 
                     <!-- กล่องแสดงข้อมูลจริงที่เข้ารหัส (Payload Inspector) -->
-                    <div class="w-full mt-3 bg-gray-950 text-gray-200 border border-gray-800 rounded-xl p-3 text-left">
+                    <div class="w-full mt-3 bg-slate-950 text-slate-200 border border-slate-800 rounded-2xl p-3.5 text-left">
                         <div
-                            class="flex items-center justify-between text-[10px] font-mono text-gray-400 pb-1.5 mb-1.5 border-b border-gray-800">
-                            <span><i class="fa-solid fa-terminal text-crimson-500 mr-1"></i>PAYLOAD INSPECTOR</span>
-                            <span id="byte-length-label" class="text-red-400 font-bold">0 bytes</span>
+                            class="flex items-center justify-between text-[10px] font-mono text-slate-400 pb-1.5 mb-1.5 border-b border-slate-800">
+                            <span><i class="fa-solid fa-terminal text-[#E11D48] mr-1"></i>PAYLOAD INSPECTOR</span>
+                            <span id="byte-length-label" class="text-[#FB7185] font-bold">0 bytes</span>
                         </div>
                         <pre id="payload-preview"
-                            class="m-0 font-mono text-xs text-gray-100 whitespace-pre-wrap break-all max-h-20 overflow-y-auto"></pre>
+                            class="m-0 font-mono text-xs text-slate-100 whitespace-pre-wrap break-all max-h-20 overflow-y-auto"></pre>
                     </div>
 
                     <!-- ปุ่มดาวน์โหลดและคัดลอก -->
                     <div class="w-full mt-5 space-y-2.5">
                         <button type="button" id="download-btn"
-                            class="w-full py-3 px-5 rounded-xl bg-crimson-500 hover:bg-crimson-600 disabled:bg-gray-300 text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2 transition red-glow disabled:shadow-none cursor-pointer disabled:cursor-not-allowed">
+                            class="w-full min-h-[46px] py-3 px-5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 text-white font-extrabold text-sm tracking-wide flex items-center justify-center gap-2 transition red-glow disabled:shadow-none cursor-pointer disabled:cursor-not-allowed">
                             <i class="fa-solid fa-download"></i>
                             <span>ดาวน์โหลดรูปภาพ (PNG)</span>
                         </button>
 
                         <button type="button" id="copy-btn"
-                            class="w-full py-2.5 px-4 rounded-xl bg-gray-950 hover:bg-gray-800 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold text-xs tracking-wide flex items-center justify-center gap-2 transition cursor-pointer disabled:cursor-not-allowed">
+                            class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 disabled:bg-slate-200 dark:disabled:bg-slate-800/60 disabled:text-slate-400 text-white font-bold text-xs tracking-wide flex items-center justify-center gap-2 transition cursor-pointer disabled:cursor-not-allowed">
                             <i class="fa-regular fa-copy"></i>
                             <span>คัดลอกรูปภาพ QR Code ลงคลิปบอร์ด</span>
                         </button>
@@ -772,27 +896,66 @@
     </main>
 
     <!-- ===================================================================== -->
-    <!-- FOOTER (International Standard Copyright matching index.html)         -->
+    <!-- EXPAND LARGE QR PREVIEW MODAL                                         -->
     <!-- ===================================================================== -->
-    <footer class="bg-white border-t border-tech-border py-5 px-6 mt-12">
-        <div class="max-w-7xl mx-auto text-center text-xs text-tech-muted font-mono tracking-wide">
+    <div id="expandQrModal" onclick="if (event.target === this) closeExpandQrModal()"
+        class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
+        <div class="studio-panel border rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="bg-slate-950 text-white px-5 py-3.5 flex items-center justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="w-8 h-8 rounded-xl bg-[#E11D48]/20 border border-[#E11D48]/40 text-[#FB7185] flex items-center justify-center text-sm shrink-0">
+                        <i class="fa-solid fa-qrcode"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <h3 class="text-sm sm:text-base font-extrabold truncate">ขยายพรีวิว QR Code ขนาดใหญ่</h3>
+                        <p id="expandQrMeta" class="text-[11px] font-mono text-slate-400 truncate">300 × 300 px</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeExpandQrModal()"
+                    class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-[#E11D48] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer shrink-0"
+                    title="ปิดหน้าต่าง (Esc)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 sm:p-7 overflow-y-auto flex flex-col items-center justify-center gap-5">
+                <div class="p-4 rounded-2xl studio-subtle border flex items-center justify-center max-w-full">
+                    <img id="expandQrImg" alt="ขยาย QR Code" class="max-w-full max-h-[55vh] rounded-xl shadow-md" />
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-2.5 w-full">
+                    <button type="button" onclick="downloadQRCode()"
+                        class="min-h-[42px] px-4 py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-download"></i>
+                        <span>ดาวน์โหลด PNG</span>
+                    </button>
+                    <button type="button" onclick="copyQRCodeImage()"
+                        class="min-h-[42px] px-4 py-2.5 rounded-xl studio-subtle border hover:border-[#E11D48] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-regular fa-copy text-[#E11D48]"></i>
+                        <span>คัดลอกรูปภาพ</span>
+                    </button>
+                    <button type="button" onclick="closeExpandQrModal()"
+                        class="min-h-[42px] px-4 py-2.5 rounded-xl studio-subtle border hover:border-[#E11D48] font-bold text-xs transition cursor-pointer">
+                        ปิด
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- FOOTER                                                                -->
+    <!-- ===================================================================== -->
+    <footer class="studio-panel border-t py-5 px-6 mt-12">
+        <div class="max-w-7xl mx-auto text-center text-xs studio-muted font-mono tracking-wide">
             &copy; 2026 Clever Tensai. All rights reserved.
         </div>
     </footer>
 
-
     <!-- =====================================================================
          ไลบรารีมาตรฐาน qrcode-generator v1.4.4 โดย Kazuhiko Arase (MIT License)
-         ฝังในไฟล์โดยตรงเพื่อความแม่นยำตามมาตรฐาน ISO/IEC 18004 และทำงานได้ 100%
          ===================================================================== -->
     <script>
-        /*!
-         * qrcode-generator v1.4.4 (c) 2009 Kazuhiko Arase
-         * URL: http://www.d-project.com/
-         * Licensed under the MIT license:
-         *   http://www.opensource.org/licenses/mit-license.php
-         * The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED
-         */
         var qrcode = function () {
             var qrcode = function (typeNumber, errorCorrectionLevel) {
                 var PAD0 = 0xEC;
@@ -866,7 +1029,7 @@
                     return pattern;
                 };
 
-                var setupTimingPatternFixed = function () {
+                var setupTimingPattern = function () {
                     for (var r = 8; r < _moduleCount - 8; r += 1) {
                         if (_modules[r][6] != null) continue;
                         _modules[r][6] = (r % 2 == 0);
@@ -876,7 +1039,6 @@
                         _modules[6][c] = (c % 2 == 0);
                     }
                 };
-                var setupTimingPattern = setupTimingPatternFixed;
 
                 var setupPositionAdjustPattern = function () {
                     var pos = QRUtil.getPatternPosition(_typeNumber);
@@ -1158,7 +1320,7 @@
                 MODE_KANJI: 1 << 3
             };
 
-            var QRErrorCorrectionLevel = {L: 1, M: 0, Q: 3, H: 2};
+            var QRErrorCorrectionLevel = { L: 1, M: 0, Q: 3, H: 2 };
 
             var QRMaskPattern = {
                 PATTERN000: 0, PATTERN001: 1, PATTERN010: 2, PATTERN011: 3,
@@ -1210,14 +1372,14 @@
 
                 _this.getMaskFunction = function (maskPattern) {
                     switch (maskPattern) {
-                        case QRMaskPattern.PATTERN000: return function (i, j) {return (i + j) % 2 == 0;};
-                        case QRMaskPattern.PATTERN001: return function (i, j) {return i % 2 == 0;};
-                        case QRMaskPattern.PATTERN010: return function (i, j) {return j % 3 == 0;};
-                        case QRMaskPattern.PATTERN011: return function (i, j) {return (i + j) % 3 == 0;};
-                        case QRMaskPattern.PATTERN100: return function (i, j) {return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0;};
-                        case QRMaskPattern.PATTERN101: return function (i, j) {return (i * j) % 2 + (i * j) % 3 == 0;};
-                        case QRMaskPattern.PATTERN110: return function (i, j) {return ((i * j) % 2 + (i * j) % 3) % 2 == 0;};
-                        case QRMaskPattern.PATTERN111: return function (i, j) {return ((i * j) % 3 + (i + j) % 2) % 2 == 0;};
+                        case QRMaskPattern.PATTERN000: return function (i, j) { return (i + j) % 2 == 0; };
+                        case QRMaskPattern.PATTERN001: return function (i, j) { return i % 2 == 0; };
+                        case QRMaskPattern.PATTERN010: return function (i, j) { return j % 3 == 0; };
+                        case QRMaskPattern.PATTERN011: return function (i, j) { return (i + j) % 3 == 0; };
+                        case QRMaskPattern.PATTERN100: return function (i, j) { return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0; };
+                        case QRMaskPattern.PATTERN101: return function (i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+                        case QRMaskPattern.PATTERN110: return function (i, j) { return ((i * j) % 2 + (i * j) % 3) % 2 == 0; };
+                        case QRMaskPattern.PATTERN111: return function (i, j) { return ((i * j) % 3 + (i + j) % 2) % 2 == 0; };
                         default: throw new Error('bad maskPattern:' + maskPattern);
                     }
                 };
@@ -1352,8 +1514,8 @@
                     return _num;
                 }();
                 var _this = {};
-                _this.getAt = function (index) {return _num[index];};
-                _this.getLength = function () {return _num.length;};
+                _this.getAt = function (index) { return _num[index]; };
+                _this.getLength = function () { return _num.length; };
                 _this.multiply = function (e) {
                     var num = new Array(_this.getLength() + e.getLength() - 1);
                     for (var i = 0; i < _this.getLength(); i += 1) {
@@ -1420,7 +1582,7 @@
 
                 var _this = {};
                 var qrRSBlock = function (totalCount, dataCount) {
-                    return {totalCount: totalCount, dataCount: dataCount};
+                    return { totalCount: totalCount, dataCount: dataCount };
                 };
                 _this.getRSBlocks = function (typeNumber, errorCorrectionLevel) {
                     var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
@@ -1455,7 +1617,7 @@
                 var _buffer = [];
                 var _length = 0;
                 var _this = {};
-                _this.getBuffer = function () {return _buffer;};
+                _this.getBuffer = function () { return _buffer; };
                 _this.getAt = function (index) {
                     var bufIndex = Math.floor(index / 8);
                     return ((_buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1;
@@ -1465,7 +1627,7 @@
                         _this.putBit(((num >>> (length - i - 1)) & 1) == 1);
                     }
                 };
-                _this.getLengthInBits = function () {return _length;};
+                _this.getLengthInBits = function () { return _length; };
                 _this.putBit = function (bit) {
                     var bufIndex = Math.floor(_length / 8);
                     if (_buffer.length <= bufIndex) _buffer.push(0);
@@ -1479,8 +1641,8 @@
                 var _mode = QRMode.MODE_8BIT_BYTE;
                 var _bytes = qrcode.stringToBytes(data);
                 var _this = {};
-                _this.getMode = function () {return _mode;};
-                _this.getLength = function () {return _bytes.length;};
+                _this.getMode = function () { return _mode; };
+                _this.getLength = function () { return _bytes.length; };
                 _this.write = function (buffer) {
                     for (var i = 0; i < _bytes.length; i += 1) {
                         buffer.put(_bytes[i], 8);
@@ -1492,7 +1654,6 @@
             return qrcode;
         }();
 
-        // บังคับใช้การเข้ารหัส UTF-8 สำหรับภาษาไทยและอักขระสากลทุกตัว
         qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
     </script>
 
@@ -1500,7 +1661,6 @@
          ส่วนควบคุมหน้าเว็บ การฝังโลโก้ และการวาด Canvas ความคมชัดสูง
          ===================================================================== -->
     <script>
-        // อ้างอิง DOM Elements
         const qrTextInput = document.getElementById('qr-text');
         const wifiSsidInput = document.getElementById('wifi-ssid');
         const wifiPassInput = document.getElementById('wifi-pass');
@@ -1533,6 +1693,7 @@
         const qrLevelInput = document.getElementById('qr-level');
 
         // Labels & Preview elements
+        const topEccBadge = document.getElementById('topEccBadge');
         const fgHexLabel = document.getElementById('fg-hex-label');
         const bgHexLabel = document.getElementById('bg-hex-label');
         const contrastWarning = document.getElementById('contrast-warning');
@@ -1551,25 +1712,97 @@
         const copyBtn = document.getElementById('copy-btn');
         const clearBtn = document.getElementById('clear-btn');
 
+        const expandQrModal = document.getElementById('expandQrModal');
+        const expandQrImg = document.getElementById('expandQrImg');
+        const expandQrMeta = document.getElementById('expandQrMeta');
+
         let currentMode = 'text';
         let currentLogoShape = 'circle';
         let toastTimer = null;
 
-        // สถานะโลโก้บริษัทที่อัปโหลด
         let activeLogoImage = null;
         let activeLogoDataUrl = null;
         let activeLogoName = '';
 
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            try {
+                localStorage.setItem('clevertensai_mixcolor_theme', isDark ? 'dark' : 'light');
+            } catch (_) {
+                // Ignore storage restrictions
+            }
+            showToast(isDark ? 'Velvet Midnight (Dark Mode)' : 'Alabaster Light Mode');
+        }
 
+        function scrollToQrPreview() {
+            const el = document.getElementById('qr-preview-section');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
 
-        /**
-         * สลับโหมดการสร้าง QR Code ('text' | 'url' | 'wifi')
-         */
+        function openExpandQrModal() {
+            const text = getPayloadData().trim();
+            if (!text || qrCanvas.classList.contains('hidden')) {
+                showToast('กรุณากรอกข้อมูลเพื่อสร้าง QR Code ก่อนขยายดู', true);
+                return;
+            }
+            expandQrImg.src = qrCanvas.toDataURL('image/png');
+            expandQrMeta.textContent = `${qrCanvas.width} × ${qrCanvas.height} px • ECC ${qrLevelInput.value}`;
+            expandQrModal.classList.remove('hidden');
+        }
+
+        function closeExpandQrModal() {
+            if (expandQrModal) expandQrModal.classList.add('hidden');
+        }
+
+        function resetAllQrSettings() {
+            currentMode = 'text';
+            qrTextInput.value = '';
+            wifiSsidInput.value = '';
+            wifiPassInput.value = '';
+            wifiTypeInput.value = 'WPA';
+
+            activeLogoImage = null;
+            activeLogoDataUrl = null;
+            activeLogoName = '';
+            logoFileInput.value = '';
+            logoFileName.textContent = 'ยังไม่ได้อัปโหลดโลโก้บริษัท';
+            removeLogoBtn.classList.add('hidden');
+            logoEccNotice.classList.add('hidden');
+
+            logoSizeSlider.value = '15';
+            logoPaddingToggle.checked = true;
+            logoBorderToggle.checked = true;
+            logoBorderColorInput.value = '#FF1E42';
+
+            qrFgColorInput.value = '#000000';
+            qrBgColorInput.value = '#ffffff';
+            qrSizeInput.value = '300';
+            qrLevelInput.value = 'M';
+
+            updateModeTabStyles('text');
+            standardInputBox.classList.remove('hidden');
+            wifiInputBox.classList.add('hidden');
+            setLogoShape('circle');
+            showToast('รีเซ็ตค่าเริ่มต้นเรียบร้อยแล้ว');
+        }
+
+        function updateModeTabStyles(mode) {
+            ['text', 'url', 'wifi'].forEach(m => {
+                const btn = document.getElementById('tab-' + m);
+                if (!btn) return;
+                const isAct = m === mode;
+                btn.className = `tab-btn min-h-[44px] py-2.5 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 sm:gap-2 transition cursor-pointer ${isAct
+                    ? 'bg-[#E11D48] text-white shadow-sm'
+                    : 'studio-muted hover:text-[var(--text-primary)]'
+                    }`;
+            });
+        }
+
         function setMode(mode) {
             currentMode = mode;
-
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tab-' + mode).classList.add('active');
+            updateModeTabStyles(mode);
 
             if (mode === 'wifi') {
                 standardInputBox.classList.add('hidden');
@@ -1594,14 +1827,10 @@
             generateQRCode();
         }
 
-        /**
-         * เติมตัวอย่างข้อความทดสอบสแกน
-         */
         function fillSample(text, targetMode) {
             if (targetMode && targetMode !== currentMode) {
                 currentMode = targetMode;
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.getElementById('tab-' + targetMode).classList.add('active');
+                updateModeTabStyles(targetMode);
                 standardInputBox.classList.remove('hidden');
                 wifiInputBox.classList.add('hidden');
             }
@@ -1609,9 +1838,6 @@
             generateQRCode();
         }
 
-        /**
-         * ดึงข้อมูล Payload ดิบตามโหมดที่เลือก
-         */
         function getPayloadData() {
             if (currentMode === 'wifi') {
                 const ssid = wifiSsidInput.value.trim();
@@ -1625,9 +1851,6 @@
             return qrTextInput.value;
         }
 
-        /**
-         * คำนวณความต่างของความสว่างสี (Relative Luminance Contrast Ratio)
-         */
         function checkColorContrast(fgHex, bgHex) {
             function getLuminance(hex) {
                 const clean = hex.replace('#', '');
@@ -1648,9 +1871,6 @@
             }
         }
 
-        /**
-         * แสดงข้อความแจ้งเตือน Toast (ไม่ใช้ alert)
-         */
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast-notification');
             const toastMsg = document.getElementById('toast-message');
@@ -1666,9 +1886,6 @@
             }, 3000);
         }
 
-        /**
-         * จัดการการอัปโหลดโลโก้บริษัทหลายรูปแบบ (PNG, JPG, JPEG, SVG, WebP, ICO, GIF, BMP, AVIF)
-         */
         function handleLogoUpload(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
@@ -1726,9 +1943,6 @@
             }
         }
 
-        /**
-         * ล้าง/ลบโลโก้ออกจาก QR Code
-         */
         function clearLogo() {
             activeLogoImage = null;
             activeLogoDataUrl = null;
@@ -1743,9 +1957,6 @@
             generateQRCode();
         }
 
-        /**
-         * ตรวจสอบและแนะนำระดับ ECC เมื่อใช้งานโลโก้
-         */
         function syncEccForLogo(logoRatioPct) {
             if (!activeLogoImage) {
                 logoEccNotice.classList.add('hidden');
@@ -1776,9 +1987,6 @@
                 'กำลังใช้ ECC ระดับ <strong>' + qrLevelInput.value + '</strong> ร่วมกับโลโก้ขนาด <strong>' + logoRatioPct + '%</strong> — พร้อมสแกนได้อย่างเสถียร';
         }
 
-        /**
-         * เลือกสีเส้นกรอบโลโก้จากชุดสีแนะนำ
-         */
         function applyLogoBorderPreset(hexColor) {
             logoBorderColorInput.value = hexColor;
             if (!logoBorderToggle.checked) {
@@ -1787,9 +1995,6 @@
             generateQRCode();
         }
 
-        /**
-         * เปลี่ยนรูปทรงพื้นหลังและกรอบโลโก้ (6 รูปทรง)
-         */
         function setLogoShape(shape) {
             currentLogoShape = shape;
             const shapeNames = {
@@ -1805,18 +2010,15 @@
             document.querySelectorAll('.logo-shape-btn').forEach(btn => {
                 const isSelected = btn.getAttribute('data-shape') === shape;
                 if (isSelected) {
-                    btn.className = 'logo-shape-btn py-2 px-1.5 rounded-lg border border-gray-950 bg-gray-950 text-white text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer shadow-sm';
+                    btn.className = 'logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[#E11D48] bg-[#E11D48] text-white text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer shadow-xs';
                 } else {
-                    btn.className = 'logo-shape-btn py-2 px-1.5 rounded-lg border border-tech-border bg-tech-panel/60 hover:bg-crimson-50 text-tech-dark text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer';
+                    btn.className = 'logo-shape-btn min-h-[54px] py-2 px-1.5 rounded-xl border border-[var(--border-color)] studio-subtle hover:border-[#E11D48] text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition cursor-pointer';
                 }
             });
 
             generateQRCode();
         }
 
-        /**
-         * สร้างเส้นทาง (Path) ตามรูปทรงพื้นหลัง/กรอบโลโก้ทั้ง 6 แบบ
-         */
         function drawLogoShapePath(ctx, cx, cy, boxSize, shape) {
             const half = boxSize / 2;
             const left = cx - half;
@@ -1862,9 +2064,6 @@
             ctx.closePath();
         }
 
-        /**
-         * วาดพรีวิวรูปทรงและเส้นกรอบตัดขอบลงบน Canvas พรีวิวโลโก้ด้านซ้าย
-         */
         function renderLogoThumbnailPreview(bgColor, withPadding, withBorder, borderColor, shape) {
             if (!logoThumbCanvas) return;
             const ctx = logoThumbCanvas.getContext('2d');
@@ -1878,12 +2077,10 @@
             ctx.clearRect(0, 0, w, h);
             ctx.save();
 
-            // พื้นหลังตามรูปทรงที่เลือก
             ctx.fillStyle = withPadding ? (bgColor || '#FFFFFF') : '#FFFFFF';
             drawLogoShapePath(ctx, cx, cy, outerSize, shape);
             ctx.fill();
 
-            // คลิปภาพโลโก้ (หรือวาดไอคอนตัวแทนหากยังไม่อัปโหลด) ตามรูปทรงจริง
             ctx.save();
             const innerClipSize = withBorder ? (outerSize - lineWidth * 2) : outerSize;
             drawLogoShapePath(ctx, cx, cy, innerClipSize, shape);
@@ -1906,7 +2103,6 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(activeLogoImage, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
             } else {
-                // วาดไอคอนอาคารตัวแทนในรูปทรงที่เลือก
                 ctx.fillStyle = withBorder ? (borderColor || '#FF1E42') : '#64748B';
                 ctx.fillRect(cx - 11, cy - 12, 22, 24);
                 ctx.fillStyle = '#FFFFFF';
@@ -1918,7 +2114,6 @@
             }
             ctx.restore();
 
-            // วาดเส้นกรอบสีตัดขอบตามรูปทรงจริง
             if (withBorder) {
                 ctx.strokeStyle = borderColor || '#FF1E42';
                 ctx.lineWidth = lineWidth;
@@ -1936,9 +2131,6 @@
             ctx.restore();
         }
 
-        /**
-         * วาดโลโก้บริษัทตรงกลางพื้นที่เมทริกซ์ QR พร้อมพื้นหลัง Quiet Zone และเส้นกรอบสีตัดขอบ
-         */
         function drawCenterLogo(ctx, matrixX, matrixY, matrixSize, bgColor, logoPct, withPadding, withBorder, borderColor, shape) {
             if (!activeLogoImage) return;
 
@@ -1954,14 +2146,12 @@
 
             ctx.save();
 
-            // 1. วาดพื้นหลัง Quiet Zone ตามรูปทรงที่เลือก
             if (withPadding) {
                 ctx.fillStyle = bgColor || '#ffffff';
                 drawLogoShapePath(ctx, centerX, centerY, totalBoxSize, shape);
                 ctx.fill();
             }
 
-            // 2. คำนวณขนาดภาพโลโก้โดยรักษาสัดส่วนเดิม
             const imgW = activeLogoImage.naturalWidth || activeLogoImage.width || 100;
             const imgH = activeLogoImage.naturalHeight || activeLogoImage.height || 100;
             const aspect = (imgW > 0 && imgH > 0) ? (imgW / imgH) : 1;
@@ -1981,7 +2171,6 @@
             const drawX = centerX - drawW / 2;
             const drawY = centerY - drawH / 2;
 
-            // 3. คลิปขอบเขตตามรูปทรงที่เลือกแล้ววาดโลโก้
             ctx.save();
             drawLogoShapePath(ctx, centerX, centerY, effectiveLogoSize, shape);
             ctx.clip();
@@ -1991,7 +2180,6 @@
             ctx.drawImage(activeLogoImage, drawX, drawY, drawW, drawH);
             ctx.restore();
 
-            // 4. วาดเส้นกรอบสีตัดขอบตามรูปทรง (Default สีแดง #FF1E42)
             if (withBorder) {
                 const lineWidth = Math.max(2, Math.round(matrixSize * 0.0085));
                 const frameSize = totalBoxSize - lineWidth;
@@ -2006,9 +2194,6 @@
             ctx.restore();
         }
 
-        /**
-         * สร้าง QR Code และวาดลงบน Canvas ด้วยความคมชัดระดับพิกเซล
-         */
         function generateQRCode() {
             const rawText = getPayloadData();
             const hasContent = rawText.trim().length > 0;
@@ -2032,13 +2217,13 @@
             logoBorderPresets.style.opacity = withBorder ? '1' : '0.45';
             logoBorderPresets.style.pointerEvents = withBorder ? 'auto' : 'none';
 
-            // อัปเดตพรีวิวโลโก้ด้านซ้ายให้ตรงกับรูปทรงและสีเส้นกรอบที่เลือกทันที
             renderLogoThumbnailPreview(bgColor, withPadding, withBorder, borderColor, currentLogoShape);
 
             checkColorContrast(fgColor, bgColor);
             syncEccForLogo(logoPct);
 
             const level = qrLevelInput.value;
+            if (topEccBadge) topEccBadge.textContent = 'ECC ' + level;
 
             if (!hasContent) {
                 qrCanvas.classList.add('hidden');
@@ -2118,24 +2303,23 @@
                 if (activeLogoImage) {
                     drawCenterLogo(ctx, matrixX, matrixY, matrixSize, bgColor, logoPct, withPadding, withBorder, borderColor, currentLogoShape);
                 }
+
+                if (expandQrModal && !expandQrModal.classList.contains('hidden')) {
+                    expandQrImg.src = qrCanvas.toDataURL('image/png');
+                    expandQrMeta.textContent = `${size} × ${size} px • ECC ${level}`;
+                }
             } catch (err) {
                 console.error('QR Error:', err);
                 showToast('ข้อความยาวเกินขีดจำกัดสูงสุดของ QR Code', true);
             }
         }
 
-        /**
-         * เลือกชุดสีแนะนำ
-         */
         function applyColorPreset(fg, bg) {
             qrFgColorInput.value = fg;
             qrBgColorInput.value = bg;
             generateQRCode();
         }
 
-        /**
-         * ดาวน์โหลดรูปภาพ QR Code เป็นไฟล์ PNG
-         */
         function downloadQRCode() {
             const text = getPayloadData().trim();
             if (!text) {
@@ -2158,9 +2342,6 @@
             }
         }
 
-        /**
-         * คัดลอกรูปภาพ QR Code ลงคลิปบอร์ด
-         */
         async function copyQRCodeImage() {
             const text = getPayloadData().trim();
             if (!text) return;
@@ -2170,7 +2351,7 @@
                         if (!blob) return;
                         try {
                             await navigator.clipboard.write([
-                                new ClipboardItem({'image/png': blob})
+                                new ClipboardItem({ 'image/png': blob })
                             ]);
                             showToast('คัดลอกรูปภาพ QR Code ลงคลิปบอร์ดแล้ว');
                         } catch (e) {
@@ -2185,7 +2366,12 @@
             }
         }
 
-        // ผูก Event Listeners
+        window.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                closeExpandQrModal();
+            }
+        });
+
         qrTextInput.addEventListener('input', generateQRCode);
         wifiSsidInput.addEventListener('input', generateQRCode);
         wifiPassInput.addEventListener('input', generateQRCode);
@@ -2217,7 +2403,6 @@
         downloadBtn.addEventListener('click', downloadQRCode);
         copyBtn.addEventListener('click', copyQRCodeImage);
 
-        // เริ่มสร้าง QR Code ทันทีที่เปิดหน้าเว็บพร้อมข้อความตัวอย่างเริ่มต้น
         window.onload = function () {
             if (!qrTextInput.value.trim()) {
                 qrTextInput.value = '';
@@ -2225,7 +2410,7 @@
             setLogoShape('circle');
         };
     </script>
-    
+
 </body>
 
 </html>
