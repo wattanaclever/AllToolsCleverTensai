@@ -262,7 +262,9 @@
         }
 
         /* Touch Active Feedback (Prevent Sticky Hover on Mobile) */
-        @media (hover: none), (pointer: coarse) {
+        @media (hover: none),
+        (pointer: coarse) {
+
             button:active,
             .rail-btn:active {
                 transform: scale(0.96);
@@ -311,6 +313,7 @@
 
         /* Strict Mobile 1-Finger Touch Isolation */
         @media (max-width: 767px) {
+
             #pdfWorkspace,
             .overlay-canvas {
                 touch-action: none !important;
@@ -355,14 +358,17 @@
             .insert-divider .insert-line {
                 opacity: 0;
             }
+
             .insert-divider .insert-btn {
                 opacity: 0;
                 transform: scale(0.75);
             }
+
             .insert-divider:hover .insert-line,
             .insert-divider.is-open .insert-line {
                 opacity: 1;
             }
+
             .insert-divider:hover .insert-btn,
             .insert-divider.is-open .insert-btn {
                 opacity: 1;
@@ -420,11 +426,13 @@
         }
 
         @media print {
-            body > *:not(#printSection) {
+            body>*:not(#printSection) {
                 display: none !important;
                 visibility: hidden !important;
             }
-            html, body {
+
+            html,
+            body {
                 width: 100% !important;
                 height: auto !important;
                 min-height: 0 !important;
@@ -434,9 +442,11 @@
                 background: #FFFFFF !important;
                 position: static !important;
             }
+
             #canvasPagesContainer {
                 transform: none !important;
             }
+
             #printSection {
                 display: block !important;
                 visibility: visible !important;
@@ -446,6 +456,7 @@
                 padding: 0 !important;
                 background: #FFFFFF !important;
             }
+
             .print-page {
                 width: 100% !important;
                 height: 296.5mm !important;
@@ -463,10 +474,12 @@
                 background: #FFFFFF !important;
                 box-sizing: border-box !important;
             }
+
             .print-page:last-child {
                 page-break-after: auto !important;
                 break-after: auto !important;
             }
+
             .print-page img {
                 display: block !important;
                 max-width: 100% !important;
@@ -480,7 +493,8 @@
     </style>
 </head>
 
-<body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
+<body
+    class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
     <!-- ===================================================================== -->
     <!-- 1. EXTERNAL SHARED NAVBAR (Loaded safely when hosted on same origin)  -->
@@ -493,7 +507,7 @@
                     var navScript = document.createElement('script');
                     navScript.src = 'JS/NavbarPDF.js';
                     navScript.defer = true;
-                    navScript.onerror = function () { navScript.remove(); };
+                    navScript.onerror = function () {navScript.remove();};
                     document.head.appendChild(navScript);
                 }
             } catch (_) {
@@ -503,9 +517,12 @@
     </script>
 
     <!-- Root-Level Hidden File Inputs -->
-    <input type="file" id="pdfFileInput" accept="application/pdf,.pdf" onchange="handleMainPdfUpload(event)" class="hidden">
-    <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/webp,image/*" onchange="handleImageUpload(event)" class="hidden">
-    <input type="file" id="insertFileInput" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp" onchange="handleInsertFileUpload(event)" class="hidden">
+    <input type="file" id="pdfFileInput" accept="application/pdf,.pdf" onchange="handleMainPdfUpload(event)"
+        class="hidden">
+    <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/webp,image/*"
+        onchange="handleImageUpload(event)" class="hidden">
+    <input type="file" id="insertFileInput" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp"
+        onchange="handleInsertFileUpload(event)" class="hidden">
 
     <!-- ===================================================================== -->
     <!-- 2. SCOPED UPLOAD SCREEN (Visible when no document is loaded)          -->
@@ -514,7 +531,8 @@
         <div class="max-w-3xl w-full mx-auto my-auto">
             <div class="text-center mb-7">
                 <div class="inline-flex items-center gap-2 mb-3">
-                    <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full panel-surface border text-[11px] font-mono font-bold shadow-sm">
+                    <span
+                        class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full panel-surface border text-[11px] font-mono font-bold shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-[#E11D48]"></span>
                         <span>CLEVERTENSAI — EDIT PDF STUDIO</span>
                     </span>
@@ -530,14 +548,16 @@
                     แก้ไขและตกแต่งเอกสาร <span class="text-[#E11D48]">PDF</span>
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto">
-                    พิมพ์ข้อความภาษาไทย 15 ฟอนต์ แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน และแทรกหน้าเอกสารได้ทันทีบนเบราว์เซอร์ 100% Client-Side
+                    พิมพ์ข้อความภาษาไทย 15 ฟอนต์ แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน
+                    และแทรกหน้าเอกสารได้ทันทีบนเบราว์เซอร์ 100% Client-Side
                 </p>
             </div>
 
             <!-- Scoped Dropzone -->
             <div id="dropZone" onclick="triggerPdfImport(event)"
                 class="panel-surface rounded-3xl p-8 sm:p-14 text-center border-2 border-dashed border-[#E11D48]/45 hover:border-[#E11D48] transition-all cursor-pointer shadow-xl group relative">
-                <div class="w-16 h-16 rounded-2xl bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] group-hover:bg-[#E11D48] group-hover:text-white flex items-center justify-center text-2xl mx-auto mb-5 transition-all">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-[#E11D48]/10 border border-[#E11D48]/25 text-[#E11D48] group-hover:bg-[#E11D48] group-hover:text-white flex items-center justify-center text-2xl mx-auto mb-5 transition-all">
                     <i class="fa-solid fa-file-arrow-up"></i>
                 </div>
 
@@ -578,7 +598,8 @@
     <section id="studioWorkspace" class="hidden flex-1 flex flex-col min-h-0 overflow-hidden">
 
         <!-- Top Studio Action Bar -->
-        <header class="h-12 panel-surface border-b px-2.5 sm:px-4 flex items-center justify-between gap-2 shrink-0 z-30">
+        <header
+            class="h-12 panel-surface border-b px-2.5 sm:px-4 flex items-center justify-between gap-2 shrink-0 z-30">
             <!-- Left: Undo/Redo, Filename Badge, Page Count & Overview Toggle -->
             <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
                 <div class="flex items-center panel-subtle border rounded-xl p-0.5">
@@ -596,7 +617,8 @@
                     </button>
                 </div>
 
-                <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl panel-subtle border max-w-[180px] lg:max-w-[240px]">
+                <div
+                    class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl panel-subtle border max-w-[180px] lg:max-w-[240px]">
                     <i class="fa-solid fa-file-pdf text-[#E11D48] text-xs shrink-0"></i>
                     <span id="filenameBadge" class="font-mono text-[11px] font-bold truncate">document.pdf</span>
                 </div>
@@ -606,7 +628,8 @@
                     title="เปิด/ปิด Pages Overview">
                     <i class="fa-regular fa-rectangle-list text-[#E11D48]"></i>
                     <span class="hidden md:inline">Pages</span>
-                    <span id="headerPageCount" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0</span>
+                    <span id="headerPageCount"
+                        class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0</span>
                 </button>
             </div>
 
@@ -656,7 +679,8 @@
                             <i class="fa-solid fa-file-pdf text-[#E11D48] w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>บันทึกเป็น PDF</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไขคมชัด</span>
+                                <span
+                                    class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไขคมชัด</span>
                             </div>
                         </button>
 
@@ -667,7 +691,8 @@
                             <i class="fa-regular fa-image text-emerald-500 w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>ส่งออกเป็น PNG</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพคมชัดสูงสุด (Lossless)</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพคมชัดสูงสุด
+                                    (Lossless)</span>
                             </div>
                         </button>
 
@@ -676,7 +701,8 @@
                             <i class="fa-solid fa-file-image text-sky-500 w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>ส่งออกเป็น JPG</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ไฟล์ขนาดเล็ก เปิดได้ทุกอุปกรณ์</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ไฟล์ขนาดเล็ก
+                                    เปิดได้ทุกอุปกรณ์</span>
                             </div>
                         </button>
 
@@ -685,7 +711,8 @@
                             <i class="fa-solid fa-sliders text-amber-500 w-4 text-center"></i>
                             <div class="flex flex-col">
                                 <span>เลือกรูปแบบภาพ &amp; หน้า...</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">PNG / JPG / WEBP / BMP หรือ ZIP</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">PNG / JPG /
+                                    WEBP / BMP หรือ ZIP</span>
                             </div>
                         </button>
                     </div>
@@ -759,7 +786,9 @@
                 <div class="px-4 py-2.5 panel-subtle border-b flex items-center justify-between gap-2 shrink-0">
                     <div class="flex items-center gap-2 min-w-0">
                         <span class="w-2 h-2 rounded-full bg-[#E11D48] shrink-0"></span>
-                        <span id="subToolTitle" class="font-mono text-[11px] font-extrabold uppercase tracking-wider truncate">SELECT STUDIO</span>
+                        <span id="subToolTitle"
+                            class="font-mono text-[11px] font-extrabold uppercase tracking-wider truncate">SELECT
+                            STUDIO</span>
                     </div>
                     <button type="button" onclick="hideSubToolPanel()"
                         class="px-2.5 py-1 rounded-lg panel-surface border hover:border-[#E11D48] text-[11px] font-bold flex items-center gap-1 transition cursor-pointer"
@@ -774,18 +803,27 @@
 
                     <!-- SELECT PANEL -->
                     <div id="panel_select" class="space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection Mode</div>
-                        <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
-                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i><strong>ดับเบิลคลิก</strong> หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> (หรือกด <strong>Enter / F2</strong>) เพื่อพิมพ์แก้คำ</p>
-                            <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i><strong>คลิกซ้ายลากบนพื้นที่ว่าง</strong> เพื่อเลื่อนดูอิสระทุกทิศทางทุกขนาดซูม หรือใช้ <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูม</p>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection
+                            Mode</div>
+                        <div
+                            class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย
+                                หรือดึงมุมเพื่อปรับขนาด</p>
+                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i><strong>ดับเบิลคลิก</strong>
+                                หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> (หรือกด <strong>Enter / F2</strong>)
+                                เพื่อพิมพ์แก้คำ</p>
+                            <p><i
+                                    class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i><strong>คลิกซ้ายลากบนพื้นที่ว่าง</strong>
+                                เพื่อเลื่อนดูอิสระทุกทิศทางทุกขนาดซูม หรือใช้ <strong>Ctrl + ลูกกลิ้งเมาส์</strong>
+                                เพื่อซูม</p>
                         </div>
                     </div>
 
                     <!-- TEXT PANEL -->
                     <div id="panel_text" class="hidden space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Text Studio</span>
+                            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Text
+                                Studio</span>
                             <button type="button" id="btnPanelEditText" onclick="editSelectedTextInline()"
                                 class="hidden px-2 py-0.5 rounded-md bg-[#E11D48] text-white text-[10px] font-bold cursor-pointer">
                                 ✎ แก้คำพิมพ์
@@ -800,11 +838,14 @@
 
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                             • <strong>คลิกตรงไหน วางกล่องข้อความตรงนั้น</strong> แล้วลากย้ายหรือแต่งฟอนต์/สีได้ทันที<br>
-                            • <strong>ดับเบิลคลิก</strong> กดปุ่ม <strong>✎ แก้ไขข้อความ</strong> หรือกด <strong>Enter / F2</strong> เพื่อพิมพ์แก้คำ
+                            • <strong>ดับเบิลคลิก</strong> กดปุ่ม <strong>✎ แก้ไขข้อความ</strong> หรือกด <strong>Enter /
+                                F2</strong> เพื่อพิมพ์แก้คำ
                         </p>
 
                         <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT FAMILY (15 FONTS)</label>
+                            <label
+                                class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT
+                                FAMILY (15 FONTS)</label>
                             <select id="textFont" onchange="onTextStyleInput('fontFamily', this.value)"
                                 class="w-full panel-subtle border rounded-xl p-2 text-xs font-medium outline-none focus:border-[#E11D48]">
                                 <optgroup label="ฟอนต์ภาษาไทย (Thai Fonts)">
@@ -831,13 +872,17 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE (PX)</label>
+                                <label
+                                    class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE
+                                    (PX)</label>
                                 <input type="number" id="textSize" value="20" min="8" max="140"
                                     oninput="onTextStyleInput('fontSize', parseInt(this.value, 10) || 20)"
                                     class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT COLOR</label>
+                                <label
+                                    class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT
+                                    COLOR</label>
                                 <input type="color" id="textColor" value="#0F172A"
                                     oninput="onTextStyleInput('color', this.value)"
                                     class="w-full h-8 panel-subtle border rounded-xl cursor-pointer p-0.5">
@@ -845,12 +890,24 @@
                         </div>
 
                         <div class="grid grid-cols-6 gap-1.5">
-                            <button type="button" onclick="applyTextSwatch('#0F172A')" class="h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark Slate"></button>
-                            <button type="button" onclick="applyTextSwatch('#E11D48')" class="h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
-                            <button type="button" onclick="applyTextSwatch('#1D4ED8')" class="h-6 rounded-lg bg-[#1D4ED8] border border-slate-300 cursor-pointer" title="Blue"></button>
-                            <button type="button" onclick="applyTextSwatch('#047857')" class="h-6 rounded-lg bg-[#047857] border border-slate-300 cursor-pointer" title="Green"></button>
-                            <button type="button" onclick="applyTextSwatch('#B45309')" class="h-6 rounded-lg bg-[#B45309] border border-slate-300 cursor-pointer" title="Amber"></button>
-                            <button type="button" onclick="applyTextSwatch('#FFFFFF')" class="h-6 rounded-lg bg-[#FFFFFF] border border-slate-300 cursor-pointer" title="White"></button>
+                            <button type="button" onclick="applyTextSwatch('#0F172A')"
+                                class="h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer"
+                                title="Dark Slate"></button>
+                            <button type="button" onclick="applyTextSwatch('#E11D48')"
+                                class="h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer"
+                                title="Crimson"></button>
+                            <button type="button" onclick="applyTextSwatch('#1D4ED8')"
+                                class="h-6 rounded-lg bg-[#1D4ED8] border border-slate-300 cursor-pointer"
+                                title="Blue"></button>
+                            <button type="button" onclick="applyTextSwatch('#047857')"
+                                class="h-6 rounded-lg bg-[#047857] border border-slate-300 cursor-pointer"
+                                title="Green"></button>
+                            <button type="button" onclick="applyTextSwatch('#B45309')"
+                                class="h-6 rounded-lg bg-[#B45309] border border-slate-300 cursor-pointer"
+                                title="Amber"></button>
+                            <button type="button" onclick="applyTextSwatch('#FFFFFF')"
+                                class="h-6 rounded-lg bg-[#FFFFFF] border border-slate-300 cursor-pointer"
+                                title="White"></button>
                         </div>
 
                         <div class="grid grid-cols-3 gap-1.5">
@@ -864,26 +921,32 @@
                             </button>
                         </div>
 
-                        <div id="textBgColorRow" class="hidden flex items-center justify-between gap-2 p-2 rounded-xl panel-subtle border">
-                            <span class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">BG FILL COLOR</span>
+                        <div id="textBgColorRow"
+                            class="hidden flex items-center justify-between gap-2 p-2 rounded-xl panel-subtle border">
+                            <span class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">BG FILL
+                                COLOR</span>
                             <input type="color" id="textBgColor" value="#FEF08A"
                                 oninput="onTextStyleInput('bgColor', this.value)"
                                 class="w-14 h-6 rounded border border-slate-300 cursor-pointer p-0.5">
                         </div>
 
                         <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ALIGNMENT</label>
+                            <label
+                                class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ALIGNMENT</label>
                             <div class="grid grid-cols-3 gap-1.5">
                                 <button type="button" id="btnAlign_left" onclick="setTextAlign('left')"
-                                    class="py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-center cursor-pointer transition" title="ชิดซ้าย">
+                                    class="py-1.5 rounded-xl bg-[#E11D48] text-white font-bold text-center cursor-pointer transition"
+                                    title="ชิดซ้าย">
                                     <i class="fa-solid fa-align-left"></i>
                                 </button>
                                 <button type="button" id="btnAlign_center" onclick="setTextAlign('center')"
-                                    class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition" title="กึ่งกลาง">
+                                    class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition"
+                                    title="กึ่งกลาง">
                                     <i class="fa-solid fa-align-center"></i>
                                 </button>
                                 <button type="button" id="btnAlign_right" onclick="setTextAlign('right')"
-                                    class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition" title="ชิดขวา">
+                                    class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition"
+                                    title="ชิดขวา">
                                     <i class="fa-solid fa-align-right"></i>
                                 </button>
                             </div>
@@ -892,7 +955,8 @@
 
                     <!-- IMAGE PANEL -->
                     <div id="panel_image" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Image Insertion</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Image
+                            Insertion</div>
                         <button type="button" onclick="triggerImagePicker()"
                             class="w-full py-2.5 px-3 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold flex items-center justify-center gap-2 shadow-md transition cursor-pointer">
                             <i class="fa-solid fa-folder-open"></i>
@@ -904,10 +968,13 @@
                                 <span class="font-bold text-emerald-600 dark:text-emerald-400">
                                     <i class="fa-solid fa-circle-check mr-1"></i>พร้อมวางภาพ
                                 </span>
-                                <span id="pendingImageName" class="text-slate-500 truncate max-w-[130px]">image.png</span>
+                                <span id="pendingImageName"
+                                    class="text-slate-500 truncate max-w-[130px]">image.png</span>
                             </div>
-                            <div class="w-full h-28 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden p-1">
-                                <img id="pendingImageThumb" src="" alt="Preview" class="max-w-full max-h-full object-contain">
+                            <div
+                                class="w-full h-28 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden p-1">
+                                <img id="pendingImageThumb" src="" alt="Preview"
+                                    class="max-w-full max-h-full object-contain">
                             </div>
                             <button type="button" onclick="placePendingImageAtCenter()"
                                 class="w-full py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer">
@@ -924,22 +991,28 @@
 
                     <!-- WATERMARK PANEL -->
                     <div id="panel_watermark" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Watermark Studio</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Watermark
+                            Studio</div>
 
                         <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT</label>
+                            <label
+                                class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT</label>
                             <input type="text" id="wmText" value="สำเนาถูกต้อง"
                                 class="w-full panel-subtle border rounded-xl p-2 text-xs font-bold outline-none focus:border-[#E11D48]">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE (PX)</label>
+                                <label
+                                    class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE
+                                    (PX)</label>
                                 <input type="number" id="wmSize" value="52" min="12" max="200"
                                     class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ANGLE (°)</label>
+                                <label
+                                    class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ANGLE
+                                    (°)</label>
                                 <input type="number" id="wmAngle" value="-45" min="-180" max="180"
                                     class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
                             </div>
@@ -947,12 +1020,14 @@
 
                         <div class="grid grid-cols-2 gap-2 items-end">
                             <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">COLOR</label>
+                                <label
+                                    class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">COLOR</label>
                                 <input type="color" id="wmColor" value="#E11D48"
                                     class="w-full h-8 panel-subtle border rounded-xl cursor-pointer p-0.5">
                             </div>
                             <div>
-                                <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                                <div
+                                    class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                     <span>OPACITY</span>
                                     <span id="wmOpacityLabel">28%</span>
                                 </div>
@@ -963,8 +1038,10 @@
                         </div>
 
                         <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SCOPE</label>
-                            <select id="wmScope" class="w-full panel-subtle border rounded-xl p-2 text-xs font-semibold outline-none">
+                            <label
+                                class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SCOPE</label>
+                            <select id="wmScope"
+                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-semibold outline-none">
                                 <option value="all">ทุกหน้า (All Pages)</option>
                                 <option value="current">เฉพาะหน้าปัจจุบัน (Current Page)</option>
                             </select>
@@ -979,7 +1056,8 @@
 
                     <!-- DRAW & HIGHLIGHTER PANEL -->
                     <div id="panel_draw" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Draw &amp; Highlighter</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Draw &amp;
+                            Highlighter</div>
 
                         <div class="grid grid-cols-3 gap-1.5">
                             <button type="button" id="drawStyle_solid" onclick="setDrawStyle('solid')"
@@ -992,7 +1070,8 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                                <div
+                                    class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                     <span>SIZE</span><span id="drawSizeLabel">4px</span>
                                 </div>
                                 <input type="range" id="drawSize" min="1" max="36" value="4"
@@ -1000,7 +1079,8 @@
                                     class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                             <div>
-                                <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                                <div
+                                    class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                     <span>OPACITY</span><span id="drawOpacityLabel">100%</span>
                                 </div>
                                 <input type="range" id="drawOpacity" min="15" max="100" value="100"
@@ -1010,11 +1090,21 @@
                         </div>
 
                         <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="setDrawColor('#E11D48')" class="w-6 h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
-                            <button type="button" onclick="setDrawColor('#0F172A')" class="w-6 h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark"></button>
-                            <button type="button" onclick="setDrawColor('#2563EB')" class="w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer" title="Blue"></button>
-                            <button type="button" onclick="setDrawColor('#10B981')" class="w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer" title="Green"></button>
-                            <button type="button" onclick="setDrawColor('#FACC15')" class="w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer" title="Yellow"></button>
+                            <button type="button" onclick="setDrawColor('#E11D48')"
+                                class="w-6 h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer"
+                                title="Crimson"></button>
+                            <button type="button" onclick="setDrawColor('#0F172A')"
+                                class="w-6 h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer"
+                                title="Dark"></button>
+                            <button type="button" onclick="setDrawColor('#2563EB')"
+                                class="w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer"
+                                title="Blue"></button>
+                            <button type="button" onclick="setDrawColor('#10B981')"
+                                class="w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer"
+                                title="Green"></button>
+                            <button type="button" onclick="setDrawColor('#FACC15')"
+                                class="w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer"
+                                title="Yellow"></button>
                             <input type="color" id="drawColor" value="#E11D48"
                                 class="flex-1 h-6 panel-subtle border rounded-lg cursor-pointer p-0.5">
                         </div>
@@ -1022,7 +1112,8 @@
 
                     <!-- ERASER PANEL -->
                     <div id="panel_eraser" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Precision Eraser</div>
+                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Precision
+                            Eraser</div>
 
                         <div class="grid grid-cols-2 gap-1.5">
                             <button type="button" id="eraserMode_partial" onclick="setEraserMode('partial')"
@@ -1036,12 +1127,12 @@
                         </div>
 
                         <div>
-                            <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                            <div
+                                class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                 <span>ERASER SIZE</span><span id="eraserSizeLabel">26px</span>
                             </div>
                             <input type="range" id="eraserSize" min="8" max="90" value="26"
-                                oninput="onEraserSizeChange(this.value)"
-                                class="w-full accent-[#E11D48] cursor-pointer">
+                                oninput="onEraserSizeChange(this.value)" class="w-full accent-[#E11D48] cursor-pointer">
                         </div>
 
                         <p id="eraserHintText" class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -1050,11 +1141,15 @@
                     </div>
 
                     <!-- SELECTED OBJECT CONTROLS -->
-                    <div id="selectedObjectControls" class="hidden pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
-                        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Selected Object</div>
+                    <div id="selectedObjectControls"
+                        class="hidden pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
+                        <div
+                            class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            Selected Object</div>
 
                         <div>
-                            <div class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+                            <div
+                                class="flex justify-between font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                                 <span>OPACITY</span><span id="selOpacityLabel">100%</span>
                             </div>
                             <input type="range" id="selOpacitySlider" min="10" max="100" value="100"
@@ -1095,7 +1190,7 @@
 
                 <!-- Scroll-Safe & Free-Pan Overscroll Container -->
                 <div id="canvasPagesContainer"
-                    class="min-w-full w-max mx-auto px-16 md:px-[38vw] py-20 md:py-[32vh] pb-44 md:pb-[36vh] flex flex-col items-center gap-8">
+                    class="min-w-full w-max mx-auto px-6 md:px-14 pt-5 pb-36 flex flex-col items-center gap-8">
                     <!-- Rendered PDF Pages -->
                 </div>
             </main>
@@ -1110,9 +1205,12 @@
                 <!-- Overview Header -->
                 <div class="p-3 panel-subtle border-b space-y-2.5 shrink-0">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="font-mono text-[11px] font-extrabold uppercase tracking-wider">Pages Overview</span>
+                        <span class="font-mono text-[11px] font-extrabold uppercase tracking-wider">Pages
+                            Overview</span>
                         <div class="flex items-center gap-1.5">
-                            <span id="overviewCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0 หน้า</span>
+                            <span id="overviewCountBadge"
+                                class="font-mono text-[10px] px-2 py-0.5 rounded bg-[#E11D48]/15 text-[#E11D48] font-bold">0
+                                หน้า</span>
                             <button type="button" onclick="setOverviewOpen(false)"
                                 class="md:hidden w-7 h-7 rounded-lg panel-surface border flex items-center justify-center cursor-pointer">
                                 <i class="fa-solid fa-xmark text-xs"></i>
@@ -1160,7 +1258,8 @@
     <!-- Floating Insert Page Popover -->
     <div id="insertPagePopover" onclick="event.stopPropagation()"
         class="hidden fixed z-[80] w-48 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
-        <div class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between mb-1">
+        <div
+            class="px-2.5 py-1.5 font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between mb-1">
             <span>แทรกหน้าใหม่</span>
             <span id="insertTargetLabel" class="text-[#E11D48]">ต่อท้าย</span>
         </div>
@@ -1188,8 +1287,7 @@
                 <i class="fa-solid fa-chevron-up text-[10px]"></i>
             </button>
 
-            <input type="number" id="navPageInput" min="1" value="1"
-                onchange="jumpToInputPage()"
+            <input type="number" id="navPageInput" min="1" value="1" onchange="jumpToInputPage()"
                 onkeydown="if (event.key === 'Enter') { this.blur(); jumpToInputPage(); }"
                 class="w-9 text-center bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md py-0.5 text-xs font-bold text-slate-900 dark:text-slate-100 outline-none focus:border-[#E11D48]">
             <span class="text-slate-500 dark:text-slate-400 font-bold">/</span>
@@ -1232,18 +1330,23 @@
     <!-- Document Preview Modal (Ultra-Sharp Original Quality Check Before Download) -->
     <div id="documentPreviewModal" onclick="if (event.target === this) closeDocumentPreview()"
         class="hidden fixed inset-0 z-[85] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
-        <div class="w-full max-w-5xl h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div
+            class="w-full max-w-5xl h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
 
             <!-- Modal Header -->
-            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+            <div
+                class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-[#E11D48]/15 text-[#E11D48] flex items-center justify-center shrink-0">
+                    <div
+                        class="w-8 h-8 rounded-xl bg-[#E11D48]/15 text-[#E11D48] flex items-center justify-center shrink-0">
                         <i class="fa-regular fa-eye text-sm"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm sm:text-base font-extrabold truncate">ตรวจสอบเอกสารก่อนดาวน์โหลด</h3>
-                            <span id="previewModalCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
+                            <span id="previewModalCountBadge"
+                                class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0
+                                หน้า</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                             แสดงผลความคมชัดระดับต้นฉบับ (HiDPI Retina Ultra-Sharp)
@@ -1259,12 +1362,14 @@
             </div>
 
             <!-- Scrollable Clean Preview Pages Stage -->
-            <div id="previewModalBody" class="stage-bg flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-6">
+            <div id="previewModalBody"
+                class="stage-bg flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-6">
                 <!-- Rendered Clean Preview Pages -->
             </div>
 
             <!-- Modal Footer with Direct Download & Print Actions -->
-            <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+            <div
+                class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
                 <button type="button" onclick="closeDocumentPreview()"
                     class="px-4 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
                     <i class="fa-solid fa-arrow-left text-[#E11D48]"></i>
@@ -1310,18 +1415,23 @@
     <!-- Interactive Image Export Modal (Supports All Formats: PNG, JPG, WEBP, BMP) -->
     <div id="imageExportModal" onclick="if (event.target === this) closeImageExportModal()"
         class="hidden fixed inset-0 z-[88] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
-        <div class="w-full max-w-4xl max-h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div
+            class="w-full max-w-4xl max-h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
 
             <!-- Modal Header -->
-            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+            <div
+                class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0">
+                    <div
+                        class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0">
                         <i class="fa-regular fa-image text-sm"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2">
                             <h3 class="text-sm sm:text-base font-extrabold truncate">ส่งออกเป็นรูปภาพ</h3>
-                            <span id="imgExportTotalBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
+                            <span id="imgExportTotalBadge"
+                                class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0
+                                หน้า</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                             เลือกหน้าที่ต้องการและเลือกรูปแบบไฟล์ (PNG / JPG / WEBP / BMP)
@@ -1343,7 +1453,8 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <!-- Left: Page Mode & Range -->
                     <div class="lg:col-span-6 space-y-2.5">
-                        <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                        <label
+                            class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                             1. เลือกหน้าที่ต้องการส่งออก
                         </label>
                         <div class="grid grid-cols-3 gap-1.5">
@@ -1364,9 +1475,9 @@
                         <!-- Two-way Synced Range Input -->
                         <div class="flex items-center gap-2">
                             <div class="relative flex-1">
-                                <i class="fa-solid fa-list-ol absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="imgExportRangeInput"
-                                    placeholder="ระบุเลขหน้า เช่น 1, 3, 5-7"
+                                <i
+                                    class="fa-solid fa-list-ol absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="imgExportRangeInput" placeholder="ระบุเลขหน้า เช่น 1, 3, 5-7"
                                     oninput="onImageExportRangeInput(this.value)"
                                     class="w-full pl-8 pr-3 py-2 rounded-xl panel-subtle border focus:border-[#E11D48] outline-none font-mono text-xs font-semibold">
                             </div>
@@ -1380,7 +1491,8 @@
 
                     <!-- Right: All Browser-Supported Image Formats -->
                     <div class="lg:col-span-6 space-y-2.5">
-                        <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
+                        <label
+                            class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                             2. รูปแบบไฟล์รูปภาพ (รองรับครบทุกฟอร์แมต)
                         </label>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1417,7 +1529,8 @@
                 <!-- 3. Interactive Thumbnail Selection Grid -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        <span
+                            class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                             คลิกที่หน้ากระดาษเพื่อเลือก / ยกเลิกการเลือก
                         </span>
                         <span id="imgExportSelectedCountText" class="font-mono text-[11px] font-bold text-[#E11D48]">
@@ -1433,7 +1546,8 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
+            <div
+                class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <button type="button" onclick="closeImageExportModal()"
                     class="px-4 py-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold transition cursor-pointer">
                     ยกเลิก
@@ -1454,7 +1568,8 @@
     <!-- Toast Message Box -->
     <div id="toast"
         class="fixed top-16 left-1/2 -translate-x-1/2 md:top-auto md:left-auto md:translate-x-0 md:bottom-6 md:right-6 z-[95] pointer-events-none opacity-0 transition-opacity duration-200">
-        <div class="px-4 py-2.5 rounded-xl bg-slate-900 text-white border border-slate-700 border-l-4 border-l-[#E11D48] shadow-xl font-mono text-xs font-bold flex items-center gap-2">
+        <div
+            class="px-4 py-2.5 rounded-xl bg-slate-900 text-white border border-slate-700 border-l-4 border-l-[#E11D48] shadow-xl font-mono text-xs font-bold flex items-center gap-2">
             <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
             <span id="toastText">Ready</span>
         </div>
@@ -1512,10 +1627,10 @@
                 const workerUrls = (window.__CLEVERTENSAI_CDNS && window.__CLEVERTENSAI_CDNS.pdfWorker) || [];
                 for (const url of workerUrls) {
                     try {
-                        const resp = await fetch(url, { mode: 'cors' });
+                        const resp = await fetch(url, {mode: 'cors'});
                         if (resp.ok) {
                             const workerCode = await resp.text();
-                            const blob = new Blob([workerCode], { type: 'application/javascript' });
+                            const blob = new Blob([workerCode], {type: 'application/javascript'});
                             const blobUrl = URL.createObjectURL(blob);
                             if (lib.GlobalWorkerOptions) {
                                 lib.GlobalWorkerOptions.workerSrc = blobUrl;
@@ -1608,7 +1723,7 @@
                 floatingEditPill: null,
 
                 // Custom Double-Tap Detection (350ms, <15px)
-                lastTap: { time: 0, itemId: null, x: 0, y: 0 },
+                lastTap: {time: 0, itemId: null, x: 0, y: 0},
 
                 // Staged Image Upload
                 pendingImage: null,  // { dataUrl, name, img }
@@ -1695,7 +1810,7 @@
                 if (state.pages.length === 0) return 595.28;
                 let maxW = 0;
                 for (const pg of state.pages) {
-                    const { w } = getPageEffectiveDims(pg);
+                    const {w} = getPageEffectiveDims(pg);
                     if (w > maxW) maxW = w;
                 }
                 return Math.max(200, maxW);
@@ -1746,13 +1861,16 @@
                 requestAnimationFrame(() => {
                     const maxScrollX = Math.max(0, vp.scrollWidth - vp.clientWidth);
                     vp.scrollLeft = Math.round(maxScrollX / 2);
+
                     const firstBlock = state.pages[0] ? $(`pageBlock_${state.pages[0].id}`) : null;
                     if (firstBlock) {
                         const vpRect = vp.getBoundingClientRect();
                         const elRect = firstBlock.getBoundingClientRect();
-                        const rawTop = vp.scrollTop + (elRect.top - vpRect.top) - 20;
+                        const rawTop = vp.scrollTop + (elRect.top - vpRect.top) - 16;
                         const maxScrollY = Math.max(0, vp.scrollHeight - vp.clientHeight);
                         vp.scrollTop = clamp(Math.round(rawTop), 0, maxScrollY);
+                    } else {
+                        vp.scrollTop = 0;
                     }
                 });
             }
@@ -2048,7 +2166,7 @@
                         e.preventDefault();
                         vp.scrollLeft += e.deltaY;
                     }
-                }, { passive: false });
+                }, {passive: false});
             }
 
             function setupMobileTwoFingerGestures(vp) {
@@ -2122,7 +2240,7 @@
                             };
                         }
                     }
-                }, { passive: false });
+                }, {passive: false});
 
                 vp.addEventListener('touchmove', (e) => {
                     if (!isMobile()) return;
@@ -2170,7 +2288,7 @@
                             vp.scrollTop = state.oneFingerPan.scrollTop - (t.clientY - state.oneFingerPan.startY);
                         }
                     }
-                }, { passive: false });
+                }, {passive: false});
 
                 const finishTwoFinger = (e) => {
                     state.oneFingerPan = null;
@@ -2207,8 +2325,8 @@
                     vp.scrollTop = targetScrollTop;
                 };
 
-                vp.addEventListener('touchend', finishTwoFinger, { passive: true });
-                vp.addEventListener('touchcancel', finishTwoFinger, { passive: true });
+                vp.addEventListener('touchend', finishTwoFinger, {passive: true});
+                vp.addEventListener('touchcancel', finishTwoFinger, {passive: true});
             }
 
             function setupKeyboardShortcuts() {
@@ -2303,7 +2421,7 @@
                     const doc = await lib.PDFDocument.create();
                     doc.addPage([595.28, 841.89]);
                     const bytes = await doc.save();
-                    const file = new File([bytes], 'CLEVERTENSAI_Blank_A4.pdf', { type: 'application/pdf' });
+                    const file = new File([bytes], 'CLEVERTENSAI_Blank_A4.pdf', {type: 'application/pdf'});
                     await loadPdfFile(file);
                 } catch (err) {
                     console.error('Blank A4 creation error:', err);
@@ -2323,7 +2441,7 @@
 
                     const sourceId = uid('src');
                     state.pdfSources = {
-                        [sourceId]: { pdfjsDoc, bytes, name: file.name }
+                        [sourceId]: {pdfjsDoc, bytes, name: file.name}
                     };
                     state.fileName = file.name;
                     state.pages = [];
@@ -2333,7 +2451,7 @@
                     for (let i = 1; i <= pdfjsDoc.numPages; i++) {
                         const pg = await pdfjsDoc.getPage(i);
                         const baseRot = ((pg.rotate || 0) % 360 + 360) % 360;
-                        const vp = pg.getViewport({ scale: 1.0, rotation: baseRot });
+                        const vp = pg.getViewport({scale: 1.0, rotation: baseRot});
                         state.pages.push({
                             id: uid('pg'),
                             kind: 'pdf',
@@ -2359,16 +2477,18 @@
                     if (st) st.classList.remove('hidden');
                     if (navPill) navPill.classList.remove('hidden');
 
+                    setOverviewOpen(!isMobile());
+                    selectTool('select', !isMobile());
+
                     const vpEl = $('pdfWorkspace');
-                    const availW = Math.max(240, (vpEl ? vpEl.clientWidth : window.innerWidth) - (isMobile() ? 24 : 96));
+                    const availW = Math.max(240, (vpEl ? vpEl.clientWidth : window.innerWidth) - (isMobile() ? 24 : 80));
                     const maxPageW = getMaxPageEffectiveWidth() * BASE_RENDER_SCALE;
                     state.zoom = clamp(+(Math.min(1.0, availW / Math.max(1, maxPageW))).toFixed(2), 0.35, 1.25);
 
                     const zLbl = $('zoomLabel');
                     if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
 
-                    setOverviewOpen(!isMobile());
-                    selectTool('select', !isMobile());
+
 
                     state.history = [];
                     state.historyIndex = -1;
@@ -2582,7 +2702,7 @@
                     const img = new Image();
                     img.onload = () => {
                         imageCache.set(dataUrl, img);
-                        state.pendingImage = { dataUrl, name: file.name || 'image.png', img };
+                        state.pendingImage = {dataUrl, name: file.name || 'image.png', img};
                         const thumb = $('pendingImageThumb');
                         const nameEl = $('pendingImageName');
                         const card = $('pendingImageCard');
@@ -2605,7 +2725,7 @@
                 }
                 const pg = getActivePage();
                 if (!pg) return;
-                const { w, h } = getPageEffectiveDims(pg);
+                const {w, h} = getPageEffectiveDims(pg);
                 placeImageOnPage(pg.id, w / 2, h / 2);
             }
 
@@ -2614,7 +2734,7 @@
                 const pg = getPageById(pageId);
                 if (!pg) return;
 
-                const { dataUrl, img } = state.pendingImage;
+                const {dataUrl, img} = state.pendingImage;
                 const targetW = 160;
                 const targetH = Math.max(24, (img.height / Math.max(1, img.width)) * targetW);
 
@@ -2630,7 +2750,7 @@
                 };
 
                 pg.items.push(item);
-                state.selectedRef = { pageId: pg.id, itemId: item.id };
+                state.selectedRef = {pageId: pg.id, itemId: item.id};
                 state.pendingImage = null;
                 const card = $('pendingImageCard');
                 if (card) card.classList.add('hidden');
@@ -2663,7 +2783,7 @@
 
                 const targetPages = scope === 'all' ? state.pages : [getActivePage()].filter(Boolean);
                 targetPages.forEach(pg => {
-                    const { w, h } = getPageEffectiveDims(pg);
+                    const {w, h} = getPageEffectiveDims(pg);
                     const existing = pg.items.find(it => it.type === 'watermark');
                     if (existing) {
                         existing.text = text;
@@ -2720,7 +2840,7 @@
 
             function measureTextItem(page, item) {
                 measureCtx.font = buildTextFontString(item, 1.0);
-                const { w: pageW } = getPageEffectiveDims(page);
+                const {w: pageW} = getPageEffectiveDims(page);
                 const maxAllowedW = Math.max(120, pageW - item.x - 20);
                 const minW = Math.max(48, item.fontSize * 1.4);
 
@@ -2741,7 +2861,7 @@
 
                 item.width = boxW;
                 item.height = boxH;
-                return { lines, width: boxW, height: boxH, lineH };
+                return {lines, width: boxW, height: boxH, lineH};
             }
 
             function createAndOpenTextAt(pageId, x, y) {
@@ -2770,7 +2890,7 @@
 
                 measureTextItem(pg, item);
                 pg.items.push(item);
-                state.selectedRef = { pageId, itemId: item.id };
+                state.selectedRef = {pageId, itemId: item.id};
                 pushHistorySnapshot();
 
                 // Drop text on canvas in selected state and return rail tool to 'select' without popping up inline editor
@@ -2795,13 +2915,13 @@
             function placeTextAtCenter() {
                 const pg = getActivePage();
                 if (!pg) return;
-                const { w, h } = getPageEffectiveDims(pg);
+                const {w, h} = getPageEffectiveDims(pg);
                 createAndOpenTextAt(pg.id, Math.max(36, w / 2 - 70), Math.max(36, h / 2 - 16));
             }
 
             function enterTextEditModeForItem(pageId, item) {
                 if (!item || item.type !== 'text') return;
-                state.selectedRef = { pageId, itemId: item.id };
+                state.selectedRef = {pageId, itemId: item.id};
 
                 // Keep active tool in 'select' while opening Text Studio options drawer + inline editor
                 if (state.tool !== 'select') {
@@ -2825,7 +2945,7 @@
 
             function syncInlineEditorStyle() {
                 if (!state.inlineEditor) return;
-                const { textareaEl, pageId, itemId } = state.inlineEditor;
+                const {textareaEl, pageId, itemId} = state.inlineEditor;
                 const pg = getPageById(pageId);
                 const item = pg ? pg.items.find(it => it.id === itemId) : null;
                 if (!pg || !item || !textareaEl) return;
@@ -2839,7 +2959,7 @@
                 textareaEl.style.textAlign = item.align || 'left';
                 textareaEl.style.background = item.hasBg ? (item.bgColor || '#FEF08A') : 'rgba(255, 255, 255, 0.98)';
 
-                const { width, height } = measureTextItem(pg, item);
+                const {width, height} = measureTextItem(pg, item);
                 textareaEl.style.width = `${Math.max(96, Math.ceil(width * cssScale + 24))}px`;
                 textareaEl.style.height = 'auto';
                 textareaEl.style.height = `${Math.max(Math.ceil(height * cssScale + 14), textareaEl.scrollHeight)}px`;
@@ -2976,7 +3096,7 @@
                 wrap.style.top = `${item.y * cssScale}px`;
                 wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
                 wrap.addEventListener('mousedown', (e) => e.stopPropagation());
-                wrap.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+                wrap.addEventListener('touchstart', (e) => e.stopPropagation(), {passive: true});
 
                 const bar = document.createElement('div');
                 bar.className = 'flex items-center gap-2 mb-1 px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono text-[10px] shadow-lg whitespace-nowrap';
@@ -3027,7 +3147,7 @@
                 wrap.appendChild(ta);
                 sheet.appendChild(wrap);
 
-                state.inlineEditor = { wrapEl: wrap, textareaEl: ta, pageId, itemId: item.id };
+                state.inlineEditor = {wrapEl: wrap, textareaEl: ta, pageId, itemId: item.id};
                 autoResize();
                 setTimeout(() => {
                     ta.focus();
@@ -3037,7 +3157,7 @@
 
             function closeInlineEditor() {
                 if (!state.inlineEditor) return;
-                const { wrapEl, pageId } = state.inlineEditor;
+                const {wrapEl, pageId} = state.inlineEditor;
                 if (wrapEl && wrapEl.parentNode) wrapEl.parentNode.removeChild(wrapEl);
                 state.inlineEditor = null;
                 redrawPageOverlay(pageId);
@@ -3168,7 +3288,7 @@
                 copy.x += 18;
                 copy.y += 18;
                 pg.items.push(copy);
-                state.selectedRef = { pageId: pg.id, itemId: copy.id };
+                state.selectedRef = {pageId: pg.id, itemId: copy.id};
 
                 pushHistorySnapshot();
                 syncSelectionPanel();
@@ -3179,7 +3299,7 @@
 
             function deleteSelectedObject() {
                 if (!state.selectedRef) return;
-                const { pageId, itemId } = state.selectedRef;
+                const {pageId, itemId} = state.selectedRef;
                 const pg = getPageById(pageId);
                 if (!pg) return;
 
@@ -3265,7 +3385,7 @@
                             targetCtx.restore();
                         }
                     } else if (item.type === 'text') {
-                        const { lines, width, height, lineH } = measureTextItem(page, item);
+                        const {lines, width, height, lineH} = measureTextItem(page, item);
                         const align = item.align || 'left';
                         targetCtx.save();
                         targetCtx.globalAlpha = item.opacity !== undefined ? item.opacity : 1.0;
@@ -3375,7 +3495,7 @@
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                const { w } = getPageEffectiveDims(pg);
+                const {w} = getPageEffectiveDims(pg);
                 const cssScale = state.zoom * BASE_RENDER_SCALE;
                 const dpr = canvas.width / Math.max(1, w * cssScale);
                 const renderScale = cssScale * dpr;
@@ -3421,10 +3541,10 @@
             function hitTestImageCornerHandle(item, x, y) {
                 if (!item || item.type !== 'image') return null;
                 const handles = [
-                    { name: 'tl', x: item.x, y: item.y },
-                    { name: 'tr', x: item.x + item.width, y: item.y },
-                    { name: 'bl', x: item.x, y: item.y + item.height },
-                    { name: 'br', x: item.x + item.width, y: item.y + item.height }
+                    {name: 'tl', x: item.x, y: item.y},
+                    {name: 'tr', x: item.x + item.width, y: item.y},
+                    {name: 'bl', x: item.x, y: item.y + item.height},
+                    {name: 'br', x: item.x + item.width, y: item.y + item.height}
                 ];
                 for (const h of handles) {
                     if (Math.hypot(x - h.x, y - h.y) <= 16) return h.name;
@@ -3516,7 +3636,7 @@
                                     origH: curSel.height,
                                     aspect: curSel.height / Math.max(1, curSel.width)
                                 };
-                                try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                                try {canvas.setPointerCapture(e.pointerId);} catch (_) { }
                                 return;
                             }
                         }
@@ -3526,14 +3646,14 @@
                             const now = Date.now();
                             const tapDist = Math.hypot(e.clientX - state.lastTap.x, e.clientY - state.lastTap.y);
                             if (hit.type === 'text' && state.lastTap.itemId === hit.id && (now - state.lastTap.time) <= 350 && tapDist < 15) {
-                                state.lastTap = { time: 0, itemId: null, x: 0, y: 0 };
+                                state.lastTap = {time: 0, itemId: null, x: 0, y: 0};
                                 state.dragState = null;
                                 enterTextEditModeForItem(pageId, hit);
                                 return;
                             }
-                            state.lastTap = { time: now, itemId: hit.id, x: e.clientX, y: e.clientY };
+                            state.lastTap = {time: now, itemId: hit.id, x: e.clientX, y: e.clientY};
 
-                            state.selectedRef = { pageId, itemId: hit.id };
+                            state.selectedRef = {pageId, itemId: hit.id};
                             state.dragState = {
                                 mode: 'move',
                                 pageId,
@@ -3544,7 +3664,7 @@
                                 offsetX: pos.x - hit.x,
                                 offsetY: pos.y - hit.y
                             };
-                            try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                            try {canvas.setPointerCapture(e.pointerId);} catch (_) { }
 
                             if (hit.type === 'text') {
                                 if (state.tool !== 'select') {
@@ -3591,10 +3711,10 @@
                             color: ($('drawColor') && $('drawColor').value) || '#E11D48',
                             size: parseInt(($('drawSize') && $('drawSize').value) || '4', 10) || 4,
                             opacity: (parseInt(($('drawOpacity') && $('drawOpacity').value) || '100', 10) || 100) / 100,
-                            points: [{ x: pos.x, y: pos.y }]
+                            points: [{x: pos.x, y: pos.y}]
                         };
-                        state.activeDraw = { pageId, pointerId: e.pointerId, tool: 'draw', strokeObj };
-                        try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                        state.activeDraw = {pageId, pointerId: e.pointerId, tool: 'draw', strokeObj};
+                        try {canvas.setPointerCapture(e.pointerId);} catch (_) { }
                         return;
                     }
 
@@ -3609,14 +3729,14 @@
                                 id: uid('ers'),
                                 kind: 'erase',
                                 size: brushDia,
-                                points: [{ x: pos.x, y: pos.y }, { x: pos.x + 0.4, y: pos.y + 0.4 }]
+                                points: [{x: pos.x, y: pos.y}, {x: pos.x + 0.4, y: pos.y + 0.4}]
                             };
-                            state.activeDraw = { pageId, pointerId: e.pointerId, tool: 'eraser', strokeObj };
-                            try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                            state.activeDraw = {pageId, pointerId: e.pointerId, tool: 'eraser', strokeObj};
+                            try {canvas.setPointerCapture(e.pointerId);} catch (_) { }
                             redrawPageOverlay(pageId, null, strokeObj);
                         } else {
-                            state.activeDraw = { pageId, pointerId: e.pointerId, tool: 'eraser_whole', changed: false };
-                            try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                            state.activeDraw = {pageId, pointerId: e.pointerId, tool: 'eraser_whole', changed: false};
+                            try {canvas.setPointerCapture(e.pointerId);} catch (_) { }
                             if (eraseWholeStrokeAt(pg, pos.x, pos.y, brushDia / 2)) {
                                 state.activeDraw.changed = true;
                                 redrawPageOverlay(pageId);
@@ -3707,7 +3827,7 @@
 
                     if (state.activeDraw && state.activeDraw.pageId === pageId && state.activeDraw.pointerId === e.pointerId) {
                         if (state.activeDraw.tool === 'draw' || state.activeDraw.tool === 'eraser') {
-                            state.activeDraw.strokeObj.points.push({ x: pos.x, y: pos.y });
+                            state.activeDraw.strokeObj.points.push({x: pos.x, y: pos.y});
                             redrawPageOverlay(pageId, null, state.activeDraw.strokeObj);
                         } else if (state.activeDraw.tool === 'eraser_whole') {
                             const scale = state.zoom * BASE_RENDER_SCALE;
@@ -3797,7 +3917,7 @@
 
                 state.pages.forEach((pg, idx) => {
                     const pageNum = idx + 1;
-                    const { w, h } = getPageEffectiveDims(pg);
+                    const {w, h} = getPageEffectiveDims(pg);
                     const cssW = Math.max(1, Math.round(w * cssScale));
                     const cssH = Math.max(1, Math.round(h * cssScale));
                     const backW = Math.max(1, Math.round(w * cssScale * dpr));
@@ -3878,7 +3998,7 @@
                 const cssScale = state.zoom * BASE_RENDER_SCALE;
                 const dpr = getHiDpiRatio();
                 const renderScale = cssScale * dpr;
-                const { w, h } = getPageEffectiveDims(pg);
+                const {w, h} = getPageEffectiveDims(pg);
 
                 if (pg.kind === 'blank') {
                     const cssW = Math.max(1, Math.round(w * cssScale));
@@ -3905,8 +4025,8 @@
                 const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                 const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
 
-                const cssVp = pdfPage.getViewport({ scale: cssScale, rotation: totalRot });
-                const hiDpiVp = pdfPage.getViewport({ scale: renderScale, rotation: totalRot });
+                const cssVp = pdfPage.getViewport({scale: cssScale, rotation: totalRot});
+                const hiDpiVp = pdfPage.getViewport({scale: renderScale, rotation: totalRot});
 
                 const cssW = Math.max(1, Math.round(cssVp.width));
                 const cssH = Math.max(1, Math.round(cssVp.height));
@@ -3924,7 +4044,7 @@
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, backW, backH);
-                await pdfPage.render({ canvasContext: ctx, viewport: hiDpiVp }).promise;
+                await pdfPage.render({canvasContext: ctx, viewport: hiDpiVp}).promise;
             }
 
             function getThumbCardDimensions(natW, natH) {
@@ -3959,8 +4079,8 @@
 
                 state.pages.forEach((pg, idx) => {
                     const pageNum = idx + 1;
-                    const { w, h } = getPageEffectiveDims(pg);
-                    const { boxW, boxH } = getThumbCardDimensions(w, h);
+                    const {w, h} = getPageEffectiveDims(pg);
+                    const {boxW, boxH} = getThumbCardDimensions(w, h);
 
                     const item = document.createElement('div');
                     item.id = `thumbItem_${pg.id}`;
@@ -4019,8 +4139,8 @@
                 if (!pg || !frame || !baseCanvas || !overlayCanvas) return;
 
                 if (pg.kind === 'blank') {
-                    const { w, h } = getPageEffectiveDims(pg);
-                    const { boxW, boxH } = getThumbCardDimensions(w, h);
+                    const {w, h} = getPageEffectiveDims(pg);
+                    const {boxW, boxH} = getThumbCardDimensions(w, h);
                     frame.style.width = `${boxW}px`;
                     frame.style.height = `${boxH}px`;
                     frame.style.aspectRatio = `${w} / ${h}`;
@@ -4047,14 +4167,14 @@
                 const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                 const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
 
-                const vp1 = pdfPage.getViewport({ scale: 1.0, rotation: totalRot });
-                const { boxW, boxH } = getThumbCardDimensions(vp1.width, vp1.height);
+                const vp1 = pdfPage.getViewport({scale: 1.0, rotation: totalRot});
+                const {boxW, boxH} = getThumbCardDimensions(vp1.width, vp1.height);
                 frame.style.width = `${boxW}px`;
                 frame.style.height = `${boxH}px`;
                 frame.style.aspectRatio = `${vp1.width} / ${vp1.height}`;
 
                 const thumbScale = (boxW * 2) / Math.max(1, vp1.width);
-                const vp = pdfPage.getViewport({ scale: thumbScale, rotation: totalRot });
+                const vp = pdfPage.getViewport({scale: thumbScale, rotation: totalRot});
 
                 const cw = Math.max(40, Math.round(vp.width));
                 const ch = Math.max(40, Math.round(vp.height));
@@ -4069,7 +4189,7 @@
                 ctx.clearRect(0, 0, cw, ch);
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(0, 0, cw, ch);
-                await pdfPage.render({ canvasContext: ctx, viewport: vp }).promise;
+                await pdfPage.render({canvasContext: ctx, viewport: vp}).promise;
 
                 renderThumbnailOverlay(pageId);
             }
@@ -4079,7 +4199,7 @@
                 const overlayCanvas = $(`thumbOverlay_${pageId}`);
                 if (!pg || !overlayCanvas || !overlayCanvas.width || !overlayCanvas.height) return;
 
-                const { w } = getPageEffectiveDims(pg);
+                const {w} = getPageEffectiveDims(pg);
                 const natW = parseFloat(overlayCanvas.dataset.natW) || Math.max(1, w);
                 const exactScale = overlayCanvas.width / natW;
 
@@ -4112,8 +4232,8 @@
                 const copy = JSON.parse(JSON.stringify(state.pages[idx]));
                 copy.id = uid('pg');
                 copy.isNew = true;
-                copy.items.forEach(it => { it.id = uid(it.type); });
-                copy.inkStrokes.forEach(st => { st.id = uid(st.kind); });
+                copy.items.forEach(it => {it.id = uid(it.type);});
+                copy.inkStrokes.forEach(st => {st.id = uid(st.kind);});
 
                 state.pages.splice(idx + 1, 0, copy);
                 state.activePageId = copy.id;
@@ -4217,13 +4337,13 @@
                         const bytes = await readFileAsUint8Array(file);
                         const extDoc = await openPdfDocumentSafely(bytes);
                         const sourceId = uid('src');
-                        state.pdfSources[sourceId] = { pdfjsDoc: extDoc, bytes, name: file.name };
+                        state.pdfSources[sourceId] = {pdfjsDoc: extDoc, bytes, name: file.name};
 
                         const newPages = [];
                         for (let i = 1; i <= extDoc.numPages; i++) {
                             const pg = await extDoc.getPage(i);
                             const baseRot = ((pg.rotate || 0) % 360 + 360) % 360;
-                            const vp = pg.getViewport({ scale: 1.0, rotation: baseRot });
+                            const vp = pg.getViewport({scale: 1.0, rotation: baseRot});
                             newPages.push({
                                 id: uid('pg'),
                                 kind: 'pdf',
@@ -4255,7 +4375,7 @@
                             imageCache.set(dataUrl, img);
                             const refIdx = Math.max(0, state.pendingInsertIndex - 1);
                             const refPg = state.pages[refIdx];
-                            const dims = refPg ? getPageEffectiveDims(refPg) : { w: 595.28, h: 841.89 };
+                            const dims = refPg ? getPageEffectiveDims(refPg) : {w: 595.28, h: 841.89};
 
                             const maxW = dims.w * 0.85;
                             const maxH = dims.h * 0.85;
@@ -4534,7 +4654,7 @@
 
                 const cssScale = state.zoom * BASE_RENDER_SCALE;
                 state.pages.forEach(pg => {
-                    const { w, h } = getPageEffectiveDims(pg);
+                    const {w, h} = getPageEffectiveDims(pg);
                     const sheet = $(`sheet_${pg.id}`);
                     if (sheet) {
                         sheet.style.width = `${Math.round(w * cssScale)}px`;
@@ -4682,7 +4802,7 @@
             async function renderCompositePageCanvas(pg, scale) {
                 const c = document.createElement('canvas');
                 const ctx = c.getContext('2d');
-                const { w, h } = getPageEffectiveDims(pg);
+                const {w, h} = getPageEffectiveDims(pg);
 
                 if (pg.kind === 'blank') {
                     c.width = Math.max(1, Math.round(w * scale));
@@ -4693,12 +4813,12 @@
                     const src = state.pdfSources[pg.sourceId];
                     const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                     const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
-                    const vp = pdfPage.getViewport({ scale, rotation: totalRot });
+                    const vp = pdfPage.getViewport({scale, rotation: totalRot});
                     c.width = Math.max(1, Math.round(vp.width));
                     c.height = Math.max(1, Math.round(vp.height));
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, c.width, c.height);
-                    await pdfPage.render({ canvasContext: ctx, viewport: vp }).promise;
+                    await pdfPage.render({canvasContext: ctx, viewport: vp}).promise;
                 }
 
                 renderPageItemsAndInk(ctx, pg, scale);
@@ -4740,7 +4860,7 @@
                     const decodePromises = [];
 
                     for (const pg of state.pages) {
-                        const { w, h } = getPageEffectiveDims(pg);
+                        const {w, h} = getPageEffectiveDims(pg);
                         const isLandscape = w > h;
                         let pageCanvas = await renderCompositePageCanvas(pg, printScale);
 
@@ -4833,7 +4953,7 @@
                     if (pg.items.length === 0 && pg.inkStrokes.length === 0) continue;
 
                     const exportScale = 2.6;
-                    const { w, h } = getPageEffectiveDims(pg);
+                    const {w, h} = getPageEffectiveDims(pg);
                     const overlay = document.createElement('canvas');
                     overlay.width = Math.max(1, Math.round(w * exportScale));
                     overlay.height = Math.max(1, Math.round(h * exportScale));
@@ -4843,19 +4963,19 @@
                     const pngBytes = await fetch(overlay.toDataURL('image/png')).then(r => r.arrayBuffer());
                     const embeddedPng = await outDoc.embedPng(pngBytes);
 
-                    const { width: rawW, height: rawH } = targetPage.getSize();
+                    const {width: rawW, height: rawH} = targetPage.getSize();
                     const quarter = finalRot === 90 || finalRot === 270;
                     const drawW = quarter ? rawH : rawW;
                     const drawH = quarter ? rawW : rawH;
 
                     if (finalRot === 90) {
-                        targetPage.drawImage(embeddedPng, { x: rawW, y: 0, width: drawW, height: drawH, rotate: lib.degrees(90) });
+                        targetPage.drawImage(embeddedPng, {x: rawW, y: 0, width: drawW, height: drawH, rotate: lib.degrees(90)});
                     } else if (finalRot === 180) {
-                        targetPage.drawImage(embeddedPng, { x: rawW, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(180) });
+                        targetPage.drawImage(embeddedPng, {x: rawW, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(180)});
                     } else if (finalRot === 270) {
-                        targetPage.drawImage(embeddedPng, { x: 0, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(270) });
+                        targetPage.drawImage(embeddedPng, {x: 0, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(270)});
                     } else {
-                        targetPage.drawImage(embeddedPng, { x: 0, y: 0, width: rawW, height: rawH });
+                        targetPage.drawImage(embeddedPng, {x: 0, y: 0, width: rawW, height: rawH});
                     }
                 }
 
@@ -4870,7 +4990,7 @@
 
                 try {
                     const pdfBytes = await buildEditedPdfBytes();
-                    triggerBlobDownload(new Blob([pdfBytes], { type: 'application/pdf' }), `edited_${state.fileName}`);
+                    triggerBlobDownload(new Blob([pdfBytes], {type: 'application/pdf'}), `edited_${state.fileName}`);
                     showToast(`ส่งออก edited_${state.fileName} สำเร็จ`, 'success');
                 } catch (err) {
                     console.error('Export PDF error:', err);
@@ -4931,7 +5051,7 @@
                     }
                 }
 
-                return new Blob([buffer], { type: 'image/bmp' });
+                return new Blob([buffer], {type: 'image/bmp'});
             }
 
             async function encodeCanvasToFormatBlob(canvas, format) {
@@ -5197,7 +5317,7 @@
             }
 
             function updateImageExportUI() {
-                const { mode, format, selectedIndices } = state.imageExport;
+                const {mode, format, selectedIndices} = state.imageExport;
                 const count = selectedIndices.length;
                 const extUpper = format.toUpperCase();
 
@@ -5292,7 +5412,7 @@
             }
 
             async function confirmImageExport() {
-                const { selectedIndices, format } = state.imageExport;
+                const {selectedIndices, format} = state.imageExport;
                 if (!selectedIndices || selectedIndices.length === 0) {
                     showToast('กรุณาเลือกอย่างน้อย 1 หน้า', 'error');
                     return;
@@ -5336,7 +5456,7 @@
                         zip.file(`${baseName}_page_${pageLabel}.${ext}`, blob);
                     }
 
-                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    const zipBlob = await zip.generateAsync({type: 'blob'});
                     triggerBlobDownload(zipBlob, `${baseName}_${ext}_pages.zip`);
                     showToast(`ส่งออก ${baseName}_${ext}_pages.zip (${indicesToExport.length} หน้า) สำเร็จ`, 'success');
                 } catch (err) {
