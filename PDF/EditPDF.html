@@ -405,25 +405,9 @@
             margin: 0;
         }
 
-        /* WYSIWYG Auto-Orientation Print Styles (Per-Page Portrait / Landscape) */
+        /* WYSIWYG One-Click Auto-Orientation Print Styles (Full A4 Portrait Fit) */
         @page {
-            size: auto;
-            margin: 0;
-        }
-
-        @page portrait_page {
-            size: portrait;
-            margin: 0;
-        }
-
-        @page landscape_page {
-            size: landscape;
-            margin: 0;
-        }
-
-        /* WYSIWYG Auto-Orientation Print Styles (Auto-Rotate Landscape to Portrait Fit) */
-        @page {
-            size: portrait;
+            size: A4 portrait;
             margin: 0;
         }
 
@@ -465,8 +449,8 @@
                 display: block;
                 max-width: 100%;
                 max-height: 100%;
-                width: 100%;
-                height: 100%;
+                width: auto;
+                height: auto;
                 object-fit: contain;
             }
         }
@@ -1427,100 +1411,6 @@
         </div>
     </div>
 
-    <!-- Interactive Print Options Modal (Approach B: Native Mixed PDF vs Auto-Rotate Portrait Fit) -->
-    <div id="printOptionsModal" onclick="if (event.target === this) closePrintOptionsModal()"
-        class="hidden fixed inset-0 z-[89] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
-        <div class="w-full max-w-2xl opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
-
-            <!-- Modal Header -->
-            <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-[#E11D48]/15 text-[#E11D48] flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-print text-sm"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-sm sm:text-base font-extrabold truncate">ตั้งค่าการพิมพ์เอกสาร</h3>
-                            <span id="printSummaryBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
-                        </div>
-                        <p id="printOrientationSubtitle" class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                            ตรวจพบสัดส่วนหน้ากระดาษอัตโนมัติ
-                        </p>
-                    </div>
-                </div>
-
-                <button type="button" onclick="closePrintOptionsModal()"
-                    class="w-9 h-9 rounded-xl panel-subtle border hover:border-[#E11D48] flex items-center justify-center transition cursor-pointer shrink-0"
-                    title="ปิดหน้าต่าง (Esc)">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            </div>
-
-            <!-- Print Mode Selection Body -->
-            <div class="p-4 sm:p-6 space-y-3.5">
-                <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    เลือกรูปแบบการจัดวางหน้ากระดาษตอนสั่งพิมพ์
-                </div>
-
-                <!-- Option 1: Native PDF Print (Mixed Portrait & Landscape) -->
-                <button type="button" id="printModeCard_native_pdf" onclick="selectPrintMode('native_pdf')"
-                    class="w-full p-4 rounded-2xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left flex items-start gap-3.5 transition cursor-pointer">
-                    <div class="w-10 h-10 rounded-xl bg-[#E11D48] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                        <i class="fa-solid fa-file-pdf text-base"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs sm:text-sm font-extrabold text-[#E11D48]">
-                                1. อัตโนมัติตามต้นฉบับ (Native PDF — แยกแนวตั้ง/แนวนอนรายหน้า)
-                            </span>
-                            <span id="printCheck_native_pdf" class="w-5 h-5 rounded-full bg-[#E11D48] text-white flex items-center justify-center text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-                        </div>
-                        <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                            ใช้ตัวพิมพ์ PDF มาตรฐานของเบราว์เซอร์ หน้าแนวตั้งจะพิมพ์เป็นแนวตั้ง และหน้าแนวนอนจะสลับเป็นแนวนอนเต็มแผ่นแยกแต่ละหน้าโดยไม่ถูกบีบเล็ก
-                        </p>
-                    </div>
-                </button>
-
-                <!-- Option 2: Auto-Rotate Landscape to Portrait A4 Full-Sheet Fit -->
-                <button type="button" id="printModeCard_portrait_rotate" onclick="selectPrintMode('portrait_rotate')"
-                    class="w-full p-4 rounded-2xl panel-subtle border-2 border-transparent hover:border-[#E11D48]/60 text-left flex items-start gap-3.5 transition cursor-pointer">
-                    <div class="w-10 h-10 rounded-xl bg-slate-800 dark:bg-slate-700 text-white flex items-center justify-center shrink-0 mt-0.5">
-                        <i class="fa-solid fa-rotate text-base"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-xs sm:text-sm font-extrabold">
-                                2. หมุนหน้าแนวนอนให้เต็มแผ่นแนวตั้ง (Auto-Rotate Portrait Fit)
-                            </span>
-                            <span id="printCheck_portrait_rotate" class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 text-transparent flex items-center justify-center text-[10px] shrink-0">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                            หมุนหน้าที่เป็นแนวนอน 90° อัตโนมัติให้วางเต็มแผ่นกระดาษแนวตั้ง (A4) แบบใหญ่เต็มตา ไม่ย่อเล็ก เหมาะกับเครื่องพิมพ์ที่ใส่กระดาษแนวตั้งไว้ในถาด
-                        </p>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
-                <button type="button" onclick="closePrintOptionsModal()"
-                    class="px-4 py-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold transition cursor-pointer">
-                    ยกเลิก
-                </button>
-
-                <button type="button" id="btnConfirmPrint" onclick="confirmAndExecutePrint()"
-                    class="px-5 py-2.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-mono font-bold flex items-center gap-2 shadow-md transition cursor-pointer">
-                    <i class="fa-solid fa-print"></i>
-                    <span>สั่งพิมพ์ทันที (PRINT)</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Hidden Print Section -->
     <div id="printSection" class="hidden"></div>
 
@@ -1706,9 +1596,6 @@
                     format: 'png',       // 'png' | 'jpg' | 'webp' | 'bmp'
                     selectedIndices: []  // sorted 0-based page indices
                 },
-
-                // Interactive Print Options State ('native_pdf' | 'portrait_rotate')
-                printMode: 'native_pdf',
 
                 // Undo / Redo History
                 history: [],
@@ -2293,7 +2180,6 @@
                     const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || !!state.inlineEditor;
 
                     if (e.key === 'Escape') {
-                        closePrintOptionsModal();
                         closeImageExportModal();
                         closeDocumentPreview();
                         closeInsertPopover();
@@ -4797,148 +4683,49 @@
                 return rotCanvas;
             }
 
-            function openPrintOptionsModal() {
+            async function triggerPrint() {
                 if (state.pages.length === 0) return;
                 closeInlineEditor();
                 closeExportMenu();
                 closeInsertPopover();
 
-                let portraitCount = 0;
-                let landscapeCount = 0;
-                for (const pg of state.pages) {
-                    const { w, h } = getPageEffectiveDims(pg);
-                    if (w > h) landscapeCount++;
-                    else portraitCount++;
-                }
-
-                const badge = $('printSummaryBadge');
-                const sub = $('printOrientationSubtitle');
-                if (badge) badge.textContent = `รวม ${state.pages.length} หน้า`;
-                if (sub) {
-                    sub.textContent = `ตรวจพบ: แนวตั้ง ${portraitCount} หน้า • แนวนอน ${landscapeCount} หน้า`;
-                }
-
-                // Default to 'native_pdf' when document has mixed or landscape pages
-                selectPrintMode(state.printMode || 'native_pdf');
-
-                const modal = $('printOptionsModal');
-                if (modal) modal.classList.remove('hidden');
-            }
-
-            function closePrintOptionsModal() {
-                const modal = $('printOptionsModal');
-                if (modal) modal.classList.add('hidden');
-            }
-
-            function selectPrintMode(mode) {
-                state.printMode = mode === 'portrait_rotate' ? 'portrait_rotate' : 'native_pdf';
-                ['native_pdf', 'portrait_rotate'].forEach(m => {
-                    const card = $(`printModeCard_${m}`);
-                    const chk = $(`printCheck_${m}`);
-                    const active = m === state.printMode;
-                    if (card) {
-                        card.className = active
-                            ? 'w-full p-4 rounded-2xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left flex items-start gap-3.5 transition cursor-pointer'
-                            : 'w-full p-4 rounded-2xl panel-subtle border-2 border-transparent hover:border-[#E11D48]/60 text-left flex items-start gap-3.5 transition cursor-pointer';
-                    }
-                    if (chk) {
-                        chk.className = active
-                            ? 'w-5 h-5 rounded-full bg-[#E11D48] text-white flex items-center justify-center text-[10px] shrink-0'
-                            : 'w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 text-transparent flex items-center justify-center text-[10px] shrink-0';
-                    }
-                });
-            }
-
-            async function executePortraitRotatePrint() {
-                showToast('กำลังจัดเรียงและหมุนหน้าแนวนอนให้เต็มแผ่นแนวตั้ง...', 'info');
                 const printSec = $('printSection');
                 if (!printSec) return;
+
+                showToast('กำลังเตรียมหน้าพิมพ์ (จัดวางเต็มแผ่น A4 อัตโนมัติ)...', 'info');
                 printSec.innerHTML = '';
 
-                for (const pg of state.pages) {
-                    const { w, h } = getPageEffectiveDims(pg);
-                    const isLandscape = w > h;
-                    let pageCanvas = await renderCompositePageCanvas(pg, 2.5);
-                    if (isLandscape) {
-                        pageCanvas = rotateCanvas90CCW(pageCanvas);
+                try {
+                    const printScale = Math.max(2.6, (window.devicePixelRatio || 1) * 1.8);
+
+                    for (const pg of state.pages) {
+                        const { w, h } = getPageEffectiveDims(pg);
+                        const isLandscape = w > h;
+                        let pageCanvas = await renderCompositePageCanvas(pg, printScale);
+
+                        // Automatically rotate landscape pages 90° so they fill A4 portrait sheets clearly without shrinking or cropping
+                        if (isLandscape) {
+                            pageCanvas = rotateCanvas90CCW(pageCanvas);
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = 'print-page';
+
+                        const img = document.createElement('img');
+                        img.src = pageCanvas.toDataURL('image/png');
+                        img.alt = 'Print Page';
+
+                        div.appendChild(img);
+                        printSec.appendChild(div);
                     }
 
-                    const div = document.createElement('div');
-                    div.className = 'print-page';
-                    const img = document.createElement('img');
-                    img.src = pageCanvas.toDataURL('image/png');
-                    div.appendChild(img);
-                    printSec.appendChild(div);
-                }
-
-                setTimeout(() => window.print(), 280);
-            }
-
-            async function executeNativePdfPrint() {
-                showToast('กำลังสร้างเอกสาร PDF สำหรับหน้าต่างพิมพ์...', 'info');
-                try {
-                    const pdfBytes = await buildEditedPdfBytes();
-                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                    const blobUrl = URL.createObjectURL(blob);
-
-                    const oldFrame = $('nativePdfPrintFrame');
-                    if (oldFrame) oldFrame.remove();
-
-                    const iframe = document.createElement('iframe');
-                    iframe.id = 'nativePdfPrintFrame';
-                    iframe.style.position = 'fixed';
-                    iframe.style.right = '0';
-                    iframe.style.bottom = '0';
-                    iframe.style.width = '1px';
-                    iframe.style.height = '1px';
-                    iframe.style.opacity = '0.01';
-                    iframe.style.pointerEvents = 'none';
-                    iframe.style.border = '0';
-
-                    let printed = false;
-                    iframe.onload = () => {
-                        if (printed) return;
-                        printed = true;
-                        setTimeout(() => {
-                            try {
-                                if (iframe.contentWindow) {
-                                    iframe.contentWindow.focus();
-                                    iframe.contentWindow.print();
-                                } else {
-                                    throw new Error('No iframe contentWindow');
-                                }
-                            } catch (err) {
-                                console.warn('Iframe PDF print blocked in sandbox, falling back to Portrait Rotate print:', err);
-                                showToast('เบราว์เซอร์บล็อกตัวพิมพ์ PDF ในกรอบจำลอง กำลังสลับเป็นโหมดเต็มแผ่นอัตโนมัติ...', 'info');
-                                executePortraitRotatePrint();
-                            }
-                            setTimeout(() => {
-                                URL.revokeObjectURL(blobUrl);
-                            }, 60000);
-                        }, 350);
-                    };
-
-                    iframe.src = blobUrl;
-                    document.body.appendChild(iframe);
+                    // Allow newly created print images to decode before opening the browser's standard Print Preview dialog
+                    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 240)));
+                    window.print();
                 } catch (err) {
-                    console.error('Native PDF print error:', err);
-                    showToast('กำลังสลับเป็นโหมดพิมพ์เต็มแผ่นแนวตั้งอัตโนมัติ...', 'info');
-                    await executePortraitRotatePrint();
+                    console.error('Auto-orientation print error:', err);
+                    showToast('เกิดข้อผิดพลาดในการเตรียมหน้าพิมพ์', 'error');
                 }
-            }
-
-            async function confirmAndExecutePrint() {
-                const chosenMode = state.printMode;
-                closePrintOptionsModal();
-                if (chosenMode === 'portrait_rotate') {
-                    await executePortraitRotatePrint();
-                } else {
-                    await executeNativePdfPrint();
-                }
-            }
-
-            function triggerPrint() {
-                openPrintOptionsModal();
             }
 
             async function buildEditedPdfBytes() {
@@ -5516,10 +5303,6 @@
                 setOverviewFilter,
                 openDocumentPreview,
                 closeDocumentPreview,
-                openPrintOptionsModal,
-                closePrintOptionsModal,
-                selectPrintMode,
-                confirmAndExecutePrint,
                 triggerPrint,
                 exportPdfDocument,
                 exportPagesAsZip,
