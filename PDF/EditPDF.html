@@ -116,34 +116,42 @@
             return window.JSZip;
         };
 
-        if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = window.__CLEVERTENSAI_CDNS.pdfWorker[0];
+        try {
+            if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = window.__CLEVERTENSAI_CDNS.pdfWorker[0];
+            }
+        } catch (_) {
+            // Ignore worker initialization error in restricted sandboxes
         }
 
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                darkMode: 'class',
-                future: {
-                    hoverOnlyWhenSupported: true
-                },
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
-                            mono: ['"JetBrains Mono"', 'monospace'],
-                            thai: ['"Prompt"', '"Sarabun"', 'sans-serif']
-                        },
-                        colors: {
-                            crimson: {
-                                400: '#FB7185',
-                                500: '#E11D48',
-                                600: '#BE123C',
-                                700: '#9F1239'
+        try {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    darkMode: 'class',
+                    future: {
+                        hoverOnlyWhenSupported: true
+                    },
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['"Space Grotesk"', '"Prompt"', 'sans-serif'],
+                                mono: ['"JetBrains Mono"', 'monospace'],
+                                thai: ['"Prompt"', '"Sarabun"', 'sans-serif']
+                            },
+                            colors: {
+                                crimson: {
+                                    400: '#FB7185',
+                                    500: '#E11D48',
+                                    600: '#BE123C',
+                                    700: '#9F1239'
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
+            }
+        } catch (_) {
+            // Ignore tailwind config warning if already initialized
         }
     </script>
 
@@ -405,7 +413,7 @@
             margin: 0;
         }
 
-        /* WYSIWYG One-Click Auto-Orientation Print Styles (Full A4 Portrait Fit) */
+        /* WYSIWYG One-Click Auto-Orientation Print Styles (Full A4 Portrait Fit - Mobile Safe) */
         @page {
             size: A4 portrait;
             margin: 0;
@@ -414,44 +422,59 @@
         @media print {
             body > *:not(#printSection) {
                 display: none !important;
+                visibility: hidden !important;
             }
             html, body {
-                background: #FFFFFF !important;
-                overflow: visible !important;
+                width: 100% !important;
                 height: auto !important;
+                min-height: 0 !important;
+                overflow: visible !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                background: #FFFFFF !important;
+                position: static !important;
+            }
+            #canvasPagesContainer {
+                transform: none !important;
             }
             #printSection {
                 display: block !important;
-                position: static;
-                width: 100%;
-                background: #FFFFFF;
+                visibility: visible !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #FFFFFF !important;
             }
             .print-page {
-                page-break-after: always;
-                page-break-inside: avoid;
-                break-after: page;
-                break-inside: avoid;
-                width: 100vw;
-                height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                background: #FFFFFF;
+                width: 100% !important;
+                height: 296.5mm !important;
+                max-height: 296.5mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: hidden !important;
+                background: #FFFFFF !important;
+                box-sizing: border-box !important;
             }
             .print-page:last-child {
-                page-break-after: auto;
-                break-after: auto;
+                page-break-after: auto !important;
+                break-after: auto !important;
             }
             .print-page img {
-                display: block;
-                max-width: 100%;
-                max-height: 100%;
-                width: auto;
-                height: auto;
-                object-fit: contain;
+                display: block !important;
+                max-width: 100% !important;
+                max-height: 100% !important;
+                width: auto !important;
+                height: auto !important;
+                object-fit: contain !important;
+                margin: 0 auto !important;
             }
         }
     </style>
@@ -460,10 +483,24 @@
 <body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
     <!-- ===================================================================== -->
-    <!-- 1. EXTERNAL SHARED NAVBAR (Loaded from JS/NavbarPDF.js)               -->
+    <!-- 1. EXTERNAL SHARED NAVBAR (Loaded safely when hosted on same origin)  -->
     <!-- ===================================================================== -->
     <div id="navbar-container" class="shrink-0"></div>
-    <script src="JS/NavbarPDF.js" defer onerror="this.remove()"></script>
+    <script>
+        (function () {
+            try {
+                if (window.location && window.location.protocol !== 'about:' && window.origin !== 'null' && window.self === window.top) {
+                    var navScript = document.createElement('script');
+                    navScript.src = 'JS/NavbarPDF.js';
+                    navScript.defer = true;
+                    navScript.onerror = function () { navScript.remove(); };
+                    document.head.appendChild(navScript);
+                }
+            } catch (_) {
+                // Skip external relative navbar script inside sandboxed preview iframes
+            }
+        })();
+    </script>
 
     <!-- Root-Level Hidden File Inputs -->
     <input type="file" id="pdfFileInput" accept="application/pdf,.pdf" onchange="handleMainPdfUpload(event)" class="hidden">
@@ -4696,14 +4733,18 @@
                 printSec.innerHTML = '';
 
                 try {
-                    const printScale = Math.max(2.6, (window.devicePixelRatio || 1) * 1.8);
+                    const printScale = isMobile()
+                        ? 2.0
+                        : Math.max(2.4, Math.min(2.8, (window.devicePixelRatio || 1) * 1.6));
+
+                    const decodePromises = [];
 
                     for (const pg of state.pages) {
                         const { w, h } = getPageEffectiveDims(pg);
                         const isLandscape = w > h;
                         let pageCanvas = await renderCompositePageCanvas(pg, printScale);
 
-                        // Automatically rotate landscape pages 90° so they fill A4 portrait sheets clearly without shrinking or cropping
+                        // Automatically rotate landscape pages 90° CCW so they fill A4 portrait sheets clearly without shrinking or cropping
                         if (isLandscape) {
                             pageCanvas = rotateCanvas90CCW(pageCanvas);
                         }
@@ -4712,17 +4753,53 @@
                         div.className = 'print-page';
 
                         const img = document.createElement('img');
-                        img.src = pageCanvas.toDataURL('image/png');
                         img.alt = 'Print Page';
+                        const dataUrl = pageCanvas.toDataURL('image/png');
+
+                        const readyPromise = new Promise((resolve) => {
+                            img.onload = async () => {
+                                try {
+                                    if (typeof img.decode === 'function') {
+                                        await img.decode();
+                                    }
+                                } catch (_) {
+                                    // Fallback if decode() is unsupported
+                                }
+                                resolve();
+                            };
+                            img.onerror = () => resolve();
+                        });
+
+                        img.src = dataUrl;
+                        decodePromises.push(readyPromise);
 
                         div.appendChild(img);
                         printSec.appendChild(div);
                     }
 
-                    // Allow newly created print images to decode before opening the browser's standard Print Preview dialog
-                    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 240)));
+                    // Wait for all print images to finish loading & decoding before invoking browser Print Preview
+                    await Promise.all(decodePromises);
+                    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+                    const cleanupPrint = () => {
+                        try {
+                            printSec.innerHTML = '';
+                        } catch (_) {
+                            // Ignore cleanup errors
+                        }
+                    };
+
+                    window.onafterprint = () => {
+                        window.onafterprint = null;
+                        cleanupPrint();
+                    };
+
                     window.print();
+
+                    // Safety cleanup fallback if mobile browser does not trigger onafterprint
+                    setTimeout(cleanupPrint, 90000);
                 } catch (err) {
+                    printSec.innerHTML = '';
                     console.error('Auto-orientation print error:', err);
                     showToast('เกิดข้อผิดพลาดในการเตรียมหน้าพิมพ์', 'error');
                 }
@@ -5349,10 +5426,18 @@
                 fitPageToViewport
             });
 
+            const safeBoot = () => {
+                try {
+                    init();
+                } catch (err) {
+                    console.error('Studio boot error:', err);
+                }
+            };
+
             if (document.readyState === 'loading') {
-                window.addEventListener('DOMContentLoaded', init);
+                window.addEventListener('DOMContentLoaded', safeBoot);
             } else {
-                init();
+                safeBoot();
             }
         })();
     </script>
