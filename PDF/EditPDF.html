@@ -22,11 +22,11 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: 15 Thai & English Studio Fonts -->
+    <!-- Google Fonts: 34 Verified Thai (20) & English (14) Studio Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;600;700&family=Bai+Jamjuree:ital,wght@0,400;0,600;0,700;1,400&family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Inter:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Kanit:ital,wght@0,400;0,600;0,700;1,400&family=Mitr:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=Pridi:wght@400;600;700&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Athiti:wght@400;600;700&family=Bai+Jamjuree:ital,wght@0,400;0,600;0,700;1,400&family=Caveat:wght@400;700&family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&family=Charm:wght@400;700&family=Dancing+Script:wght@400;700&family=Fira+Code:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@400;600;700&family=Inter:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=K2D:ital,wght@0,400;0,600;0,700;1,400&family=Kanit:ital,wght@0,400;0,600;0,700;1,400&family=Kodchasan:ital,wght@0,400;0,600;0,700;1,400&family=Krub:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,700;1,400&family=Mali:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Mitr:wght@400;600;700&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&family=Niramit:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Serif+Thai:wght@400;600;700&family=Pacifico&family=Pattaya&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:ital,wght@0,400;0,600;0,700;1,400&family=Pridi:wght@400;600;700&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,700;1,400&family=Sarabun:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Sriracha&family=Trirong:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet">
 
     <!-- FontAwesome 6.4.0 CDN -->
@@ -478,36 +478,10 @@
 <body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
     <!-- ===================================================================== -->
-    <!-- 1. SHARED PDF NAVBAR & FALLBACK FOR PREVIEW INTERACTIVE               -->
+    <!-- 1. SHARED PDF NAVBAR & ALL TOOLS HUB MODAL (ORIGINAL SYSTEM NAVBAR)   -->
     <!-- ===================================================================== -->
-    <div id="navbar-container" class="shrink-0">
-        <!-- Fallback Navbar rendered automatically when external JS/NavbarPDF.js is unavailable in Preview -->
-        <nav id="fallbackStudioNavbar"
-            class="h-12 panel-surface border-b px-3 sm:px-5 flex items-center justify-between gap-2 select-none">
-            <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-7 h-7 rounded-lg bg-[#E11D48] text-white flex items-center justify-center shadow-sm shrink-0">
-                    <i class="fa-solid fa-file-pen text-xs"></i>
-                </div>
-                <div class="flex items-center gap-2 min-w-0">
-                    <span class="font-mono font-extrabold text-xs sm:text-sm tracking-tight truncate">
-                        CLEVERTENSAI
-                    </span>
-                    <span class="hidden sm:inline-block text-slate-300 dark:text-slate-700">|</span>
-                    <span class="font-mono text-[11px] font-bold text-[#E11D48] truncate">
-                        EDIT PDF STUDIO
-                    </span>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full panel-subtle border font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    100% CLIENT-SIDE
-                </span>
-            </div>
-        </nav>
-    </div>
-    <script src="JS/NavbarPDF.js" onerror="this.remove()"></script>
+    <div id="navbar-container" class="shrink-0"></div>
+    <script src="JS/NavbarPDF.js"></script>
 
 
     <!-- Root-Level Hidden File Inputs -->
@@ -538,7 +512,7 @@
                     แก้ไขและตกแต่งเอกสาร <span class="text-[#E11D48]">PDF</span>
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto">
-                    พิมพ์ข้อความภาษาไทย 15 ฟอนต์ แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน และแทรกหน้าเอกสารได้ทันทีบนเบราว์เซอร์ 100% Client-Side
+                    พิมพ์ข้อความภาษาไทยและอังกฤษ 34 ฟอนต์ แทรกรูปภาพ ลายน้ำ วาดไฮไลต์ ยางลบเฉพาะส่วน และแทรกหน้าเอกสารได้ทันทีบนเบราว์เซอร์ 100% Client-Side
                 </p>
             </div>
 
@@ -790,7 +764,7 @@
                         </div>
                     </div>
 
-                    <!-- ENHANCED TEXT PANEL (Stepper -/+, Presets, Live Slider & Canvas Corner Resize Handle) -->
+                    <!-- ENHANCED TEXT PANEL (34 Verified Fonts + Live Preview Picker + CSS Font Loading Verification) -->
                     <div id="panel_text" class="hidden space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Text Studio</span>
@@ -810,31 +784,75 @@
                             คลิกบนกระดาษเพื่อวางข้อความ • <strong>ดับเบิลคลิก</strong> เพื่อแก้คำ • ลากจุดมุมขวาล่างเพื่อย่อ/ขยายฟอนต์
                         </p>
 
-                        <!-- Font Family -->
-                        <div>
-                            <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT FAMILY (15 FONTS)</label>
-                            <select id="textFont" onchange="onTextStyleInput('fontFamily', this.value)"
-                                class="w-full panel-subtle border rounded-xl p-2 text-xs font-medium outline-none focus:border-[#E11D48]">
-                                <optgroup label="ฟอนต์ภาษาไทย (Thai Fonts)">
-                                    <option value="Prompt" selected>Prompt (พร้อม)</option>
-                                    <option value="Sarabun">Sarabun (สารบรรณ)</option>
-                                    <option value="Kanit">Kanit (คนิต)</option>
-                                    <option value="Noto Sans Thai">Noto Sans Thai (โนโต้ไทย)</option>
-                                    <option value="Noto Serif Thai">Noto Serif Thai (โนโต้มีหัว)</option>
-                                    <option value="Chakra Petch">Chakra Petch (จักรเพชร)</option>
-                                    <option value="Bai Jamjuree">Bai Jamjuree (ใบจามจุรี)</option>
-                                    <option value="IBM Plex Sans Thai">IBM Plex Sans Thai</option>
-                                    <option value="Pridi">Pridi (ปรีดี)</option>
-                                    <option value="Mitr">Mitr (มิตร)</option>
-                                    <option value="Athiti">Athiti (อทิติ)</option>
-                                </optgroup>
-                                <optgroup label="English Studio Fonts">
-                                    <option value="Space Grotesk">Space Grotesk</option>
-                                    <option value="Inter">Inter</option>
-                                    <option value="Roboto">Roboto</option>
-                                    <option value="JetBrains Mono">JetBrains Mono</option>
-                                </optgroup>
-                            </select>
+                        <!-- Upgraded Live Font Preview Picker (34 Verified Fonts + Real Font Load Status) -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">FONT STUDIO (34 FONTS)</label>
+                                <span id="fontVerifyBadge"
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                                    <i class="fa-solid fa-circle-check text-[8px]"></i>
+                                    <span>✓ พร้อมใช้</span>
+                                </span>
+                            </div>
+
+                            <!-- Hidden Sync Input -->
+                            <input type="hidden" id="textFont" value="Prompt">
+
+                            <!-- Live Font Trigger Button -->
+                            <button type="button" id="fontPickerTriggerBtn" onclick="toggleFontPickerDrawer()"
+                                class="w-full panel-subtle border hover:border-[#E11D48] rounded-xl px-3 py-2 flex items-center justify-between gap-2 transition cursor-pointer text-left">
+                                <div class="min-w-0 flex-1">
+                                    <div id="activeFontTitle" class="text-sm font-bold truncate" style="font-family: 'Prompt', sans-serif;">
+                                        Prompt (พร้อม - โมเดิร์น)
+                                    </div>
+                                    <div id="activeFontMeta" class="font-mono text-[9px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                        THAI • สวัสดีประเทศไทย ABC 123
+                                    </div>
+                                </div>
+                                <i id="fontPickerChevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform shrink-0"></i>
+                            </button>
+
+                            <!-- Expandable Searchable & Categorized Font List -->
+                            <div id="fontPickerDrawer"
+                                class="hidden panel-surface border border-slate-300 dark:border-slate-700 rounded-2xl p-2 space-y-2 shadow-lg">
+                                <!-- Search Bar -->
+                                <div class="relative">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
+                                    <input type="text" id="fontSearchInput"
+                                        placeholder="ค้นหาชื่อฟอนต์ เช่น Sarabun, Mali, Lora..."
+                                        oninput="onFontSearchInput(this.value)"
+                                        class="w-full pl-7 pr-7 py-1.5 rounded-xl panel-subtle border focus:border-[#E11D48] outline-none text-[11px] font-medium">
+                                    <button type="button" id="btnClearFontSearch" onclick="clearFontSearch()"
+                                        class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#E11D48] text-[10px] cursor-pointer">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Category Filter Tabs -->
+                                <div class="grid grid-cols-4 gap-1 font-mono text-[9px]">
+                                    <button type="button" id="fontCatBtn_all" onclick="setFontCategoryFilter('all')"
+                                        class="py-1 rounded-lg bg-[#E11D48] text-white font-bold text-center cursor-pointer transition">
+                                        ทั้งหมด 34
+                                    </button>
+                                    <button type="button" id="fontCatBtn_thai" onclick="setFontCategoryFilter('thai')"
+                                        class="py-1 rounded-lg panel-subtle border hover:border-[#E11D48] font-bold text-center cursor-pointer transition">
+                                        ไทย 20
+                                    </button>
+                                    <button type="button" id="fontCatBtn_handwriting" onclick="setFontCategoryFilter('handwriting')"
+                                        class="py-1 rounded-lg panel-subtle border hover:border-[#E11D48] font-bold text-center cursor-pointer transition">
+                                        ลายมือ
+                                    </button>
+                                    <button type="button" id="fontCatBtn_en" onclick="setFontCategoryFilter('en')"
+                                        class="py-1 rounded-lg panel-subtle border hover:border-[#E11D48] font-bold text-center cursor-pointer transition">
+                                        อังกฤษ 14
+                                    </button>
+                                </div>
+
+                                <!-- Scrollable Font Items Container -->
+                                <div id="fontListContainer" class="max-h-52 overflow-y-auto space-y-1 pr-0.5">
+                                    <!-- Populated dynamically by renderFontPickerList() -->
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Enhanced Font Size Controls: Stepper [-] / [+], Quick Presets, Live Range Slider -->
@@ -1159,7 +1177,7 @@
             <main id="pdfWorkspace" class="stage-bg flex-1 relative overflow-auto min-w-0 select-none">
                 <div id="eraserCursor"></div>
 
-                <!-- Scroll-Safe & Balanced Initial Position Container (with pb-[64dvh] on mobile for bottom drawer clearance) -->
+                <!-- Scroll-Safe & Balanced Initial Position Container -->
                 <div id="canvasPagesContainer"
                     class="min-w-full w-max mx-auto px-6 md:px-14 pt-5 pb-[64dvh] md:pb-36 flex flex-col items-center gap-8">
                     <!-- Rendered PDF Pages -->
@@ -1525,6 +1543,55 @@
             let pdfWorkerBlobReady = false;
             let pdfWorkerBlobAttempted = false;
 
+            // =================================================================
+            // 1B. STUDIO FONT CATALOG (34 VERIFIED GOOGLE FONTS: 20 THAI + 14 EN)
+            // =================================================================
+            const STUDIO_FONTS = [
+                // 20 Thai Studio Fonts
+                { family: 'Prompt', label: 'Prompt (พร้อม - โมเดิร์น)', category: 'thai', tags: ['thai', 'modern', 'sans'], sample: 'สวัสดีประเทศไทย ABC 123', hasItalic: true },
+                { family: 'Sarabun', label: 'Sarabun (สารบรรณ - ราชการ)', category: 'thai', tags: ['thai', 'official', 'formal'], sample: 'หนังสือราชการไทย ABC 123', hasItalic: true },
+                { family: 'Kanit', label: 'Kanit (คนิต - พาดหัวคมชัด)', category: 'thai', tags: ['thai', 'headline', 'modern'], sample: 'พาดหัวตัวอักษร ABC 123', hasItalic: true },
+                { family: 'Noto Sans Thai', label: 'Noto Sans Thai (โนโต้ไทย - คลีน)', category: 'thai', tags: ['thai', 'clean', 'sans'], sample: 'อ่านง่ายสบายตา ABC 123', hasItalic: false },
+                { family: 'Noto Serif Thai', label: 'Noto Serif Thai (โนโต้มีหัว - ทางการ)', category: 'thai', tags: ['thai', 'serif', 'formal'], sample: 'เอกสารทางการ ABC 123', hasItalic: false },
+                { family: 'Chakra Petch', label: 'Chakra Petch (จักรเพชร - เทค/ดิจิทัล)', category: 'thai', tags: ['thai', 'tech', 'futuristic'], sample: 'เทคโนโลยีดิจิทัล ABC 123', hasItalic: true },
+                { family: 'Bai Jamjuree', label: 'Bai Jamjuree (ใบจามจุรี - กึ่งทางการ)', category: 'thai', tags: ['thai', 'modern', 'clean'], sample: 'ร่วมสมัยอ่านชัด ABC 123', hasItalic: true },
+                { family: 'IBM Plex Sans Thai', label: 'IBM Plex Sans Thai (ไอบีเอ็มไทย)', category: 'thai', tags: ['thai', 'corporate', 'clean'], sample: 'มาตรฐานองค์กร ABC 123', hasItalic: false },
+                { family: 'Pridi', label: 'Pridi (ปรีดี - มีหัวร่วมสมัย)', category: 'thai', tags: ['thai', 'serif', 'editorial'], sample: 'บทความและสิ่งพิมพ์ ABC 123', hasItalic: false },
+                { family: 'Mitr', label: 'Mitr (มิตร - หัวกลมเป็นมิตร)', category: 'thai', tags: ['thai', 'rounded', 'friendly'], sample: 'เป็นมิตรอบอุ่น ABC 123', hasItalic: false },
+                { family: 'Athiti', label: 'Athiti (อทิติ - เรียบหรู)', category: 'thai', tags: ['thai', 'elegant', 'clean'], sample: 'เรียบหรูดูดี ABC 123', hasItalic: false },
+                { family: 'Mali', label: 'Mali (มะลิ - ลายมือน่ารัก)', category: 'thai', tags: ['thai', 'handwriting', 'cute'], sample: 'ลายมือน่ารักสดใส ABC 123', hasItalic: true },
+                { family: 'Charm', label: 'Charm (ฌามส์ - ตัวเขียนพริ้ว)', category: 'thai', tags: ['thai', 'handwriting', 'script'], sample: 'ตัวเขียนพริ้วไหว ABC 123', hasItalic: false },
+                { family: 'Sriracha', label: 'Sriracha (ศรีราชา - ลายมือพู่กัน)', category: 'thai', tags: ['thai', 'handwriting', 'brush'], sample: 'ลายมือพู่กันไทย ABC 123', hasItalic: false },
+                { family: 'Pattaya', label: 'Pattaya (พัทยา - ป้าย/พาดหัว)', category: 'thai', tags: ['thai', 'handwriting', 'display'], sample: 'ป้ายพาดหัวเด่น ABC 123', hasItalic: false },
+                { family: 'K2D', label: 'K2D (เคทูดี - โมเดิร์นเรขาคณิต)', category: 'thai', tags: ['thai', 'geometric', 'modern'], sample: 'เรขาคณิตทันสมัย ABC 123', hasItalic: true },
+                { family: 'Niramit', label: 'Niramit (นิรมิต - คลาสสิกอ่านง่าย)', category: 'thai', tags: ['thai', 'classic', 'clean'], sample: 'คลาสสิกสบายตา ABC 123', hasItalic: true },
+                { family: 'Trirong', label: 'Trirong (ไตรรงค์ - มีหัวสง่างาม)', category: 'thai', tags: ['thai', 'serif', 'elegant'], sample: 'สง่างามมีระดับ ABC 123', hasItalic: true },
+                { family: 'Kodchasan', label: 'Kodchasan (คชสาร - น่ารักสบายตา)', category: 'thai', tags: ['thai', 'rounded', 'friendly'], sample: 'ตัวกลมอ่านสนุก ABC 123', hasItalic: true },
+                { family: 'Krub', label: 'Krub (ครับ - สุภาพทันสมัย)', category: 'thai', tags: ['thai', 'clean', 'friendly'], sample: 'สุภาพทันสมัย ABC 123', hasItalic: true },
+
+                // 14 English Studio Fonts
+                { family: 'Space Grotesk', label: 'Space Grotesk (Studio Sans)', category: 'en', tags: ['en', 'modern', 'sans'], sample: 'Modern Studio Typography 123', hasItalic: false },
+                { family: 'Inter', label: 'Inter (Clean UI Sans)', category: 'en', tags: ['en', 'clean', 'sans'], sample: 'Clean Interface Font 123', hasItalic: true },
+                { family: 'Roboto', label: 'Roboto (Neutral Geometric)', category: 'en', tags: ['en', 'clean', 'sans'], sample: 'Universal Clarity 123', hasItalic: true },
+                { family: 'Montserrat', label: 'Montserrat (Bold Display)', category: 'en', tags: ['en', 'headline', 'modern'], sample: 'BOLD HEADLINE STYLE 123', hasItalic: true },
+                { family: 'Poppins', label: 'Poppins (Geometric Round)', category: 'en', tags: ['en', 'modern', 'sans'], sample: 'Geometric Balance 123', hasItalic: true },
+                { family: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans (Editorial)', category: 'en', tags: ['en', 'modern', 'sans'], sample: 'Editorial Precision 123', hasItalic: true },
+                { family: 'Playfair Display', label: 'Playfair Display (Luxury Serif)', category: 'en', tags: ['en', 'serif', 'luxury'], sample: 'Classic Luxury Title 123', hasItalic: true },
+                { family: 'Lora', label: 'Lora (Contemporary Serif)', category: 'en', tags: ['en', 'serif', 'editorial'], sample: 'Elegant Story Text 123', hasItalic: true },
+                { family: 'Merriweather', label: 'Merriweather (Readable Serif)', category: 'en', tags: ['en', 'serif', 'formal'], sample: 'Formal Publication 123', hasItalic: true },
+                { family: 'Pacifico', label: 'Pacifico (Brush Script)', category: 'en', tags: ['en', 'handwriting', 'script'], sample: 'Creative Brush Script 123', hasItalic: false },
+                { family: 'Dancing Script', label: 'Dancing Script (Calligraphy)', category: 'en', tags: ['en', 'handwriting', 'script'], sample: 'Signature & Invitation 123', hasItalic: false },
+                { family: 'Caveat', label: 'Caveat (Casual Handwriting)', category: 'en', tags: ['en', 'handwriting', 'note'], sample: 'Quick Handwritten Note 123', hasItalic: false },
+                { family: 'JetBrains Mono', label: 'JetBrains Mono (Code/Data)', category: 'en', tags: ['en', 'mono', 'tech'], sample: 'CODE_ID: 0x2026_PDF', hasItalic: false },
+                { family: 'Fira Code', label: 'Fira Code (Developer Mono)', category: 'en', tags: ['en', 'mono', 'tech'], sample: 'const studio = true; // 123', hasItalic: false }
+            ];
+
+            const verifiedFontCache = new Set();
+
+            function getFontMetaByFamily(family) {
+                return STUDIO_FONTS.find(f => f.family === family) || STUDIO_FONTS[0];
+            }
+
             function getHiDpiRatio() {
                 return Math.min(3, Math.max(2, window.devicePixelRatio || 2));
             }
@@ -1643,6 +1710,7 @@
                 activeDraw: null,
 
                 textDefaults: {
+                    fontFamily: 'Prompt',
                     fontSize: 20,
                     bold: false,
                     italic: false,
@@ -1650,6 +1718,9 @@
                     bgColor: '#FEF08A',
                     align: 'left'
                 },
+                fontPickerOpen: false,
+                fontCategoryFilter: 'all',
+                fontSearchQuery: '',
                 inlineEditor: null,
                 floatingEditPill: null,
 
@@ -1840,7 +1911,6 @@
             function getMobileBottomObstructionTop() {
                 let topLimit = window.innerHeight;
 
-                // 1. Check virtual keyboard via VisualViewport API
                 if (window.visualViewport) {
                     const vvBottom = window.visualViewport.offsetTop + window.visualViewport.height;
                     if (vvBottom < topLimit) {
@@ -1848,7 +1918,6 @@
                     }
                 }
 
-                // 2. Check bottom tool drawer (#subToolPopover) if open on mobile
                 const popover = $('subToolPopover');
                 if (popover && !popover.classList.contains('hidden') && state.isSubToolOpen) {
                     const popRect = popover.getBoundingClientRect();
@@ -1857,7 +1926,6 @@
                     }
                 }
 
-                // 3. Check floating bottom nav pill if visible and higher than dock
                 const navPill = $('floatingNavPill');
                 if (navPill && !navPill.classList.contains('hidden')) {
                     const pillRect = navPill.getBoundingClientRect();
@@ -1877,7 +1945,6 @@
                 const sheet = $(`sheet_${pageId}`);
                 if (!vp || !sheet) return;
 
-                // Wait 2 animation frames so #subToolPopover finishes opening & layout settles
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         const livePg = getPageById(pageId);
@@ -1894,8 +1961,8 @@
                         const itemScreenBottom = sheetRect.top + ((item.y + m.height) * cssScale);
 
                         const obstructionTop = getMobileBottomObstructionTop();
-                        const safeBottomMargin = 32; // Clear text box + floating edit pill comfortably
-                        const safeTopMargin = vpRect.top + 56; // Avoid colliding with top action bar
+                        const safeBottomMargin = 32;
+                        const safeTopMargin = vpRect.top + 56;
 
                         const overlapBottom = itemScreenBottom - (obstructionTop - safeBottomMargin);
                         if (overlapBottom > 0) {
@@ -1946,6 +2013,274 @@
             }
 
             // =================================================================
+            // 2C. CSS FONT LOADING VERIFICATION & LIVE FONT PICKER ENGINE
+            // =================================================================
+            function setFontVerifyBadgeStatus(status) {
+                const badge = $('fontVerifyBadge');
+                if (!badge) return;
+
+                if (status === 'loading') {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30';
+                    badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[8px]"></i><span>กำลังโหลด...</span>';
+                } else if (status === 'fallback') {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-rose-500/15 text-rose-600 dark:text-rose-300 border border-rose-500/30';
+                    badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-[8px]"></i><span>! ฟอนต์สำรอง</span>';
+                } else {
+                    badge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25';
+                    badge.innerHTML = '<i class="fa-solid fa-circle-check text-[8px]"></i><span>✓ พร้อมใช้</span>';
+                }
+            }
+
+            function isFontAvailableInBrowser(family) {
+                if (!family) return false;
+                if (verifiedFontCache.has(family)) return true;
+                try {
+                    if (document.fonts && typeof document.fonts.check === 'function') {
+                        const ok = document.fonts.check(`16px "${family}"`) || document.fonts.check(`bold 16px "${family}"`);
+                        if (ok) {
+                            verifiedFontCache.add(family);
+                            return true;
+                        }
+                    }
+                } catch (_) {
+                    // Ignore font check errors
+                }
+                return false;
+            }
+
+            async function ensureFontLoadedAndVerified(family, showFeedback = false) {
+                const targetFamily = family || 'Prompt';
+                const meta = getFontMetaByFamily(targetFamily);
+
+                if (isFontAvailableInBrowser(targetFamily)) {
+                    setFontVerifyBadgeStatus('ready');
+                    return true;
+                }
+
+                setFontVerifyBadgeStatus('loading');
+                if (showFeedback) {
+                    showToast(`กำลังโหลดฟอนต์ ${targetFamily}...`, 'info');
+                }
+
+                try {
+                    if (document.fonts && typeof document.fonts.load === 'function') {
+                        const sampleText = meta.sample || 'กขคง ABC 123';
+                        const loaders = [
+                            document.fonts.load(`400 24px "${targetFamily}"`, sampleText),
+                            document.fonts.load(`700 24px "${targetFamily}"`, sampleText)
+                        ];
+                        if (meta.hasItalic) {
+                            loaders.push(document.fonts.load(`italic 400 24px "${targetFamily}"`, sampleText));
+                        }
+                        await Promise.race([
+                            Promise.all(loaders),
+                            new Promise(resolve => setTimeout(resolve, 4000))
+                        ]);
+                    }
+                } catch (_) {
+                    // Continue to verification check
+                }
+
+                const loaded = isFontAvailableInBrowser(targetFamily);
+                if (loaded) {
+                    setFontVerifyBadgeStatus('ready');
+                    if (showFeedback) {
+                        showToast(`ฟอนต์ ${targetFamily} พร้อมใช้งานแล้ว`, 'success');
+                    }
+                } else {
+                    setFontVerifyBadgeStatus('fallback');
+                    if (showFeedback) {
+                        showToast(`โหลดฟอนต์ ${targetFamily} ไม่สำเร็จ (ใช้ฟอนต์สำรอง)`, 'error');
+                    }
+                }
+                return loaded;
+            }
+
+            async function ensureAllDocumentFontsLoaded() {
+                const families = new Set(['Prompt']);
+                state.pages.forEach(pg => {
+                    pg.items.forEach(it => {
+                        if (it.type === 'text' && it.fontFamily) {
+                            families.add(it.fontFamily);
+                        }
+                    });
+                });
+                await Promise.all(Array.from(families).map(f => ensureFontLoadedAndVerified(f, false)));
+            }
+
+            function updateActiveFontDisplay(family) {
+                const meta = getFontMetaByFamily(family);
+                const hiddenInp = $('textFont');
+                const titleEl = $('activeFontTitle');
+                const metaEl = $('activeFontMeta');
+
+                if (hiddenInp) hiddenInp.value = meta.family;
+                if (titleEl) {
+                    titleEl.textContent = meta.label;
+                    titleEl.style.fontFamily = `"${meta.family}", "Prompt", sans-serif`;
+                }
+                if (metaEl) {
+                    const catLabel = meta.category === 'thai' ? 'THAI' : 'ENGLISH';
+                    metaEl.textContent = `${catLabel} • ${meta.sample}`;
+                    metaEl.style.fontFamily = `"${meta.family}", "Prompt", sans-serif`;
+                }
+
+                if (isFontAvailableInBrowser(meta.family)) {
+                    setFontVerifyBadgeStatus('ready');
+                }
+            }
+
+            function toggleFontPickerDrawer() {
+                state.fontPickerOpen = !state.fontPickerOpen;
+                const drawer = $('fontPickerDrawer');
+                const chev = $('fontPickerChevron');
+                if (drawer) drawer.classList.toggle('hidden', !state.fontPickerOpen);
+                if (chev) chev.style.transform = state.fontPickerOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+                if (state.fontPickerOpen) {
+                    renderFontPickerList();
+                }
+            }
+
+            function closeFontPickerDrawer() {
+                state.fontPickerOpen = false;
+                const drawer = $('fontPickerDrawer');
+                const chev = $('fontPickerChevron');
+                if (drawer) drawer.classList.add('hidden');
+                if (chev) chev.style.transform = 'rotate(0deg)';
+            }
+
+            function setFontCategoryFilter(cat) {
+                state.fontCategoryFilter = cat;
+                ['all', 'thai', 'handwriting', 'en'].forEach(c => {
+                    const btn = $(`fontCatBtn_${c}`);
+                    if (!btn) return;
+                    btn.className = c === cat
+                        ? 'py-1 rounded-lg bg-[#E11D48] text-white font-bold text-center cursor-pointer transition'
+                        : 'py-1 rounded-lg panel-subtle border hover:border-[#E11D48] font-bold text-center cursor-pointer transition';
+                });
+                renderFontPickerList();
+            }
+
+            function onFontSearchInput(val) {
+                state.fontSearchQuery = String(val || '').trim().toLowerCase();
+                const clrBtn = $('btnClearFontSearch');
+                if (clrBtn) clrBtn.classList.toggle('hidden', state.fontSearchQuery.length === 0);
+                renderFontPickerList();
+            }
+
+            function clearFontSearch() {
+                state.fontSearchQuery = '';
+                const inp = $('fontSearchInput');
+                const clrBtn = $('btnClearFontSearch');
+                if (inp) inp.value = '';
+                if (clrBtn) clrBtn.classList.add('hidden');
+                renderFontPickerList();
+            }
+
+            function renderFontPickerList() {
+                const container = $('fontListContainer');
+                if (!container) return;
+
+                const selItem = getSelectedItem();
+                const activeFamily = (selItem && selItem.type === 'text' && selItem.fontFamily)
+                    ? selItem.fontFamily
+                    : (state.textDefaults.fontFamily || 'Prompt');
+
+                const filtered = STUDIO_FONTS.filter(f => {
+                    if (state.fontCategoryFilter === 'thai' && f.category !== 'thai') return false;
+                    if (state.fontCategoryFilter === 'en' && f.category !== 'en') return false;
+                    if (state.fontCategoryFilter === 'handwriting' && !f.tags.includes('handwriting')) return false;
+
+                    if (state.fontSearchQuery) {
+                        const hay = `${f.family} ${f.label} ${f.tags.join(' ')} ${f.sample}`.toLowerCase();
+                        if (!hay.includes(state.fontSearchQuery)) return false;
+                    }
+                    return true;
+                });
+
+                container.innerHTML = '';
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="py-5 text-center font-mono text-[11px] text-slate-400">
+                            ไม่พบฟอนต์ที่ค้นหา "${state.fontSearchQuery}"
+                        </div>
+                    `;
+                    return;
+                }
+
+                filtered.forEach(f => {
+                    const isSelected = f.family === activeFamily;
+                    const isReady = isFontAvailableInBrowser(f.family);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.onclick = () => selectStudioFont(f.family);
+                    btn.className = isSelected
+                        ? 'w-full text-left px-2.5 py-2 rounded-xl bg-[#E11D48]/12 border border-[#E11D48] flex items-center justify-between gap-2 transition cursor-pointer'
+                        : 'w-full text-left px-2.5 py-2 rounded-xl panel-subtle border border-transparent hover:border-[#E11D48]/60 flex items-center justify-between gap-2 transition cursor-pointer';
+
+                    btn.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs font-bold truncate ${isSelected ? 'text-[#E11D48]' : ''}" style="font-family: '${f.family}', 'Prompt', sans-serif;">
+                                ${f.label}
+                            </div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" style="font-family: '${f.family}', 'Prompt', sans-serif;">
+                                ${f.sample}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            ${isReady
+                                ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500" title="พร้อมใช้งาน"></span>'
+                                : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600" title="คลิกเพื่อโหลดฟอนต์"></span>'}
+                            ${isSelected ? '<i class="fa-solid fa-check text-[#E11D48] text-xs"></i>' : ''}
+                        </div>
+                    `;
+                    container.appendChild(btn);
+                });
+            }
+
+            async function selectStudioFont(family) {
+                const validMeta = getFontMetaByFamily(family);
+                const chosenFamily = validMeta.family;
+
+                state.textDefaults.fontFamily = chosenFamily;
+                updateActiveFontDisplay(chosenFamily);
+                closeFontPickerDrawer();
+
+                const item = getSelectedItem();
+                if (item && item.type === 'text') {
+                    item.fontFamily = chosenFamily;
+                    const pg = getPageById(state.selectedRef.pageId);
+                    if (pg) {
+                        measureTextItem(pg, item);
+                        if (state.inlineEditor && state.inlineEditor.itemId === item.id) {
+                            syncInlineEditorStyle();
+                        } else {
+                            redrawPageOverlay(pg.id);
+                            updateFloatingTextEditPill();
+                        }
+                    }
+                }
+
+                await ensureFontLoadedAndVerified(chosenFamily, true);
+
+                // Re-measure & re-render once real font metrics are loaded in browser memory
+                const liveItem = getSelectedItem();
+                if (liveItem && liveItem.type === 'text' && liveItem.fontFamily === chosenFamily) {
+                    const livePg = getPageById(state.selectedRef.pageId);
+                    if (livePg) {
+                        measureTextItem(livePg, liveItem);
+                        if (state.inlineEditor && state.inlineEditor.itemId === liveItem.id) {
+                            syncInlineEditorStyle();
+                        } else {
+                            redrawPageOverlay(livePg.id);
+                            updateFloatingTextEditPill();
+                        }
+                        pushHistorySnapshot();
+                    }
+                }
+            }
+
+            // =================================================================
             // 3. THEME & EXPORT DROPDOWN
             // =================================================================
             function toggleTheme() {
@@ -1975,13 +2310,6 @@
             function init() {
                 if (isInitialized) return;
                 isInitialized = true;
-
-                // Remove fallback navbar if external NavbarPDF.js injected its own content
-                const navContainer = $('navbar-container');
-                const fallbackNav = $('fallbackStudioNavbar');
-                if (navContainer && fallbackNav && navContainer.children.length > 1) {
-                    fallbackNav.remove();
-                }
 
                 const dropZone = $('dropZone');
                 const workspace = $('pdfWorkspace');
@@ -2039,6 +2367,7 @@
 
                 setupKeyboardShortcuts();
                 syncTextControlsUI(state.textDefaults);
+                ensureFontLoadedAndVerified('Prompt', false);
 
                 const eraserSlider = $('eraserSize');
                 if (eraserSlider) onEraserSizeChange(eraserSlider.value);
@@ -2418,6 +2747,7 @@
                         closeDocumentPreview();
                         closeInsertPopover();
                         closeExportMenu();
+                        closeFontPickerDrawer();
                         closeInlineEditor();
                         return;
                     }
@@ -2634,7 +2964,6 @@
                 updateMobileUnhidePill();
                 updateWorkspaceMobileBottomPadding();
 
-                // If a text box is already selected on mobile when opening the drawer, scroll it above the drawer
                 if (isMobile() && state.selectedRef) {
                     const sel = getSelectedItem();
                     if (sel && sel.type === 'text') {
@@ -2647,6 +2976,7 @@
                 if (isMobile()) {
                     state.isMobileDrawerLockedHidden = true;
                 }
+                closeFontPickerDrawer();
                 const panel = $('subToolPopover');
                 if (panel) {
                     panel.classList.add('hidden');
@@ -2674,6 +3004,7 @@
             function selectTool(tool, wantOpenPanel = true) {
                 if (tool !== 'text') {
                     closeInlineEditor();
+                    closeFontPickerDrawer();
                 }
                 state.tool = tool;
                 const titleEl = $('subToolTitle');
@@ -2907,7 +3238,7 @@
             // 10. MULTI-LINE TEXT MEASUREMENT & ENHANCED FONT SIZE CONTROLS
             // =================================================================
             function buildTextFontString(item, scale) {
-                return `${item.italic ? 'italic ' : ''}${item.bold ? 'bold ' : ''}${item.fontSize * scale}px "${item.fontFamily}", sans-serif`;
+                return `${item.italic ? 'italic ' : ''}${item.bold ? 'bold ' : ''}${item.fontSize * scale}px "${item.fontFamily}", "Prompt", sans-serif`;
             }
 
             function wrapTextLine(ctx, line, maxW) {
@@ -3041,10 +3372,11 @@
                 });
             }
 
-            function createAndOpenTextAt(pageId, x, y) {
+            async function createAndOpenTextAt(pageId, x, y) {
                 const pg = getPageById(pageId);
                 if (!pg) return;
 
+                const chosenFamily = state.textDefaults.fontFamily || ($('textFont') && $('textFont').value) || 'Prompt';
                 const fontSize = clamp(parseInt(($('textSize') && $('textSize').value) || state.textDefaults.fontSize || '20', 10) || 20, 8, 200);
                 const item = {
                     id: uid('txt'),
@@ -3052,7 +3384,7 @@
                     x,
                     y,
                     text: 'พิมพ์ข้อความ...',
-                    fontFamily: ($('textFont') && $('textFont').value) || 'Prompt',
+                    fontFamily: chosenFamily,
                     fontSize,
                     color: ($('textColor') && $('textColor').value) || '#0F172A',
                     bold: state.textDefaults.bold,
@@ -3087,6 +3419,11 @@
                 updateOverviewBadges();
                 ensureTextVisibleAboveDrawer(pageId, item);
                 showToast('วางกล่องข้อความแล้ว (ดับเบิลคลิกหรือกด Enter เพื่อพิมพ์)', 'info');
+
+                await ensureFontLoadedAndVerified(chosenFamily, false);
+                measureTextItem(pg, item);
+                redrawPageOverlay(pageId);
+                updateFloatingTextEditPill();
             }
 
             function placeTextAtCenter() {
@@ -3127,7 +3464,7 @@
                 if (!pg || !item || !textareaEl) return;
 
                 const cssScale = state.zoom * BASE_RENDER_SCALE;
-                textareaEl.style.fontFamily = `"${item.fontFamily}", sans-serif`;
+                textareaEl.style.fontFamily = `"${item.fontFamily}", "Prompt", sans-serif`;
                 textareaEl.style.fontSize = `${item.fontSize * cssScale}px`;
                 textareaEl.style.color = item.color;
                 textareaEl.style.fontWeight = item.bold ? 'bold' : 'normal';
@@ -3148,6 +3485,10 @@
             }
 
             function onTextStyleInput(prop, val) {
+                if (prop === 'fontFamily') {
+                    selectStudioFont(val);
+                    return;
+                }
                 if (prop === 'bgColor') {
                     state.textDefaults.bgColor = val;
                 }
@@ -3211,12 +3552,16 @@
             }
 
             function syncTextControlsUI(src) {
-                const fEl = $('textFont');
                 const cEl = $('textColor');
                 const bgColorEl = $('textBgColor');
                 const bgRow = $('textBgColorRow');
 
-                if (fEl && src.fontFamily) fEl.value = src.fontFamily;
+                const targetFamily = src.fontFamily || state.textDefaults.fontFamily || 'Prompt';
+                updateActiveFontDisplay(targetFamily);
+                if (state.fontPickerOpen) {
+                    renderFontPickerList();
+                }
+
                 if (src.fontSize) syncFontSizeWidgets(src.fontSize);
                 if (cEl && src.color) cEl.value = src.color;
                 if (bgColorEl && src.bgColor) bgColorEl.value = src.bgColor;
@@ -3385,6 +3730,7 @@
             // =================================================================
             function clearSelection(shouldRedraw = true) {
                 closeInlineEditor();
+                closeFontPickerDrawer();
                 const prevPageId = state.selectedRef ? state.selectedRef.pageId : null;
                 state.selectedRef = null;
                 removeFloatingTextEditPill();
@@ -3565,6 +3911,12 @@
                             targetCtx.restore();
                         }
                     } else if (item.type === 'text') {
+                        if (item.fontFamily && !isFontAvailableInBrowser(item.fontFamily)) {
+                            ensureFontLoadedAndVerified(item.fontFamily, false).then((loaded) => {
+                                if (loaded) redrawPageOverlay(page.id);
+                            });
+                        }
+
                         const { lines, width, height, lineH } = measureTextItem(page, item);
                         const align = item.align || 'left';
                         targetCtx.save();
@@ -3662,7 +4014,6 @@
                         ctx.stroke();
                     });
                 } else if (item.type === 'text') {
-                    // Bottom-right circular proportional font-size resize handle
                     const cx = (x + w) * renderScale;
                     const cy = (y + h) * renderScale;
                     ctx.fillStyle = '#E11D48';
@@ -3896,7 +4247,6 @@
                             redrawPageOverlay(pageId);
                             updateFloatingTextEditPill();
 
-                            // Mobile Responsive Auto-Scroll: If text box is selected while bottom drawer is open (not hidden), scroll it above the drawer
                             if (hit.type === 'text') {
                                 ensureTextVisibleAboveDrawer(pageId, hit);
                             }
@@ -4124,6 +4474,8 @@
                 buildOverviewSidebarDOM();
                 updateHeaderAndNavCounters();
                 updateOverviewBadges();
+
+                await ensureAllDocumentFontsLoaded();
 
                 for (const pg of state.pages) {
                     await renderMainPageBase(pg.id);
@@ -4961,6 +5313,7 @@
                 closeInlineEditor();
                 closeExportMenu();
                 closeInsertPopover();
+                closeFontPickerDrawer();
 
                 const modal = $('documentPreviewModal');
                 const body = $('previewModalBody');
@@ -4977,6 +5330,7 @@
                 modal.classList.remove('hidden');
 
                 try {
+                    await ensureAllDocumentFontsLoaded();
                     const frag = document.createDocumentFragment();
                     const total = state.pages.length;
                     const previewScale = Math.min(3.0, Math.max(2.5, 1.5 * getHiDpiRatio()));
@@ -5073,6 +5427,7 @@
                 closeInlineEditor();
                 closeExportMenu();
                 closeInsertPopover();
+                closeFontPickerDrawer();
 
                 const printSec = $('printSection');
                 if (!printSec) return;
@@ -5098,6 +5453,7 @@
                 };
 
                 try {
+                    await ensureAllDocumentFontsLoaded();
                     const printScale = isMobile()
                         ? 2.0
                         : Math.max(2.4, Math.min(2.8, (window.devicePixelRatio || 1) * 1.6));
@@ -5170,6 +5526,7 @@
             }
 
             async function buildEditedPdfBytes() {
+                await ensureAllDocumentFontsLoaded();
                 const lib = await window.ensurePdfLibLoaded();
                 const outDoc = await lib.PDFDocument.create();
                 const loadedDocs = {};
@@ -5230,6 +5587,7 @@
                 if (state.pages.length === 0) return;
 
                 closeInlineEditor();
+                closeFontPickerDrawer();
                 showToast('กำลังสร้างไฟล์ PDF คุณภาพสูง...', 'info');
 
                 try {
@@ -5356,6 +5714,7 @@
             }
 
             async function downloadSinglePageImage(pg, pageIndex, format = 'png', singleDocFlag = false) {
+                await ensureAllDocumentFontsLoaded();
                 const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
                 const validFormats = ['png', 'jpg', 'webp', 'bmp'];
                 const ext = validFormats.includes(format) ? format : 'png';
@@ -5376,6 +5735,7 @@
                 closeInlineEditor();
                 closeExportMenu();
                 closeInsertPopover();
+                closeFontPickerDrawer();
 
                 const validFormats = ['png', 'jpg', 'webp', 'bmp'];
                 const chosenFmt = validFormats.includes(format) ? format : 'png';
@@ -5674,6 +6034,7 @@
                 showToast(`กำลังรวมภาพ ${indicesToExport.length} หน้า (.${chosenFormat.toUpperCase()}) เป็นไฟล์ ZIP...`, 'info');
 
                 try {
+                    await ensureAllDocumentFontsLoaded();
                     const ZipCtor = await window.ensureJSZipLoaded();
                     const zip = new ZipCtor();
                     const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
@@ -5750,6 +6111,12 @@
                 toggleSubToolPanel,
                 hideSubToolPanel,
                 unhideMobileSubToolPanel,
+                toggleFontPickerDrawer,
+                closeFontPickerDrawer,
+                setFontCategoryFilter,
+                onFontSearchInput,
+                clearFontSearch,
+                selectStudioFont,
                 placeTextAtCenter,
                 editSelectedTextInline,
                 setFontSizeValue,
