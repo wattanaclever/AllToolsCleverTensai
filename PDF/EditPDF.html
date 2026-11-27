@@ -404,6 +404,18 @@
             z-index: 90;
         }
 
+        /* Dynamic Draw Color Dot Cursor */
+        #drawCursor {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 90;
+            box-shadow: 0 0 0 1.5px #FFFFFF, 0 0 0 2.5px rgba(15, 23, 42, 0.48), 0 2px 6px rgba(0, 0, 0, 0.25);
+            transition: width 0.08s ease, height 0.08s ease, background-color 0.08s ease, opacity 0.08s ease;
+        }
+
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -721,9 +733,14 @@
                     </button>
 
                     <button type="button" id="rail_draw" onclick="onRailToolClick('draw')"
-                        class="rail-btn h-11 md:w-11 rounded-xl flex flex-col items-center justify-center gap-0.5 text-slate-500 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
+                        class="rail-btn relative h-11 md:w-11 rounded-xl flex flex-col items-center justify-center gap-0.5 text-slate-500 dark:text-slate-400 hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer"
                         title="วาดเส้นอิสระและไฮไลต์">
-                        <i class="fa-solid fa-pen-nib text-xs sm:text-sm"></i>
+                        <span class="relative inline-flex items-center justify-center">
+                            <i class="fa-solid fa-pen-nib text-xs sm:text-sm"></i>
+                            <span id="railDrawColorDot"
+                                class="w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 shadow-xs -ml-0.5 -mt-2 shrink-0"
+                                style="background-color: #0F172A;"></span>
+                        </span>
                         <span class="text-[9px] font-medium">วาด</span>
                     </button>
 
@@ -1107,7 +1124,13 @@
 
                     <!-- DRAW & HIGHLIGHTER PANEL -->
                     <div id="panel_draw" class="hidden space-y-3">
-                        <div class="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#E11D48]">Draw &amp; Highlighter</div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#E11D48]">Draw &amp; Highlighter</span>
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full panel-subtle border font-mono text-[10px] font-medium">
+                                <span id="panelDrawColorDot" class="w-2.5 h-2.5 rounded-full border border-white dark:border-slate-800 shadow-xs" style="background-color: #0F172A;"></span>
+                                <span id="drawColorHexLabel">#0F172A</span>
+                            </span>
+                        </div>
 
                         <div class="grid grid-cols-3 gap-1.5">
                             <button type="button" id="drawStyle_solid" onclick="setDrawStyle('solid')"
@@ -1124,7 +1147,7 @@
                                     <span>SIZE</span><span id="drawSizeLabel">4px</span>
                                 </div>
                                 <input type="range" id="drawSize" min="1" max="36" value="4"
-                                    oninput="document.getElementById('drawSizeLabel').textContent = this.value + 'px'"
+                                    oninput="onDrawSizeChange(this.value)"
                                     class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                             <div>
@@ -1132,18 +1155,19 @@
                                     <span>OPACITY</span><span id="drawOpacityLabel">100%</span>
                                 </div>
                                 <input type="range" id="drawOpacity" min="15" max="100" value="100"
-                                    oninput="document.getElementById('drawOpacityLabel').textContent = this.value + '%'"
+                                    oninput="onDrawOpacityChange(this.value)"
                                     class="w-full accent-[#E11D48] cursor-pointer">
                             </div>
                         </div>
 
                         <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="setDrawColor('#E11D48')" class="w-6 h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
-                            <button type="button" onclick="setDrawColor('#1E293B')" class="w-6 h-6 rounded-lg bg-[#1E293B] border border-slate-300 cursor-pointer" title="Charcoal"></button>
-                            <button type="button" onclick="setDrawColor('#2563EB')" class="w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer" title="Blue"></button>
-                            <button type="button" onclick="setDrawColor('#10B981')" class="w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer" title="Green"></button>
-                            <button type="button" onclick="setDrawColor('#FACC15')" class="w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer" title="Yellow"></button>
-                            <input type="color" id="drawColor" value="#E11D48"
+                            <button type="button" data-draw-swatch="#0F172A" onclick="setDrawColor('#0F172A')" class="draw-swatch-btn w-6 h-6 rounded-lg bg-[#0F172A] ring-2 ring-[#E11D48] ring-offset-1 dark:ring-offset-slate-900 border border-slate-300 cursor-pointer transition" title="Black (ค่าเริ่มต้น)"></button>
+                            <button type="button" data-draw-swatch="#E11D48" onclick="setDrawColor('#E11D48')" class="draw-swatch-btn w-6 h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer transition" title="Crimson"></button>
+                            <button type="button" data-draw-swatch="#2563EB" onclick="setDrawColor('#2563EB')" class="draw-swatch-btn w-6 h-6 rounded-lg bg-[#2563EB] border border-slate-300 cursor-pointer transition" title="Blue"></button>
+                            <button type="button" data-draw-swatch="#10B981" onclick="setDrawColor('#10B981')" class="draw-swatch-btn w-6 h-6 rounded-lg bg-[#10B981] border border-slate-300 cursor-pointer transition" title="Green"></button>
+                            <button type="button" data-draw-swatch="#FACC15" onclick="setDrawColor('#FACC15')" class="draw-swatch-btn w-6 h-6 rounded-lg bg-[#FACC15] border border-slate-300 cursor-pointer transition" title="Yellow"></button>
+                            <input type="color" id="drawColor" value="#0F172A"
+                                oninput="setDrawColor(this.value)"
                                 class="flex-1 h-6 panel-subtle border rounded-lg cursor-pointer p-0.5">
                         </div>
                     </div>
@@ -1220,6 +1244,7 @@
             <!-- Center Document Workspace -->
             <main id="pdfWorkspace" class="stage-bg flex-1 relative overflow-auto min-w-0 select-none">
                 <div id="eraserCursor"></div>
+                <div id="drawCursor"></div>
 
                 <!-- Scroll-Safe & Balanced Initial Position Container -->
                 <div id="canvasPagesContainer"
@@ -1746,6 +1771,7 @@
 
                 tool: 'select',
                 drawStyle: 'solid',
+                drawColor: '#0F172A',
                 eraserMode: 'partial',
                 zoom: 1.0,
                 activePageId: null,
@@ -2444,6 +2470,7 @@
                 setupKeyboardShortcuts();
                 syncTextControlsUI(state.textDefaults);
                 ensureFontLoadedAndVerified('Prompt', 400, false, false);
+                setDrawColor(state.drawColor || '#0F172A');
 
                 const eraserSlider = $('eraserSize');
                 if (eraserSlider) onEraserSizeChange(eraserSlider.value);
@@ -3127,6 +3154,11 @@
                     eraserRing.style.display = 'none';
                 }
 
+                const drawDot = $('drawCursor');
+                if (drawDot && state.tool !== 'draw') {
+                    drawDot.style.display = 'none';
+                }
+
                 const vp = $('pdfWorkspace');
                 if (vp) {
                     vp.classList.toggle('select-pan-stage', state.tool === 'select');
@@ -3136,12 +3168,47 @@
                 if (state.tool === 'select') cur = 'grab';
                 else if (state.tool === 'text') cur = 'text';
                 else if (state.tool === 'image') cur = 'copy';
-                else if (state.tool === 'draw') cur = 'crosshair';
+                else if (state.tool === 'draw') cur = 'none';
                 else if (state.tool === 'eraser') cur = 'none';
 
                 document.querySelectorAll('.overlay-canvas').forEach(c => {
                     c.style.cursor = cur;
                 });
+            }
+
+            function syncDrawCursorAppearance() {
+                const dot = $('drawCursor');
+                if (!dot) return;
+
+                const color = state.drawColor || ($('drawColor') && $('drawColor').value) || '#0F172A';
+                const rawSize = parseInt(($('drawSize') && $('drawSize').value) || '4', 10) || 4;
+                const rawOpacity = (parseInt(($('drawOpacity') && $('drawOpacity').value) || '100', 10) || 100) / 100;
+                const scale = state.zoom * BASE_RENDER_SCALE;
+
+                const effectiveDia = state.drawStyle === 'highlighter'
+                    ? Math.max(10, rawSize * 2.4 * scale)
+                    : Math.max(6, rawSize * scale);
+                const effectiveOpacity = state.drawStyle === 'highlighter'
+                    ? Math.min(0.45, rawOpacity * 0.45)
+                    : Math.max(0.25, rawOpacity);
+
+                dot.style.width = `${Math.round(effectiveDia)}px`;
+                dot.style.height = `${Math.round(effectiveDia)}px`;
+                dot.style.backgroundColor = color;
+                dot.style.opacity = String(effectiveOpacity);
+            }
+
+            function positionDrawCursor(clientX, clientY) {
+                const dot = $('drawCursor');
+                if (!dot) return;
+                if (state.tool === 'draw') {
+                    syncDrawCursorAppearance();
+                    dot.style.display = 'block';
+                    dot.style.left = `${clientX}px`;
+                    dot.style.top = `${clientY}px`;
+                } else {
+                    dot.style.display = 'none';
+                }
             }
 
             function setDrawStyle(style) {
@@ -3153,11 +3220,49 @@
                         ? 'py-1.5 rounded-xl bg-[#E11D48] text-white font-medium text-[11px] cursor-pointer'
                         : 'py-1.5 rounded-xl panel-subtle border font-medium text-[11px] cursor-pointer';
                 });
+                syncDrawCursorAppearance();
             }
 
             function setDrawColor(hex) {
+                const normalized = String(hex || '#0F172A').toUpperCase();
+                state.drawColor = normalized;
+
                 const inp = $('drawColor');
-                if (inp) inp.value = hex;
+                if (inp && inp.value.toUpperCase() !== normalized) {
+                    inp.value = normalized;
+                }
+
+                const railDot = $('railDrawColorDot');
+                if (railDot) railDot.style.backgroundColor = normalized;
+
+                const panelDot = $('panelDrawColorDot');
+                if (panelDot) panelDot.style.backgroundColor = normalized;
+
+                const hexLbl = $('drawColorHexLabel');
+                if (hexLbl) hexLbl.textContent = normalized;
+
+                document.querySelectorAll('.draw-swatch-btn').forEach(btn => {
+                    const sw = String(btn.dataset.drawSwatch || '').toUpperCase();
+                    if (sw === normalized) {
+                        btn.classList.add('ring-2', 'ring-[#E11D48]', 'ring-offset-1', 'dark:ring-offset-slate-900');
+                    } else {
+                        btn.classList.remove('ring-2', 'ring-[#E11D48]', 'ring-offset-1', 'dark:ring-offset-slate-900');
+                    }
+                });
+
+                syncDrawCursorAppearance();
+            }
+
+            function onDrawSizeChange(val) {
+                const lbl = $('drawSizeLabel');
+                if (lbl) lbl.textContent = `${val}px`;
+                syncDrawCursorAppearance();
+            }
+
+            function onDrawOpacityChange(val) {
+                const lbl = $('drawOpacityLabel');
+                if (lbl) lbl.textContent = `${val}%`;
+                syncDrawCursorAppearance();
             }
 
             function setEraserMode(mode) {
@@ -4507,11 +4612,12 @@
                     if (state.tool === 'draw') {
                         e.preventDefault();
                         closeInlineEditor();
+                        positionDrawCursor(e.clientX, e.clientY);
                         const strokeObj = {
                             id: uid('ink'),
                             kind: 'draw',
                             style: state.drawStyle,
-                            color: ($('drawColor') && $('drawColor').value) || '#E11D48',
+                            color: state.drawColor || ($('drawColor') && $('drawColor').value) || '#0F172A',
                             size: parseInt(($('drawSize') && $('drawSize').value) || '4', 10) || 4,
                             opacity: (parseInt(($('drawOpacity') && $('drawOpacity').value) || '100', 10) || 100) / 100,
                             points: [{ x: pos.x, y: pos.y }]
@@ -4560,6 +4666,13 @@
                         } else {
                             ring.style.display = 'none';
                         }
+                    }
+
+                    if (state.tool === 'draw') {
+                        positionDrawCursor(e.clientX, e.clientY);
+                    } else {
+                        const drawDot = $('drawCursor');
+                        if (drawDot) drawDot.style.display = 'none';
                     }
 
                     const pg = getPageById(pageId);
@@ -4699,6 +4812,8 @@
                 canvas.addEventListener('pointerleave', () => {
                     const ring = $('eraserCursor');
                     if (ring) ring.style.display = 'none';
+                    const drawDot = $('drawCursor');
+                    if (drawDot) drawDot.style.display = 'none';
                 });
             }
 
@@ -5467,6 +5582,7 @@
 
                 const zLbl = $('zoomLabel');
                 if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
+                syncDrawCursorAppearance();
 
                 const cssScale = state.zoom * BASE_RENDER_SCALE;
                 state.pages.forEach(pg => {
@@ -6369,6 +6485,8 @@
                 applyWatermarkAction,
                 setDrawStyle,
                 setDrawColor,
+                onDrawSizeChange,
+                onDrawOpacityChange,
                 setEraserMode,
                 onEraserSizeChange,
                 onSelectedOpacityInput,
