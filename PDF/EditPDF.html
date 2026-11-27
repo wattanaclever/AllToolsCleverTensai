@@ -249,7 +249,6 @@
             background-clip: content-box;
         }
 
-        /* Restrict scrollbar hover styling to mouse/fine-pointer devices */
         @media (hover: hover) {
             ::-webkit-scrollbar-thumb:hover {
                 background: #E11D48;
@@ -261,7 +260,6 @@
             }
         }
 
-        /* Touch Active Feedback (Prevent Sticky Hover on Mobile) */
         @media (hover: none), (pointer: coarse) {
             button:active,
             .rail-btn:active {
@@ -281,7 +279,6 @@
             cursor: grabbing !important;
         }
 
-        /* Select Mode Free-Pan Stage Cursor */
         #pdfWorkspace.select-pan-stage {
             cursor: grab;
         }
@@ -309,7 +306,6 @@
             flex-shrink: 0;
         }
 
-        /* Strict Mobile 1-Finger Touch Isolation */
         @media (max-width: 767px) {
             #pdfWorkspace,
             .overlay-canvas {
@@ -317,12 +313,10 @@
             }
         }
 
-        /* GPU Transform Origin for 60fps Pinch-to-Zoom */
         #canvasPagesContainer {
             transform-origin: 0 0;
         }
 
-        /* Strict Full-Frame Fit for Overview Thumbnails */
         .thumb-canvas-fit {
             width: 100% !important;
             height: 100% !important;
@@ -413,7 +407,7 @@
             margin: 0;
         }
 
-        /* WYSIWYG One-Click Auto-Orientation Print Styles (Full A4 Portrait Fill - Mobile Safe) */
+        /* WYSIWYG One-Click Auto-Orientation Print Styles */
         @page {
             size: A4 portrait;
             margin: 0;
@@ -483,156 +477,11 @@
 <body class="h-[100dvh] flex flex-col overflow-hidden font-sans antialiased selection:bg-[#E11D48] selection:text-white">
 
     <!-- ===================================================================== -->
-    <!-- 1. SHARED PDF NAVBAR & ALL TOOLS HUB MODAL                            -->
+    <!-- 1. SHARED PDF NAVBAR & ALL TOOLS HUB MODAL (MATCHES CropPDF_2.html)   -->
     <!-- ===================================================================== -->
     <div id="navbar-container" class="shrink-0"></div>
     <script src="JS/NavbarPDF.js"></script>
 
-    <!-- Fallback Navbar (runs automatically if JS/NavbarPDF.js did not populate #navbar-container) -->
-    <script>
-        (function () {
-            const container = document.getElementById("navbar-container");
-            if (!container || container.innerHTML.trim() !== "") return;
-
-            const PDF_TOOLS_MENU = [
-                { title: "Merge PDF", desc: "รวมไฟล์เอกสารหลายหน้าเข้าด้วยกันเป็นเล่มเดียว", url: "MergePDF.html", icon: "fa-solid fa-object-ungroup", isNew: false },
-                { title: "Split PDF", desc: "แยกหน้าหรือตัดเลือกบางส่วนของเอกสาร PDF", url: "SplitPDF.html", icon: "fa-solid fa-scissors", isNew: false },
-                { title: "Crop & Rotate PDF", desc: "ตัดขอบ หมุนหน้าเอกสาร และปรับสัดส่วนแบบเรียลไทม์", url: "CropPDF.html", icon: "fa-solid fa-crop-simple", isNew: true },
-                { title: "Edit PDF", desc: "เขียน วาด พิมพ์ และเติมข้อความบนหน้า PDF", url: "EditPDF.html", icon: "fa-solid fa-pen-to-square", isNew: false },
-                { title: "Compress PDF", desc: "ลดขนาดไฟล์ PDF พร้อมคงความคมชัดตัวอักษร", url: "CompressPDF.html", icon: "fa-solid fa-file-zipper", isNew: false },
-                { title: "Convert to PDF", desc: "แปลงรูปภาพและไฟล์ข้อความให้เป็นเอกสาร PDF", url: "ConvertToPDF.html", icon: "fa-solid fa-file-import", isNew: false }
-            ];
-
-            const OTHER_WORKSPACES = [
-                { title: "Excel Unlock Pro", desc: "ปลดล็อกชีตและสมุดงาน Excel", url: "../HomeExcelUnlock.html", icon: "fa-solid fa-file-excel", colorClass: "bg-emerald-500/20 text-emerald-400" },
-                { title: "QR Code Generator", desc: "สร้าง QR Code ภาษาไทย/Wi-Fi", url: "../HomeQRcode.html", icon: "fa-solid fa-qrcode", colorClass: "bg-blue-500/20 text-blue-400" },
-                { title: "Unit Converter Suite", desc: "แปลงมาตราวัดสากลและมาตราไทย", url: "../UnitConverter.html", icon: "fa-solid fa-ruler-combined", colorClass: "bg-crimson-500/20 text-crimson-500" },
-                { title: "Color Mixer Studio", desc: "ผสมสีและคำนวณสูตรแม่สี 12 ระบบ", url: "../HomeMixColor.html", icon: "fa-solid fa-droplet", colorClass: "bg-purple-500/20 text-purple-400" }
-            ];
-
-            container.innerHTML = `
-                <nav class="bg-gray-950 border-b border-gray-800 h-14 flex-shrink-0 z-50 px-3 sm:px-6 flex items-center justify-between font-sans text-xs text-white relative">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <a href="HomePDF.html" class="flex items-center gap-2 group shrink-0" title="กลับสู่หน้าหลัก PDF Studio Suite">
-                            <div class="w-8 h-8 rounded-xl bg-red-600 flex items-center justify-center text-white font-bold text-base shadow-lg group-hover:bg-crimson-500 transition-colors">
-                                <i class="fa-solid fa-file-pdf"></i>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-xs sm:text-sm font-extrabold tracking-wider leading-none">CLEVER<span class="text-red-500">TENSAI</span></span>
-                                <span class="font-mono text-[8px] sm:text-[9px] text-gray-400 tracking-widest mt-0.5">PDF STUDIO SUITE</span>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="hidden sm:block absolute left-1/2 transform -translate-x-1/2">
-                        <button type="button" onclick="toggleNavPopup()"
-                            class="px-4 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 rounded-full font-bold flex items-center gap-2 text-gray-100 transition-all shadow-md group text-xs cursor-pointer">
-                            <i class="fa-solid fa-th text-red-500 group-hover:scale-110 transition-transform"></i>
-                            <span>All Tools Hub</span>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
-                        </button>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                        <button type="button" onclick="toggleNavPopup()"
-                            class="sm:hidden px-2.5 py-1.5 bg-gray-900 border border-gray-700 rounded-xl font-bold flex items-center gap-1.5 text-gray-100 text-xs cursor-pointer">
-                            <i class="fa-solid fa-th text-red-500"></i>
-                            <span>Hub</span>
-                        </button>
-
-                        <div class="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-900 border border-gray-800 text-emerald-400 font-mono text-[10px]">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>CLIENT-SIDE</span>
-                        </div>
-
-                        <a href="../index.html"
-                            class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/60 text-gray-200 hover:text-white font-mono text-[11px] flex items-center gap-1.5 transition-all">
-                            <i class="fa-solid fa-house text-red-500"></i>
-                            <span class="hidden sm:inline">หน้าหลัก Portal</span>
-                        </a>
-                    </div>
-                </nav>
-
-                <div id="navPopupModal" onclick="if (event.target === this) toggleNavPopup()"
-                    class="hidden fixed inset-0 z-[80] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-                    <div class="bg-gray-900 border-2 border-gray-800 rounded-3xl max-w-5xl w-full p-5 sm:p-8 shadow-2xl relative text-white font-sans max-h-[90dvh] flex flex-col">
-                        <div class="flex items-center justify-between pb-4 sm:pb-5 border-b border-gray-800 shrink-0">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-lg sm:text-xl border border-red-500/30">
-                                    <i class="fa-solid fa-th"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-base sm:text-xl font-extrabold text-white tracking-wide">Select PDF Tool &amp; Workspace</h3>
-                                    <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5">เลือกเครื่องมือจัดการเอกสาร PDF หรือสลับไปยังระบบอื่น</p>
-                                </div>
-                            </div>
-                            <button type="button" onclick="toggleNavPopup()"
-                                class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gray-800 hover:bg-red-600/20 border border-gray-700 hover:border-red-500/50 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all text-lg cursor-pointer">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-
-                        <div class="overflow-y-auto py-4 sm:py-5 space-y-6">
-                            <div>
-                                <div class="text-xs font-mono text-red-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                    <span>PDF STUDIO TOOLS</span>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    ${PDF_TOOLS_MENU.map(tool => `
-                                        <a href="${tool.url}" class="p-3.5 rounded-2xl bg-gray-800/70 hover:bg-red-600/15 border border-gray-800 hover:border-red-500/60 transition-all flex items-center gap-3.5 group relative">
-                                            ${tool.isNew ? '<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-red-600 text-white font-mono text-[9px] font-bold">NEW</span>' : ''}
-                                            <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 group-hover:bg-red-600 group-hover:text-white flex items-center justify-center text-lg shrink-0 transition-all">
-                                                <i class="${tool.icon}"></i>
-                                            </div>
-                                            <div class="min-w-0">
-                                                <div class="font-extrabold text-sm text-gray-100 group-hover:text-red-400">${tool.title}</div>
-                                                <div class="text-[11px] text-gray-400 mt-0.5 leading-snug">${tool.desc}</div>
-                                            </div>
-                                        </a>
-                                    `).join("")}
-                                </div>
-                            </div>
-
-                            <div class="pt-4 border-t border-gray-800">
-                                <div class="text-xs font-mono text-gray-400 uppercase tracking-wider font-bold mb-3 flex items-center gap-2">
-                                    <i class="fa-solid fa-cubes text-red-500"></i>
-                                    <span>QUICK SWITCH WORKSPACE</span>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                    <a href="../index.html" class="p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
-                                        <div class="w-9 h-9 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-sm shrink-0">
-                                            <i class="fa-solid fa-house"></i>
-                                        </div>
-                                        <div class="min-w-0">
-                                            <div class="font-bold text-xs text-gray-100 group-hover:text-red-400 truncate">Main Portal</div>
-                                            <div class="text-[10px] text-gray-400 truncate">หน้ารวมเว็บแอปทั้งหมด</div>
-                                        </div>
-                                    </a>
-                                    ${OTHER_WORKSPACES.map(ws => `
-                                        <a href="${ws.url}" class="p-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-gray-700 hover:border-red-500/50 flex items-center gap-3 transition group">
-                                            <div class="w-9 h-9 rounded-xl ${ws.colorClass} flex items-center justify-center text-sm shrink-0">
-                                                <i class="${ws.icon}"></i>
-                                            </div>
-                                            <div class="min-w-0">
-                                                <div class="font-bold text-xs text-gray-100 group-hover:text-red-400 truncate">${ws.title}</div>
-                                                <div class="text-[10px] text-gray-400 truncate">${ws.desc}</div>
-                                            </div>
-                                        </a>
-                                    `).join("")}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            window.toggleNavPopup = function () {
-                const modal = document.getElementById("navPopupModal");
-                if (modal) modal.classList.toggle("hidden");
-            };
-        })();
-    </script>
 
     <!-- Root-Level Hidden File Inputs -->
     <input type="file" id="pdfFileInput" accept="application/pdf,.pdf" onchange="handleMainPdfUpload(event)" class="hidden">
@@ -772,7 +621,7 @@
                     <span class="hidden sm:inline">PRINT</span>
                 </button>
 
-                <!-- Export Dropdown (Separated PNG, JPG & Multi-Format Modal) -->
+                <!-- Export Dropdown -->
                 <div class="relative" id="exportDropdownWrap">
                     <button type="button" onclick="toggleExportMenu(event)"
                         class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer">
@@ -885,7 +734,7 @@
 
             <!-- Tool Options Drawer (Desktop Docked Left / Mobile Collapsible Bottom Sheet) -->
             <div id="subToolPopover"
-                class="hidden fixed inset-x-0 bottom-[64px] max-h-[55dvh] z-40 rounded-t-2xl shadow-2xl border-t md:static md:inset-auto md:bottom-auto md:max-h-none md:w-72 md:shrink-0 md:rounded-none md:shadow-none md:border-t-0 md:border-r md:z-20 panel-surface flex-col overflow-hidden">
+                class="hidden fixed inset-x-0 bottom-[64px] max-h-[58dvh] z-40 rounded-t-2xl shadow-2xl border-t md:static md:inset-auto md:bottom-auto md:max-h-none md:w-72 md:shrink-0 md:rounded-none md:shadow-none md:border-t-0 md:border-r md:z-20 panel-surface flex-col overflow-hidden">
 
                 <!-- Drawer Header -->
                 <div class="px-4 py-2.5 panel-subtle border-b flex items-center justify-between gap-2 shrink-0">
@@ -902,24 +751,24 @@
                 </div>
 
                 <!-- Scrollable Tool Options Body -->
-                <div class="overflow-y-auto p-4 space-y-4 text-xs flex-1">
+                <div class="overflow-y-auto p-4 space-y-3.5 text-xs flex-1">
 
                     <!-- SELECT PANEL -->
                     <div id="panel_select" class="space-y-3">
                         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection Mode</div>
                         <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
+                            <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย หรือดึงมุมขวาล่างเพื่อปรับขนาด</p>
                             <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i><strong>ดับเบิลคลิก</strong> หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> (หรือกด <strong>Enter / F2</strong>) เพื่อพิมพ์แก้คำ</p>
                             <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i><strong>คลิกซ้ายลากบนพื้นที่ว่าง</strong> เพื่อเลื่อนดูอิสระทุกทิศทางทุกขนาดซูม หรือใช้ <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูม</p>
                         </div>
                     </div>
 
-                    <!-- TEXT PANEL -->
+                    <!-- ENHANCED TEXT PANEL (Stepper -/+, Presets, Live Slider & Canvas Corner Resize Handle) -->
                     <div id="panel_text" class="hidden space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Text Studio</span>
                             <button type="button" id="btnPanelEditText" onclick="editSelectedTextInline()"
-                                class="hidden px-2 py-0.5 rounded-md bg-[#E11D48] text-white text-[10px] font-bold cursor-pointer">
+                                class="hidden px-2.5 py-1 rounded-lg bg-[#E11D48] hover:bg-[#BE123C] text-white text-[10px] font-bold shadow-xs transition cursor-pointer">
                                 ✎ แก้คำพิมพ์
                             </button>
                         </div>
@@ -930,11 +779,11 @@
                             <span>วางข้อความกลางหน้าทันที</span>
                         </button>
 
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                            • <strong>คลิกตรงไหน วางกล่องข้อความตรงนั้น</strong> แล้วลากย้ายหรือแต่งฟอนต์/สีได้ทันที<br>
-                            • <strong>ดับเบิลคลิก</strong> กดปุ่ม <strong>✎ แก้ไขข้อความ</strong> หรือกด <strong>Enter / F2</strong> เพื่อพิมพ์แก้คำ
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug bg-slate-50 dark:bg-slate-900/60 px-2.5 py-2 rounded-xl border border-slate-200/70 dark:border-slate-800">
+                            คลิกบนกระดาษเพื่อวางข้อความ • <strong>ดับเบิลคลิก</strong> เพื่อแก้คำ • ลากจุดมุมขวาล่างเพื่อย่อ/ขยายฟอนต์
                         </p>
 
+                        <!-- Font Family -->
                         <div>
                             <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">FONT FAMILY (15 FONTS)</label>
                             <select id="textFont" onchange="onTextStyleInput('fontFamily', this.value)"
@@ -961,30 +810,87 @@
                             </select>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">SIZE (PX)</label>
-                                <input type="number" id="textSize" value="20" min="8" max="140"
-                                    oninput="onTextStyleInput('fontSize', parseInt(this.value, 10) || 20)"
-                                    class="w-full panel-subtle border rounded-xl p-1.5 text-xs font-mono font-bold outline-none focus:border-[#E11D48]">
+                        <!-- Enhanced Font Size Controls: Stepper [-] / [+], Quick Presets, Live Range Slider -->
+                        <div class="p-2.5 rounded-2xl panel-subtle border space-y-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label for="textSize" class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                                    SIZE (PX)
+                                </label>
+
+                                <!-- Stepper [-] [20] [+] with Press-and-Hold Support -->
+                                <div class="flex items-center panel-surface border rounded-xl overflow-hidden shadow-xs">
+                                    <button type="button" id="btnFontDec"
+                                        onpointerdown="startFontStepHold(event, -2)"
+                                        onpointerup="stopFontStepHold()"
+                                        onpointerleave="stopFontStepHold()"
+                                        onpointercancel="stopFontStepHold()"
+                                        class="w-8 h-7 hover:bg-[#E11D48] hover:text-white text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center transition cursor-pointer"
+                                        title="ลดขนาดตัวอักษร (-2px)">
+                                        <i class="fa-solid fa-minus text-[10px]"></i>
+                                    </button>
+                                    <input type="number" id="textSize" value="20" min="8" max="200"
+                                        oninput="setFontSizeValue(this.value, false)"
+                                        onchange="setFontSizeValue(this.value, true)"
+                                        class="w-12 h-7 text-center bg-transparent border-x border-slate-200 dark:border-slate-700 text-xs font-mono font-extrabold outline-none focus:text-[#E11D48]">
+                                    <button type="button" id="btnFontInc"
+                                        onpointerdown="startFontStepHold(event, 2)"
+                                        onpointerup="stopFontStepHold()"
+                                        onpointerleave="stopFontStepHold()"
+                                        onpointercancel="stopFontStepHold()"
+                                        class="w-8 h-7 hover:bg-[#E11D48] hover:text-white text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center transition cursor-pointer"
+                                        title="เพิ่มขนาดตัวอักษร (+2px)">
+                                        <i class="fa-solid fa-plus text-[10px]"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">TEXT COLOR</label>
+
+                            <!-- Live Range Slider (8px - 120px) -->
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono text-[9px] text-slate-400">8</span>
+                                <input type="range" id="textSizeSlider" min="8" max="120" value="20"
+                                    oninput="setFontSizeValue(this.value, false)"
+                                    onchange="setFontSizeValue(this.value, true)"
+                                    class="flex-1 accent-[#E11D48] cursor-pointer">
+                                <span class="font-mono text-[9px] text-slate-400">120</span>
+                            </div>
+
+                            <!-- 6 Quick Size Presets -->
+                            <div class="grid grid-cols-6 gap-1 font-mono text-[10px]">
+                                <button type="button" data-size="12" onclick="setFontSizeValue(12, true)"
+                                    class="size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer">12</button>
+                                <button type="button" data-size="16" onclick="setFontSizeValue(16, true)"
+                                    class="size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer">16</button>
+                                <button type="button" data-size="20" onclick="setFontSizeValue(20, true)"
+                                    class="size-preset-btn py-1 rounded-lg bg-[#E11D48] text-white border border-[#E11D48] font-bold text-center transition cursor-pointer">20</button>
+                                <button type="button" data-size="28" onclick="setFontSizeValue(28, true)"
+                                    class="size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer">28</button>
+                                <button type="button" data-size="36" onclick="setFontSizeValue(36, true)"
+                                    class="size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer">36</button>
+                                <button type="button" data-size="48" onclick="setFontSizeValue(48, true)"
+                                    class="size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer">48</button>
+                            </div>
+                        </div>
+
+                        <!-- Text Color & Quick Swatches -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <label for="textColor" class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400">TEXT COLOR</label>
                                 <input type="color" id="textColor" value="#0F172A"
                                     oninput="onTextStyleInput('color', this.value)"
-                                    class="w-full h-8 panel-subtle border rounded-xl cursor-pointer p-0.5">
+                                    class="w-24 h-7 panel-subtle border rounded-xl cursor-pointer p-0.5">
+                            </div>
+
+                            <div class="grid grid-cols-6 gap-1.5">
+                                <button type="button" onclick="applyTextSwatch('#0F172A')" class="h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark Slate"></button>
+                                <button type="button" onclick="applyTextSwatch('#E11D48')" class="h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
+                                <button type="button" onclick="applyTextSwatch('#1D4ED8')" class="h-6 rounded-lg bg-[#1D4ED8] border border-slate-300 cursor-pointer" title="Blue"></button>
+                                <button type="button" onclick="applyTextSwatch('#047857')" class="h-6 rounded-lg bg-[#047857] border border-slate-300 cursor-pointer" title="Green"></button>
+                                <button type="button" onclick="applyTextSwatch('#B45309')" class="h-6 rounded-lg bg-[#B45309] border border-slate-300 cursor-pointer" title="Amber"></button>
+                                <button type="button" onclick="applyTextSwatch('#FFFFFF')" class="h-6 rounded-lg bg-[#FFFFFF] border border-slate-300 cursor-pointer" title="White"></button>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-6 gap-1.5">
-                            <button type="button" onclick="applyTextSwatch('#0F172A')" class="h-6 rounded-lg bg-[#0F172A] border border-slate-300 cursor-pointer" title="Dark Slate"></button>
-                            <button type="button" onclick="applyTextSwatch('#E11D48')" class="h-6 rounded-lg bg-[#E11D48] border border-slate-300 cursor-pointer" title="Crimson"></button>
-                            <button type="button" onclick="applyTextSwatch('#1D4ED8')" class="h-6 rounded-lg bg-[#1D4ED8] border border-slate-300 cursor-pointer" title="Blue"></button>
-                            <button type="button" onclick="applyTextSwatch('#047857')" class="h-6 rounded-lg bg-[#047857] border border-slate-300 cursor-pointer" title="Green"></button>
-                            <button type="button" onclick="applyTextSwatch('#B45309')" class="h-6 rounded-lg bg-[#B45309] border border-slate-300 cursor-pointer" title="Amber"></button>
-                            <button type="button" onclick="applyTextSwatch('#FFFFFF')" class="h-6 rounded-lg bg-[#FFFFFF] border border-slate-300 cursor-pointer" title="White"></button>
-                        </div>
-
+                        <!-- Bold / Italic / Background Fill -->
                         <div class="grid grid-cols-3 gap-1.5">
                             <button type="button" id="btnTextBold" onclick="toggleTextFlag('bold')"
                                 class="py-1.5 rounded-xl panel-subtle border font-bold text-center cursor-pointer transition">Bold</button>
@@ -1003,6 +909,7 @@
                                 class="w-14 h-6 rounded border border-slate-300 cursor-pointer p-0.5">
                         </div>
 
+                        <!-- Alignment -->
                         <div>
                             <label class="font-mono text-[10px] font-bold text-slate-500 dark:text-slate-400 block mb-1">ALIGNMENT</label>
                             <div class="grid grid-cols-3 gap-1.5">
@@ -1361,12 +1268,11 @@
         </div>
     </div>
 
-    <!-- Document Preview Modal (Ultra-Sharp Original Quality Check Before Download) -->
+    <!-- Document Preview Modal -->
     <div id="documentPreviewModal" onclick="if (event.target === this) closeDocumentPreview()"
         class="hidden fixed inset-0 z-[85] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
         <div class="w-full max-w-5xl h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
 
-            <!-- Modal Header -->
             <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-[#E11D48]/15 text-[#E11D48] flex items-center justify-center shrink-0">
@@ -1390,12 +1296,10 @@
                 </button>
             </div>
 
-            <!-- Scrollable Clean Preview Pages Stage -->
             <div id="previewModalBody" class="stage-bg flex-1 overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-6">
                 <!-- Rendered Clean Preview Pages -->
             </div>
 
-            <!-- Modal Footer with Direct Download & Print Actions -->
             <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
                 <button type="button" onclick="closeDocumentPreview()"
                     class="px-4 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
@@ -1439,12 +1343,11 @@
         </div>
     </div>
 
-    <!-- Interactive Image Export Modal (Supports All Formats: PNG, JPG, WEBP, BMP) -->
+    <!-- Interactive Image Export Modal (Supports PNG, JPG, WEBP, BMP) -->
     <div id="imageExportModal" onclick="if (event.target === this) closeImageExportModal()"
         class="hidden fixed inset-0 z-[88] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
         <div class="w-full max-w-4xl max-h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
 
-            <!-- Modal Header -->
             <div class="px-4 sm:px-6 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center shrink-0">
@@ -1468,12 +1371,8 @@
                 </button>
             </div>
 
-            <!-- Controls & Interactive Selection Body -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-
-                <!-- 1. Quick Mode Buttons + Range Input + All-Format Selector -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <!-- Left: Page Mode & Range -->
                     <div class="lg:col-span-6 space-y-2.5">
                         <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                             1. เลือกหน้าที่ต้องการส่งออก
@@ -1493,7 +1392,6 @@
                             </button>
                         </div>
 
-                        <!-- Two-way Synced Range Input -->
                         <div class="flex items-center gap-2">
                             <div class="relative flex-1">
                                 <i class="fa-solid fa-list-ol absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -1510,7 +1408,6 @@
                         </div>
                     </div>
 
-                    <!-- Right: All Browser-Supported Image Formats -->
                     <div class="lg:col-span-6 space-y-2.5">
                         <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                             2. รูปแบบไฟล์รูปภาพ (รองรับครบทุกฟอร์แมต)
@@ -1540,13 +1437,10 @@
                     </div>
                 </div>
 
-                <!-- 2. Dynamic Notice Banner -->
                 <div id="imgExportNotice"
                     class="px-4 py-3 rounded-2xl border flex items-center gap-3 text-xs font-semibold transition-all">
-                    <!-- Populated dynamically by updateImageExportUI() -->
                 </div>
 
-                <!-- 3. Interactive Thumbnail Selection Grid -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -1559,12 +1453,10 @@
 
                     <div id="imgExportGrid"
                         class="stage-bg p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[38dvh] overflow-y-auto">
-                        <!-- Interactive Page Cards Rendered Here -->
                     </div>
                 </div>
             </div>
 
-            <!-- Modal Footer -->
             <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0">
                 <button type="button" onclick="closeImageExportModal()"
                     class="px-4 py-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold transition cursor-pointer">
@@ -1672,7 +1564,6 @@
                     }
                 })();
 
-                // Attempt 1: If not in restricted sandbox and Blob worker is ready, try worker mode first
                 if (!isSandboxed && pdfWorkerBlobReady) {
                     try {
                         return await lib.getDocument({
@@ -1692,7 +1583,6 @@
                     }
                 }
 
-                // Attempt 2: 100% Sandbox-Safe Workerless Mode (disableWorker + useWorkerFetch: false + isEvalSupported: false)
                 return await lib.getDocument({
                     data: bytes.slice(0),
                     disableWorker: true,
@@ -1705,68 +1595,58 @@
             }
 
             const state = {
-                pdfSources: {},      // sourceId -> { pdfjsDoc, bytes, name }
-                pages: [],           // [{ id, kind, sourceId, sourcePageIndex, width, height, rotation, isNew, items[], inkStrokes[] }]
+                pdfSources: {},
+                pages: [],
                 fileName: 'document.pdf',
 
-                tool: 'select',      // select | text | image | watermark | draw | eraser
-                drawStyle: 'solid',  // solid | dashed | highlighter
-                eraserMode: 'partial', // partial | whole
+                tool: 'select',
+                drawStyle: 'solid',
+                eraserMode: 'partial',
                 zoom: 1.0,
                 activePageId: null,
 
-                // Panels & Mobile Drawer Lock
                 isSubToolOpen: false,
                 isMobileDrawerLockedHidden: false,
                 isOverviewOpen: false,
-                overviewFilter: 'all', // all | edited
+                overviewFilter: 'all',
 
-                // Selection & Dragging
-                selectedRef: null,   // { pageId, itemId }
-                dragState: null,     // { mode: 'move'|'resize', handle, pageId, itemId, startClientX, startClientY, moved, ... }
+                selectedRef: null,
+                dragState: null,
 
-                // Active Freehand Draw / Erase
-                activeDraw: null,    // { pageId, pointerId, tool, strokeObj, changed }
+                activeDraw: null,
 
-                // Text Defaults & Inline Editor
                 textDefaults: {
+                    fontSize: 20,
                     bold: false,
                     italic: false,
                     hasBg: false,
                     bgColor: '#FEF08A',
                     align: 'left'
                 },
-                inlineEditor: null,  // { wrapEl, textareaEl, pageId, itemId }
+                inlineEditor: null,
                 floatingEditPill: null,
 
-                // Custom Double-Tap Detection (350ms, <15px)
                 lastTap: { time: 0, itemId: null, x: 0, y: 0 },
 
-                // Staged Image Upload
-                pendingImage: null,  // { dataUrl, name, img }
+                pendingImage: null,
 
-                // Insert Page Popover State
                 pendingInsertIndex: 0,
                 activeDividerEl: null,
 
-                // Desktop Hand Panning (Spacebar / Middle Click / Select Empty-Space Free Pan)
                 isSpaceHeld: false,
                 handPan: null,
                 mouseFreePan: null,
 
-                // Mobile 2-Finger 60fps Pinch-to-Zoom & Pan + Select-Mode 1-Finger Pan
                 twoFinger: null,
                 oneFingerPan: null,
                 programmaticScrollUntil: 0,
 
-                // Smart Image Export Modal State (Supports png, jpg, webp, bmp)
                 imageExport: {
-                    mode: 'all',         // 'all' | 'current' | 'custom'
-                    format: 'png',       // 'png' | 'jpg' | 'webp' | 'bmp'
-                    selectedIndices: []  // sorted 0-based page indices
+                    mode: 'all',
+                    format: 'png',
+                    selectedIndices: []
                 },
 
-                // Undo / Redo History
                 history: [],
                 historyIndex: -1
             };
@@ -1781,6 +1661,9 @@
             let zoomDebounceTimer = null;
             let scrollSyncRaf = null;
             let gestureRaf = null;
+            let fontHoldTimeout = null;
+            let fontHoldInterval = null;
+            let fontHoldChanged = false;
             let isInitialized = false;
 
             // =================================================================
@@ -1999,6 +1882,7 @@
                 }
 
                 setupKeyboardShortcuts();
+                syncTextControlsUI(state.textDefaults);
 
                 const eraserSlider = $('eraserSize');
                 if (eraserSlider) onEraserSizeChange(eraserSlider.value);
@@ -2042,8 +1926,10 @@
 
                 const pos = getUnscaledPos(target, clientX, clientY);
                 const curSel = getSelectedItem();
-                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId && hitTestImageCornerHandle(curSel, pos.x, pos.y)) {
-                    return true;
+                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId) {
+                    if (hitTestImageCornerHandle(curSel, pos.x, pos.y) || hitTestTextCornerHandle(pg, curSel, pos.x, pos.y)) {
+                        return true;
+                    }
                 }
                 return !!hitTestItem(pg, pos.x, pos.y);
             }
@@ -2072,10 +1958,10 @@
                     state.isSpaceHeld = false;
                     state.handPan = null;
                     state.mouseFreePan = null;
+                    stopFontStepHold();
                     vp.classList.remove('hand-pan-ready', 'hand-pan-active');
                 });
 
-                // Spacebar + Left Click OR Middle Click Pan
                 vp.addEventListener('mousedown', (e) => {
                     if (!state.isSpaceHeld && e.button !== 1) return;
                     e.preventDefault();
@@ -2089,7 +1975,6 @@
                     vp.classList.add('hand-pan-active');
                 }, true);
 
-                // Select Mode Left-Click Free Pan on Any Empty Space (Any Zoom Level)
                 vp.addEventListener('mousedown', (e) => {
                     if (e.button !== 0 || state.isSpaceHeld || state.handPan) return;
                     if (state.tool !== 'select' || state.pages.length === 0 || state.inlineEditor) return;
@@ -2153,7 +2038,6 @@
                 vp.addEventListener('wheel', (e) => {
                     state.programmaticScrollUntil = 0;
 
-                    // Ctrl + Scroll / Trackpad Pinch -> Zoom anchored to cursor
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         if (state.pages.length === 0) return;
@@ -2221,7 +2105,6 @@
                         return;
                     }
 
-                    // Select mode 1-finger scroll on empty space at any zoom level
                     state.oneFingerPan = null;
                     if (e.touches.length === 1 && state.tool === 'select' && state.pages.length >= 1 && !state.inlineEditor) {
                         const target = e.target;
@@ -2239,7 +2122,8 @@
                             if (pg) {
                                 const pos = getUnscaledPos(canvas, t.clientX, t.clientY);
                                 const curSel = getSelectedItem();
-                                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId && hitTestImageCornerHandle(curSel, pos.x, pos.y)) {
+                                if (curSel && state.selectedRef && state.selectedRef.pageId === pageId &&
+                                    (hitTestImageCornerHandle(curSel, pos.x, pos.y) || hitTestTextCornerHandle(pg, curSel, pos.x, pos.y))) {
                                     hitInteractive = true;
                                 } else if (hitTestItem(pg, pos.x, pos.y)) {
                                     hitInteractive = true;
@@ -2622,7 +2506,6 @@
                     clearSelection(false);
                 }
 
-                // If switching to 'select' while a text object is active/selected, keep Text Studio options visible
                 if (tool === 'select' && curSel && curSel.type === 'text') {
                     showTextOptionsInSelectMode();
                 }
@@ -2835,7 +2718,7 @@
             }
 
             // =================================================================
-            // 10. MULTI-LINE TEXT MEASUREMENT & SEAMLESS CLICK-TO-ADD / CLICK-TO-EDIT
+            // 10. MULTI-LINE TEXT MEASUREMENT & ENHANCED FONT SIZE CONTROLS
             // =================================================================
             function buildTextFontString(item, scale) {
                 return `${item.italic ? 'italic ' : ''}${item.bold ? 'bold ' : ''}${item.fontSize * scale}px "${item.fontFamily}", sans-serif`;
@@ -2884,11 +2767,99 @@
                 return { lines, width: boxW, height: boxH, lineH };
             }
 
+            function setFontSizeValue(rawVal, commitHistory = true) {
+                const parsed = parseInt(rawVal, 10);
+                if (isNaN(parsed)) return;
+                const clampedSize = clamp(parsed, 8, 200);
+
+                state.textDefaults.fontSize = clampedSize;
+                syncFontSizeWidgets(clampedSize);
+
+                const item = getSelectedItem();
+                if (!item || item.type !== 'text') return;
+
+                item.fontSize = clampedSize;
+                const pg = getPageById(state.selectedRef.pageId);
+                if (pg) {
+                    measureTextItem(pg, item);
+                    if (state.inlineEditor && state.inlineEditor.itemId === item.id) {
+                        syncInlineEditorStyle();
+                    } else {
+                        redrawPageOverlay(pg.id);
+                        updateFloatingTextEditPill();
+                    }
+                    if (commitHistory) {
+                        pushHistorySnapshot();
+                    }
+                }
+            }
+
+            function stepFontSize(delta, commitHistory = true) {
+                const sizeInp = $('textSize');
+                const item = getSelectedItem();
+                const current = (item && item.type === 'text')
+                    ? item.fontSize
+                    : (parseInt(sizeInp && sizeInp.value, 10) || state.textDefaults.fontSize || 20);
+                setFontSizeValue(current + delta, commitHistory);
+            }
+
+            function startFontStepHold(e, delta) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                stopFontStepHold();
+                fontHoldChanged = true;
+                stepFontSize(delta, false);
+
+                fontHoldTimeout = setTimeout(() => {
+                    fontHoldInterval = setInterval(() => {
+                        stepFontSize(delta, false);
+                    }, 75);
+                }, 320);
+            }
+
+            function stopFontStepHold() {
+                if (fontHoldTimeout) {
+                    clearTimeout(fontHoldTimeout);
+                    fontHoldTimeout = null;
+                }
+                if (fontHoldInterval) {
+                    clearInterval(fontHoldInterval);
+                    fontHoldInterval = null;
+                }
+                if (fontHoldChanged) {
+                    fontHoldChanged = false;
+                    const item = getSelectedItem();
+                    if (item && item.type === 'text') {
+                        pushHistorySnapshot();
+                    }
+                }
+            }
+
+            function syncFontSizeWidgets(sizeVal) {
+                const sEl = $('textSize');
+                const slEl = $('textSizeSlider');
+                if (sEl && document.activeElement !== sEl) {
+                    sEl.value = sizeVal;
+                }
+                if (slEl) {
+                    slEl.value = clamp(sizeVal, 8, 120);
+                }
+                document.querySelectorAll('.size-preset-btn').forEach(btn => {
+                    const preset = parseInt(btn.dataset.size, 10);
+                    const isMatch = preset === sizeVal;
+                    btn.className = isMatch
+                        ? 'size-preset-btn py-1 rounded-lg bg-[#E11D48] text-white border border-[#E11D48] font-bold text-center transition cursor-pointer'
+                        : 'size-preset-btn py-1 rounded-lg panel-surface border hover:border-[#E11D48] font-bold text-center transition cursor-pointer';
+                });
+            }
+
             function createAndOpenTextAt(pageId, x, y) {
                 const pg = getPageById(pageId);
                 if (!pg) return;
 
-                const fontSize = parseInt(($('textSize') && $('textSize').value) || '20', 10) || 20;
+                const fontSize = clamp(parseInt(($('textSize') && $('textSize').value) || state.textDefaults.fontSize || '20', 10) || 20, 8, 200);
                 const item = {
                     id: uid('txt'),
                     type: 'text',
@@ -2913,7 +2884,6 @@
                 state.selectedRef = { pageId, itemId: item.id };
                 pushHistorySnapshot();
 
-                // Drop text on canvas in selected state and return rail tool to 'select' without popping up inline editor
                 state.tool = 'select';
                 ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
                     const btn = $(`rail_${t}`);
@@ -2943,7 +2913,6 @@
                 if (!item || item.type !== 'text') return;
                 state.selectedRef = { pageId, itemId: item.id };
 
-                // Keep active tool in 'select' while opening Text Studio options drawer + inline editor
                 if (state.tool !== 'select') {
                     state.tool = 'select';
                     ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
@@ -3056,13 +3025,12 @@
 
             function syncTextControlsUI(src) {
                 const fEl = $('textFont');
-                const sEl = $('textSize');
                 const cEl = $('textColor');
                 const bgColorEl = $('textBgColor');
                 const bgRow = $('textBgColorRow');
 
                 if (fEl && src.fontFamily) fEl.value = src.fontFamily;
-                if (sEl && src.fontSize) sEl.value = src.fontSize;
+                if (src.fontSize) syncFontSizeWidgets(src.fontSize);
                 if (cEl && src.color) cEl.value = src.color;
                 if (bgColorEl && src.bgColor) bgColorEl.value = src.bgColor;
                 if (bgRow) bgRow.classList.toggle('hidden', !src.hasBg);
@@ -3145,7 +3113,6 @@
 
                 ta.addEventListener('input', autoResize);
                 ta.addEventListener('blur', (e) => {
-                    // Keep inline editor open if user clicked inside Text Studio style controls
                     const nextTarget = e.relatedTarget;
                     if (nextTarget) {
                         if (wrap.contains(nextTarget) || nextTarget.closest('#panel_text')) {
@@ -3231,7 +3198,6 @@
                 removeFloatingTextEditPill();
                 syncSelectionPanel();
 
-                // Restore Select panel in drawer if currently in 'select' mode
                 if (state.tool === 'select') {
                     const titleEl = $('subToolTitle');
                     if (titleEl) titleEl.textContent = TOOL_LABELS.select;
@@ -3379,7 +3345,6 @@
             }
 
             function renderPageItemsAndInk(targetCtx, page, renderScale, skipItemId = null, liveStroke = null) {
-                // 1. Render Objects (Watermarks, Images, Text)
                 for (const item of page.items) {
                     if (item.id === skipItemId) continue;
 
@@ -3431,7 +3396,6 @@
                     }
                 }
 
-                // 2. Render Isolated Freehand Ink Layer (supports destination-out partial erasing)
                 const hasInk = page.inkStrokes.length > 0 || !!liveStroke;
                 if (!hasInk) return;
 
@@ -3502,6 +3466,17 @@
                         ctx.fill();
                         ctx.stroke();
                     });
+                } else if (item.type === 'text') {
+                    // Bottom-right circular proportional font-size resize handle
+                    const cx = (x + w) * renderScale;
+                    const cy = (y + h) * renderScale;
+                    ctx.fillStyle = '#E11D48';
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2 * dpr;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 6.5 * dpr, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
                 }
                 ctx.restore();
             }
@@ -3572,6 +3547,14 @@
                 return null;
             }
 
+            function hitTestTextCornerHandle(page, item, x, y) {
+                if (!item || item.type !== 'text') return false;
+                const m = measureTextItem(page, item);
+                const hx = item.x + m.width + 4;
+                const hy = item.y + m.height + 4;
+                return Math.hypot(x - hx, y - hy) <= 18;
+            }
+
             function eraseWholeStrokeAt(page, x, y, radiusUnscaled) {
                 let removed = false;
                 page.inkStrokes = page.inkStrokes.filter(st => {
@@ -3588,7 +3571,7 @@
             }
 
             // =================================================================
-            // 14. CANVAS POINTER EVENTS (CLICK-TO-ADD & CLICK-TO-EDIT TEXT)
+            // 14. CANVAS POINTER EVENTS (CLICK-TO-ADD, EDIT & CORNER FONT RESIZE)
             // =================================================================
             function getUnscaledPos(canvas, clientX, clientY) {
                 const rect = canvas.getBoundingClientRect();
@@ -3600,7 +3583,6 @@
             }
 
             function attachCanvasPointerEvents(canvas, pageId) {
-                // Desktop double-click opens inline text editor immediately
                 canvas.addEventListener('dblclick', (e) => {
                     if (state.twoFinger || state.isSpaceHeld || state.handPan || state.mouseFreePan) return;
                     const pg = getPageById(pageId);
@@ -3623,11 +3605,50 @@
 
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
 
-                    // SELECT, WATERMARK, OR TEXT (when clicking an existing text box)
                     if (state.tool === 'select' || state.tool === 'watermark' || state.tool === 'text') {
                         const hit = hitTestItem(pg, pos.x, pos.y);
+                        const curSel = getSelectedItem();
 
-                        // In Text tool: clicking empty space drops a new text box right there
+                        if (curSel && state.selectedRef && state.selectedRef.pageId === pageId) {
+                            if (state.tool === 'select') {
+                                const corner = hitTestImageCornerHandle(curSel, pos.x, pos.y);
+                                if (corner) {
+                                    state.dragState = {
+                                        mode: 'resize',
+                                        handle: corner,
+                                        pageId,
+                                        itemId: curSel.id,
+                                        startClientX: e.clientX,
+                                        startClientY: e.clientY,
+                                        moved: false,
+                                        origX: curSel.x,
+                                        origY: curSel.y,
+                                        origW: curSel.width,
+                                        origH: curSel.height,
+                                        aspect: curSel.height / Math.max(1, curSel.width)
+                                    };
+                                    try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                                    return;
+                                }
+                            }
+
+                            if (curSel.type === 'text' && hitTestTextCornerHandle(pg, curSel, pos.x, pos.y)) {
+                                const m = measureTextItem(pg, curSel);
+                                state.dragState = {
+                                    mode: 'resize-text',
+                                    pageId,
+                                    itemId: curSel.id,
+                                    startClientX: e.clientX,
+                                    startClientY: e.clientY,
+                                    moved: false,
+                                    origFontSize: curSel.fontSize,
+                                    origDiag: Math.max(24, Math.hypot(m.width, m.height))
+                                };
+                                try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+                                return;
+                            }
+                        }
+
                         if (state.tool === 'text' && (!hit || hit.type !== 'text')) {
                             closeInlineEditor();
                             createAndOpenTextAt(pageId, pos.x, pos.y);
@@ -3638,31 +3659,7 @@
                             closeInlineEditor();
                         }
 
-                        const curSel = getSelectedItem();
-                        if (state.tool === 'select' && curSel && state.selectedRef && state.selectedRef.pageId === pageId) {
-                            const corner = hitTestImageCornerHandle(curSel, pos.x, pos.y);
-                            if (corner) {
-                                state.dragState = {
-                                    mode: 'resize',
-                                    handle: corner,
-                                    pageId,
-                                    itemId: curSel.id,
-                                    startClientX: e.clientX,
-                                    startClientY: e.clientY,
-                                    moved: false,
-                                    origX: curSel.x,
-                                    origY: curSel.y,
-                                    origW: curSel.width,
-                                    origH: curSel.height,
-                                    aspect: curSel.height / Math.max(1, curSel.width)
-                                };
-                                try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
-                                return;
-                            }
-                        }
-
                         if (hit) {
-                            // Double-tap / double-click detection (350ms, <15px) -> enter inline text editor
                             const now = Date.now();
                             const tapDist = Math.hypot(e.clientX - state.lastTap.x, e.clientY - state.lastTap.y);
                             if (hit.type === 'text' && state.lastTap.itemId === hit.id && (now - state.lastTap.time) <= 350 && tapDist < 15) {
@@ -3783,15 +3780,20 @@
                     if (!pg) return;
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
 
-                    // Dynamic cursor: pointer/move on objects, text/grab on empty space
                     if ((state.tool === 'select' || state.tool === 'text') && !state.dragState && e.pointerType === 'mouse') {
                         const curSel = getSelectedItem();
-                        const corner = (state.tool === 'select' && curSel && state.selectedRef && state.selectedRef.pageId === pageId)
+                        const imgCorner = (state.tool === 'select' && curSel && state.selectedRef && state.selectedRef.pageId === pageId)
                             ? hitTestImageCornerHandle(curSel, pos.x, pos.y)
                             : null;
+                        const txtCorner = (curSel && curSel.type === 'text' && state.selectedRef && state.selectedRef.pageId === pageId)
+                            ? hitTestTextCornerHandle(pg, curSel, pos.x, pos.y)
+                            : false;
                         const hoverHit = hitTestItem(pg, pos.x, pos.y);
-                        if (corner) {
-                            canvas.style.cursor = (corner === 'tl' || corner === 'br') ? 'nwse-resize' : 'nesw-resize';
+
+                        if (imgCorner) {
+                            canvas.style.cursor = (imgCorner === 'tl' || imgCorner === 'br') ? 'nwse-resize' : 'nesw-resize';
+                        } else if (txtCorner) {
+                            canvas.style.cursor = 'nwse-resize';
                         } else if (hoverHit) {
                             canvas.style.cursor = 'move';
                         } else {
@@ -3804,12 +3806,18 @@
                         if (!item) return;
 
                         const moveDist = Math.hypot(e.clientX - state.dragState.startClientX, e.clientY - state.dragState.startClientY);
-                        if (moveDist >= 5) {
+                        if (moveDist >= 4) {
                             state.dragState.moved = true;
                         }
                         if (!state.dragState.moved) return;
 
-                        if (state.dragState.mode === 'resize' && item.type === 'image') {
+                        if (state.dragState.mode === 'resize-text' && item.type === 'text') {
+                            const d = state.dragState;
+                            const newDiag = Math.max(16, Math.hypot(pos.x - item.x, pos.y - item.y));
+                            const ratio = newDiag / d.origDiag;
+                            const nextSize = clamp(Math.round(d.origFontSize * ratio), 8, 200);
+                            setFontSizeValue(nextSize, false);
+                        } else if (state.dragState.mode === 'resize' && item.type === 'image') {
                             const d = state.dragState;
                             if (d.handle === 'br') {
                                 const newW = Math.max(28, pos.x - d.origX);
@@ -4746,7 +4754,7 @@
             }
 
             // =================================================================
-            // 19. DOCUMENT PREVIEW MODAL (HiDPI ULTRA-SHARP), PRINT, PDF & ALL-FORMAT IMAGE EXPORT
+            // 19. DOCUMENT PREVIEW MODAL, PRINT, PDF & ALL-FORMAT IMAGE EXPORT
             // =================================================================
             async function openDocumentPreview() {
                 if (state.pages.length === 0) return;
@@ -4901,7 +4909,6 @@
                         const isLandscape = w > h;
                         let pageCanvas = await renderCompositePageCanvas(pg, printScale);
 
-                        // Rotate landscape pages 90° CCW so they fill A4 portrait sheets clearly without manual printer tray switching
                         if (isLandscape) {
                             pageCanvas = rotateCanvas90CCW(pageCanvas);
                         }
@@ -4945,7 +4952,6 @@
                         printSec.appendChild(div);
                     }
 
-                    // Wait for all print images to finish loading & decoding before invoking browser Print Preview
                     await Promise.all(decodePromises);
                     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
@@ -4955,8 +4961,6 @@
                     };
 
                     window.print();
-
-                    // Safety cleanup fallback if mobile browser does not trigger onafterprint
                     setTimeout(cleanupPrint, 90000);
                 } catch (err) {
                     cleanupPrint();
@@ -5056,20 +5060,18 @@
                 const view = new DataView(buffer);
                 const bytes = new Uint8Array(buffer);
 
-                // BITMAPFILEHEADER (14 bytes)
-                view.setUint8(0, 0x42); // 'B'
-                view.setUint8(1, 0x4D); // 'M'
+                view.setUint8(0, 0x42);
+                view.setUint8(1, 0x4D);
                 view.setUint32(2, fileSize, true);
                 view.setUint32(6, 0, true);
                 view.setUint32(10, 54, true);
 
-                // BITMAPINFOHEADER (40 bytes)
                 view.setUint32(14, 40, true);
                 view.setInt32(18, w, true);
-                view.setInt32(22, h, true); // positive height = bottom-up rows
+                view.setInt32(22, h, true);
                 view.setUint16(26, 1, true);
                 view.setUint16(28, 24, true);
-                view.setUint32(30, 0, true); // BI_RGB uncompressed
+                view.setUint32(30, 0, true);
                 view.setUint32(34, pixelArraySize, true);
                 view.setInt32(38, 2835, true);
                 view.setInt32(42, 2835, true);
@@ -5081,9 +5083,9 @@
                     const rowStart = y * w * 4;
                     for (let x = 0; x < w; x++) {
                         const p = rowStart + x * 4;
-                        bytes[offset++] = imgData[p + 2]; // B
-                        bytes[offset++] = imgData[p + 1]; // G
-                        bytes[offset++] = imgData[p];     // R
+                        bytes[offset++] = imgData[p + 2];
+                        bytes[offset++] = imgData[p + 1];
+                        bytes[offset++] = imgData[p];
                     }
                     const pad = rowSize - w * 3;
                     for (let k = 0; k < pad; k++) {
@@ -5178,7 +5180,6 @@
                 const validFormats = ['png', 'jpg', 'webp', 'bmp'];
                 const chosenFmt = validFormats.includes(format) ? format : 'png';
 
-                // 1-Page Document with quick PNG/JPG shortcut -> immediate direct export
                 if (state.pages.length === 1 && directSinglePage) {
                     try {
                         showToast(`กำลังส่งออกไฟล์ .${chosenFmt.toUpperCase()}...`, 'info');
@@ -5190,7 +5191,6 @@
                     return;
                 }
 
-                // Multi-page or "Choose Format/Pages" -> Open Interactive Modal pre-set to chosenFmt
                 openImageExportModal(chosenFmt);
             }
 
@@ -5361,7 +5361,6 @@
                 const count = selectedIndices.length;
                 const extUpper = format.toUpperCase();
 
-                // 1. Update Quick Mode Buttons
                 ['all', 'current', 'custom'].forEach(m => {
                     const btn = $(`imgModeBtn_${m}`);
                     if (!btn) return;
@@ -5370,7 +5369,6 @@
                         : 'py-2 px-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-xs text-center transition cursor-pointer truncate';
                 });
 
-                // 2. Update All 4 Format Buttons (PNG, JPG, WEBP, BMP)
                 ['png', 'jpg', 'webp', 'bmp'].forEach(f => {
                     const btn = $(`imgFmtBtn_${f}`);
                     if (!btn) return;
@@ -5384,7 +5382,6 @@
                     }
                 });
 
-                // 3. Update Dynamic Notice Banner
                 const notice = $('imgExportNotice');
                 if (notice) {
                     if (count === 0) {
@@ -5408,7 +5405,6 @@
                     }
                 }
 
-                // 4. Update Thumbnail Cards & Selected Counter
                 const countText = $('imgExportSelectedCountText');
                 if (countText) countText.textContent = `เลือกแล้ว ${count} / ${state.pages.length} หน้า`;
 
@@ -5436,7 +5432,6 @@
                     }
                 });
 
-                // 5. Update Confirm CTA Button
                 const confirmBtn = $('btnConfirmImageExport');
                 const confirmText = $('btnConfirmImageExportText');
                 if (confirmBtn) confirmBtn.disabled = count === 0;
@@ -5462,7 +5457,6 @@
                 const chosenFormat = format;
                 closeImageExportModal();
 
-                // Single selected page -> direct image download
                 if (indicesToExport.length === 1) {
                     const idx = indicesToExport[0];
                     const pg = state.pages[idx];
@@ -5477,7 +5471,6 @@
                     return;
                 }
 
-                // Multiple selected pages -> bundle into ZIP
                 showToast(`กำลังรวมภาพ ${indicesToExport.length} หน้า (.${chosenFormat.toUpperCase()}) เป็นไฟล์ ZIP...`, 'info');
 
                 try {
@@ -5559,6 +5552,10 @@
                 unhideMobileSubToolPanel,
                 placeTextAtCenter,
                 editSelectedTextInline,
+                setFontSizeValue,
+                stepFontSize,
+                startFontStepHold,
+                stopFontStepHold,
                 onTextStyleInput,
                 applyTextSwatch,
                 toggleTextFlag,
