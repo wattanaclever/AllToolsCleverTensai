@@ -33,18 +33,91 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- PDF.js 3.11.174 CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
 
     <!-- pdf-lib 1.17.1 CDN -->
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js" crossorigin="anonymous"></script>
 
     <!-- JSZip 3.10.1 CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 
-    <!-- Safe CDN Configuration -->
+    <!-- Safe CDN Configuration & Dynamic Multi-CDN Loader -->
     <script>
+        window.__CLEVERTENSAI_CDNS = {
+            pdfjs: [
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+                'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js',
+                'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js'
+            ],
+            pdfWorker: [
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+                'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+                'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'
+            ],
+            pdflib: [
+                'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js',
+                'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js'
+            ],
+            jszip: [
+                'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+                'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js',
+                'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'
+            ]
+        };
+
+        function loadScriptSequential(urls, globalCheckFn) {
+            return new Promise((resolve, reject) => {
+                if (globalCheckFn()) {
+                    resolve(true);
+                    return;
+                }
+                let index = 0;
+                const tryNext = () => {
+                    if (globalCheckFn()) {
+                        resolve(true);
+                        return;
+                    }
+                    if (index >= urls.length) {
+                        reject(new Error('ไม่สามารถโหลดไลบรารีจาก CDN ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'));
+                        return;
+                    }
+                    const src = urls[index++];
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.async = true;
+                    script.crossOrigin = 'anonymous';
+                    script.onload = () => {
+                        if (globalCheckFn()) resolve(true);
+                        else tryNext();
+                    };
+                    script.onerror = () => {
+                        script.remove();
+                        tryNext();
+                    };
+                    document.head.appendChild(script);
+                };
+                tryNext();
+            });
+        }
+
+        window.ensurePdfJsLoaded = async function () {
+            await loadScriptSequential(window.__CLEVERTENSAI_CDNS.pdfjs, () => typeof window.pdfjsLib !== 'undefined');
+            return window.pdfjsLib;
+        };
+
+        window.ensurePdfLibLoaded = async function () {
+            await loadScriptSequential(window.__CLEVERTENSAI_CDNS.pdflib, () => typeof window.PDFLib !== 'undefined');
+            return window.PDFLib;
+        };
+
+        window.ensureJSZipLoaded = async function () {
+            await loadScriptSequential(window.__CLEVERTENSAI_CDNS.jszip, () => typeof window.JSZip !== 'undefined');
+            return window.JSZip;
+        };
+
         if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            pdfjsLib.GlobalWorkerOptions.workerSrc = window.__CLEVERTENSAI_CDNS.pdfWorker[0];
         }
 
         if (typeof tailwind !== 'undefined') {
@@ -517,7 +590,7 @@
                     <span class="hidden sm:inline">PRINT</span>
                 </button>
 
-                <!-- Export Dropdown -->
+                <!-- Export Dropdown (Separated PNG, JPG & Multi-Format Modal) -->
                 <div class="relative" id="exportDropdownWrap">
                     <button type="button" onclick="toggleExportMenu(event)"
                         class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-md transition cursor-pointer">
@@ -527,7 +600,7 @@
                     </button>
 
                     <div id="exportDropdownMenu"
-                        class="hidden absolute right-0 mt-1.5 w-60 z-50 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
+                        class="hidden absolute right-0 mt-1.5 w-64 z-50 opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-lg p-1.5 text-xs">
                         <button type="button" onclick="closeExportMenu(); exportPdfDocument();"
                             class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-solid fa-file-pdf text-[#E11D48] w-4 text-center"></i>
@@ -536,12 +609,33 @@
                                 <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">รวมทุกหน้าและงานแก้ไขคมชัด</span>
                             </div>
                         </button>
-                        <button type="button" onclick="closeExportMenu(); handleExportImagesClick();"
-                            class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
+
+                        <div class="my-1 border-t border-slate-200 dark:border-slate-800"></div>
+
+                        <button type="button" onclick="closeExportMenu(); exportImagesWithFormat('png', true);"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
                             <i class="fa-regular fa-image text-emerald-500 w-4 text-center"></i>
                             <div class="flex flex-col">
-                                <span>ส่งออกเป็นรูปภาพ</span>
-                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพความละเอียดสูง (PNG / JPG หรือ ZIP)</span>
+                                <span>ส่งออกเป็น PNG</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ภาพคมชัดสูงสุด (Lossless)</span>
+                            </div>
+                        </button>
+
+                        <button type="button" onclick="closeExportMenu(); exportImagesWithFormat('jpg', true);"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
+                            <i class="fa-solid fa-file-image text-sky-500 w-4 text-center"></i>
+                            <div class="flex flex-col">
+                                <span>ส่งออกเป็น JPG</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">ไฟล์ขนาดเล็ก เปิดได้ทุกอุปกรณ์</span>
+                            </div>
+                        </button>
+
+                        <button type="button" onclick="closeExportMenu(); openImageExportModal('png');"
+                            class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center gap-2.5 cursor-pointer">
+                            <i class="fa-solid fa-sliders text-amber-500 w-4 text-center"></i>
+                            <div class="flex flex-col">
+                                <span>เลือกรูปแบบภาพ &amp; หน้า...</span>
+                                <span class="text-[10px] font-normal text-slate-500 dark:text-slate-400">PNG / JPG / WEBP / BMP หรือ ZIP</span>
                             </div>
                         </button>
                     </div>
@@ -633,7 +727,7 @@
                         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-[#E11D48]">Selection Mode</div>
                         <div class="p-3 rounded-xl panel-subtle border space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
                             <p><i class="fa-solid fa-hand-pointer text-[#E11D48] mr-1.5"></i>คลิกวัตถุเพื่อเลือก ลากย้าย หรือดึงมุมเพื่อปรับขนาด</p>
-                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i>ดับเบิลคลิก หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> เพื่อพิมพ์แก้คำ</p>
+                            <p><i class="fa-solid fa-i-cursor text-[#E11D48] mr-1.5"></i><strong>ดับเบิลคลิก</strong> หรือกดปุ่ม <strong>✎ แก้ไขข้อความ</strong> (หรือกด <strong>Enter / F2</strong>) เพื่อพิมพ์แก้คำ</p>
                             <p><i class="fa-solid fa-up-down-left-right text-slate-500 mr-1.5"></i><strong>คลิกซ้ายลากบนพื้นที่ว่าง</strong> เพื่อเลื่อนดูอิสระทุกทิศทางทุกขนาดซูม หรือใช้ <strong>Ctrl + ลูกกลิ้งเมาส์</strong> เพื่อซูม</p>
                         </div>
                     </div>
@@ -647,8 +741,16 @@
                                 ✎ แก้คำพิมพ์
                             </button>
                         </div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                            แตะบนหน้ากระดาษเพื่อวางกล่องข้อความ กด Enter เพื่อขึ้นบรรทัดใหม่
+
+                        <button type="button" onclick="placeTextAtCenter()"
+                            class="w-full py-2 px-3 rounded-xl bg-[#E11D48] hover:bg-[#BE123C] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>วางข้อความกลางหน้าทันที</span>
+                        </button>
+
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                            • <strong>คลิกตรงไหน วางกล่องข้อความตรงนั้น</strong> แล้วลากย้ายหรือแต่งฟอนต์/สีได้ทันที<br>
+                            • <strong>ดับเบิลคลิก</strong> กดปุ่ม <strong>✎ แก้ไขข้อความ</strong> หรือกด <strong>Enter / F2</strong> เพื่อพิมพ์แก้คำ
                         </p>
 
                         <div>
@@ -1077,7 +1179,7 @@
         </div>
     </div>
 
-    <!-- Document Preview Modal (Check Before Download) -->
+    <!-- Document Preview Modal (Ultra-Sharp Original Quality Check Before Download) -->
     <div id="documentPreviewModal" onclick="if (event.target === this) closeDocumentPreview()"
         class="hidden fixed inset-0 z-[85] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
         <div class="w-full max-w-5xl h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
@@ -1094,7 +1196,7 @@
                             <span id="previewModalCountBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                            แสดงผลลัพธ์จริงฉบับสมบูรณ์ (ซ่อนกรอบเลือกและเครื่องมือแก้ไขทั้งหมด)
+                            แสดงผลความคมชัดระดับต้นฉบับ (HiDPI Retina Ultra-Sharp)
                         </p>
                     </div>
                 </div>
@@ -1121,15 +1223,28 @@
 
                 <div class="flex flex-wrap items-center gap-2">
                     <button type="button" onclick="closeDocumentPreview(); triggerPrint();"
-                        class="px-3.5 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer">
+                        class="px-3 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-mono font-bold flex items-center gap-1.5 transition cursor-pointer">
                         <i class="fa-solid fa-print text-[#E11D48]"></i>
                         <span>PRINT</span>
                     </button>
 
-                    <button type="button" onclick="closeDocumentPreview(); handleExportImagesClick();"
-                        class="px-3.5 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                    <button type="button" onclick="closeDocumentPreview(); exportImagesWithFormat('png', true);"
+                        class="px-3 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
                         <i class="fa-regular fa-image text-emerald-500"></i>
-                        <span>ส่งออกเป็นรูปภาพ</span>
+                        <span>PNG</span>
+                    </button>
+
+                    <button type="button" onclick="closeDocumentPreview(); exportImagesWithFormat('jpg', true);"
+                        class="px-3 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-file-image text-sky-500"></i>
+                        <span>JPG</span>
+                    </button>
+
+                    <button type="button" onclick="closeDocumentPreview(); openImageExportModal('png');"
+                        class="px-3 py-2 rounded-xl panel-subtle border hover:border-[#E11D48] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                        title="เลือกฟอร์แมตภาพทั้งหมด PNG / JPG / WEBP / BMP">
+                        <i class="fa-solid fa-sliders text-amber-500"></i>
+                        <span class="hidden sm:inline">ฟอร์แมตภาพอื่น</span>
                     </button>
 
                     <button type="button" onclick="closeDocumentPreview(); exportPdfDocument();"
@@ -1142,7 +1257,7 @@
         </div>
     </div>
 
-    <!-- Interactive Image Export Modal (For Multi-Page Documents) -->
+    <!-- Interactive Image Export Modal (Supports All Formats: PNG, JPG, WEBP, BMP) -->
     <div id="imageExportModal" onclick="if (event.target === this) closeImageExportModal()"
         class="hidden fixed inset-0 z-[88] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-6">
         <div class="w-full max-w-4xl max-h-[92dvh] opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
@@ -1159,7 +1274,7 @@
                             <span id="imgExportTotalBadge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E11D48]/15 text-[#E11D48] font-bold shrink-0">0 หน้า</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                            เลือกหน้าที่ต้องการและรูปแบบไฟล์ก่อนดาวน์โหลด
+                            เลือกหน้าที่ต้องการและเลือกรูปแบบไฟล์ (PNG / JPG / WEBP / BMP)
                         </p>
                     </div>
                 </div>
@@ -1174,10 +1289,10 @@
             <!-- Controls & Interactive Selection Body -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
 
-                <!-- 1. Quick Mode Buttons + Range Input + Format Selector -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                <!-- 1. Quick Mode Buttons + Range Input + All-Format Selector -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <!-- Left: Page Mode & Range -->
-                    <div class="lg:col-span-7 space-y-2.5">
+                    <div class="lg:col-span-6 space-y-2.5">
                         <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                             1. เลือกหน้าที่ต้องการส่งออก
                         </label>
@@ -1213,21 +1328,31 @@
                         </div>
                     </div>
 
-                    <!-- Right: Format Selector -->
-                    <div class="lg:col-span-5 space-y-2.5">
+                    <!-- Right: All Browser-Supported Image Formats -->
+                    <div class="lg:col-span-6 space-y-2.5">
                         <label class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                            2. รูปแบบไฟล์รูปภาพ
+                            2. รูปแบบไฟล์รูปภาพ (รองรับครบทุกฟอร์แมต)
                         </label>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <button type="button" id="imgFmtBtn_png" onclick="setImageExportFormat('png')"
                                 class="p-2.5 rounded-xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left transition cursor-pointer">
                                 <div class="font-mono text-xs font-extrabold text-[#E11D48]">PNG</div>
-                                <div class="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5">คมชัดสูงสุด (Lossless)</div>
+                                <div class="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5">คมชัดสูงสุด</div>
                             </button>
                             <button type="button" id="imgFmtBtn_jpg" onclick="setImageExportFormat('jpg')"
                                 class="p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer">
                                 <div class="font-mono text-xs font-extrabold">JPG</div>
-                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">ขนาดไฟล์เล็ก โหลดไว</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">ไฟล์เล็ก โหลดไว</div>
+                            </button>
+                            <button type="button" id="imgFmtBtn_webp" onclick="setImageExportFormat('webp')"
+                                class="p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer">
+                                <div class="font-mono text-xs font-extrabold">WEBP</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">คมชัด ไฟล์เบา</div>
+                            </button>
+                            <button type="button" id="imgFmtBtn_bmp" onclick="setImageExportFormat('bmp')"
+                                class="p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer">
+                                <div class="font-mono text-xs font-extrabold">BMP</div>
+                                <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">บิตแมปดิบ</div>
                             </button>
                         </div>
                     </div>
@@ -1296,6 +1421,106 @@
             // 1. STATE & CONSTANTS
             // =================================================================
             const BASE_RENDER_SCALE = 1.5;
+            let pdfWorkerBlobReady = false;
+            let pdfWorkerBlobAttempted = false;
+
+            function getHiDpiRatio() {
+                return Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+            }
+
+            async function readFileAsUint8Array(file) {
+                if (file && typeof file.arrayBuffer === 'function') {
+                    try {
+                        const buf = await file.arrayBuffer();
+                        return new Uint8Array(buf);
+                    } catch (_) {
+                        // Fallback to FileReader below
+                    }
+                }
+                return await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        if (reader.result instanceof ArrayBuffer) {
+                            resolve(new Uint8Array(reader.result));
+                        } else {
+                            reject(new Error('ไม่สามารถอ่านข้อมูลไบนารีของไฟล์ได้'));
+                        }
+                    };
+                    reader.onerror = () => reject(reader.error || new Error('FileReader อ่านไฟล์ไม่สำเร็จ'));
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+
+            async function ensurePdfJsReady() {
+                const lib = await window.ensurePdfJsLoaded();
+                if (!lib) {
+                    throw new Error('ไม่พบไลบรารี PDF.js (กรุณาตรวจสอบอินเทอร์เน็ต)');
+                }
+                if (pdfWorkerBlobReady || pdfWorkerBlobAttempted) return lib;
+                pdfWorkerBlobAttempted = true;
+
+                const workerUrls = (window.__CLEVERTENSAI_CDNS && window.__CLEVERTENSAI_CDNS.pdfWorker) || [];
+                for (const url of workerUrls) {
+                    try {
+                        const resp = await fetch(url, { mode: 'cors' });
+                        if (resp.ok) {
+                            const workerCode = await resp.text();
+                            const blob = new Blob([workerCode], { type: 'application/javascript' });
+                            const blobUrl = URL.createObjectURL(blob);
+                            if (lib.GlobalWorkerOptions) {
+                                lib.GlobalWorkerOptions.workerSrc = blobUrl;
+                            }
+                            pdfWorkerBlobReady = true;
+                            break;
+                        }
+                    } catch (_) {
+                        // Try next CDN or fall back to disableWorker mode
+                    }
+                }
+                return lib;
+            }
+
+            async function openPdfDocumentSafely(bytes) {
+                const lib = await ensurePdfJsReady();
+                const isSandboxed = (() => {
+                    try {
+                        return window.self !== window.top || window.origin === 'null';
+                    } catch (_) {
+                        return true;
+                    }
+                })();
+
+                // Attempt 1: If not in restricted sandbox and Blob worker is ready, try worker mode first
+                if (!isSandboxed && pdfWorkerBlobReady) {
+                    try {
+                        return await lib.getDocument({
+                            data: bytes.slice(0),
+                            useWorkerFetch: false,
+                            isEvalSupported: false,
+                            disableRange: true,
+                            disableStream: true,
+                            disableAutoFetch: true
+                        }).promise;
+                    } catch (err) {
+                        const isPasswordErr = err && (
+                            err.name === 'PasswordException' ||
+                            String(err.message || '').toLowerCase().includes('password')
+                        );
+                        if (isPasswordErr) throw err;
+                    }
+                }
+
+                // Attempt 2: 100% Sandbox-Safe Workerless Mode (disableWorker + useWorkerFetch: false + isEvalSupported: false)
+                return await lib.getDocument({
+                    data: bytes.slice(0),
+                    disableWorker: true,
+                    useWorkerFetch: false,
+                    isEvalSupported: false,
+                    disableRange: true,
+                    disableStream: true,
+                    disableAutoFetch: true
+                }).promise;
+            }
 
             const state = {
                 pdfSources: {},      // sourceId -> { pdfjsDoc, bytes, name }
@@ -1316,7 +1541,7 @@
 
                 // Selection & Dragging
                 selectedRef: null,   // { pageId, itemId }
-                dragState: null,     // { mode: 'move'|'resize', handle, pageId, itemId, startX, startY, origX, origY, origW, origH, aspect }
+                dragState: null,     // { mode: 'move'|'resize', handle, pageId, itemId, startClientX, startClientY, moved, ... }
 
                 // Active Freehand Draw / Erase
                 activeDraw: null,    // { pageId, pointerId, tool, strokeObj, changed }
@@ -1329,7 +1554,7 @@
                     bgColor: '#FEF08A',
                     align: 'left'
                 },
-                inlineEditor: null,  // { wrapEl, pageId, itemId }
+                inlineEditor: null,  // { wrapEl, textareaEl, pageId, itemId }
                 floatingEditPill: null,
 
                 // Custom Double-Tap Detection (350ms, <15px)
@@ -1352,10 +1577,10 @@
                 oneFingerPan: null,
                 programmaticScrollUntil: 0,
 
-                // Smart Image Export Modal State
+                // Smart Image Export Modal State (Supports png, jpg, webp, bmp)
                 imageExport: {
                     mode: 'all',         // 'all' | 'current' | 'custom'
-                    format: 'png',       // 'png' | 'jpg'
+                    format: 'png',       // 'png' | 'jpg' | 'webp' | 'bmp'
                     selectedIndices: []  // sorted 0-based page indices
                 },
 
@@ -1734,7 +1959,6 @@
                             clearSelection();
                             state.mouseFreePan = null;
                         } else {
-                            // Keep moved=true briefly so trailing click event does not clear selection
                             setTimeout(() => {
                                 state.mouseFreePan = null;
                             }, 30);
@@ -1889,7 +2113,6 @@
                             });
                         }
                     } else if (e.touches.length === 1 && !state.inlineEditor) {
-                        // Strict 1-finger lock: block native scrolling; pan only if Select-mode empty-space pan is active
                         e.preventDefault();
                         if (state.oneFingerPan && !state.dragState) {
                             const t = e.touches[0];
@@ -1965,6 +2188,12 @@
                             e.preventDefault();
                             deleteSelectedObject();
                         }
+                    } else if (e.key === 'Enter' || e.key === 'F2') {
+                        const selItem = getSelectedItem();
+                        if (selItem && selItem.type === 'text' && state.selectedRef) {
+                            e.preventDefault();
+                            enterTextEditModeForItem(state.selectedRef.pageId, selItem);
+                        }
                     }
                 });
             }
@@ -2018,34 +2247,29 @@
             }
 
             async function createBlankDemoDocument() {
-                if (typeof PDFLib === 'undefined') {
-                    showToast('ไม่พบไลบรารี pdf-lib กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
-                    return;
-                }
                 try {
                     showToast('กำลังสร้างเอกสาร A4 เปล่า...', 'info');
-                    const doc = await PDFLib.PDFDocument.create();
+                    const lib = await window.ensurePdfLibLoaded();
+                    const doc = await lib.PDFDocument.create();
                     doc.addPage([595.28, 841.89]);
                     const bytes = await doc.save();
                     const file = new File([bytes], 'CLEVERTENSAI_Blank_A4.pdf', { type: 'application/pdf' });
                     await loadPdfFile(file);
                 } catch (err) {
                     console.error('Blank A4 creation error:', err);
-                    showToast('ไม่สามารถสร้างเอกสารเปล่าได้', 'error');
+                    const detail = err && (err.message || err.name) ? `: ${err.message || err.name}` : '';
+                    showToast(`ไม่สามารถสร้างเอกสารเปล่าได้${detail}`, 'error');
                 }
             }
 
             async function loadPdfFile(file) {
-                if (typeof pdfjsLib === 'undefined') {
-                    showToast('ไม่พบไลบรารี PDF.js กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
-                    return;
-                }
-
                 try {
                     showToast('กำลังเปิดไฟล์ PDF...', 'info');
-                    const buf = await file.arrayBuffer();
-                    const bytes = new Uint8Array(buf);
-                    const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise;
+                    const bytes = await readFileAsUint8Array(file);
+                    if (!bytes || bytes.length === 0) {
+                        throw new Error('ไฟล์ว่างเปล่า (0 bytes)');
+                    }
+                    const pdfjsDoc = await openPdfDocumentSafely(bytes);
 
                     const sourceId = uid('src');
                     state.pdfSources = {
@@ -2085,7 +2309,6 @@
                     if (st) st.classList.remove('hidden');
                     if (navPill) navPill.classList.remove('hidden');
 
-                    // Calculate initial fit zoom (Mobile uses clientWidth - 24 against max page width)
                     const vpEl = $('pdfWorkspace');
                     const availW = Math.max(240, (vpEl ? vpEl.clientWidth : window.innerWidth) - (isMobile() ? 24 : 96));
                     const maxPageW = getMaxPageEffectiveWidth() * BASE_RENDER_SCALE;
@@ -2107,8 +2330,9 @@
                 } catch (err) {
                     console.error('Load PDF error:', err);
                     const isEncrypted = err && (err.name === 'PasswordException' || String(err.message || '').toLowerCase().includes('password'));
+                    const errLabel = err && (err.message || err.name) ? ` (${String(err.message || err.name).slice(0, 75)})` : '';
                     showToast(
-                        isEncrypted ? 'ไฟล์ PDF นี้ติดรหัสผ่าน ไม่สามารถเปิดได้' : 'ไฟล์ PDF ไม่ถูกต้องหรือเสียหาย',
+                        isEncrypted ? 'ไฟล์ PDF นี้ติดรหัสผ่าน ไม่สามารถเปิดได้' : `ไม่สามารถเปิดไฟล์ PDF ได้${errLabel}`,
                         'error'
                     );
                 }
@@ -2189,7 +2413,9 @@
             }
 
             function selectTool(tool, wantOpenPanel = true) {
-                closeInlineEditor();
+                if (tool !== 'text') {
+                    closeInlineEditor();
+                }
                 state.tool = tool;
                 const titleEl = $('subToolTitle');
                 if (titleEl) titleEl.textContent = TOOL_LABELS[tool] || 'STUDIO';
@@ -2201,8 +2427,14 @@
                     if (pnl) pnl.classList.toggle('hidden', t !== tool);
                 });
 
-                if (tool !== 'select' && tool !== 'watermark') {
+                const curSel = getSelectedItem();
+                if (tool !== 'select' && tool !== 'watermark' && !(tool === 'text' && curSel && curSel.type === 'text')) {
                     clearSelection(false);
+                }
+
+                // If switching to 'select' while a text object is active/selected, keep Text Studio options visible
+                if (tool === 'select' && curSel && curSel.type === 'text') {
+                    showTextOptionsInSelectMode();
                 }
 
                 if (wantOpenPanel && !(isMobile() && state.isMobileDrawerLockedHidden)) {
@@ -2212,6 +2444,15 @@
                 }
 
                 updateAllCanvasCursors();
+            }
+
+            function showTextOptionsInSelectMode() {
+                const titleEl = $('subToolTitle');
+                if (titleEl) titleEl.textContent = TOOL_LABELS.text;
+                ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
+                    const pnl = $(`panel_${t}`);
+                    if (pnl) pnl.classList.toggle('hidden', t !== 'text');
+                });
             }
 
             function updateAllCanvasCursors() {
@@ -2404,7 +2645,7 @@
             }
 
             // =================================================================
-            // 10. MULTI-LINE TEXT MEASUREMENT & DUAL-ACCESS INLINE EDITOR
+            // 10. MULTI-LINE TEXT MEASUREMENT & SEAMLESS CLICK-TO-ADD / CLICK-TO-EDIT
             // =================================================================
             function buildTextFontString(item, scale) {
                 return `${item.italic ? 'italic ' : ''}${item.bold ? 'bold ' : ''}${item.fontSize * scale}px "${item.fontFamily}", sans-serif`;
@@ -2453,6 +2694,107 @@
                 return { lines, width: boxW, height: boxH, lineH };
             }
 
+            function createAndOpenTextAt(pageId, x, y) {
+                const pg = getPageById(pageId);
+                if (!pg) return;
+
+                const fontSize = parseInt(($('textSize') && $('textSize').value) || '20', 10) || 20;
+                const item = {
+                    id: uid('txt'),
+                    type: 'text',
+                    x,
+                    y,
+                    text: 'พิมพ์ข้อความ...',
+                    fontFamily: ($('textFont') && $('textFont').value) || 'Prompt',
+                    fontSize,
+                    color: ($('textColor') && $('textColor').value) || '#0F172A',
+                    bold: state.textDefaults.bold,
+                    italic: state.textDefaults.italic,
+                    hasBg: state.textDefaults.hasBg,
+                    bgColor: ($('textBgColor') && $('textBgColor').value) || state.textDefaults.bgColor,
+                    align: state.textDefaults.align || 'left',
+                    opacity: 1.0,
+                    width: 120,
+                    height: fontSize * 1.4
+                };
+
+                measureTextItem(pg, item);
+                pg.items.push(item);
+                state.selectedRef = { pageId, itemId: item.id };
+                pushHistorySnapshot();
+
+                // Drop text on canvas in selected state and return rail tool to 'select' without popping up inline editor
+                state.tool = 'select';
+                ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
+                    const btn = $(`rail_${t}`);
+                    if (btn) btn.classList.toggle('active', t === 'select');
+                });
+                showTextOptionsInSelectMode();
+                if (!(isMobile() && state.isMobileDrawerLockedHidden)) {
+                    openSubToolPanel(false);
+                }
+                updateAllCanvasCursors();
+
+                syncSelectionPanel();
+                redrawPageOverlay(pageId);
+                updateFloatingTextEditPill();
+                updateOverviewBadges();
+                showToast('วางกล่องข้อความแล้ว (ดับเบิลคลิกหรือกด Enter เพื่อพิมพ์)', 'info');
+            }
+
+            function placeTextAtCenter() {
+                const pg = getActivePage();
+                if (!pg) return;
+                const { w, h } = getPageEffectiveDims(pg);
+                createAndOpenTextAt(pg.id, Math.max(36, w / 2 - 70), Math.max(36, h / 2 - 16));
+            }
+
+            function enterTextEditModeForItem(pageId, item) {
+                if (!item || item.type !== 'text') return;
+                state.selectedRef = { pageId, itemId: item.id };
+
+                // Keep active tool in 'select' while opening Text Studio options drawer + inline editor
+                if (state.tool !== 'select') {
+                    state.tool = 'select';
+                    ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
+                        const btn = $(`rail_${t}`);
+                        if (btn) btn.classList.toggle('active', t === 'select');
+                    });
+                    updateAllCanvasCursors();
+                }
+
+                showTextOptionsInSelectMode();
+                if (!state.isSubToolOpen && !(isMobile() && state.isMobileDrawerLockedHidden)) {
+                    openSubToolPanel(false);
+                }
+
+                syncSelectionPanel();
+                redrawPageOverlay(pageId);
+                openInlineEditor(pageId, item);
+            }
+
+            function syncInlineEditorStyle() {
+                if (!state.inlineEditor) return;
+                const { textareaEl, pageId, itemId } = state.inlineEditor;
+                const pg = getPageById(pageId);
+                const item = pg ? pg.items.find(it => it.id === itemId) : null;
+                if (!pg || !item || !textareaEl) return;
+
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
+                textareaEl.style.fontFamily = `"${item.fontFamily}", sans-serif`;
+                textareaEl.style.fontSize = `${item.fontSize * cssScale}px`;
+                textareaEl.style.color = item.color;
+                textareaEl.style.fontWeight = item.bold ? 'bold' : 'normal';
+                textareaEl.style.fontStyle = item.italic ? 'italic' : 'normal';
+                textareaEl.style.textAlign = item.align || 'left';
+                textareaEl.style.background = item.hasBg ? (item.bgColor || '#FEF08A') : 'rgba(255, 255, 255, 0.98)';
+
+                const { width, height } = measureTextItem(pg, item);
+                textareaEl.style.width = `${Math.max(96, Math.ceil(width * cssScale + 24))}px`;
+                textareaEl.style.height = 'auto';
+                textareaEl.style.height = `${Math.max(Math.ceil(height * cssScale + 14), textareaEl.scrollHeight)}px`;
+            }
+
             function applyTextSwatch(hex) {
                 const inp = $('textColor');
                 if (inp) inp.value = hex;
@@ -2470,8 +2812,12 @@
                 const pg = getPageById(state.selectedRef.pageId);
                 if (pg) {
                     measureTextItem(pg, item);
-                    redrawPageOverlay(pg.id);
-                    updateFloatingTextEditPill();
+                    if (state.inlineEditor && state.inlineEditor.itemId === item.id) {
+                        syncInlineEditorStyle();
+                    } else {
+                        redrawPageOverlay(pg.id);
+                        updateFloatingTextEditPill();
+                    }
                     pushHistorySnapshot();
                 }
             }
@@ -2484,8 +2830,12 @@
                     const pg = getPageById(state.selectedRef.pageId);
                     if (pg) {
                         measureTextItem(pg, item);
-                        redrawPageOverlay(pg.id);
-                        updateFloatingTextEditPill();
+                        if (state.inlineEditor && state.inlineEditor.itemId === item.id) {
+                            syncInlineEditorStyle();
+                        } else {
+                            redrawPageOverlay(pg.id);
+                            updateFloatingTextEditPill();
+                        }
                         pushHistorySnapshot();
                     }
                 } else {
@@ -2501,7 +2851,11 @@
                     syncTextControlsUI(item);
                     const pg = getPageById(state.selectedRef.pageId);
                     if (pg) {
-                        redrawPageOverlay(pg.id);
+                        if (state.inlineEditor && state.inlineEditor.itemId === item.id) {
+                            syncInlineEditorStyle();
+                        } else {
+                            redrawPageOverlay(pg.id);
+                        }
                         pushHistorySnapshot();
                     }
                 } else {
@@ -2551,7 +2905,7 @@
             function editSelectedTextInline() {
                 const item = getSelectedItem();
                 if (item && item.type === 'text') {
-                    openInlineEditor(state.selectedRef.pageId, item);
+                    enterTextEditModeForItem(state.selectedRef.pageId, item);
                 }
             }
 
@@ -2565,11 +2919,11 @@
 
                 redrawPageOverlay(pageId, item.id);
 
-                const scale = state.zoom * BASE_RENDER_SCALE;
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
                 const wrap = document.createElement('div');
                 wrap.className = 'inline-editor-wrap';
-                wrap.style.left = `${item.x * scale}px`;
-                wrap.style.top = `${item.y * scale}px`;
+                wrap.style.left = `${item.x * cssScale}px`;
+                wrap.style.top = `${item.y * cssScale}px`;
                 wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
                 wrap.addEventListener('mousedown', (e) => e.stopPropagation());
                 wrap.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
@@ -2592,25 +2946,22 @@
                 const ta = document.createElement('textarea');
                 ta.className = 'inline-editor-textarea';
                 ta.value = item.text;
-                ta.style.fontFamily = `"${item.fontFamily}", sans-serif`;
-                ta.style.fontSize = `${item.fontSize * scale}px`;
-                ta.style.color = item.color;
-                ta.style.fontWeight = item.bold ? 'bold' : 'normal';
-                ta.style.fontStyle = item.italic ? 'italic' : 'normal';
-                ta.style.textAlign = item.align || 'left';
 
                 const autoResize = () => {
                     item.text = ta.value;
-                    const { width, height } = measureTextItem(pg, item);
-                    ta.style.width = `${Math.max(96, Math.ceil(width * scale + 24))}px`;
-                    ta.style.height = 'auto';
-                    ta.style.height = `${Math.max(Math.ceil(height * scale + 14), ta.scrollHeight)}px`;
+                    syncInlineEditorStyle();
                     renderThumbnailOverlay(pageId);
                 };
 
                 ta.addEventListener('input', autoResize);
                 ta.addEventListener('blur', (e) => {
-                    if (e.relatedTarget && wrap.contains(e.relatedTarget)) return;
+                    // Keep inline editor open if user clicked inside Text Studio style controls
+                    const nextTarget = e.relatedTarget;
+                    if (nextTarget) {
+                        if (wrap.contains(nextTarget) || nextTarget.closest('#panel_text')) {
+                            return;
+                        }
+                    }
                     closeInlineEditor();
                     pushHistorySnapshot();
                 });
@@ -2626,7 +2977,7 @@
                 wrap.appendChild(ta);
                 sheet.appendChild(wrap);
 
-                state.inlineEditor = { wrapEl: wrap, pageId, itemId: item.id };
+                state.inlineEditor = { wrapEl: wrap, textareaEl: ta, pageId, itemId: item.id };
                 autoResize();
                 setTimeout(() => {
                     ta.focus();
@@ -2661,19 +3012,19 @@
                 if (!pg || !sheet) return;
 
                 measureTextItem(pg, item);
-                const scale = state.zoom * BASE_RENDER_SCALE;
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
 
                 const pill = document.createElement('button');
                 pill.type = 'button';
                 pill.id = 'floatingTextEditPill';
                 pill.className = 'absolute z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap opacity-100 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border-2 border-[#E11D48] shadow-lg rounded-full px-3 py-1 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer';
-                pill.style.left = `${(item.x + item.width / 2) * scale}px`;
-                pill.style.top = `${Math.max(30, item.y * scale - 10)}px`;
+                pill.style.left = `${(item.x + item.width / 2) * cssScale}px`;
+                pill.style.top = `${Math.max(30, item.y * cssScale - 10)}px`;
                 pill.innerHTML = '<i class="fa-solid fa-pen text-[10px] text-[#E11D48]"></i><span>✎ แก้ไขข้อความ</span>';
                 pill.addEventListener('pointerdown', (e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    openInlineEditor(pg.id, item);
+                    enterTextEditModeForItem(pg.id, item);
                 });
 
                 sheet.appendChild(pill);
@@ -2689,6 +3040,17 @@
                 state.selectedRef = null;
                 removeFloatingTextEditPill();
                 syncSelectionPanel();
+
+                // Restore Select panel in drawer if currently in 'select' mode
+                if (state.tool === 'select') {
+                    const titleEl = $('subToolTitle');
+                    if (titleEl) titleEl.textContent = TOOL_LABELS.select;
+                    ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
+                        const pnl = $(`panel_${t}`);
+                        if (pnl) pnl.classList.toggle('hidden', t !== 'select');
+                    });
+                }
+
                 if (shouldRedraw && prevPageId) redrawPageOverlay(prevPageId);
             }
 
@@ -2780,7 +3142,7 @@
             }
 
             // =================================================================
-            // 12. CANVAS COMPOSITOR (ITEMS + ISOLATED DESTINATION-OUT INK LAYER)
+            // 12. CANVAS COMPOSITOR (HiDPI ULTRA-SHARP + ISOLATED INK LAYER)
             // =================================================================
             function drawStrokeOnCtx(ctx, stroke, scale) {
                 if (!stroke.points || stroke.points.length < 2) return;
@@ -2826,7 +3188,7 @@
                 ctx.restore();
             }
 
-            function renderPageItemsAndInk(targetCtx, page, scale, skipItemId = null, liveStroke = null) {
+            function renderPageItemsAndInk(targetCtx, page, renderScale, skipItemId = null, liveStroke = null) {
                 // 1. Render Objects (Watermarks, Images, Text)
                 for (const item of page.items) {
                     if (item.id === skipItemId) continue;
@@ -2834,9 +3196,9 @@
                     if (item.type === 'watermark') {
                         targetCtx.save();
                         targetCtx.globalAlpha = item.opacity !== undefined ? item.opacity : 0.28;
-                        targetCtx.translate(item.x * scale, item.y * scale);
+                        targetCtx.translate(item.x * renderScale, item.y * renderScale);
                         targetCtx.rotate((item.angle || -45) * Math.PI / 180);
-                        targetCtx.font = `bold ${item.fontSize * scale}px "Prompt", sans-serif`;
+                        targetCtx.font = `bold ${item.fontSize * renderScale}px "Prompt", sans-serif`;
                         targetCtx.fillStyle = item.color || '#E11D48';
                         targetCtx.textAlign = 'center';
                         targetCtx.textBaseline = 'middle';
@@ -2847,7 +3209,9 @@
                         if (img && img.complete && img.naturalWidth > 0) {
                             targetCtx.save();
                             targetCtx.globalAlpha = item.opacity !== undefined ? item.opacity : 1.0;
-                            targetCtx.drawImage(img, item.x * scale, item.y * scale, item.width * scale, item.height * scale);
+                            targetCtx.imageSmoothingEnabled = true;
+                            targetCtx.imageSmoothingQuality = 'high';
+                            targetCtx.drawImage(img, item.x * renderScale, item.y * renderScale, item.width * renderScale, item.height * renderScale);
                             targetCtx.restore();
                         }
                     } else if (item.type === 'text') {
@@ -2858,20 +3222,20 @@
 
                         if (item.hasBg) {
                             targetCtx.fillStyle = item.bgColor || '#FEF08A';
-                            targetCtx.fillRect((item.x - 4) * scale, (item.y - 2) * scale, (width + 8) * scale, (height + 4) * scale);
+                            targetCtx.fillRect((item.x - 4) * renderScale, (item.y - 2) * renderScale, (width + 8) * renderScale, (height + 4) * renderScale);
                         }
 
-                        targetCtx.font = buildTextFontString(item, scale);
+                        targetCtx.font = buildTextFontString(item, renderScale);
                         targetCtx.fillStyle = item.color || '#0F172A';
                         targetCtx.textAlign = align;
                         targetCtx.textBaseline = 'top';
 
-                        let drawX = item.x * scale;
-                        if (align === 'center') drawX = (item.x + width / 2) * scale;
-                        else if (align === 'right') drawX = (item.x + width) * scale;
+                        let drawX = item.x * renderScale;
+                        if (align === 'center') drawX = (item.x + width / 2) * renderScale;
+                        else if (align === 'right') drawX = (item.x + width) * renderScale;
 
                         lines.forEach((ln, idx) => {
-                            targetCtx.fillText(ln, drawX, (item.y + idx * lineH) * scale);
+                            targetCtx.fillText(ln, drawX, (item.y + idx * lineH) * renderScale);
                         });
                         targetCtx.restore();
                     }
@@ -2893,10 +3257,10 @@
                 offscreenInkCtx.clearRect(0, 0, cw, ch);
 
                 for (const st of page.inkStrokes) {
-                    drawStrokeOnCtx(offscreenInkCtx, st, scale);
+                    drawStrokeOnCtx(offscreenInkCtx, st, renderScale);
                 }
                 if (liveStroke) {
-                    drawStrokeOnCtx(offscreenInkCtx, liveStroke, scale);
+                    drawStrokeOnCtx(offscreenInkCtx, liveStroke, renderScale);
                 }
 
                 targetCtx.save();
@@ -2905,7 +3269,7 @@
                 targetCtx.restore();
             }
 
-            function drawSelectionBox(ctx, page, item, scale) {
+            function drawSelectionBox(ctx, page, item, renderScale, dpr = 1) {
                 let x, y, w, h;
                 if (item.type === 'watermark') {
                     w = Math.max(120, item.fontSize * (item.text.length * 0.6));
@@ -2927,9 +3291,9 @@
 
                 ctx.save();
                 ctx.strokeStyle = '#E11D48';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([5, 4]);
-                ctx.strokeRect(x * scale, y * scale, w * scale, h * scale);
+                ctx.lineWidth = 1.5 * dpr;
+                ctx.setLineDash([5 * dpr, 4 * dpr]);
+                ctx.strokeRect(x * renderScale, y * renderScale, w * renderScale, h * renderScale);
                 ctx.setLineDash([]);
 
                 if (item.type === 'image') {
@@ -2942,9 +3306,9 @@
                     corners.forEach(([cx, cy]) => {
                         ctx.fillStyle = '#FFFFFF';
                         ctx.strokeStyle = '#E11D48';
-                        ctx.lineWidth = 2;
+                        ctx.lineWidth = 2 * dpr;
                         ctx.beginPath();
-                        ctx.arc(cx * scale, cy * scale, 6, 0, Math.PI * 2);
+                        ctx.arc(cx * renderScale, cy * renderScale, 6 * dpr, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.stroke();
                     });
@@ -2961,12 +3325,16 @@
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                const scale = state.zoom * BASE_RENDER_SCALE;
-                renderPageItemsAndInk(ctx, pg, scale, skipItemId, liveStroke);
+                const { w } = getPageEffectiveDims(pg);
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
+                const dpr = canvas.width / Math.max(1, w * cssScale);
+                const renderScale = cssScale * dpr;
+
+                renderPageItemsAndInk(ctx, pg, renderScale, skipItemId, liveStroke);
 
                 if (state.selectedRef && state.selectedRef.pageId === pageId && state.selectedRef.itemId !== skipItemId) {
                     const sel = getSelectedItem();
-                    if (sel) drawSelectionBox(ctx, pg, sel, scale);
+                    if (sel) drawSelectionBox(ctx, pg, sel, renderScale, dpr);
                 }
 
                 if (!liveStroke) {
@@ -3030,7 +3398,7 @@
             }
 
             // =================================================================
-            // 14. CANVAS POINTER EVENTS (1-FINGER EDITING + DOUBLE-TAP/DBLCLICK)
+            // 14. CANVAS POINTER EVENTS (CLICK-TO-ADD & CLICK-TO-EDIT TEXT)
             // =================================================================
             function getUnscaledPos(canvas, clientX, clientY) {
                 const rect = canvas.getBoundingClientRect();
@@ -3042,18 +3410,16 @@
             }
 
             function attachCanvasPointerEvents(canvas, pageId) {
-                // Desktop dblclick backup for text editing
+                // Desktop double-click opens inline text editor immediately
                 canvas.addEventListener('dblclick', (e) => {
-                    if (state.tool !== 'select') return;
+                    if (state.twoFinger || state.isSpaceHeld || state.handPan || state.mouseFreePan) return;
                     const pg = getPageById(pageId);
                     if (!pg) return;
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
                     const hit = hitTestItem(pg, pos.x, pos.y);
                     if (hit && hit.type === 'text') {
-                        state.selectedRef = { pageId, itemId: hit.id };
-                        syncSelectionPanel();
-                        redrawPageOverlay(pageId);
-                        openInlineEditor(pageId, hit);
+                        e.preventDefault();
+                        enterTextEditModeForItem(pageId, hit);
                     }
                 });
 
@@ -3067,11 +3433,23 @@
 
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
 
-                    if (state.tool === 'select' || state.tool === 'watermark') {
-                        closeInlineEditor();
-                        const curSel = getSelectedItem();
+                    // SELECT, WATERMARK, OR TEXT (when clicking an existing text box)
+                    if (state.tool === 'select' || state.tool === 'watermark' || state.tool === 'text') {
+                        const hit = hitTestItem(pg, pos.x, pos.y);
 
-                        if (curSel && state.selectedRef.pageId === pageId) {
+                        // In Text tool: clicking empty space drops a new text box right there
+                        if (state.tool === 'text' && (!hit || hit.type !== 'text')) {
+                            closeInlineEditor();
+                            createAndOpenTextAt(pageId, pos.x, pos.y);
+                            return;
+                        }
+
+                        if (state.inlineEditor && (!hit || hit.id !== state.inlineEditor.itemId)) {
+                            closeInlineEditor();
+                        }
+
+                        const curSel = getSelectedItem();
+                        if (state.tool === 'select' && curSel && state.selectedRef && state.selectedRef.pageId === pageId) {
                             const corner = hitTestImageCornerHandle(curSel, pos.x, pos.y);
                             if (corner) {
                                 state.dragState = {
@@ -3079,6 +3457,9 @@
                                     handle: corner,
                                     pageId,
                                     itemId: curSel.id,
+                                    startClientX: e.clientX,
+                                    startClientY: e.clientY,
+                                    moved: false,
                                     origX: curSel.x,
                                     origY: curSel.y,
                                     origW: curSel.width,
@@ -3090,16 +3471,14 @@
                             }
                         }
 
-                        const hit = hitTestItem(pg, pos.x, pos.y);
                         if (hit) {
+                            // Double-tap / double-click detection (350ms, <15px) -> enter inline text editor
                             const now = Date.now();
-                            const dist = Math.hypot(e.clientX - state.lastTap.x, e.clientY - state.lastTap.y);
-                            if (hit.type === 'text' && state.lastTap.itemId === hit.id && (now - state.lastTap.time) <= 350 && dist < 15) {
+                            const tapDist = Math.hypot(e.clientX - state.lastTap.x, e.clientY - state.lastTap.y);
+                            if (hit.type === 'text' && state.lastTap.itemId === hit.id && (now - state.lastTap.time) <= 350 && tapDist < 15) {
                                 state.lastTap = { time: 0, itemId: null, x: 0, y: 0 };
-                                state.selectedRef = { pageId, itemId: hit.id };
-                                syncSelectionPanel();
-                                redrawPageOverlay(pageId);
-                                openInlineEditor(pageId, hit);
+                                state.dragState = null;
+                                enterTextEditModeForItem(pageId, hit);
                                 return;
                             }
                             state.lastTap = { time: now, itemId: hit.id, x: e.clientX, y: e.clientY };
@@ -3109,48 +3488,34 @@
                                 mode: 'move',
                                 pageId,
                                 itemId: hit.id,
+                                startClientX: e.clientX,
+                                startClientY: e.clientY,
+                                moved: false,
                                 offsetX: pos.x - hit.x,
                                 offsetY: pos.y - hit.y
                             };
                             try { canvas.setPointerCapture(e.pointerId); } catch (_) { }
+
+                            if (hit.type === 'text') {
+                                if (state.tool !== 'select') {
+                                    state.tool = 'select';
+                                    ['select', 'text', 'image', 'watermark', 'draw', 'eraser'].forEach(t => {
+                                        const btn = $(`rail_${t}`);
+                                        if (btn) btn.classList.toggle('active', t === 'select');
+                                    });
+                                    updateAllCanvasCursors();
+                                }
+                                showTextOptionsInSelectMode();
+                                if (!(isMobile() && state.isMobileDrawerLockedHidden)) {
+                                    openSubToolPanel(false);
+                                }
+                            }
                             syncSelectionPanel();
                             redrawPageOverlay(pageId);
                             updateFloatingTextEditPill();
                         } else if (state.tool !== 'select' || e.pointerType !== 'mouse') {
                             clearSelection();
                         }
-                        return;
-                    }
-
-                    if (state.tool === 'text') {
-                        closeInlineEditor();
-                        const fontSize = parseInt(($('textSize') && $('textSize').value) || '20', 10) || 20;
-                        const item = {
-                            id: uid('txt'),
-                            type: 'text',
-                            x: pos.x,
-                            y: pos.y,
-                            text: 'พิมพ์ข้อความ...',
-                            fontFamily: ($('textFont') && $('textFont').value) || 'Prompt',
-                            fontSize,
-                            color: ($('textColor') && $('textColor').value) || '#0F172A',
-                            bold: state.textDefaults.bold,
-                            italic: state.textDefaults.italic,
-                            hasBg: state.textDefaults.hasBg,
-                            bgColor: ($('textBgColor') && $('textBgColor').value) || state.textDefaults.bgColor,
-                            align: state.textDefaults.align || 'left',
-                            opacity: 1.0,
-                            width: 120,
-                            height: fontSize * 1.4
-                        };
-                        measureTextItem(pg, item);
-                        pg.items.push(item);
-                        state.selectedRef = { pageId, itemId: item.id };
-                        pushHistorySnapshot();
-                        selectTool('select', false);
-                        syncSelectionPanel();
-                        updateOverviewBadges();
-                        openInlineEditor(pageId, item);
                         return;
                     }
 
@@ -3228,24 +3593,31 @@
                     if (!pg) return;
                     const pos = getUnscaledPos(canvas, e.clientX, e.clientY);
 
-                    // Dynamic cursor in Select mode: pointer/move on objects, grab on empty space
-                    if (state.tool === 'select' && !state.dragState && e.pointerType === 'mouse') {
+                    // Dynamic cursor: pointer/move on objects, text/grab on empty space
+                    if ((state.tool === 'select' || state.tool === 'text') && !state.dragState && e.pointerType === 'mouse') {
                         const curSel = getSelectedItem();
-                        const corner = (curSel && state.selectedRef && state.selectedRef.pageId === pageId)
+                        const corner = (state.tool === 'select' && curSel && state.selectedRef && state.selectedRef.pageId === pageId)
                             ? hitTestImageCornerHandle(curSel, pos.x, pos.y)
                             : null;
+                        const hoverHit = hitTestItem(pg, pos.x, pos.y);
                         if (corner) {
                             canvas.style.cursor = (corner === 'tl' || corner === 'br') ? 'nwse-resize' : 'nesw-resize';
-                        } else if (hitTestItem(pg, pos.x, pos.y)) {
+                        } else if (hoverHit) {
                             canvas.style.cursor = 'move';
                         } else {
-                            canvas.style.cursor = 'grab';
+                            canvas.style.cursor = state.tool === 'text' ? 'text' : 'grab';
                         }
                     }
 
                     if (state.dragState && state.dragState.pageId === pageId) {
                         const item = pg.items.find(it => it.id === state.dragState.itemId);
                         if (!item) return;
+
+                        const moveDist = Math.hypot(e.clientX - state.dragState.startClientX, e.clientY - state.dragState.startClientY);
+                        if (moveDist >= 5) {
+                            state.dragState.moved = true;
+                        }
+                        if (!state.dragState.moved) return;
 
                         if (state.dragState.mode === 'resize' && item.type === 'image') {
                             const d = state.dragState;
@@ -3300,10 +3672,14 @@
 
                 const endPointer = (e) => {
                     if (state.dragState && state.dragState.pageId === pageId) {
+                        const d = state.dragState;
                         state.dragState = null;
-                        pushHistorySnapshot();
-                        redrawPageOverlay(pageId);
-                        updateOverviewBadges();
+
+                        if (d.moved) {
+                            pushHistorySnapshot();
+                            redrawPageOverlay(pageId);
+                            updateOverviewBadges();
+                        }
                     }
 
                     if (state.activeDraw && state.activeDraw.pageId === pageId && state.activeDraw.pointerId === e.pointerId) {
@@ -3343,7 +3719,7 @@
             }
 
             // =================================================================
-            // 15. MAIN PAGE & ACCURATE THUMBNAIL RENDERING
+            // 15. MAIN PAGE (HiDPI ULTRA-SHARP) & THUMBNAIL RENDERING
             // =================================================================
             async function rebuildAllDOMAndRender() {
                 buildMainPagesDOM();
@@ -3365,14 +3741,17 @@
                 const container = $('canvasPagesContainer');
                 if (!container) return;
                 container.innerHTML = '';
-                const scale = state.zoom * BASE_RENDER_SCALE;
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
+                const dpr = getHiDpiRatio();
                 const total = state.pages.length;
 
                 state.pages.forEach((pg, idx) => {
                     const pageNum = idx + 1;
                     const { w, h } = getPageEffectiveDims(pg);
-                    const pxW = Math.max(1, Math.round(w * scale));
-                    const pxH = Math.max(1, Math.round(h * scale));
+                    const cssW = Math.max(1, Math.round(w * cssScale));
+                    const cssH = Math.max(1, Math.round(h * cssScale));
+                    const backW = Math.max(1, Math.round(w * cssScale * dpr));
+                    const backH = Math.max(1, Math.round(h * cssScale * dpr));
 
                     const block = document.createElement('div');
                     block.id = `pageBlock_${pg.id}`;
@@ -3412,19 +3791,19 @@
                     const sheet = document.createElement('div');
                     sheet.id = `sheet_${pg.id}`;
                     sheet.className = 'page-sheet';
-                    sheet.style.width = `${pxW}px`;
-                    sheet.style.height = `${pxH}px`;
+                    sheet.style.width = `${cssW}px`;
+                    sheet.style.height = `${cssH}px`;
 
                     const baseCanvas = document.createElement('canvas');
                     baseCanvas.id = `base_${pg.id}`;
-                    baseCanvas.width = pxW;
-                    baseCanvas.height = pxH;
+                    baseCanvas.width = backW;
+                    baseCanvas.height = backH;
                     baseCanvas.className = 'absolute inset-0 w-full h-full block pointer-events-none';
 
                     const overlayCanvas = document.createElement('canvas');
                     overlayCanvas.id = `overlay_${pg.id}`;
-                    overlayCanvas.width = pxW;
-                    overlayCanvas.height = pxH;
+                    overlayCanvas.width = backW;
+                    overlayCanvas.height = backH;
                     overlayCanvas.className = 'overlay-canvas absolute inset-0 w-full h-full block';
 
                     attachCanvasPointerEvents(overlayCanvas, pg.id);
@@ -3446,23 +3825,28 @@
                 const overlayCanvas = $(`overlay_${pageId}`);
                 if (!pg || !sheet || !baseCanvas || !overlayCanvas) return;
 
-                const scale = state.zoom * BASE_RENDER_SCALE;
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
+                const dpr = getHiDpiRatio();
+                const renderScale = cssScale * dpr;
                 const { w, h } = getPageEffectiveDims(pg);
 
                 if (pg.kind === 'blank') {
-                    const pxW = Math.max(1, Math.round(w * scale));
-                    const pxH = Math.max(1, Math.round(h * scale));
-                    sheet.style.width = `${pxW}px`;
-                    sheet.style.height = `${pxH}px`;
-                    baseCanvas.width = pxW;
-                    baseCanvas.height = pxH;
-                    overlayCanvas.width = pxW;
-                    overlayCanvas.height = pxH;
+                    const cssW = Math.max(1, Math.round(w * cssScale));
+                    const cssH = Math.max(1, Math.round(h * cssScale));
+                    const backW = Math.max(1, Math.round(w * renderScale));
+                    const backH = Math.max(1, Math.round(h * renderScale));
+
+                    sheet.style.width = `${cssW}px`;
+                    sheet.style.height = `${cssH}px`;
+                    baseCanvas.width = backW;
+                    baseCanvas.height = backH;
+                    overlayCanvas.width = backW;
+                    overlayCanvas.height = backH;
 
                     const ctx = baseCanvas.getContext('2d');
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, pxW, pxH);
+                    ctx.fillRect(0, 0, backW, backH);
                     return;
                 }
 
@@ -3470,22 +3854,27 @@
                 if (!src) return;
                 const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                 const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
-                const vp = pdfPage.getViewport({ scale, rotation: totalRot });
 
-                const pxW = Math.max(1, Math.round(vp.width));
-                const pxH = Math.max(1, Math.round(vp.height));
-                sheet.style.width = `${pxW}px`;
-                sheet.style.height = `${pxH}px`;
-                baseCanvas.width = pxW;
-                baseCanvas.height = pxH;
-                overlayCanvas.width = pxW;
-                overlayCanvas.height = pxH;
+                const cssVp = pdfPage.getViewport({ scale: cssScale, rotation: totalRot });
+                const hiDpiVp = pdfPage.getViewport({ scale: renderScale, rotation: totalRot });
+
+                const cssW = Math.max(1, Math.round(cssVp.width));
+                const cssH = Math.max(1, Math.round(cssVp.height));
+                const backW = Math.max(1, Math.round(hiDpiVp.width));
+                const backH = Math.max(1, Math.round(hiDpiVp.height));
+
+                sheet.style.width = `${cssW}px`;
+                sheet.style.height = `${cssH}px`;
+                baseCanvas.width = backW;
+                baseCanvas.height = backH;
+                overlayCanvas.width = backW;
+                overlayCanvas.height = backH;
 
                 const ctx = baseCanvas.getContext('2d');
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, pxW, pxH);
-                await pdfPage.render({ canvasContext: ctx, viewport: vp }).promise;
+                ctx.fillRect(0, 0, backW, backH);
+                await pdfPage.render({ canvasContext: ctx, viewport: hiDpiVp }).promise;
             }
 
             function getThumbCardDimensions(natW, natH) {
@@ -3608,7 +3997,6 @@
                 const pdfPage = await src.pdfjsDoc.getPage(pg.sourcePageIndex);
                 const totalRot = (((pdfPage.rotate || 0) + (pg.rotation || 0)) % 360 + 360) % 360;
 
-                // Measure true viewport at scale 1.0 so cropped or newly inserted pages fit cleanly
                 const vp1 = pdfPage.getViewport({ scale: 1.0, rotation: totalRot });
                 const { boxW, boxH } = getThumbCardDimensions(vp1.width, vp1.height);
                 frame.style.width = `${boxW}px`;
@@ -3775,14 +4163,9 @@
             async function handleInsertFromFile(file) {
                 try {
                     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                        if (typeof pdfjsLib === 'undefined') {
-                            showToast('ไม่พบไลบรารี PDF.js', 'error');
-                            return;
-                        }
                         showToast(`กำลังแทรกหน้าจาก ${file.name}...`, 'info');
-                        const buf = await file.arrayBuffer();
-                        const bytes = new Uint8Array(buf);
-                        const extDoc = await pdfjsLib.getDocument({ data: bytes.slice(0) }).promise;
+                        const bytes = await readFileAsUint8Array(file);
+                        const extDoc = await openPdfDocumentSafely(bytes);
                         const sourceId = uid('src');
                         state.pdfSources[sourceId] = { pdfjsDoc: extDoc, bytes, name: file.name };
 
@@ -3814,7 +4197,6 @@
                         return;
                     }
 
-                    // Image file -> new A4 page with centered image
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         const dataUrl = ev.target.result;
@@ -3864,7 +4246,8 @@
                     reader.readAsDataURL(file);
                 } catch (err) {
                     console.error('Insert file error:', err);
-                    showToast('เกิดข้อผิดพลาดในการแทรกไฟล์', 'error');
+                    const errLabel = err && (err.message || err.name) ? ` (${String(err.message || err.name).slice(0, 70)})` : '';
+                    showToast(`เกิดข้อผิดพลาดในการแทรกไฟล์${errLabel}`, 'error');
                 }
             }
 
@@ -4099,13 +4482,13 @@
                 const zLbl = $('zoomLabel');
                 if (zLbl) zLbl.textContent = `${Math.round(state.zoom * 100)}%`;
 
-                const scale = state.zoom * BASE_RENDER_SCALE;
+                const cssScale = state.zoom * BASE_RENDER_SCALE;
                 state.pages.forEach(pg => {
                     const { w, h } = getPageEffectiveDims(pg);
                     const sheet = $(`sheet_${pg.id}`);
                     if (sheet) {
-                        sheet.style.width = `${Math.round(w * scale)}px`;
-                        sheet.style.height = `${Math.round(h * scale)}px`;
+                        sheet.style.width = `${Math.round(w * cssScale)}px`;
+                        sheet.style.height = `${Math.round(h * cssScale)}px`;
                     }
                 });
                 updateFloatingTextEditPill();
@@ -4173,7 +4556,7 @@
             }
 
             // =================================================================
-            // 19. DOCUMENT PREVIEW MODAL, WYSIWYG PRINT, PDF & SMART IMAGE EXPORT
+            // 19. DOCUMENT PREVIEW MODAL (HiDPI ULTRA-SHARP), PRINT, PDF & ALL-FORMAT IMAGE EXPORT
             // =================================================================
             async function openDocumentPreview() {
                 if (state.pages.length === 0) return;
@@ -4190,7 +4573,7 @@
                 body.innerHTML = `
                     <div class="my-auto flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400 font-mono text-xs">
                         <i class="fa-solid fa-spinner fa-spin text-xl text-[#E11D48]"></i>
-                        <span>กำลังประมวลผลตัวอย่างเอกสารฉบับสมบูรณ์...</span>
+                        <span>กำลังเรนเดอร์ตัวอย่างเอกสารความคมชัดระดับต้นฉบับ...</span>
                     </div>
                 `;
                 modal.classList.remove('hidden');
@@ -4198,10 +4581,11 @@
                 try {
                     const frag = document.createDocumentFragment();
                     const total = state.pages.length;
+                    const previewScale = Math.min(3.0, Math.max(2.5, 1.5 * getHiDpiRatio()));
 
                     for (let i = 0; i < total; i++) {
                         const pg = state.pages[i];
-                        const merged = await renderCompositePageCanvas(pg, 1.8);
+                        const merged = await renderCompositePageCanvas(pg, previewScale);
 
                         const card = document.createElement('div');
                         card.className = 'w-full max-w-3xl flex flex-col items-center';
@@ -4210,7 +4594,7 @@
                         label.className = 'w-full flex items-center justify-between px-1 mb-1.5 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300';
                         label.innerHTML = `
                             <span>หน้า ${i + 1} / ${total}</span>
-                            ${isPageEdited(pg) ? '<span class="px-1.5 py-0.5 rounded bg-[#E11D48] text-white text-[9px]">EDITED</span>' : '<span class="text-[10px] text-slate-400">ORIGINAL</span>'}
+                            ${isPageEdited(pg) ? '<span class="px-1.5 py-0.5 rounded bg-[#E11D48] text-white text-[9px]">EDITED</span>' : '<span class="text-[10px] text-slate-400">ORIGINAL HD</span>'}
                         `;
 
                         const frame = document.createElement('div');
@@ -4280,7 +4664,7 @@
                 printSec.innerHTML = '';
 
                 for (const pg of state.pages) {
-                    const merged = await renderCompositePageCanvas(pg, 2.2);
+                    const merged = await renderCompositePageCanvas(pg, 2.4);
                     const div = document.createElement('div');
                     div.className = 'print-page';
                     const img = document.createElement('img');
@@ -4294,19 +4678,16 @@
 
             async function exportPdfDocument() {
                 if (state.pages.length === 0) return;
-                if (typeof PDFLib === 'undefined') {
-                    showToast('ไม่พบไลบรารี pdf-lib กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
-                    return;
-                }
 
                 closeInlineEditor();
                 showToast('กำลังสร้างไฟล์ PDF คุณภาพสูง...', 'info');
 
                 try {
-                    const outDoc = await PDFLib.PDFDocument.create();
+                    const lib = await window.ensurePdfLibLoaded();
+                    const outDoc = await lib.PDFDocument.create();
                     const loadedDocs = {};
                     for (const srcId of Object.keys(state.pdfSources)) {
-                        loadedDocs[srcId] = await PDFLib.PDFDocument.load(state.pdfSources[srcId].bytes);
+                        loadedDocs[srcId] = await lib.PDFDocument.load(state.pdfSources[srcId].bytes);
                     }
 
                     for (const pg of state.pages) {
@@ -4317,13 +4698,13 @@
                         if (pg.kind === 'blank') {
                             targetPage = outDoc.addPage([pg.width, pg.height]);
                             finalRot = userRot;
-                            if (finalRot !== 0) targetPage.setRotation(PDFLib.degrees(finalRot));
+                            if (finalRot !== 0) targetPage.setRotation(lib.degrees(finalRot));
                         } else {
                             const [copied] = await outDoc.copyPages(loadedDocs[pg.sourceId], [pg.sourcePageIndex - 1]);
                             targetPage = outDoc.addPage(copied);
                             const existingRot = targetPage.getRotation().angle || 0;
                             finalRot = (existingRot + userRot) % 360;
-                            if (userRot !== 0) targetPage.setRotation(PDFLib.degrees(finalRot));
+                            if (userRot !== 0) targetPage.setRotation(lib.degrees(finalRot));
                         }
 
                         if (pg.items.length === 0 && pg.inkStrokes.length === 0) continue;
@@ -4345,11 +4726,11 @@
                         const drawH = quarter ? rawW : rawH;
 
                         if (finalRot === 90) {
-                            targetPage.drawImage(embeddedPng, { x: rawW, y: 0, width: drawW, height: drawH, rotate: PDFLib.degrees(90) });
+                            targetPage.drawImage(embeddedPng, { x: rawW, y: 0, width: drawW, height: drawH, rotate: lib.degrees(90) });
                         } else if (finalRot === 180) {
-                            targetPage.drawImage(embeddedPng, { x: rawW, y: rawH, width: drawW, height: drawH, rotate: PDFLib.degrees(180) });
+                            targetPage.drawImage(embeddedPng, { x: rawW, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(180) });
                         } else if (finalRot === 270) {
-                            targetPage.drawImage(embeddedPng, { x: 0, y: rawH, width: drawW, height: drawH, rotate: PDFLib.degrees(270) });
+                            targetPage.drawImage(embeddedPng, { x: 0, y: rawH, width: drawW, height: drawH, rotate: lib.degrees(270) });
                         } else {
                             targetPage.drawImage(embeddedPng, { x: 0, y: 0, width: rawW, height: rawH });
                         }
@@ -4360,13 +4741,81 @@
                     showToast(`ส่งออก edited_${state.fileName} สำเร็จ`, 'success');
                 } catch (err) {
                     console.error('Export PDF error:', err);
-                    showToast('เกิดข้อผิดพลาดในการส่งออก PDF', 'error');
+                    const errLabel = err && (err.message || err.name) ? ` (${String(err.message || err.name).slice(0, 70)})` : '';
+                    showToast(`เกิดข้อผิดพลาดในการส่งออก PDF${errLabel}`, 'error');
                 }
             }
 
             // =================================================================
-            // SMART IMAGE EXPORT SYSTEM (1-PAGE DIRECT PNG vs MULTI-PAGE MODAL)
+            // SMART MULTI-FORMAT IMAGE EXPORT (PNG, JPG, WEBP, BMP)
             // =================================================================
+            function canvasToBmpBlob(canvas) {
+                const w = canvas.width;
+                const h = canvas.height;
+                const ctx = canvas.getContext('2d');
+                const imgData = ctx.getImageData(0, 0, w, h).data;
+
+                const rowSize = Math.floor((24 * w + 31) / 32) * 4;
+                const pixelArraySize = rowSize * h;
+                const fileSize = 54 + pixelArraySize;
+
+                const buffer = new ArrayBuffer(fileSize);
+                const view = new DataView(buffer);
+                const bytes = new Uint8Array(buffer);
+
+                // BITMAPFILEHEADER (14 bytes)
+                view.setUint8(0, 0x42); // 'B'
+                view.setUint8(1, 0x4D); // 'M'
+                view.setUint32(2, fileSize, true);
+                view.setUint32(6, 0, true);
+                view.setUint32(10, 54, true);
+
+                // BITMAPINFOHEADER (40 bytes)
+                view.setUint32(14, 40, true);
+                view.setInt32(18, w, true);
+                view.setInt32(22, h, true); // positive height = bottom-up rows
+                view.setUint16(26, 1, true);
+                view.setUint16(28, 24, true);
+                view.setUint32(30, 0, true); // BI_RGB uncompressed
+                view.setUint32(34, pixelArraySize, true);
+                view.setInt32(38, 2835, true);
+                view.setInt32(42, 2835, true);
+                view.setUint32(46, 0, true);
+                view.setUint32(50, 0, true);
+
+                let offset = 54;
+                for (let y = h - 1; y >= 0; y--) {
+                    const rowStart = y * w * 4;
+                    for (let x = 0; x < w; x++) {
+                        const p = rowStart + x * 4;
+                        bytes[offset++] = imgData[p + 2]; // B
+                        bytes[offset++] = imgData[p + 1]; // G
+                        bytes[offset++] = imgData[p];     // R
+                    }
+                    const pad = rowSize - w * 3;
+                    for (let k = 0; k < pad; k++) {
+                        bytes[offset++] = 0;
+                    }
+                }
+
+                return new Blob([buffer], { type: 'image/bmp' });
+            }
+
+            async function encodeCanvasToFormatBlob(canvas, format) {
+                const fmt = String(format || 'png').toLowerCase();
+                if (fmt === 'bmp') {
+                    return canvasToBmpBlob(canvas);
+                }
+                const mimeMap = {
+                    png: 'image/png',
+                    jpg: 'image/jpeg',
+                    webp: 'image/webp'
+                };
+                const mime = mimeMap[fmt] || 'image/png';
+                const quality = (fmt === 'jpg' || fmt === 'webp') ? 0.94 : undefined;
+                return await new Promise(resolve => canvas.toBlob(resolve, mime, quality));
+            }
+
             function formatIndicesToRangeString(indices) {
                 if (!indices || indices.length === 0) return '';
                 const sorted = Array.from(new Set(indices)).sort((a, b) => a - b);
@@ -4413,12 +4862,11 @@
 
             async function downloadSinglePageImage(pg, pageIndex, format = 'png', singleDocFlag = false) {
                 const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
-                const ext = format === 'jpg' ? 'jpg' : 'png';
-                const mime = format === 'jpg' ? 'image/jpeg' : 'image/png';
-                const quality = format === 'jpg' ? 0.92 : undefined;
+                const validFormats = ['png', 'jpg', 'webp', 'bmp'];
+                const ext = validFormats.includes(format) ? format : 'png';
 
-                const merged = await renderCompositePageCanvas(pg, 2.2);
-                const blob = await new Promise(resolve => merged.toBlob(resolve, mime, quality));
+                const merged = await renderCompositePageCanvas(pg, 2.4);
+                const blob = await encodeCanvasToFormatBlob(merged, ext);
                 const pageLabel = String(pageIndex + 1).padStart(2, '0');
                 const outFilename = singleDocFlag
                     ? `${baseName}.${ext}`
@@ -4428,17 +4876,20 @@
                 showToast(`ส่งออก ${outFilename} สำเร็จ`, 'success');
             }
 
-            async function handleExportImagesClick() {
+            async function exportImagesWithFormat(format = 'png', directSinglePage = true) {
                 if (state.pages.length === 0) return;
                 closeInlineEditor();
                 closeExportMenu();
                 closeInsertPopover();
 
-                // 1-Page Document: Bypass modal and immediately export as PNG
-                if (state.pages.length === 1) {
+                const validFormats = ['png', 'jpg', 'webp', 'bmp'];
+                const chosenFmt = validFormats.includes(format) ? format : 'png';
+
+                // 1-Page Document with quick PNG/JPG shortcut -> immediate direct export
+                if (state.pages.length === 1 && directSinglePage) {
                     try {
-                        showToast('กำลังส่งออกรูปภาพ...', 'info');
-                        await downloadSinglePageImage(state.pages[0], 0, 'png', true);
+                        showToast(`กำลังส่งออกไฟล์ .${chosenFmt.toUpperCase()}...`, 'info');
+                        await downloadSinglePageImage(state.pages[0], 0, chosenFmt, true);
                     } catch (err) {
                         console.error('Single image export error:', err);
                         showToast('เกิดข้อผิดพลาดในการส่งออกรูปภาพ', 'error');
@@ -4446,11 +4897,16 @@
                     return;
                 }
 
-                // Multi-Page Document: Open Interactive Image Export Modal
-                openImageExportModal();
+                // Multi-page or "Choose Format/Pages" -> Open Interactive Modal pre-set to chosenFmt
+                openImageExportModal(chosenFmt);
             }
 
-            function openImageExportModal() {
+            async function handleExportImagesClick() {
+                await exportImagesWithFormat('png', true);
+            }
+
+            function openImageExportModal(defaultFormat = 'png') {
+                if (state.pages.length === 0) return;
                 const modal = $('imageExportModal');
                 const badge = $('imgExportTotalBadge');
                 const curBtn = $('imgModeBtn_current');
@@ -4458,12 +4914,13 @@
 
                 const total = state.pages.length;
                 const activeIdx = Math.max(0, getPageIndexById(state.activePageId));
+                const validFormats = ['png', 'jpg', 'webp', 'bmp'];
 
                 if (badge) badge.textContent = `${total} หน้า`;
                 if (curBtn) curBtn.textContent = `หน้าปัจจุบัน (${activeIdx + 1})`;
 
                 state.imageExport.mode = 'all';
-                state.imageExport.format = 'png';
+                state.imageExport.format = validFormats.includes(defaultFormat) ? defaultFormat : 'png';
                 state.imageExport.selectedIndices = state.pages.map((_, idx) => idx);
 
                 const rangeInp = $('imgExportRangeInput');
@@ -4499,7 +4956,6 @@
                     const thumbWrap = document.createElement('div');
                     thumbWrap.className = 'w-full aspect-[3/4] bg-white rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center relative shadow-sm';
 
-                    // Composite lightweight snapshot from existing thumbnail canvases or direct render
                     const snapCanvas = document.createElement('canvas');
                     snapCanvas.className = 'max-w-full max-h-full object-contain block';
                     const srcBase = $(`thumbBase_${pg.id}`);
@@ -4521,13 +4977,11 @@
                     }
                     thumbWrap.appendChild(snapCanvas);
 
-                    // Checkmark Badge (Top-Right)
                     const checkBadge = document.createElement('div');
                     checkBadge.id = `imgExportCheck_${idx}`;
                     checkBadge.className = 'absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-md transition';
                     thumbWrap.appendChild(checkBadge);
 
-                    // Edited Badge (Top-Left)
                     if (isPageEdited(pg)) {
                         const edBadge = document.createElement('span');
                         edBadge.className = 'absolute top-2 left-2 px-1.5 py-0.5 rounded bg-[#E11D48] text-white font-mono text-[8px] font-bold shadow';
@@ -4567,7 +5021,8 @@
             }
 
             function setImageExportFormat(fmt) {
-                state.imageExport.format = fmt === 'jpg' ? 'jpg' : 'png';
+                const validFormats = ['png', 'jpg', 'webp', 'bmp'];
+                state.imageExport.format = validFormats.includes(fmt) ? fmt : 'png';
                 updateImageExportUI();
             }
 
@@ -4622,14 +5077,17 @@
                         : 'py-2 px-2 rounded-xl panel-subtle border hover:border-[#E11D48] font-bold text-xs text-center transition cursor-pointer truncate';
                 });
 
-                // 2. Update Format Buttons
-                ['png', 'jpg'].forEach(f => {
+                // 2. Update All 4 Format Buttons (PNG, JPG, WEBP, BMP)
+                ['png', 'jpg', 'webp', 'bmp'].forEach(f => {
                     const btn = $(`imgFmtBtn_${f}`);
                     if (!btn) return;
+                    const titleEl = btn.querySelector('div:first-child');
                     if (f === format) {
                         btn.className = 'p-2.5 rounded-xl border-2 border-[#E11D48] bg-[#E11D48]/10 text-left transition cursor-pointer';
+                        if (titleEl) titleEl.classList.add('text-[#E11D48]');
                     } else {
                         btn.className = 'p-2.5 rounded-xl panel-subtle border hover:border-[#E11D48] text-left transition cursor-pointer';
+                        if (titleEl) titleEl.classList.remove('text-[#E11D48]');
                     }
                 });
 
@@ -4717,8 +5175,8 @@
                     const pg = state.pages[idx];
                     if (!pg) return;
                     try {
-                        showToast(`กำลังส่งออกหน้า ${idx + 1} เป็นรูปภาพ...`, 'info');
-                        await downloadSinglePageImage(pg, idx, chosenFormat, false);
+                        showToast(`กำลังส่งออกหน้า ${idx + 1} เป็น .${chosenFormat.toUpperCase()}...`, 'info');
+                        await downloadSinglePageImage(pg, idx, chosenFormat, state.pages.length === 1);
                     } catch (err) {
                         console.error('Single selected image export error:', err);
                         showToast('เกิดข้อผิดพลาดในการส่งออกรูปภาพ', 'error');
@@ -4727,32 +5185,27 @@
                 }
 
                 // Multiple selected pages -> bundle into ZIP
-                if (typeof JSZip === 'undefined') {
-                    showToast('ไม่พบไลบรารี JSZip กรุณาเชื่อมต่ออินเทอร์เน็ต', 'error');
-                    return;
-                }
-
-                showToast(`กำลังรวมภาพ ${indicesToExport.length} หน้าเป็นไฟล์ ZIP...`, 'info');
+                showToast(`กำลังรวมภาพ ${indicesToExport.length} หน้า (.${chosenFormat.toUpperCase()}) เป็นไฟล์ ZIP...`, 'info');
 
                 try {
-                    const zip = new JSZip();
+                    const ZipCtor = await window.ensureJSZipLoaded();
+                    const zip = new ZipCtor();
                     const baseName = state.fileName.replace(/\.pdf$/i, '') || 'document';
-                    const ext = chosenFormat === 'jpg' ? 'jpg' : 'png';
-                    const mime = chosenFormat === 'jpg' ? 'image/jpeg' : 'image/png';
-                    const quality = chosenFormat === 'jpg' ? 0.92 : undefined;
+                    const validFormats = ['png', 'jpg', 'webp', 'bmp'];
+                    const ext = validFormats.includes(chosenFormat) ? chosenFormat : 'png';
 
                     for (const idx of indicesToExport) {
                         const pg = state.pages[idx];
                         if (!pg) continue;
-                        const merged = await renderCompositePageCanvas(pg, 2.2);
-                        const blob = await new Promise(resolve => merged.toBlob(resolve, mime, quality));
+                        const merged = await renderCompositePageCanvas(pg, 2.4);
+                        const blob = await encodeCanvasToFormatBlob(merged, ext);
                         const pageLabel = String(idx + 1).padStart(2, '0');
                         zip.file(`${baseName}_page_${pageLabel}.${ext}`, blob);
                     }
 
                     const zipBlob = await zip.generateAsync({ type: 'blob' });
-                    triggerBlobDownload(zipBlob, `${baseName}_pages.zip`);
-                    showToast(`ส่งออก ${baseName}_pages.zip (${indicesToExport.length} หน้า) สำเร็จ`, 'success');
+                    triggerBlobDownload(zipBlob, `${baseName}_${ext}_pages.zip`);
+                    showToast(`ส่งออก ${baseName}_${ext}_pages.zip (${indicesToExport.length} หน้า) สำเร็จ`, 'success');
                 } catch (err) {
                     console.error('Export ZIP error:', err);
                     showToast('เกิดข้อผิดพลาดในการสร้างไฟล์ ZIP', 'error');
@@ -4797,6 +5250,7 @@
                 triggerPrint,
                 exportPdfDocument,
                 exportPagesAsZip,
+                exportImagesWithFormat,
                 handleExportImagesClick,
                 openImageExportModal,
                 closeImageExportModal,
@@ -4810,6 +5264,7 @@
                 toggleSubToolPanel,
                 hideSubToolPanel,
                 unhideMobileSubToolPanel,
+                placeTextAtCenter,
                 editSelectedTextInline,
                 onTextStyleInput,
                 applyTextSwatch,
